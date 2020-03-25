@@ -8,28 +8,22 @@ MuseScore {
 
     function applyToNotesInSelection(func) {
             var cursor = curScore.newCursor();
-            console.log("PADU");
             cursor.rewind(0);
 
-            //iterate over all staves
             for (var staff = 0; staff < curScore.nstaves; staff++) {
                   cursor.track = staff * 4; 
-                  console.log("First loop");
                   for (var voice = 0; voice < 4; voice++) {
                         cursor.rewind(0); // sets voice to 0
                         cursor.voice = voice; //voice has to be set after goTo
                         cursor.staffIdx = staff;
 
-                        var flag = true;
-                        while (flag) {
-                              if (cursor.element && cursor.element.type === Element.CHORD) {
-                                    func(cursor);
+                        while (cursor.element) {
+                              if (cursor.element.type === Element.CHORD) {
                                     console.log("Adding note");
-                                    flag = cursor.next();
+                                    func(cursor);
                                     cursor.prev();
-                                    continue;
                               }
-                              flag = cursor.next();
+                              cursor.next();
                         }
                   }
             }
