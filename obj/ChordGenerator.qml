@@ -35,13 +35,12 @@ QtObject
         while(maxPitch - note >= 0){
                 possiblePitch.push(note);
                 note = note + 12;
-
         }
 
         return possiblePitch;
     }
 
-    function generateChords(chordType){
+    function generateChords(chordType, sopranoNote){
         
         var basicNote;
 
@@ -54,9 +53,12 @@ QtObject
         var kwinta = basicNote + basic_dur_chord[2];
 
         var schemas = [ [1,1,3,5], [1, 1, 5, 3], [1, 3, 1, 5], [1, 3, 5, 1], [1, 5, 1, 3], [1, 5, 3, 1], [1,3,5,5], [1,5,3,5], [1,5,5,3] ];
+        
+        if(sopranoNote != -1) schemas = schemas.filter( function(x){ return x[3] == sopranoNote});
+        
         var chords = [];
         for(var i=0; i< schemas.length; i++){
-            schemas[i] = schemas[i].map(
+            var schema_mapped = schemas[i].map(
                 function(x){
                     if(x == 1)
                             return pryma;
@@ -66,15 +68,17 @@ QtObject
                             return kwinta;
                 }
             );
+
+            console.log(schema_mapped);
                 
-            var bass = getPossiblePitchValuesFromInterval(schemas[i][0], bassMin, bassMax);
-            var tenor = getPossiblePitchValuesFromInterval(schemas[i][1], tenorMin, tenorMax);
-            var alto = getPossiblePitchValuesFromInterval(schemas[i][2], altoMin, altoMax);
-            var soprano = getPossiblePitchValuesFromInterval(schemas[i][3], sopranoMin, sopranoMax);
+            var bass = getPossiblePitchValuesFromInterval(schema_mapped[0], bassMin, bassMax);
+            var tenor = getPossiblePitchValuesFromInterval(schema_mapped[1], tenorMin, tenorMax);
+            var alto = getPossiblePitchValuesFromInterval(schema_mapped[2], altoMin, altoMax);
+            var soprano = getPossiblePitchValuesFromInterval(schema_mapped[3], sopranoMin, sopranoMax);
             
             
             /*console.log("------------");
-            console.log(schemas[i]);
+            console.log(schema_mapped);
             console.log("------------");
             console.log(bass);
             console.log(tenor);
@@ -95,7 +99,7 @@ QtObject
                                                 console.log(m);
                                                 if(soprano[m] >= alto[k] && soprano[m] - alto[k] < 12){
 
-                                                    chords.push([bass[n], tenor[j], alto[k], soprano[m]]);
+                                                    chords.push([chordType, [[bass[n], schemas[i][0]], [tenor[j], schemas[i][1]], [alto[k], schemas[i][2]], [soprano[m], schemas[i][3]]]]);
 
                                                 }
                                         }
@@ -109,7 +113,26 @@ QtObject
         return chords;
     }
     
+    function selectSoprano(cursor){
+        cursor.track = 0;
+    }
+    function selectAlto(cursor){
+        cursor.track = 1;
+    }
+    function selectTenor(cursor){
+        cursor.track = 4;
+    }
+    function selectBass(cursor){
+        cursor.track = 5;
+    }
+
     function addChords(chords){
+
+        chords = chords.map(
+            function(x){
+                return [x[1][0][0], x[1][1][0], x[1][2][0], x[1][3][0]];
+            }
+        );
         
         var cursor = curScore.newCursor();
         cursor.rewind(0);
@@ -118,16 +141,21 @@ QtObject
         for(var i=0; i<chords.length;i++){
             var chord = chords[i];
         
-            cursor.track = 4;
-            cursor.addNote(chord[0], false);
-            cursor.prev()
-            cursor.addNote(chord[1], true);
-            cursor.prev()
-
-            cursor.track = 0;
+            selectSoprano(cursor);
+            cursor.addNote(chord[3], false);
+            cursor.prev();
+            
+            selectAlto(cursor);
             cursor.addNote(chord[2], false);
             cursor.prev()
-            cursor.addNote(chord[3], true);
+            
+            selectTenor(cursor);
+            cursor.addNote(chord[1], false);
+            cursor.prev()
+ 
+            selectBass(cursor);
+            cursor.addNote(chord[0], false);
+            
         }
         
     }
