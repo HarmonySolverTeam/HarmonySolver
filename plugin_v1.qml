@@ -39,12 +39,12 @@ MuseScore {
             //console.log(current_chord_index)
 
             //console.log(chords_to_write[current_chord_index])
-        var chords = generator.generateChords(chords_to_write[current_chord_index][0], chords_to_write[current_chord_index][1])
+        var chords = generator.generateChords(chords_to_write[current_chord_index][0], chords_to_write[current_chord_index][1], "E")
 
         var good_chords = []
 
         for (var j = 0; j < chords.length; j++){
-            //console.log(chords[j].toString())
+            console.log(chords[j].toString())
             var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
               //console.log(score)
@@ -106,7 +106,7 @@ MuseScore {
 
 //        for (var i=0; i< acords_to_write.length; i++){
 //
-//            var chords = generator.generateChords(acords_to_write[i][0], acords_to_write[i][1])
+//            var chords = generator.generateChords(acords_to_write[i][0], acords_to_write[i][1], "C")
 //
 //            var chord = null
 //            var best_score = -1
@@ -153,7 +153,7 @@ MuseScore {
             generator.addChordsAtCursorPosition(cursor, solution_chords);
         }
 
-//        var chords = generator.generateChords("T", 5);
+//        var chords = generator.generateChords("T", 5,"C");
                                          
 //        for(var i=0; i<chords.length;i++){
 //            console.log(chords[i]);
