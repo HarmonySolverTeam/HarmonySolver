@@ -13,6 +13,7 @@ QtObject
 //    };
 
     function concurrentOctaves(prevChord, currentChord){
+        if(prevChord[0] === currentChord[0]) return 0;
         for(var i = 0; i < 3; i++){
             for(var j = i + 1; j < 4; j++){
                 if((prevChord[1][j][0]-prevChord[1][i][0])%12 === 0){
@@ -27,10 +28,11 @@ QtObject
     }
 
     function concurrentFifths(prevChord, currentChord){
+        if(prevChord[0] === currentChord[0]) return 0;
         for(var i = 0; i < 3; i++){
             for(var j = i + 1; j < 4; j++){
-                if((prevChord[1][j][0]-prevChord[1][i][0])%7 === 0 && prevChord[1][j][0] !== prevChord[1][i][0]){
-                    if((currentChord[1][j][0]-currentChord[1][i][0])%7 === 0 && prevChord[1][j][0] !== prevChord[1][i][0]){
+                if((prevChord[1][j][0]-prevChord[1][i][0])%12 === 7){
+                    if((currentChord[1][j][0]-currentChord[1][i][0])%12 === 7){
 
                                                 console.log(i)
                                                 console.log(j)
@@ -47,12 +49,16 @@ QtObject
     function crossingVoices(prevChord, currentChord){
         for(var i = 0; i < 3; i++){
             if(currentChord[1][i][0]>prevChord[1][i+1][0]){
-                                                            console.log("crossingVoices")
+                    console.log("crossingVoices")
                     return -1
             }
-
-
         }
+        for(var i = 3; i > 0; i--){
+                    if(currentChord[1][i][0]<prevChord[1][i-1][0]){
+                            console.log("crossingVoices")
+                            return -1
+                    }
+                }
         return 0;
     }
 
@@ -105,6 +111,9 @@ QtObject
                 if(dominantVoiceWith3 > 0 && currentChord[1][dominantVoiceWith3][1] !== 1){
                     result += 1;
                 }
+                break;
+            case "D->S":
+                throw "Forbidden connection: "+connection;
                 break;
         }
         return result;
