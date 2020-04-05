@@ -44,18 +44,18 @@ QtObject
         
         var basicNote;
 
-        if(key == "C")                        basicNote = 60 + 0;
+        if(key == "C")                   basicNote = 60 + 0;
         if(key == "Cis" || key == "Des") basicNote = 60 + 1;
-        if(key == "D")                        basicNote = 60 + 2;
-        if(key == "Dis" || key == "Es")  basicNote = 60 + 3;
-        if(key == "E")                        basicNote = 60 + 4;
-        if(key == "F")                        basicNote = 60 + 5;
+        if(key == "D")                   basicNote = 60 + 2;
+        if(key == "Es")                  basicNote = 60 + 3;
+        if(key == "E")                   basicNote = 60 + 4;
+        if(key == "F")                   basicNote = 60 + 5;
         if(key == "Fis" || key == "Ges") basicNote = 60 + 6;
-        if(key == "G")                        basicNote = 60 + 7;
-        if(key == "Gis" || key == "As")  basicNote = 60 + 8;
-        if(key == "A")                        basicNote = 60 + 9;
-        if(key == "Ais" || key == "B")   basicNote = 60 + 10;
-        if(key == "H")                        basicNote = 60 + 11;
+        if(key == "G")                   basicNote = 60 + 7;
+        if(key == "As")                  basicNote = 60 + 8;
+        if(key == "A")                   basicNote = 60 + 9;
+        if(key == "B")                   basicNote = 60 + 10;
+        if(key == "H"   || key == "Ces") basicNote = 60 + 11;
 
 
         if(chordType == "T") basicNote = basicNote + dur[0];
