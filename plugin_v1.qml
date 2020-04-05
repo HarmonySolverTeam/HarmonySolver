@@ -29,10 +29,60 @@ MuseScore {
         acords_to_write.push(["T",3])
         acords_to_write.push(["S",3])
         acords_to_write.push(["D",5])
-        acords_to_write.push(["T",5])
+        acords_to_write.push(["T",-1])
 
         return acords_to_write
     }
+
+
+    function findSolution(chords_to_write, current_chord_index, prev_prev_chord, prev_chord){
+            //console.log(current_chord_index)
+
+            //console.log(chords_to_write[current_chord_index])
+        var chords = generator.generateChords(chords_to_write[current_chord_index][0], chords_to_write[current_chord_index][1])
+
+        var good_chords = []
+
+        for (var j = 0; j < chords.length; j++){
+            //console.log(chords[j].toString())
+            var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
+
+              //console.log(score)
+              //console.log(chords[j])
+
+            if (score !== -1 ){
+                good_chords.push([score,chords[j]])
+            }
+
+        }
+
+        if (good_chords.length === 0){
+            return [];
+        }
+
+        good_chords.sort(function(a,b){(a[0] > b[0]) ? 1 : -1})
+
+        if (current_chord_index+1 === chords_to_write.length){
+            //console.log(good_chords[0][1])
+            return [good_chords[0][1]];
+        }
+
+        for (var i = 0; i< good_chords.length; i++){
+
+            var next_chords = findSolution(chords_to_write,current_chord_index + 1, prev_chord,good_chords[i][1]  )
+
+            if (next_chords.length != 0){
+                next_chords.unshift(good_chords[i][1])
+                return next_chords
+            }
+
+        }
+
+        return []
+
+    }
+
+
 
 
     onRun: {
@@ -54,47 +104,54 @@ MuseScore {
         var prev_prev_chord = []
         var prev_chord = first_acord[0]
 
-        for (var i=0; i< acords_to_write.length; i++){
+//        for (var i=0; i< acords_to_write.length; i++){
+//
+//            var chords = generator.generateChords(acords_to_write[i][0], acords_to_write[i][1])
+//
+//            var chord = null
+//            var best_score = -1
+//
+//            for (var j = 0; j < chords.length; j++){
+//                var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
+//
+//                  console.log(score)
+//                  console.log(chords[j])
+//
+//                if (score !== -1 ){
+//                    if (best_score === -1 || best_score > score){
+//                        chord = chords[j]
+//                        best_score = score
+//                    }
+//                }
+//
+//            }
+//
+//            if (chord === null){
+//                console.log("Hyhyhyhyhy ni ma rozwiązania")
+//                break;
+//            }
+//
+//            var chord_to_add = []
+//            chord_to_add.push(chord)
+//
+//            generator.addChordsAtCursorPosition(cursor, chord_to_add);
+//
+//            console.log(best_score)
+//            console.log(chord)
+//
+//            prev_prev_chord = prev_chord
+//            prev_chord = chord
+//
+//        }
 
-            var chords = generator.generateChords(acords_to_write[i][0], acords_to_write[i][1])
+        var solution_chords = findSolution(acords_to_write,0,prev_prev_chord, prev_chord)
 
-            var chord = null
-            var best_score = -1
-
-            for (var j = 0; j < chords.length; j++){
-                var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
-
-                  //console.log(score)
-
-                if (score !== -1 ){
-                    if (best_score === -1 || best_score > score){
-                        chord = chords[j]
-                        best_score = score
-                    }
-                }
-
-            }
-
-            if (chord === null){
-                console.log("Hyhyhyhyhy ni ma rozwiązania")
-                break;
-            }
-
-            //console.log(chord)
-
-            var chord_to_add = []
-            chord_to_add.push(chord)
-
-            generator.addChordsAtCursorPosition(cursor, chord_to_add);
-
-            console.log(best_score)
-            console.log(chord)
-
-            prev_prev_chord = prev_chord
-            prev_chord = chord
-
+        if (solution_chords.length === 0){
+            console.log("Hyhyhyhyhy nie ma rozwiazania")
+        } else {
+            //console.log(solution_chords)
+            generator.addChordsAtCursorPosition(cursor, solution_chords);
         }
-
 
 //        var chords = generator.generateChords("T", 5);
                                          
