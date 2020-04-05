@@ -29,7 +29,7 @@ MuseScore {
         acords_to_write.push(["T",3])
         acords_to_write.push(["S",3])
         acords_to_write.push(["D",5])
-        acords_to_write.push(["T",3])
+        acords_to_write.push(["T",5])
 
         return acords_to_write
     }
@@ -64,6 +64,8 @@ MuseScore {
             for (var j = 0; j < chords.length; j++){
                 var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
+                  //console.log(score)
+
                 if (score !== -1 ){
                     if (best_score === -1 || best_score > score){
                         chord = chords[j]
@@ -77,6 +79,8 @@ MuseScore {
                 console.log("Hyhyhyhyhy ni ma rozwiązania")
                 break;
             }
+
+            //console.log(chord)
 
             var chord_to_add = []
             chord_to_add.push(chord)

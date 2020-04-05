@@ -17,6 +17,7 @@ QtObject
             for(var j = i + 1; j < 4; j++){
                 if((prevChord[1][j][0]-prevChord[1][i][0])%12 === 0){
                     if((currentChord[1][j][0]-currentChord[1][i][0])%12 === 0){
+                        console.log("concurrentOctaves")
                         return -1;
                     }
                 }
@@ -28,8 +29,13 @@ QtObject
     function concurrentFifths(prevChord, currentChord){
         for(var i = 0; i < 3; i++){
             for(var j = i + 1; j < 4; j++){
-                if((prevChord[1][j][0]-prevChord[1][i][0])%7 === 0){
-                    if((currentChord[1][j][0]-currentChord[1][i][0])%7 === 0){
+                if((prevChord[1][j][0]-prevChord[1][i][0])%7 === 0 && prevChord[1][j][0] !== prevChord[1][i][0]){
+                    if((currentChord[1][j][0]-currentChord[1][i][0])%7 === 0 && prevChord[1][j][0] !== prevChord[1][i][0]){
+
+                                                console.log(i)
+                                                console.log(j)
+                                                console.log("concurrentFifths")
+
                         return -1;
                     }
                 }
@@ -40,7 +46,12 @@ QtObject
 
     function crossingVoices(prevChord, currentChord){
         for(var i = 0; i < 3; i++){
-            if(currentChord[1][i][0]>prevChord[1][i+1][0]) return -1
+            if(currentChord[1][i][0]>prevChord[1][i+1][0]){
+                                                            console.log("crossingVoices")
+                    return -1
+            }
+
+
         }
         return 0;
     }
@@ -49,8 +60,12 @@ QtObject
         if((currentChord[1][0][0]>prevChord[1][0][0] && currentChord[1][1][0]>prevChord[1][1][0] && currentChord[1][2][0]>prevChord[1][2][0]
             && currentChord[1][3][0]>prevChord[1][3][0] )
             ||(currentChord[1][1][0]<prevChord[1][1][0] && currentChord[1][2][0]<prevChord[1][2][0]
-                && currentChord[1][3][0]<prevChord[1][3][0] && currentChord[1][0][0]<prevChord[1][0][0]))
-            return -1;
+                && currentChord[1][3][0]<prevChord[1][3][0] && currentChord[1][0][0]<prevChord[1][0][0])){
+                                        console.log("oneDirection")
+
+                return -1;
+                }
+
         return 0;
     }
 
@@ -67,7 +82,10 @@ QtObject
         for(var i = 0; i < 4; i++){
             if(((prevPrevChord[1][i][0]>prevChord[1][i][0] && prevChord[1][i][0]>currentChord[1][i][0]) ||
                 (prevPrevChord[1][i][0]<prevChord[1][i][0] && prevChord[1][i][0]<currentChord[1][i][0]))
-                && forbiddenJump(prevPrevChord, currentChord)) return -1;
+                && forbiddenJump(prevPrevChord, currentChord)){
+                    console.log("forbiddenSumJump")
+                    return -1;
+                }
         }
         return 0;
     }
