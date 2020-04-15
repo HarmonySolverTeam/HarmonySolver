@@ -10,7 +10,6 @@ MuseScore {
     ChordGenerator{id:generator;}
     RulesChecker{id:checker;}
 
-
     function get_acords_to_write(){
 
         var acords_to_write = []
@@ -30,7 +29,6 @@ MuseScore {
         acords_to_write.push(["S",3])
         acords_to_write.push(["D",5])
         acords_to_write.push(["T",-1])
-
         return acords_to_write
     }
 
@@ -83,8 +81,6 @@ MuseScore {
     }
 
 
-
-
     onRun: {
 
         if (typeof curScore === 'undefined')
@@ -104,46 +100,6 @@ MuseScore {
         var prev_prev_chord = []
         var prev_chord = first_acord[0]
 
-//        for (var i=0; i< acords_to_write.length; i++){
-//
-//            var chords = generator.generateChords(acords_to_write[i][0], acords_to_write[i][1], "C")
-//
-//            var chord = null
-//            var best_score = -1
-//
-//            for (var j = 0; j < chords.length; j++){
-//                var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
-//
-//                  console.log(score)
-//                  console.log(chords[j])
-//
-//                if (score !== -1 ){
-//                    if (best_score === -1 || best_score > score){
-//                        chord = chords[j]
-//                        best_score = score
-//                    }
-//                }
-//
-//            }
-//
-//            if (chord === null){
-//                console.log("Hyhyhyhyhy ni ma rozwiązania")
-//                break;
-//            }
-//
-//            var chord_to_add = []
-//            chord_to_add.push(chord)
-//
-//            generator.addChordsAtCursorPosition(cursor, chord_to_add);
-//
-//            console.log(best_score)
-//            console.log(chord)
-//
-//            prev_prev_chord = prev_chord
-//            prev_chord = chord
-//
-//        }
-
         var solution_chords = findSolution(acords_to_write,0,prev_prev_chord, prev_chord)
 
         if (solution_chords.length === 0){
@@ -152,14 +108,6 @@ MuseScore {
             //console.log(solution_chords)
             generator.addChordsAtCursorPosition(cursor, solution_chords);
         }
-
-//        var chords = generator.generateChords("T", 5,"C");
-                                         
-//        for(var i=0; i<chords.length;i++){
-//            console.log(chords[i]);
-//        }
-        
-        //generator.addChordsAtBegining(chords);
 
         Qt.quit()
     }
