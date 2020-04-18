@@ -115,6 +115,28 @@ QtObject
             case "D->S":
                 throw "Forbidden connection: "+connection;
                 break;
+            case "D7->T":
+                var dominantVoiceWith3 = -1;
+                for(var i = 0; i < 4; i++){
+                    if(prevChord[1][i][1] === 3) {
+                        dominantVoiceWith3 = i;
+                        break;
+                    }
+                }
+                if(dominantVoiceWith3 > -1 && currentChord[1][dominantVoiceWith3][1] !== 1){
+                    result += 1;
+                }
+                var dominantVoiceWith7 = -1;
+                for(var i = 0; i < 4; i++){
+                    if(prevChord[1][i][1] === 7) {
+                        dominantVoiceWith7 = i;
+                        break;
+                    }
+                }
+                if(dominantVoiceWith7 > -1 && currentChord[1][dominantVoiceWith7][1] !== 3){
+                    result += 1;
+                }
+                break;
         }
         return result;
     }
