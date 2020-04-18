@@ -101,14 +101,14 @@ QtObject
         var result = 0;
         switch (connection) {
             case "D->T":
-                var dominantVoiceWith3 = 0;
+                var dominantVoiceWith3 = -1;
                 for(var i = 0; i < 4; i++){
                     if(prevChord[1][i][1] === 3) {
                         dominantVoiceWith3 = i;
                         break;
                     }
                 }
-                if(dominantVoiceWith3 > 0 && currentChord[1][dominantVoiceWith3][1] !== 1){
+                if(dominantVoiceWith3 > -1 && currentChord[1][dominantVoiceWith3][1] !== 1){
                     result += 1;
                 }
                 break;

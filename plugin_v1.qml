@@ -10,34 +10,55 @@ MuseScore {
     ChordGenerator{id:generator;}
     RulesChecker{id:checker;}
 
-    function get_acords_to_write(){
+    function get_chords_to_write(){
 
-        var acords_to_write = []
+        var chords_to_write = []
 
-        acords_to_write.push(["T",5])
-        acords_to_write.push(["S",3])
-        acords_to_write.push(["S",5])
-        acords_to_write.push(["D",1])
-        acords_to_write.push(["D",3])
-        acords_to_write.push(["T",1])
-        acords_to_write.push(["T",3])
-        acords_to_write.push(["S",1])
-        acords_to_write.push(["D",5])
-        acords_to_write.push(["D",3])
-        acords_to_write.push(["D",1])
-        acords_to_write.push(["T",3])
-        acords_to_write.push(["S",3])
-        acords_to_write.push(["D",5])
-        acords_to_write.push(["T",-1])
-        return acords_to_write
+        chords_to_write.push(["T",5])
+        chords_to_write.push(["S",1])
+        chords_to_write.push(["S",5])
+        chords_to_write.push(["D",1])
+        chords_to_write.push(["D",3])
+        chords_to_write.push(["T",1])
+        chords_to_write.push(["T",3])
+        chords_to_write.push(["S",1])
+        chords_to_write.push(["D",5])
+        chords_to_write.push(["D",3])
+        chords_to_write.push(["D",1])
+        chords_to_write.push(["T",3])
+        chords_to_write.push(["S",3])
+        chords_to_write.push(["D",5])
+        chords_to_write.push(["T",-1])
+
+        return chords_to_write
+    }
+
+    function getKeyName(keyValue){
+        switch(keyValue){
+            case -7: return "Cb"
+            case -6: return "Gb"
+            case -5: return "Db"
+            case -4: return "Ab"
+            case -3: return "Eb"
+            case -2: return "Bb"
+            case -1: return "F"
+            case 0: return "C"
+            case 1: return "G"
+            case 2: return "D"
+            case 3: return "A"
+            case 4: return "E"
+            case 5: return "B"
+            case 6: return "F#"
+            case 7: return "C#"
+        }
     }
 
 
-    function findSolution(chords_to_write, current_chord_index, prev_prev_chord, prev_chord){
+    function findSolution(chords_to_write, current_chord_index, prev_prev_chord, prev_chord, keyName){
             //console.log(current_chord_index)
 
             //console.log(chords_to_write[current_chord_index])
-        var chords = generator.generateChords(chords_to_write[current_chord_index][0], chords_to_write[current_chord_index][1], "E")
+        var chords = generator.generateChords(chords_to_write[current_chord_index][0], chords_to_write[current_chord_index][1], keyName)
 
         var good_chords = []
 
@@ -67,7 +88,7 @@ MuseScore {
 
         for (var i = 0; i< good_chords.length; i++){
 
-            var next_chords = findSolution(chords_to_write,current_chord_index + 1, prev_chord,good_chords[i][1]  )
+            var next_chords = findSolution(chords_to_write,current_chord_index + 1, prev_chord,good_chords[i][1], keyName  )
 
             if (next_chords.length != 0){
                 next_chords.unshift(good_chords[i][1])
@@ -86,21 +107,23 @@ MuseScore {
         if (typeof curScore === 'undefined')
                   Qt.quit();
 
-        var first_acord = []
-        first_acord.push(["T", [[48, 1], [60, 1], [64, 3], [67, 5]]])
+        var first_chord = []
+        first_chord.push(["T", [[52, 1], [64, 1], [68, 3], [71, 5]]])
 
-        var acords_to_write = get_acords_to_write()
+        var chords_to_write = get_chords_to_write()
 
         var cursor = curScore.newCursor();
+        var keyName = getKeyName(cursor.keySignature)
+
         cursor.rewind(0);
         cursor.setDuration(1, 4);
 
-        generator.addChordsAtCursorPosition(cursor, first_acord);
+        generator.addChordsAtCursorPosition(cursor, first_chord);
 
         var prev_prev_chord = []
-        var prev_chord = first_acord[0]
+        var prev_chord = first_chord[0]
 
-        var solution_chords = findSolution(acords_to_write,0,prev_prev_chord, prev_chord)
+        var solution_chords = findSolution(chords_to_write,0,prev_prev_chord, prev_chord, keyName)
 
         if (solution_chords.length === 0){
             console.log("Hyhyhyhyhy nie ma rozwiazania")

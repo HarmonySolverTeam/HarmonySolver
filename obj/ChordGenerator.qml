@@ -54,8 +54,8 @@ QtObject
         if(key == "G")                   basicNote = 60 + 7;
         if(key == "Ab")                  basicNote = 60 + 8;
         if(key == "A")                   basicNote = 60 + 9;
-        if(key == "Hb")                   basicNote = 60 + 10;
-        if(key == "H"   || key == "Cb") basicNote = 60 + 11;
+        if(key == "Bb")                   basicNote = 60 + 10;
+        if(key == "B"   || key == "Cb") basicNote = 60 + 11;
 
 
         if(chordType == "T") basicNote = basicNote + dur[0];
