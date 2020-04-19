@@ -76,10 +76,40 @@ QtObject
     }
 
     function forbiddenJump(prevChord, currentChord){
-        //altered intervals or greater than 6th are forbidden
-        //TODO altered intervals?
+        function getBaseDistance(first, second ){
+                    var i = 0
+                    while(first!=second) {
+                          first = (first+2)%7
+                          i++
+                    }
+                    return i
+              }
+
+        function checkAlteration(halfToneDist, baseDist){
+            if(halfToneDist > 12){
+                if(halfToneDist%12==0) halfToneDist = 12
+                else halfToneDist = halfToneDist % 12
+            }
+            var alteredIntervals = {1:0, 3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
+            return alteredIntervals[halfToneDist] == baseDist
+        }
+
+        function isAltered(firstNote, secondNote){
+            var halfToneDist = firstNote.pitch-secondNote.pitch
+            var firstBase = (firstNote.tpc+1)%7
+            var secondBase = (secondNote.tpc+1)%7
+            var baseDistance
+            if(halfToneDist>0){
+                baseDistance = getBaseDistance(secondBase, firstBase)
+            } else{
+                baseDistance = getBaseDistance(firstBase, secondBase)
+                halfToneDist = -halfToneDist
+            }
+            return checkAlteration(halfToneDist, baseDistance)
+        }
         for(var i = 0; i < 4; i++){
             if(abs(currentChord[1][i][0]-prevChord[1][i][0])>9) return -1;
+            //TODO potrzebuję jeszcze tpc z nuty
         }
         return 0;
     }
