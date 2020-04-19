@@ -53,46 +53,43 @@ function contains(list, obj){
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down) {
-        this.functionName = functionName
-        this.degree = degree
-        this.position = position
-        this.revolution = revolution
-        this.delay = delay //delayed components list
-        this.extra = extra //extra components list
-        this.omit = omit //omitted components list
-        this.down = down //true or false
+    this.functionName = functionName
+    this.degree = degree !== undefined?degree:""
+    this.position = position
+    this.revolution = revolution
+    this.delay = delay //delayed components list
+    this.extra = extra !== undefined?extra:"" //extra components list
+    this.omit = omit //omitted components list
+    this.down = down //true or false
 
+    this.getSymbol = function(){
+        return this.down?this.functionName+"down"+this.extra:this.functionName+this.extra
+    }
+    this.equals = function(other){
+        return this.functionName === other.functionName && this.degree === other.degree && this.down === other.down
+    }
 }
 
 function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
-        this.sopranoNote = sopranoNote
-        this.altoNote = altoNote
-        this.tenorNote = tenorNote
-        this.bassNote = bassNote
-        this.harmonicFunction = harmonicFunction
-
+    this.sopranoNote = sopranoNote
+    this.altoNote = altoNote
+    this.tenorNote = tenorNote
+    this.bassNote = bassNote
+    this.harmonicFunction = harmonicFunction
+    this.notes = [bassNote, tenorNote, altoNote, sopranoNote]
 }
 
-function Note(pitch, baseNote) {
-        this.pitch = pitch
-        this.baseNote = baseNote
-
+function Note(pitch, baseNote, chordComponent) {
+    this.pitch = pitch
+    this.baseNote = baseNote
+    this.chordComponent = chordComponent
 }
 
 function Scale(baseNote) {
-        this.baseNote = baseNote
+    this.baseNote = baseNote
 }
 
 function MajorScale(baseNote) {
-        Scale.call(baseNote)
-        this.pitches = [0, 2, 4, 5, 7, 9, 11]
+    Scale.call(baseNote)
+    this.pitches = [0, 2, 4, 5, 7, 9, 11]
 }
-
-var dur = new MajorScale(BASE_NOTES.C)
-var n1 = new Note(48, BASE_NOTES.C)
-var n2 = new Note(60, BASE_NOTES.C)
-var n3 = new Note(64, BASE_NOTES.E)
-var n4 = new Note(67, BASE_NOTES.G)
-
-//var chord = new Chord(n4, n3, n2, n1, new HarmonicFunction(FUNCTION_NAMES.TONIC, 0, 0, 0, [], [], [], false))
-//console.log(chord)

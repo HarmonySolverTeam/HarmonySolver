@@ -54,14 +54,20 @@ function contains(list, obj){
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down) {
     this.functionName = functionName
-    this.degree = degree
+    this.degree = degree !== undefined?degree:""
     this.position = position
     this.revolution = revolution
     this.delay = delay //delayed components list
-    this.extra = extra //extra components list
+    this.extra = extra !== undefined?extra:"" //extra components list
     this.omit = omit //omitted components list
     this.down = down //true or false
 
+    this.getSymbol = function(){
+        return this.down?this.functionName+"down"+this.extra:this.functionName+this.extra
+    }
+    this.equals = function(other){
+        return this.functionName === other.functionName && this.degree === other.degree && this.down === other.down
+    }
 }
 
 function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
@@ -70,13 +76,13 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     this.tenorNote = tenorNote
     this.bassNote = bassNote
     this.harmonicFunction = harmonicFunction
-
+    this.notes = [bassNote, tenorNote, altoNote, sopranoNote]
 }
 
-function Note(pitch, baseNote) {
+function Note(pitch, baseNote, chordComponent) {
     this.pitch = pitch
     this.baseNote = baseNote
-
+    this.chordComponent = chordComponent
 }
 
 function Scale(baseNote) {
