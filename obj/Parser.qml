@@ -99,6 +99,12 @@ QtObject
             //console.log(measures)
 
             var ret = new Objects.Exercise(key, mode, metre, system, measures, first_chord)
+
+            readScore(filePath+"/template scores/"+key+"_"+mode+".mscz")
+            writeScore(curScore, filePath+"/solution","mscz")
+            closeScore(curScore)
+            readScore(filePath+"/solution.mscz")
+
             return ret
 
 //        } catch (error) {
