@@ -99,11 +99,11 @@ QtObject
             //console.log(measures)
 
             var ret = new Objects.Exercise(key, mode, metre, system, measures, first_chord)
-
+            var number = Math.floor(100000 * Math.random());
             readScore(filePath+"/template scores/"+key+"_"+mode+".mscz")
-            writeScore(curScore, filePath+"/solution","mscz")
+            writeScore(curScore, filePath+"/solution"+number,"mscz")
             closeScore(curScore)
-            readScore(filePath+"/solution.mscz")
+            readScore(filePath+"/solution"+number+".mscz")
 
             return ret
 

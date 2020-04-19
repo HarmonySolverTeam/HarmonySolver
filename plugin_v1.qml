@@ -261,9 +261,9 @@ MuseScore {
                   if (typeof curScore === 'undefined')
                             Qt.quit();
 
-                  var input = 'C#\n10,20,30,40\n3/4\nT6{};S7{}\nT{"position":3, "revolution":5, "delay":[[4,3],[9,8]],"degree":2, "extra":[7], "omit":[1], "down":false}'
+                 // var input = 'C#\n10,20,30,40\n3/4\nT6{};S7{}\nT{"position":3, "revolution":5, "delay":[[4,3],[9,8]],"degree":2, "extra":[7], "omit":[1], "down":false}'
 
-                  var parser_test = parser.parse(input)
+                //  var parser_test = parser.parse(input)
 
                   //console.log(parser_test)
 
