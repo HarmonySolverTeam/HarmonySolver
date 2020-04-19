@@ -1,11 +1,11 @@
 class Exercise {
-    constructor(key, meter,system ,chords) {
+    constructor(key, meter, system, measures, first_chord) {
         this.key = key
         this.meter = meter
         this.system = system
-        this.chords = chords
+        this.measures = measures
+        this.first_chord = first_chord
     }
-
 }
 
 const VOICES = {
@@ -30,6 +30,12 @@ const BASE_NOTES = {
     A : 5,
     B : 6
 }
+
+var possible_keys = ['C', 'C#', 'Db',
+    'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A',
+    'Hb', 'H', 'Cb']
+
+var possible_systems = ['close', 'open', '-']
 
 class HarmonicFunction{
     constructor(functionName, degree, position, revolution, delay, extra, omit, down) {
