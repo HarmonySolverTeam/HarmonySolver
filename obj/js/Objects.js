@@ -1,5 +1,6 @@
-function Exercise(key, meter, system, measures, first_chord)
+function Exercise(key, meter, mode, system, measures, first_chord)
 {
+    this.mode = mode
     this.key = key
     this.meter = meter
     this.system = system
@@ -31,9 +32,13 @@ var BASE_NOTES = {
     B: 6
 }
 
-var possible_keys = ['C', 'C#', 'Db',
+var possible_keys_major = ['C', 'C#', 'Db',
     'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A',
-    'Hb', 'H', 'Cb']
+    'Bb', 'B', 'Cb']
+
+var possible_keys_minor = ['c', 'c#', 'db',
+    'd', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'ab', 'a',
+    'bb', 'b', 'cb']
 
 var possible_systems = ['close', 'open', '-']
 

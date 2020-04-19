@@ -1,15 +1,25 @@
 import QtQuick 2.0
 import MuseScore 3.0
 import "obj" 
+import FileIO 3.0
+import QtQuick.Dialogs 1.0
+import QtQuick.Controls 1.0
 
 MuseScore {
-    menuPath: "Plugins.pluginName"
+    menuPath: "Plugins.HarmonySolver"
     description: "Description goes here"
     version: "1.0"
-    
+    requiresScore: false
+    pluginType: "dialog"
+
+
     ChordGenerator{id:generator;}
     RulesChecker{id:checker;}
     Parser{id:parser;}
+
+    id:window
+    width:  800; height: 500;
+    onRun: {}
 
     function get_chords_to_write(){
 
@@ -103,44 +113,203 @@ MuseScore {
     }
 
 
-    onRun: {
+//    onRun: {
+//
+//        if (typeof curScore === 'undefined')
+//                  Qt.quit();
+//
+//        var input = "C#\n10,20,30,40\n3/4\nT6{};S7{}\nT{\"position\":3, \"revolution\":5, \"delay\":[[4,3],[9,8]],\"degree\":2, \"extra\":[7], \"omit\":[1], \"down\":false}"
+//
+//        var parser_test = parser.parse(input)
+//
+//        //console.log(parser_test)
+//
+//        var first_chord = []
+//        first_chord.push(["T", [[52, 1], [64, 1], [68, 3], [71, 5]]])
+//
+//        var chords_to_write = get_chords_to_write()
+//
+//        var cursor = curScore.newCursor();
+//        var keyName = getKeyName(cursor.keySignature)
+//
+//        cursor.rewind(0);
+//        cursor.setDuration(1, 4);
+//
+//        generator.addChordsAtCursorPosition(cursor, first_chord);
+//
+//        var prev_prev_chord = []
+//        var prev_chord = first_chord[0]
+//
+//        var solution_chords = findSolution(chords_to_write,0,prev_prev_chord, prev_chord, keyName)
+//
+//        if (solution_chords.length === 0){
+//            console.log("Hyhyhyhyhy nie ma rozwiazania")
+//        } else {
+//            //console.log(solution_chords)
+//            generator.addChordsAtCursorPosition(cursor, solution_chords);
+//        }
+//
+//        Qt.quit()
+//    }
 
-        if (typeof curScore === 'undefined')
-                  Qt.quit();
+        FileIO {
+              id: myFileAbc
+              onError: console.log(msg + "  Filename = " + myFileAbc.source)
+              }
 
-        var input = "C#\n10,20,30,40\n3/4\nT6{};S7{}\nT{\"position\":3, \"revolution\":5, \"delay\":[[4,3],[9,8]],\"degree\":2, \"extra\":[7], \"omit\":[1], \"down\":false}"
+          FileIO {
+              id: myFile
+              source: tempPath() + "/my_file.xml"
+              onError: console.log(msg)
+              }
 
-        var parser_test = parser.parse(input)
+          FileDialog {
+              id: fileDialog
+              title: qsTr("Please choose a file")
+              onAccepted: {
+                  var filename = fileDialog.fileUrl
+                  //console.log("You chose: " + filename)
 
-        //console.log(parser_test)
+                  if(filename){
+                      myFileAbc.source = filename
+                      //read abc file and put it in the TextArea
+                      abcText.text = myFileAbc.read()
+                      }
+                  }
+              }
 
-        var first_chord = []
-        first_chord.push(["T", [[52, 1], [64, 1], [68, 3], [71, 5]]])
+            FileDialog {
+              id: fileDialogParse
+              title: qsTr("Please choose a file to parse")
+              onAccepted: {
+                  var filename = fileDialog.fileUrl
+                  //console.log("You chose: " + filename)
 
-        var chords_to_write = get_chords_to_write()
+                  if(filename){
+                      myFileAbc.source = filename
+                      //read abc file and put it in the TextArea
+                      var input_text = String(myFileAbc.read())
+                      var parser_test = parser.parse(input_text)
+                       abcText.text = parser_test
+                      }
+                  }
+              }
 
-        var cursor = curScore.newCursor();
-        var keyName = getKeyName(cursor.keySignature)
+          Label {
+              id: textLabel
+              wrapMode: Text.WordWrap
+              text: qsTr("Your task will show here")
+              font.pointSize:12
+              anchors.left: window.left
+              anchors.top: window.top
+              anchors.leftMargin: 10
+              anchors.topMargin: 10
+              }
 
-        cursor.rewind(0);
-        cursor.setDuration(1, 4);
+          // Where people can paste their ABC tune or where an ABC file is put when opened
+          TextArea {
+              id:abcText
+              anchors.top: textLabel.bottom
+              anchors.left: window.left
+              anchors.right: window.right
+              anchors.bottom: buttonOpenFile.top
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              anchors.leftMargin: 10
+              anchors.rightMargin: 10
+              width:parent.width
+              height:400
+              wrapMode: TextEdit.WrapAnywhere
+              textFormat: TextEdit.PlainText
+              }
 
-        generator.addChordsAtCursorPosition(cursor, first_chord);
+          Button {
+              id : buttonOpenFile
+              text: qsTr("Open file")
+              anchors.bottom: window.bottom
+              anchors.left: abcText.left
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              anchors.leftMargin: 10
+              onClicked: {
+                  fileDialog.open();
+                  }
+              }
 
-        var prev_prev_chord = []
-        var prev_chord = first_chord[0]
+          Button {
+              id : buttonParse
+              text: qsTr("Parse file")
+              anchors.bottom: window.bottom
+              anchors.left: buttonOpenFile.right
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              anchors.leftMargin: 10
+              onClicked: {
+                      fileDialogParse.open()
+                  }
+              }
 
-        var solution_chords = findSolution(chords_to_write,0,prev_prev_chord, prev_chord, keyName)
+          Button {
+              id : buttonRun
+              text: qsTr("Run")
+              anchors.bottom: window.bottom
+              anchors.left: buttonParse.right
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              anchors.leftMargin: 10
+              onClicked: {
+                  if (typeof curScore === 'undefined')
+                            Qt.quit();
 
-        if (solution_chords.length === 0){
-            console.log("Hyhyhyhyhy nie ma rozwiazania")
-        } else {
-            //console.log(solution_chords)
-            generator.addChordsAtCursorPosition(cursor, solution_chords);
-        }
+                  var input = 'C#\n10,20,30,40\n3/4\nT6{};S7{}\nT{"position":3, "revolution":5, "delay":[[4,3],[9,8]],"degree":2, "extra":[7], "omit":[1], "down":false}'
 
-        Qt.quit()
-    }
-      
+                  var parser_test = parser.parse(input)
+
+                  //console.log(parser_test)
+
+                  var first_chord = []
+                  first_chord.push(["T", [[52, 1], [64, 1], [68, 3], [71, 5]]])
+
+                  var chords_to_write = get_chords_to_write()
+
+                  var cursor = curScore.newCursor();
+                  var keyName = getKeyName(cursor.keySignature)
+
+                  cursor.rewind(0);
+                  cursor.setDuration(1, 4);
+
+                  generator.addChordsAtCursorPosition(cursor, first_chord);
+
+                  var prev_prev_chord = []
+                  var prev_chord = first_chord[0]
+
+                  var solution_chords = findSolution(chords_to_write,0,prev_prev_chord, prev_chord, keyName)
+
+                  if (solution_chords.length === 0){
+                      console.log("Hyhyhyhyhy nie ma rozwiazania")
+                  } else {
+                      //console.log(solution_chords)
+                      generator.addChordsAtCursorPosition(cursor, solution_chords);
+                  }
+                  }
+              }
+
+
+          Button {
+              id : buttonCancel
+              text: qsTr("Cancel")
+              anchors.bottom: window.bottom
+              anchors.right: abcText.right
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              onClicked: {
+                      Qt.quit();
+                  }
+              }
+
+
+
+
+
 
 }

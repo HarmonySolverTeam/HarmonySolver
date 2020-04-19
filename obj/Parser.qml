@@ -19,7 +19,10 @@ QtObject
         var ret = new Objects.HarmonicFunction()
         ret.functionName = chord_type
 
-        if (arguments === null || arguments.length === 2) {
+        console.log(arguments)
+
+
+        if (arguments === null || arguments.length < 2) {
             return ret
         }
 
@@ -41,7 +44,13 @@ QtObject
 
             var key = lines[0]
 
-            if (!contains(Objects.possible_keys,key)) {
+            var mode = null
+
+            if (contains(Objects.possible_keys_major, key)){
+                mode = "major"
+            } else if (contains(Objects.possible_keys_minor, key)){
+                mode = "minor"
+            } else {
                 throw new Error("Unrecognized key: " + key)
             }
             //console.log(key)
@@ -89,7 +98,7 @@ QtObject
 
             //console.log(measures)
 
-            var ret = new Objects.Exercise(key, metre, system, measures, first_chord)
+            var ret = new Objects.Exercise(key, mode, metre, system, measures, first_chord)
             return ret
 
 //        } catch (error) {

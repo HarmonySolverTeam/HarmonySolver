@@ -1,0 +1,5 @@
+C#
+10,20,30,40
+3/4
+T6{};S7{}
+T{"position":3, "revolution":5, "delay":[[4,3],[9,8]],"degree":2, "extra":[7], "omit":[1], "down":false}
