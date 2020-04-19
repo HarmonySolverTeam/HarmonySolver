@@ -43,31 +43,39 @@ QtObject
     function generateChords(chordType, sopranoNote, key){
         
         var basicNote;
-//todo wydzielic te C C# itd do osobnego pliku ze stalymi
+
         if(key == "C")                   basicNote = 60 + 0;
-        if(key == "C#" || key == "Db") basicNote = 60 + 1;
+        if(key == "Cis" || key == "Des") basicNote = 60 + 1;
         if(key == "D")                   basicNote = 60 + 2;
-        if(key == "Eb")                  basicNote = 60 + 3;
+        if(key == "Es")                  basicNote = 60 + 3;
         if(key == "E")                   basicNote = 60 + 4;
         if(key == "F")                   basicNote = 60 + 5;
-        if(key == "F#" || key == "Gb") basicNote = 60 + 6;
+        if(key == "Fis" || key == "Ges") basicNote = 60 + 6;
         if(key == "G")                   basicNote = 60 + 7;
-        if(key == "Ab")                  basicNote = 60 + 8;
+        if(key == "As")                  basicNote = 60 + 8;
         if(key == "A")                   basicNote = 60 + 9;
-        if(key == "Bb")                   basicNote = 60 + 10;
-        if(key == "B"   || key == "Cb") basicNote = 60 + 11;
+        if(key == "B")                   basicNote = 60 + 10;
+        if(key == "H"   || key == "Ces") basicNote = 60 + 11;
 
 
         if(chordType == "T") basicNote = basicNote + dur[0];
-        if(chordType == "S") basicNote = basicNote + dur[3];
-        if(chordType == "D") basicNote = basicNote + dur[4];
+        if(chordType == "S" || chordType == "S6") basicNote = basicNote + dur[3];
+        if(chordType == "D" || chordType == "D7") basicNote = basicNote + dur[4];
 
         var pryma = basicNote + basic_dur_chord[0];
         var tercja = basicNote + basic_dur_chord[1];
         var kwinta = basicNote + basic_dur_chord[2];
+        var seksta = basicNote + dur[5];
+        var septyma = basicNote + dur[6];
 
-        var schemas = [ [1,1,3,5], [1, 1, 5, 3], [1, 3, 1, 5], [1, 3, 5, 1], [1, 5, 1, 3], [1, 5, 3, 1], [1,3,5,5], [1,5,3,5], [1,5,5,3] ];
-        
+        var schemas;
+        if(chordType == "T" || chordType == "S" || chordType == "D")
+            schemas = [ [1, 1, 3, 5], [1, 1, 5, 3], [1, 3, 1, 5], [1, 3, 5, 1], [1, 5, 1, 3], [1, 5, 3, 1], [1,3,5,5], [1,5,3,5], [1,5,5,3] ];
+        if(chordType == "S6")
+            schemas = [ [1, 3, 5, 6], [1, 3, 6, 5], [1, 5, 3, 6], [1, 5, 6, 3],  [1, 6, 3, 5], [1, 6, 5, 3]];
+        if(chordType == "D7")
+            schemas = [ [1, 3, 5, 7], [1, 3, 7, 5], [1, 5, 3, 7], [1, 5, 7, 3],  [1, 7, 3, 5], [1, 7, 5, 3]];
+
         if(sopranoNote != -1) schemas = schemas.filter( function(x){ return x[3] == sopranoNote});
         
         var chords = [];
@@ -80,6 +88,10 @@ QtObject
                             return tercja;
                     if(x == 5)
                             return kwinta;
+                    if(x == 6)
+                            return seksta;
+                    if(x == 7)
+                            return septyma;
                 }
             );
 
