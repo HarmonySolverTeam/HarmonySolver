@@ -48,39 +48,39 @@ function contains(list, obj){
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down) {
-    this.functionName = functionName
-    this.degree = degree
-    this.position = position
-    this.revolution = revolution
-    this.delay = delay //delayed components list
-    this.extra = extra //extra components list
-    this.omit = omit //omitted components list
-    this.down = down //true or false
+        this.functionName = functionName
+        this.degree = degree
+        this.position = position
+        this.revolution = revolution
+        this.delay = delay //delayed components list
+        this.extra = extra //extra components list
+        this.omit = omit //omitted components list
+        this.down = down //true or false
 
 }
 
 function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
-    this.sopranoNote = sopranoNote
-    this.altoNote = altoNote
-    this.tenorNote = tenorNote
-    this.bassNote = bassNote
-    this.harmonicFunction = harmonicFunction
+        this.sopranoNote = sopranoNote
+        this.altoNote = altoNote
+        this.tenorNote = tenorNote
+        this.bassNote = bassNote
+        this.harmonicFunction = harmonicFunction
 
 }
 
 function Note(pitch, baseNote) {
-    this.pitch = pitch
-    this.baseNote = baseNote
+        this.pitch = pitch
+        this.baseNote = baseNote
 
 }
 
 function Scale(baseNote) {
-    this.baseNote = baseNote
+        this.baseNote = baseNote
 }
 
 function MajorScale(baseNote) {
-    Scale.call(baseNote)
-    this.pitches = [0, 2, 4, 5, 7, 9, 11]
+        Scale.call(baseNote)
+        this.pitches = [0, 2, 4, 5, 7, 9, 11]
 }
 
 var dur = new MajorScale(BASE_NOTES.C)

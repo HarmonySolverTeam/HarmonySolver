@@ -1,9 +1,9 @@
 import QtQuick 2.0
+import "./js/Objects.js" as Objects
 
 QtObject
 {
 
-    //Objects{id:objects;}
 
     function parseChord(string) {
         //console.log(string)
@@ -16,7 +16,7 @@ QtObject
         //console.log(chord_type)
         var arguments = string.substring(i, string.length)
 
-        var ret = new objects.HarmonicFunction()
+        var ret = new Objects.HarmonicFunction()
         ret.functionName = chord_type
 
         if (arguments === null || arguments.length === 2) {
@@ -36,12 +36,12 @@ QtObject
 
     //todo obsluga i wyswietlanie bledow co i gdzie jest nie tak dokladnie w pliku
     function parse(input) {
-        try {
+ //       try {
             var lines = input.split("\n")
 
             var key = lines[0]
 
-            if (!possible_keys.includes(key)) {
+            if (!contains(Objects.possible_keys,key)) {
                 throw new Error("Unrecognized key: " + key)
             }
             //console.log(key)
@@ -56,7 +56,7 @@ QtObject
                 first_chord = [notes[0], notes[1], notes[2], notes[3]]
             } else {
                 //uklad
-                if (!possible_systems.includes(system_or_first_chord)) {
+                if (!contains(Objects.possible_systems,system_or_first_chord)) {
                     throw new Error("Unrecognized system: " + key)
                 }
                 system = system_or_first_chord
@@ -89,13 +89,13 @@ QtObject
 
             //console.log(measures)
 
-            var ret = new objects.Exercise(key, metre, system, measures,first_chord)
+            var ret = new Objects.Exercise(key, metre, system, measures, first_chord)
             return ret
 
-        } catch (error) {
-            console.log("Error during parsing file!")
-            console.log(error)
-            return null
-        }
+//        } catch (error) {
+//            console.log("Error during parsing file!")
+//            console.log(error)
+//            return null
+//        }
     }
 }
