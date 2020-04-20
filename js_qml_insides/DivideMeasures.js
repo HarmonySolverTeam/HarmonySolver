@@ -59,11 +59,11 @@ var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"fu
 
 var measures = ex.measures
 
+console.log("append "+(measures.length-1)+" measures - curScore.appendMeasures(measures.length-1)")
+
 for(var measure_id = 0; measure_id < measures.length; measure_id++){
     var current_measure = measures[measure_id]
-    console.log(current_measure)
     var funList = divide_fun_changed(current_measure)
-    console.log(funList)
     function add_time_to_fun(list, value){
         if(list.length === 1) {
             funList[list[0][1]].push(value)
@@ -82,7 +82,7 @@ for(var measure_id = 0; measure_id < measures.length; measure_id++){
         for(var i = 0; i < funList.length; i++){
             len_list = default_divide(funList[i][0], [funList[i][2]])
             for(var j = 0; j < len_list.length; j++) {
-                console.log("add chord " + current_measure[counter_measure].functionName + " " + len_list[j])
+                console.log("cursor.setDuration(1, "+1/len_list[j]+") add chord " + current_measure[counter_measure].functionName)
                 counter_measure++
             }
         }
