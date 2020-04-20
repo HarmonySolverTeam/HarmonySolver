@@ -1,9 +1,7 @@
-import "Objects.js"
-import "Consts.js"
-
 var basicDurChord = [0,4,7];
 var basicDur6Chord = [0, 4, 7, 9];
 var basicDur7Chord = [0, 4, 7, 10];
+
 
 function ChordGenerator(key){
     this.key = key;
@@ -29,10 +27,10 @@ function ChordGenerator(key){
 
     this.generate = function(harmonicFunction){
 
-       
-        var scale = MajorScale(this.key);
+        var scale = new MajorScale(this.key);
 
         var basicNote = scale.tonicPitch;
+
         switch(harmonicFunction.functionName){
             case 'T':
                 basicNote += scale.pitches[0];
@@ -58,13 +56,13 @@ function ChordGenerator(key){
                 break;
         }
 
-        
         var pryma = basicNote + chordScheme[0];
         var tercja = basicNote + chordScheme[1];
         var kwinta = basicNote + chordScheme[2];
         var added = basicNote + chordScheme[3];
 
         var chords = [];
+
         for(var i=0; i< schemas.length; i++){
             var schema_mapped = schemas[i].map(
                 function(x){
@@ -80,8 +78,8 @@ function ChordGenerator(key){
                             return added;
                 }
             );
-    
-            var vb = VoicesBoundary()
+            
+            var vb = new VoicesBoundary()
             var bass = getPossiblePitchValuesFromInterval(schema_mapped[0], vb.bassMin, vb.bassMax);
             var tenor = getPossiblePitchValuesFromInterval(schema_mapped[1], vb.tenorMin, vb.tenorMax);
             var alto = getPossiblePitchValuesFromInterval(schema_mapped[2], vb.altoMin, vb.altoMax);
@@ -100,13 +98,16 @@ function ChordGenerator(key){
                                                 if(soprano[m] >= alto[k] && soprano[m] - alto[k] < 12){
 
                                                     var d1 = {"T": 0, "S": 3, "D" : 4 }; 
-                                                    
-                                                    var bassNote = Note(bass[n], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][0]-1) % 7 );
-                                                    var tenorNote = Note(tenor[j], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][1]-1) % 7 );
-                                                    var altoNote = Note(alto[k], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][2]-1) % 7 );
-                                                    var sopranoNote = Note(soprano[m], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][3]-1) % 7 );
-                                                    
-                                                    chords.push(Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction));
+                                                    // console.log("----------------------------")
+                                                    var bassNote = new Note(bass[n], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][0]-1) % 7, schemas[i][0]);
+                                                    var tenorNote = new Note(tenor[j], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][1]-1) % 7, schemas[i][1] );
+                                                    var altoNote = new Note(alto[k], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][2]-1) % 7, schemas[i][2] );
+                                                    var sopranoNote = new Note(soprano[m], (scale.baseNote + d1[harmonicFunction.functionName] + schemas[i][3]-1) % 7,schemas[i][3] );
+                                                    // console.log(bassNote.toString());
+                                                    // console.log(tenorNote.toString());
+                                                    // console.log(altoNote.toString());
+                                                    // console.log(sopranoNote.toString());
+                                                    chords.push(new Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction));
                                                 }
                                         }
                                     }

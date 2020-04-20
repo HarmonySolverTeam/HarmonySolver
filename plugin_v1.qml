@@ -5,6 +5,9 @@ import FileIO 3.0
 import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.0
 
+
+import "./obj/js/Objects.js" as Objects
+
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
     description: "Description goes here"
@@ -293,6 +296,25 @@ MuseScore {
                   }
                   }
               }
+
+            Button {
+              id : buttonGeneratorTest
+              text: qsTr("Gen Test")
+              anchors.bottom: window.bottom
+              anchors.left: buttonRun.right
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              anchors.leftMargin: 10
+              onClicked: {
+                  var cg = new Objects.ChordGenerator("C");
+
+                  var hf = new Objects.HarmonicFunction("T", "", 3, "", "",[7], "", "");
+
+                  var chordsList = cg.generate(hf);
+                  chordsList.forEach(function (element){    console.log(element.toString());   })
+                  }
+              }
+
 
 
           Button {
