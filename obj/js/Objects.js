@@ -8,6 +8,22 @@ function Exercise(key, meter, mode, system, measures, first_chord)
     this.first_chord = first_chord
 }
 
+function ExerciseSolution(exercise, rating, chords){
+    this.exercise = exercise;
+    this.rating = rating;
+    this.chords = chords;
+
+    //najprawdopodobniej nie tu
+    this.drawAtScore = function (cursor){
+
+        curScore.appendMeasures(this.exercise.measures.length - 1);
+        
+        cursor.rewind(0)
+        for(var i=0; i<this.chords.length; i++){
+            this.chords[i].drawAtScore(cursor);
+        }
+    }
+}
 
 var VOICES = {
     SOPRANO: 0,
@@ -77,6 +93,7 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     this.bassNote = bassNote
     this.harmonicFunction = harmonicFunction
     this.notes = [bassNote, tenorNote, altoNote, sopranoNote]
+    this.duration = undefined
 
     this.toString = function(){
         var chordStr = "CHORD: \n";

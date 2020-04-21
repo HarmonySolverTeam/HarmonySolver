@@ -24,6 +24,57 @@ MuseScore {
     width:  800; height: 500;
     onRun: {}
 
+
+    function Solver(exercise){
+        this.exercise = exercise
+        this.harmoniFunctions = exercise.measures[0];
+        for(var i=1; i<exercise.measures.length; i++){
+            this.harmoniFunctions.concat(exercise.measures[i]);
+        }
+        this.chordGenerator = new ChordGenerator(this.exercise.key);
+
+        this.solve = funtion(){
+            var sol_chords =  this.findSolution(0, undefined, this.exercise.first_chord);
+            return new ExerciseSolution(this.exercise, -12321, sol_chords);
+        }
+
+        this.findSolution = function(curr_index, prev_prev_chord, prev_chord){
+            var chords = this.chordGenerator.generate(this.exercise.measures[curr_index])
+            var good_chords = []
+
+            for (var j = 0; j < chords.length; j++){
+                console.log(chords[j].toString())
+                var score = checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
+
+                if (score !== -1 ) good_chords.push([score,chords[j]]);
+            }
+
+            if (good_chords.length === 0){
+                return [];
+            }
+
+            good_chords.sort(function(a,b){(a[0] > b[0]) ? 1 : -1})
+
+            if (curr_index+1 === this.harmoniFunctions.length){
+            //console.log(good_chords[0][1])
+                return [good_chords[0][1]];
+            }
+
+            for (var i = 0; i< good_chords.length; i++){
+
+                var next_chords = findSolution( curr_index + 1, prev_chord, good_chords[i][1])
+
+                if (next_chords.length != 0){
+                    next_chords.unshift(good_chords[i][1])
+                    return next_chords
+                }
+
+            }
+
+        return []
+        }
+    }
+
     function get_chords_to_write(){
 
         var chords_to_write = []
@@ -261,61 +312,35 @@ MuseScore {
               anchors.bottomMargin: 10
               anchors.leftMargin: 10
               onClicked: {
-                  if (typeof curScore === 'undefined')
-                            Qt.quit();
 
-                 // var input = 'C#\n10,20,30,40\n3/4\nT6{};S7{}\nT{"position":3, "revolution":5, "delay":[[4,3],[9,8]],"degree":2, "extra":[7], "omit":[1], "down":false}'
+                exercise = abcText.text         //średnie ale chyba zadziała
 
-                //  var parser_test = parser.parse(input)
+                solver = new Solver(exercise);
+                solution = solver.solve();
 
-                  //console.log(parser_test)
+                var cursor = curScore.newCursor();
+                solution.drawAtScore(cursor);
 
-                  var first_chord = []
-                  first_chord.push(["T", [[52, 1], [64, 1], [68, 3], [71, 5]]])
-
-                  var chords_to_write = get_chords_to_write()
-
-                  var cursor = curScore.newCursor();
-                  var keyName = getKeyName(cursor.keySignature)
-
-                  cursor.rewind(0);
-                  cursor.setDuration(1, 4);
-
-                  generator.addChordsAtCursorPosition(cursor, first_chord);
-
-                  var prev_prev_chord = []
-                  var prev_chord = first_chord[0]
-
-                  var solution_chords = findSolution(chords_to_write,0,prev_prev_chord, prev_chord, keyName)
-
-                  if (solution_chords.length === 0){
-                      console.log("Hyhyhyhyhy nie ma rozwiazania")
-                  } else {
-                      //console.log(solution_chords)
-                      generator.addChordsAtCursorPosition(cursor, solution_chords);
-                  }
-                  }
+                }
               }
 
-            Button {
-              id : buttonGeneratorTest
-              text: qsTr("Gen Test")
-              anchors.bottom: window.bottom
-              anchors.left: buttonRun.right
-              anchors.topMargin: 10
-              anchors.bottomMargin: 10
-              anchors.leftMargin: 10
-              onClicked: {
-                  var cg = new Objects.ChordGenerator("C");
+            // Button {
+            //   id : buttonGeneratorTest
+            //   text: qsTr("Gen Test")
+            //   anchors.bottom: window.bottom
+            //   anchors.left: buttonRun.right
+            //   anchors.topMargin: 10
+            //   anchors.bottomMargin: 10
+            //   anchors.leftMargin: 10
+            //   onClicked: {
+            //       var cg = new Objects.ChordGenerator("C");
 
-                  var hf = new Objects.HarmonicFunction("T", "", 3, "", "",[7], "", "");
+            //       var hf = new Objects.HarmonicFunction("T", "", 3, "", "",[7], "", "");
 
-                  var chordsList = cg.generate(hf);
-                  chordsList.forEach(function (element){    console.log(element.toString());   })
-                  }
-              }
-
-
+            //       var chordsList = cg.generate(hf);
+            //       chordsList.forEach(function (element){    console.log(element.toString());   })
+            //       }
+            //   }
 
           Button {
               id : buttonCancel
