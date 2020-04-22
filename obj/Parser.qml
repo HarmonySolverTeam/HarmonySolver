@@ -28,8 +28,10 @@ QtObject
 
         var arguments_json = JSON.parse(arguments)
         for (var variable in ret){
-            if (variable !== "functionName"){
+            // console.log(variable);
+            if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
                 ret[variable] = arguments_json[variable]
+                // console.log(arguments_json[variable]);
             }
         }
 
