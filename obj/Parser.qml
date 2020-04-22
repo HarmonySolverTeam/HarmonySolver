@@ -88,22 +88,22 @@ QtObject
             var measures = []
 
             for (var i = 3; i < lines.length; i++) {
+                if(!lines[i]) continue
                 var chords = lines[i].split(";")
                 var chords_parsed = []
                 for (var j = 0; j < chords.length; j++) {
                     chords_parsed.push(parseChord(chords[j]))
-                }
-                measures.push(chords_parsed)
+                }measures.push(chords_parsed)
             }
 
             //console.log(measures)
 
-            var ret = new Objects.Exercise(key, mode, metre, system, measures, first_chord)
-            var number = Math.floor(100000 * Math.random());
-            readScore(filePath+"/template scores/"+key+"_"+mode+".mscz")
-            writeScore(curScore, filePath+"/solution"+number,"mscz")
-            closeScore(curScore)
-            readScore(filePath+"/solution"+number+".mscz")
+            var ret = new Objects.Exercise(key, metre, mode, system, measures, first_chord)
+//            var number = Math.floor(100000 * Math.random());
+//            readScore(filePath+"/template scores/"+key+"_"+mode+".mscz")
+//            writeScore(curScore, filePath+"/solutions/solution"+number,"mscz")
+//            closeScore(curScore)
+//            readScore(filePath+"/solutions/solution"+number+".mscz")
 
             return ret
 

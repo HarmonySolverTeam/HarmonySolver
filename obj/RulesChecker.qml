@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import "./js/Objects.js" as Objects
 QtObject
 {
     function abs(a){
@@ -180,20 +180,9 @@ QtObject
     }
 
     function checkAllRules(prevPrevChord, prevChord, currentChord){
-        var chosenRules = [concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
+        //var chosenRules = [concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
+        var chosenRules = [concurrentOctaves]
         var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
         return result
     }
-
-
-
-    /*
-    //Code for testing:
-    myPrevPrevChord = [functions.D,[43,1],[59,3],[62,5],[67,1]];
-    myPrevChord = [functions.T,[48,1],[60,1],[64,3],[67,5]];
-    myCurrentChord = [functions.S,[41,1],[60,5],[65,1],[69,3]];
-    const chosenRules = [concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
-    const result = checkRules(myPrevPrevChord ,myPrevChord, myCurrentChord, chosenRules, true);
-    console.log(result)
-    */
 }

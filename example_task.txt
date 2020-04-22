@@ -1,4 +1,4 @@
 E
-10,20,30,40
-3/4
-T{"position":3, "revolution":5, "delay":[[4,3],[9,8]],"degree":2, "extra":[7], "omit":[1], "down":false}
+52,64,68,73
+4/4
+S{"position":-1}
