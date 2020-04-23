@@ -90,3 +90,72 @@ for(var measure_id = 0; measure_id < measures.length; measure_id++){
         counter_measure++
     }
 }
+
+
+
+
+
+function Scale(baseNote) {
+    this.baseNote = baseNote
+}
+
+function MajorScale(baseNote, tonicPitch) {
+    Scale.call(this.baseNote)
+    this.tonicPitch = tonicPitch
+    this.pitches = [0, 2, 4, 5, 7, 9, 11]
+}
+
+function MajorScale(key){
+    Scale.call(this, keyStrBase[key])
+    this.tonicPitch = keyStrPitch[key]
+    this.pitches = [0, 2, 4, 5, 7, 9, 11]
+}
+var keyStrPitch = {
+    'C'  : 60,
+    'C#' : 61,
+    'Db' : 61,
+    'D'  : 62,
+    'Eb' : 63,
+    'E'  : 64,
+    'F'  : 65,
+    'F#' : 66,
+    'Gb' : 66,
+    'G'  : 67,
+    'Ab' : 68,
+    'A'  : 69,
+    'Bb' : 70,
+    'B'  : 71,
+    'Cb' : 71
+}
+var BASE_NOTES = {
+    C: 0,
+    D: 1,
+    E: 2,
+    F: 3,
+    G: 4,
+    A: 5,
+    B: 6
+}
+
+var keyStrBase = {
+    'C'  : BASE_NOTES.C,
+    'C#' : BASE_NOTES.C,
+    'Db' : BASE_NOTES.D,
+    'D'  : BASE_NOTES.D,
+    'Eb' : BASE_NOTES.E,
+    'E'  : BASE_NOTES.E,
+    'F'  : BASE_NOTES.F,
+    'F#' : BASE_NOTES.F,
+    'Gb' : BASE_NOTES.G,
+    'G'  : BASE_NOTES.G,
+    'Ab' : BASE_NOTES.A,
+    'A'  : BASE_NOTES.A,
+    'Bb' : BASE_NOTES.B,
+    'B'  : BASE_NOTES.B,
+    'Cb' : BASE_NOTES.C
+}
+
+
+var s = new MajorScale("E")
+
+console.log(s.baseNote)

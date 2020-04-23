@@ -3,24 +3,16 @@ import "./js/Objects.js" as Objects
 
 QtObject
 {
-
-
     function parseChord(string) {
-        //console.log(string)
-
         var i = 0
         while (i < string.length && string[i] !== '{') {
             i++
         }
         var chord_type = string.substring(0, i)
-        //console.log(chord_type)
         var arguments = string.substring(i, string.length)
 
         var ret = new Objects.HarmonicFunction()
         ret.functionName = chord_type
-
-        console.log(arguments)
-
 
         if (arguments === null || arguments.length < 2) {
             return ret
@@ -28,15 +20,11 @@ QtObject
 
         var arguments_json = JSON.parse(arguments)
         for (var variable in ret){
-            // console.log(variable);
             if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
                 ret[variable] = arguments_json[variable]
-                // console.log(arguments_json[variable]);
             }
         }
-
         return ret
-
     }
 
     //todo obsluga i wyswietlanie bledow co i gdzie jest nie tak dokladnie w pliku
@@ -55,8 +43,6 @@ QtObject
             } else {
                 throw new Error("Unrecognized key: " + key)
             }
-            //console.log(key)
-
             var system_or_first_chord = lines[1]
 
             var first_chord = null
@@ -72,20 +58,14 @@ QtObject
                 }
                 system = system_or_first_chord
             }
-
-            //console.log(system)
-            //console.log(first_chord)
-
             var metre = lines[2]
 
             if (metre === 'C') {
-                metre = 'C'
+                metre = [4,4]
             } else {
                 //todo czy to dziala
                 metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
             }
-
-            //console.log(metre)
 
             var measures = []
 
@@ -98,14 +78,7 @@ QtObject
                 }measures.push(chords_parsed)
             }
 
-            //console.log(measures)
-
             var ret = new Objects.Exercise(key, metre, mode, system, measures, first_chord)
-//            var number = Math.floor(100000 * Math.random());
-//            readScore(filePath+"/template scores/"+key+"_"+mode+".mscz")
-//            writeScore(curScore, filePath+"/solutions/solution"+number,"mscz")
-//            closeScore(curScore)
-//            readScore(filePath+"/solutions/solution"+number+".mscz")
 
             return ret
 

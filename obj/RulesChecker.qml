@@ -69,7 +69,7 @@ QtObject
     function forbiddenJump(prevChord, currentChord){
         function getBaseDistance(first, second ){
             var i = 0
-            while(first!=second) {
+            while(first!==second) {
                 first = (first+1)%7
                 i++
             }
@@ -118,7 +118,10 @@ QtObject
     }
 
     function checkConnection(prevChord, currentChord){
-        const connection = prevChord.harmonicFunction.getSymbol()+"->"+currentChord.harmonicFunction.getSymbol();
+        var getSymbol = function(harmonicFunction){
+            return harmonicFunction.down?(harmonicFunction.functionName+"down"+harmonicFunction.extra):(harmonicFunction.functionName+harmonicFunction.extra)
+        }
+        const connection = getSymbol(prevChord.harmonicFunction)+"->"+getSymbol(currentChord.harmonicFunction);
         var result = 0;
         switch (connection) {
             case "D->T":
@@ -180,8 +183,7 @@ QtObject
     }
 
     function checkAllRules(prevPrevChord, prevChord, currentChord){
-        //var chosenRules = [concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
-        var chosenRules = [concurrentOctaves]
+        var chosenRules = [concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
         var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
         return result
     }

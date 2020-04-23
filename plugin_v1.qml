@@ -127,29 +127,56 @@ MuseScore {
               onClicked: {
                 var solver = new Objects.Solver(exercise);
                 var solution = solver.solve();
+                var number = Math.floor(100000 * Math.random());
+                readScore(filePath+"/template scores/"+solution.exercise.key+"_"+solution.exercise.mode+".mscz")
+                writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+number,"mscz")
+                closeScore(curScore)
+                readScore(filePath+"/solutions/harmonic functions exercise/solution"+number+".mscz")
+                solution.setDurations();
 
+                curScore.appendMeasures(solution.exercise.measures.length - 1);
                 var cursor = curScore.newCursor();
-                //solution.drawAtScore(cursor);
+                cursor.rewind(0)
+                var lastSegment = false
+                for(var i=0; i<solution.chords.length; i++){
+                    var curChord = solution.chords[i]
+                    if(i === solution.chords.length - 1) lastSegment = true
+                    
+                    function selectSoprano(cursor){
+                        cursor.track = 0;
+                    }
+                    function selectAlto(cursor){
+                        cursor.track = 1;
+                    }
+                    function selectTenor(cursor){
+                        cursor.track = 4;
+                    }
+                    function selectBass(cursor){
+                        cursor.track = 5;
+                    }
+                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                    selectSoprano(cursor);
+                    cursor.addNote(curChord.sopranoNote.pitch, false);
+                    if(!lastSegment) cursor.prev();
+
+                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                    selectAlto(cursor);
+                    cursor.addNote(curChord.altoNote.pitch, false);
+                    if(!lastSegment) cursor.prev()
+
+                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                    selectTenor(cursor);
+                    cursor.addNote(curChord.tenorNote.pitch, false);
+                    if(!lastSegment) cursor.prev()
+
+                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                    selectBass(cursor);
+                    cursor.addNote(curChord.bassNote.pitch, false);
+                }
+                writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+number,"mscz")
+                Qt.quit()
                 }
               }
-
-//             Button {
-//               id : buttonGeneratorTest
-//               text: qsTr("Gen Test")
-//               anchors.bottom: window.bottom
-//               anchors.left: buttonRun.right
-//               anchors.topMargin: 10
-//               anchors.bottomMargin: 10
-//               anchors.leftMargin: 10
-//               onClicked: {
-//                   var cg = new Objects.ChordGenerator("C");
-//
-//                   var hf = new Objects.HarmonicFunction("T", "", 3, "", "",[7], "", "");
-//
-//                   var chordsList = cg.generate(hf);
-//                   chordsList.forEach(function (element){    console.log(element.toString());   })
-//                   }
-//               }
 
           Button {
               id : buttonCancel
