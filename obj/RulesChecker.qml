@@ -25,8 +25,8 @@ QtObject
         if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
         for(var i = 0; i < 3; i++){
             for(var j = i + 1; j < 4; j++){
-                if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%7 === 0){
-                    if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%7 === 0){
+                if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 7){
+                    if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 7){
                         console.log("concurrentFifths"+i+" "+j)
 
                         return -1;
@@ -54,13 +54,18 @@ QtObject
     }
 
     function oneDirection(prevChord, currentChord){
-        if((currentChord.bassNote.pitch>prevChord.bassNote.pitch && currentChord.tenorNote.pitch>prevChord.tenorNote.pitch
-            && currentChord.altoNote.pitch>prevChord.altoNote.pitch && currentChord.bassNote.pitch>prevChord.bassNote.pitch)
-            ||(currentChord.bassNote.pitch<prevChord.bassNote.pitch && currentChord.tenorNote.pitch<prevChord.tenorNote.pitch
-                && currentChord.altoNote.pitch<prevChord.altoNote.pitch && currentChord.bassNote.pitch<prevChord.bassNote.pitch)){
-            console.log("oneDirection")
+        if((currentChord.bassNote.pitch>prevChord.bassNote.pitch
+            && currentChord.tenorNote.pitch>prevChord.tenorNote.pitch
+            && currentChord.altoNote.pitch>prevChord.altoNote.pitch
+            && currentChord.bassNote.pitch>prevChord.bassNote.pitch)
+            ||
+            (currentChord.bassNote.pitch<prevChord.bassNote.pitch
+            && currentChord.tenorNote.pitch<prevChord.tenorNote.pitch
+            && currentChord.altoNote.pitch<prevChord.altoNote.pitch
+            && currentChord.bassNote.pitch<prevChord.bassNote.pitch)){
 
-            return -1;
+                console.log("oneDirection")
+                return -1;
         }
 
         return 0;

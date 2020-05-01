@@ -43,21 +43,12 @@ QtObject
             } else {
                 throw new Error("Unrecognized key: " + key)
             }
-            var system_or_first_chord = lines[1]
+            var system = lines[1]
 
-            var first_chord = null
-            var system = null
-
-            if (system_or_first_chord.includes(',')) {
-                var notes = system_or_first_chord.split(",")
-                first_chord = [notes[0], notes[1], notes[2], notes[3]]
-            } else {
-                //uklad
-                if (!contains(Objects.possible_systems,system_or_first_chord)) {
-                    throw new Error("Unrecognized system: " + key)
-                }
-                system = system_or_first_chord
+            if (!contains(Objects.possible_systems,system)) {
+                throw new Error("Unrecognized system: " + key)
             }
+
             var metre = lines[2]
 
             if (metre === 'C') {
