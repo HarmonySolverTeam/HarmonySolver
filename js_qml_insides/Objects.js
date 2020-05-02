@@ -36,11 +36,13 @@ var possible_keys_major = ['C', 'C#', 'Db',
     'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A',
     'Bb', 'B', 'Cb']
 
+exports.possible_keys_major = possible_keys_major
+
 var possible_keys_minor = ['c', 'c#', 'db',
     'd', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'ab', 'a',
     'bb', 'b', 'cb']
 
-var possible_systems = ['close', 'open', '-']
+var possible_systems = ['close', 'open']
 
 function contains(list, obj){
 

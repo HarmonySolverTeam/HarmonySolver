@@ -43,22 +43,8 @@ QtObject
             } else {
                 throw new Error("Unrecognized key: " + key)
             }
-            var system_or_first_chord = lines[1]
 
-            var first_chord = null
-            var system = null
-
-            if (system_or_first_chord.includes(',')) {
-                var notes = system_or_first_chord.split(",")
-                first_chord = [notes[0], notes[1], notes[2], notes[3]]
-            } else {
-                //uklad
-                if (!contains(Objects.possible_systems,system_or_first_chord)) {
-                    throw new Error("Unrecognized system: " + key)
-                }
-                system = system_or_first_chord
-            }
-            var metre = lines[2]
+            var metre = lines[1]
 
             if (metre === 'C') {
                 metre = [4,4]
@@ -69,7 +55,7 @@ QtObject
 
             var measures = []
 
-            for (var i = 3; i < lines.length; i++) {
+            for (var i = 2; i < lines.length; i++) {
                 if(!lines[i]) continue
                 var chords = lines[i].split(";")
                 var chords_parsed = []
@@ -78,7 +64,7 @@ QtObject
                 }measures.push(chords_parsed)
             }
 
-            var ret = new Objects.Exercise(key, metre, mode, system, measures, first_chord)
+            var ret = new Objects.Exercise(key, metre, mode, measures, first_chord)
 
             return ret
 

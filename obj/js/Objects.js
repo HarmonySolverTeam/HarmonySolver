@@ -1,9 +1,8 @@
-function Exercise(key, meter, mode, system, measures, first_chord)
+function Exercise(key, meter, mode, measures, first_chord)
 {
     this.mode = mode
     this.key = key
     this.meter = meter
-    this.system = system
     this.measures = measures
     this.first_chord = first_chord
 }
@@ -136,7 +135,7 @@ var possible_keys_minor = ['c', 'c#', 'db',
     'd', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'ab', 'a',
     'bb', 'b', 'cb']
 
-var possible_systems = ['close', 'open', '-']
+var possible_systems = ['close', 'open']
 
 function contains(list, obj){
 
@@ -147,8 +146,8 @@ function contains(list, obj){
     }
     return false
 }
-
-function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down) {
+//todo zmienna na pierwszy akord czy skupiony czy rozlegly
+function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
     this.functionName = functionName
     this.degree = degree
     this.position = position
@@ -157,6 +156,7 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     this.extra = extra  //extra components list
     this.omit = omit //omitted components list
     this.down = down //true or false
+    this.system = system //open, close
 
     this.getSymbol = function(){
         return this.down?(this.functionName+"down"+this.extra):(this.functionName+this.extra)
