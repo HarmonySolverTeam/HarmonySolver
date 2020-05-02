@@ -64,7 +64,7 @@ QtObject
                 }measures.push(chords_parsed)
             }
 
-            var ret = new Objects.Exercise(key, metre, mode, measures, first_chord)
+            var ret = new Objects.Exercise(key, metre, mode, measures)
 
             return ret
 

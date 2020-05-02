@@ -14,12 +14,10 @@ class HarmonicFunction {
 }
 
 class Exercise {
-    constructor(key, meter, system, measures, first_chord) {
+    constructor(key, meter, measures) {
         this.key = key
         this.meter = meter
-        this.system = system
         this.measures = measures
-        this.first_chord = first_chord
     }
 }
 
@@ -85,7 +83,7 @@ function parse(input) {
         }measures.push(chords_parsed)
     }
 
-    var ret = new Objects.Exercise(key, metre, mode, measures, first_chord)
+    var ret = new Objects.Exercise(key, metre, mode, measures)
 
     return ret
 

@@ -54,8 +54,8 @@ function divide_fun_changed(measure){
 }
 
 //todo na prawdziwych obiektach, a nie jsonach
-var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3},{"functionName":"T","position":1},{"functionName":"T","position":5},{"functionName":"S","position":3},{"functionName":"D","position":-1},{"functionName":"D","position":3}],[{"functionName":"T","degree":"","extra":""},{"functionName":"T","degree":"","extra":""}],[{"functionName":"S","degree":"","extra":""}]],"first_chord":["10","20","30","40"]}
-//var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3}]],"first_chord":["10","20","30","40"]}
+var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3},{"functionName":"T","position":1},{"functionName":"T","position":5},{"functionName":"S","position":3},{"functionName":"D","position":-1},{"functionName":"D","position":3}],[{"functionName":"T","degree":"","extra":""},{"functionName":"T","degree":"","extra":""}],[{"functionName":"S","degree":"","extra":""}]]}
+//var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3}]]}
 
 var measures = ex.measures
 

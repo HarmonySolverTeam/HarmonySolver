@@ -24,12 +24,21 @@ MuseScore {
     width:  800; height: 500;
     onRun: {}
 
-    function prepare_score_for_solution(filePath, solution){
-        var number = Math.floor(100000 * Math.random());
+    function get_solution_date(){
+        var date = new Date()
+        var ret = "_"
+        ret += date.getFullYear() + "_" +(date.getMonth() + 1) + "_" + date.getDate() + "_"
+        ret += date.getHours() + "_" + date.getMinutes() + "_" + date.getSeconds()
+        console.log(ret)
+        return ret
+    }
+
+
+    function prepare_score_for_solution(filePath, solution, solution_date){
         readScore(filePath+"/template scores/"+solution.exercise.key+"_"+solution.exercise.mode+".mscz")
-        writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+number,"mscz")
+        writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
         closeScore(curScore)
-        readScore(filePath+"/solutions/harmonic functions exercise/solution"+number+".mscz")
+        readScore(filePath+"/solutions/harmonic functions exercise/solution"+solution_date+".mscz")
         solution.setDurations();
     }
 
@@ -180,11 +189,13 @@ MuseScore {
                 var solver = new Objects.Solver(exercise);
                 var solution = solver.solve();
 
-                prepare_score_for_solution(filePath, solution)
+                var solution_date = get_solution_date()
+
+                prepare_score_for_solution(filePath, solution, solution_date)
 
                 fill_score_with_solution(solution)
 
-                writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+number,"mscz")
+                writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
                 Qt.quit()
                 }
               }

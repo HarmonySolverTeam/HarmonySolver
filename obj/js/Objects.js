@@ -1,18 +1,15 @@
-function Exercise(key, meter, mode, measures, first_chord)
+function Exercise(key, meter, mode, measures)
 {
     this.mode = mode
     this.key = key
     this.meter = meter
     this.measures = measures
-    this.first_chord = first_chord
 }
 
 function ExerciseSolution(exercise, rating, chords){
     this.exercise = exercise;
     this.rating = rating;
     this.chords = chords;
-    this.chords.unshift(exercise.first_chord)
-    this.exercise.measures[0].unshift(exercise.first_chord.harmonicFunction)
 
     this.setDurations = function(){
         function default_divide(number, result){
@@ -146,7 +143,7 @@ function contains(list, obj){
     }
     return false
 }
-//todo zmienna na pierwszy akord czy skupiony czy rozlegly
+
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
     this.functionName = functionName
     this.degree = degree
@@ -221,13 +218,7 @@ function Solver(exercise){
     this.chordGenerator = new ChordGenerator(this.exercise.key);
 
     this.solve = function(){
-        var first_chord = new Chord(new Note(this.exercise.first_chord[3], BASE_NOTES.B, 5),
-            new Note(this.exercise.first_chord[2], BASE_NOTES.G, 3),
-            new Note(this.exercise.first_chord[1], BASE_NOTES.E, 1),
-            new Note(this.exercise.first_chord[0], BASE_NOTES.E, 1),
-            new HarmonicFunction('T',undefined, -1, undefined, undefined, undefined, undefined, undefined))
-        this.exercise.first_chord = first_chord
-        var sol_chords =  this.findSolution(0, undefined, first_chord);
+        var sol_chords =  this.findSolution(0, undefined, undefined);
         return new ExerciseSolution(this.exercise, -12321, sol_chords);
     }
 
@@ -257,7 +248,7 @@ function Solver(exercise){
 
             var next_chords = this.findSolution( curr_index + 1, prev_chord, good_chords[i][1])
 
-            if (next_chords.length != 0){
+            if (next_chords.length !== 0){
                 next_chords.unshift(good_chords[i][1])
                 return next_chords
             }

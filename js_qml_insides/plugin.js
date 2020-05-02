@@ -57,7 +57,7 @@ function findSolution(chords_to_write, current_chord_index, prev_prev_chord, pre
 
         var next_chords = findSolution(chords_to_write,current_chord_index + 1, prev_chord,good_chords[i][1]  )
 
-        if (next_chords.length != 0){
+        if (next_chords.length !== 0){
             next_chords.unshift(good_chords[i][1])
             return next_chords
         }
