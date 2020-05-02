@@ -19,8 +19,8 @@ function concurrentFifths(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
-            if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%7 === 0){
-                if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%7 === 0){
+            if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 7){
+                if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 7){
                     console.log("concurrentFifths"+i+" "+j)
 
                     return -1;

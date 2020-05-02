@@ -1,6 +1,7 @@
 .import "./Consts.js" as Consts
 .import "./Exercise.js" as Exercise
 .import "./HarmonicFunction.js" as HarmonicFunction
+.import "./Utils.js" as Utils
 
 function parseChord(string) {
     var i = 0
@@ -28,58 +29,43 @@ function parseChord(string) {
 
 //todo obsluga i wyswietlanie bledow co i gdzie jest nie tak dokladnie w pliku
 function parse(input) {
-//       try {
-        var lines = input.split("\n")
+    //       try {
+    var lines = input.split("\n")
 
-        var key = lines[0]
+    var key = lines[0]
 
-        var mode = null
+    var mode = null
 
-        if (contains(Consts.possible_keys_major, key)){
-            mode = "major"
-        } else if (contains(Consts.possible_keys_minor, key)){
-            mode = "minor"
-        } else {
-            throw new Error("Unrecognized key: " + key)
-        }
-        var system_or_first_chord = lines[1]
+    if (Utils.contains(Consts.possible_keys_major, key)){
+        mode = "major"
+    } else if (Utils.contains(Consts.possible_keys_minor, key)){
+        mode = "minor"
+    } else {
+        throw new Error("Unrecognized key: " + key)
+    }
 
-        var first_chord = null
-        var system = null
+    var metre = lines[1]
 
-        if (system_or_first_chord.includes(',')) {
-            var notes = system_or_first_chord.split(",")
-            first_chord = [notes[0], notes[1], notes[2], notes[3]]
-        } else {
-            //uklad
-            if (!contains(Consts.possible_systems,system_or_first_chord)) {
-                throw new Error("Unrecognized system: " + key)
-            }
-            system = system_or_first_chord
-        }
-        var metre = lines[2]
+    if (metre === 'C') {
+        metre = [4,4]
+    } else {
+        metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
+    }
 
-        if (metre === 'C') {
-            metre = [4,4]
-        } else {
-            //todo czy to dziala
-            metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
-        }
+    var measures = []
 
-        var measures = []
+    for (var i = 2; i < lines.length; i++) {
+        if(!lines[i]) continue
+        var chords = lines[i].split(";")
+        var chords_parsed = []
+        for (var j = 0; j < chords.length; j++) {
+            chords_parsed.push(parseChord(chords[j]))
+        }measures.push(chords_parsed)
+    }
 
-        for (var i = 3; i < lines.length; i++) {
-            if(!lines[i]) continue
-            var chords = lines[i].split(";")
-            var chords_parsed = []
-            for (var j = 0; j < chords.length; j++) {
-                chords_parsed.push(parseChord(chords[j]))
-            }measures.push(chords_parsed)
-        }
+    var ret = new Exercise.Exercise(key, metre, mode, measures)
 
-        var ret = new Exercise.Exercise(key, metre, mode, system, measures, first_chord)
-
-        return ret
+    return ret
 
 //        } catch (error) {
 //            console.log("Error during parsing file!")

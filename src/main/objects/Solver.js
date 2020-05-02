@@ -15,14 +15,7 @@ function Solver(exercise){
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key);
 
     this.solve = function(){
-        var first_chord = new Chord.Chord(
-            new Note.Note(this.exercise.first_chord[3], (new Consts.BASE_NOTES()).B, 5),
-            new Note.Note(this.exercise.first_chord[2], (new Consts.BASE_NOTES()).G, 3),
-            new Note.Note(this.exercise.first_chord[1], (new Consts.BASE_NOTES()).E, 1),
-            new Note.Note(this.exercise.first_chord[0], (new Consts.BASE_NOTES()).E, 1),
-            new HarmonicFunction.HarmonicFunction('T',undefined, -1, undefined, undefined, undefined, undefined, undefined))
-        this.exercise.first_chord = first_chord
-        var sol_chords =  this.findSolution(0, undefined, first_chord);
+        var sol_chords =  this.findSolution(0, undefined, undefined);
         return new ExerciseSolution.ExerciseSolution(this.exercise, -12321, sol_chords);
     }
 
@@ -52,7 +45,7 @@ function Solver(exercise){
 
             var next_chords = this.findSolution( curr_index + 1, prev_chord, good_chords[i][1])
 
-            if (next_chords.length != 0){
+            if (next_chords.length !== 0){
                 next_chords.unshift(good_chords[i][1])
                 return next_chords
             }

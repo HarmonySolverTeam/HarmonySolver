@@ -2,8 +2,6 @@ function ExerciseSolution(exercise, rating, chords){
     this.exercise = exercise;
     this.rating = rating;
     this.chords = chords;
-    this.chords.unshift(exercise.first_chord)
-    this.exercise.measures[0].unshift(exercise.first_chord.harmonicFunction)
 
     this.setDurations = function(){
         function default_divide(number, result){

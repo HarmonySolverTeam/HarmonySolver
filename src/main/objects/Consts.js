@@ -77,6 +77,6 @@ var possible_keys_minor = ['c', 'c#', 'db',
     'd', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'ab', 'a',
     'bb', 'b', 'cb']
 
-var possible_systems = ['close', 'open', '-']
+var possible_systems = ['close', 'open']
 
 var basicDurChord = [0,4,7];
