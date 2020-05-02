@@ -85,13 +85,9 @@ MuseScore {
         FileIO {
               id: myFileAbc
               onError: console.log(msg + "  Filename = " + myFileAbc.source)
-              }
+        }
 
-          FileIO {
-              id: myFile
-              source: tempPath() + "/my_file.xml"
-              onError: console.log(msg)
-              }
+
 
           FileDialog {
               id: fileDialog
@@ -100,25 +96,28 @@ MuseScore {
                   var filename = fileDialog.fileUrl
                   if(filename){
                       myFileAbc.source = filename
-                      //read abc file and put it in the TextArea
-                      abcText.text = myFileAbc.read()
-                      }
+
+                      var input_text = String(myFileAbc.read())
+                      abcText.text = input_text
+                      exercise = Parser.parse(input_text)
+
                   }
               }
+          }
 
             FileDialog {
               id: fileDialogParse
               title: qsTr("Please choose a file to parse")
               onAccepted: {
-                  var filename = fileDialog.fileUrl
+                  var filename = fileDialogParse.fileUrl
                   if(filename){
                       myFileAbc.source = filename
                       var input_text = String(myFileAbc.read())
                       exercise = Parser.parse(input_text)
                       abcText.text = JSON.stringify(exercise)
-                      }
                   }
               }
+            }
 
           Label {
               id: textLabel
@@ -131,7 +130,6 @@ MuseScore {
               anchors.topMargin: 10
               }
 
-          // Where people can paste their ABC tune or where an ABC file is put when opened
           TextArea {
               id:abcText
               anchors.top: textLabel.bottom
@@ -207,10 +205,5 @@ MuseScore {
                       Qt.quit();
                   }
               }
-
-
-
-
-
 
 }
