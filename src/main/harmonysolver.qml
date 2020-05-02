@@ -11,10 +11,12 @@ import "./objects/Parser.js" as Parser
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
-    description: "Description goes here"
+    description: "This plugin solves harmonics exercises"
     version: "1.0"
     requiresScore: false
-    pluginType: "dialog"
+    pluginType: "dock"
+    dockArea:   "right"
+
 
     property var exercise : ({})
     id:window
@@ -174,7 +176,7 @@ MuseScore {
 
           Button {
               id : buttonRun
-              text: qsTr("Run")
+              text: qsTr("Solve")
               anchors.bottom: window.bottom
               anchors.left: buttonParse.right
               anchors.topMargin: 10
