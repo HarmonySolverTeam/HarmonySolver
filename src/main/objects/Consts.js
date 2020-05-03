@@ -17,21 +17,21 @@ var keyStrPitch = {
 }
 
 var keyStrBase = { 
-    'C'  : BASE_NOTES.C,
-    'C#' : BASE_NOTES.C,
-    'Db' : BASE_NOTES.D,
-    'D'  : BASE_NOTES.D, 
-    'Eb' : BASE_NOTES.E,
-    'E'  : BASE_NOTES.E,
-    'F'  : BASE_NOTES.F, 
-    'F#' : BASE_NOTES.F, 
-    'Gb' : BASE_NOTES.G, 
-    'G'  : BASE_NOTES.G, 
-    'Ab' : BASE_NOTES.A, 
-    'A'  : BASE_NOTES.A,
-    'Bb' : BASE_NOTES.B,
-    'B'  : BASE_NOTES.B, 
-    'Cb' : BASE_NOTES.C
+    'C'  : (new BASE_NOTES()).C,
+    'C#' : (new BASE_NOTES()).C,
+    'Db' : (new BASE_NOTES()).D,
+    'D'  : (new BASE_NOTES()).D, 
+    'Eb' : (new BASE_NOTES()).E,
+    'E'  : (new BASE_NOTES()).E,
+    'F'  : (new BASE_NOTES()).F, 
+    'F#' : (new BASE_NOTES()).F, 
+    'Gb' : (new BASE_NOTES()).G, 
+    'G'  : (new BASE_NOTES()).G, 
+    'Ab' : (new BASE_NOTES()).A, 
+    'A'  : (new BASE_NOTES()).A,
+    'Bb' : (new BASE_NOTES()).B,
+    'B'  : (new BASE_NOTES()).B, 
+    'Cb' : (new BASE_NOTES()).C
 }
 
 function VoicesBoundary(){
