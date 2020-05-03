@@ -3,6 +3,23 @@
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Utils.js" as Utils
 
+
+function get_valid_degree(arguments_json, chord_type) {
+    if (arguments_json["degree"] !== undefined){
+        return arguments_json["degree"]
+    }
+
+    switch (chord_type){
+        case "T":
+            return 1
+        case "S":
+            return 4
+        case "D":
+            return 5
+    }
+}
+
+
 function parseChord(string) {
     var i = 0
     while (i < string.length && string[i] !== '{') {
@@ -19,11 +36,21 @@ function parseChord(string) {
     }
 
     var arguments_json = JSON.parse(arguments)
-    for (var variable in ret){
-        if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
-            ret[variable] = arguments_json[variable]
-        }
-    }
+    // for (var variable in ret){
+    //     if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
+    //         ret[variable] = arguments_json[variable]
+    //     }
+    // }
+
+    ret.degree = get_valid_degree(arguments_json, chord_type)
+    ret.position = arguments_json["position"] === undefined ? -1 : arguments_json["position"]
+    ret.revolution = arguments_json["revolution"] === undefined ? 1 : arguments_json["revolution"]
+    //ret.delay = delay
+    ret.extra = arguments_json["extra"] === undefined ? [] : arguments_json["extra"]
+    ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
+    ret.down = arguments_json["down"] === undefined ? [] : arguments_json["down"]
+    ret.system = arguments_json["extra"]
+
     return ret
 }
 
@@ -62,6 +89,7 @@ function parse(input) {
             chords_parsed.push(parseChord(chords[j]))
         }measures.push(chords_parsed)
     }
+    console.log(measures)
 
     var ret = new Exercise.Exercise(key, metre, mode, measures)
 
