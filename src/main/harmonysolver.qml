@@ -45,6 +45,10 @@ MuseScore {
             curScore.appendMeasures(solution.exercise.measures.length - 1);
             var cursor = curScore.newCursor();
             cursor.rewind(0)
+            var ts = newElement(Element.TIMESIG)
+            ts.timesig = fraction(solution.exercise.meter[0], solution.exercise.meter[1])
+            cursor.add(ts)
+            cursor.rewind(0)
             var lastSegment = false
             for(var i=0; i<solution.chords.length; i++){
                 var curChord = solution.chords[i]

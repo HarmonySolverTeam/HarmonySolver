@@ -5,20 +5,32 @@ function ExerciseSolution(exercise, rating, chords){
 
     this.setDurations = function(){
         function default_divide(number, result){
-            //default_divide(3, [1/2])
+            //default_divide(3, [1/2]) // [3]
             if(result.length === number) return result
-            var all_equal = true
+            all_equal = true
             for(var i = 0; i < result.length-1; i++){
                 if(result[i] > result[i+1]){
-                    result[i] /= 2
-                    result.splice(i, 0, result[i])
+                    if(result[i]<=1) {
+                        result[i] /= 2
+                        result.splice(i, 0, result[i])
+                    } else{
+                        newElement = Math.ceil(result[i]/2)
+                        result[i] = Math.floor(result[i]/2)
+                        result.splice(i, 0, newElement)
+                    }
                     all_equal = false
                     break
                 }
             }
             if(all_equal){
-                result[result.length-1] /= 2
-                result.push(result[result.length-1])
+                if(result[result.length-1]<=1) {
+                    result[result.length - 1] /= 2
+                    result.push(result[result.length - 1])
+                } else{
+                    newElement = Math.floor(result[result.length - 1]/2)
+                    result[result.length - 1] = Math.ceil(result[result.length - 1]/2)
+                    result.push(newElement)
+                }
             }
             return default_divide(number, result)
         }
@@ -71,18 +83,27 @@ function ExerciseSolution(exercise, rating, chords){
                 var index = find_division_point(list)
                 var list1 = list.slice(0, index)
                 var list2 = list.slice(index, list.length)
-                add_time_to_fun(list1, value/2)
-                add_time_to_fun(list2, value/2)
+                if(value > 1){
+                    add_time_to_fun(list1, Math.floor(value / 2))
+                    add_time_to_fun(list2, Math.ceil(value / 2))
+                }else {
+                    add_time_to_fun(list1, value / 2)
+                    add_time_to_fun(list2, value / 2)
+                }
             }
-            add_time_to_fun(funList, 1)
+            add_time_to_fun(funList, this.exercise.meter[0])
             var counter_measure = 0
             var counter_fun = 0
             while(counter_measure < current_measure.length){
                 for(var i = 0; i < funList.length; i++){
                     var len_list = default_divide(funList[i][0], [funList[i][2]])
                     for(var j = 0; j < len_list.length; j++) {
-                        console.log("Duration added : "+this.chords[counter_measure+offset].toString())
-                        this.chords[counter_measure+offset].duration = [1,1/len_list[j]]
+                        if(len_list[j] >= 1) {
+                            this.chords[counter_measure + offset].duration = [len_list[j], this.exercise.meter[1]]
+                        } else{
+                            this.chords[counter_measure + offset].duration = [1, this.exercise.meter[1]*(1/len_list[j])]
+                        }
+                        console.log("Duration added : " + this.chords[counter_measure + offset].toString())
                         counter_measure++
                     }
                 }
