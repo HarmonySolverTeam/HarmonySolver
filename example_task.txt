@@ -1,3 +1,6 @@
 C
-4/4
-T{"degree": 1,"position":-1,"revolution":1, "extra":["7>"], "omit":["5"]}
+3/4
+T{};S{};S{};S{};D{};D{}
+T{};S{}
+T{}
+

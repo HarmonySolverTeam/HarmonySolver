@@ -7,7 +7,7 @@ function ExerciseSolution(exercise, rating, chords){
         function default_divide(number, result){
             //default_divide(3, [1/2]) // [3]
             if(result.length === number) return result
-            all_equal = true
+            var all_equal = true
             for(var i = 0; i < result.length-1; i++){
                 if(result[i] > result[i+1]){
                     if(result[i]<=1) {
@@ -51,14 +51,14 @@ function ExerciseSolution(exercise, rating, chords){
                     last = 1
                 }
             }
-            return last===0?back+1:front-1
+            return last===0?back+1:front
         }
 
         function divide_fun_changed(measure){
             var funList = []
             var changes_counter = 0
             if(measure.length === 1) return [[1, 0]]
-            for(var i = 0; i < measure.length-1; i++){
+            for(var i = 0; i < measure.length; i++){
                 var one_fun_counter = 0
                 while(i < measure.length-1 && measure[i].equals(measure[i+1])){
                     one_fun_counter++
@@ -84,8 +84,8 @@ function ExerciseSolution(exercise, rating, chords){
                 var list1 = list.slice(0, index)
                 var list2 = list.slice(index, list.length)
                 if(value > 1){
-                    add_time_to_fun(list1, Math.floor(value / 2))
-                    add_time_to_fun(list2, Math.ceil(value / 2))
+                    add_time_to_fun(list1, Math.ceil(value / 2))
+                    add_time_to_fun(list2, Math.floor(value / 2))
                 }else {
                     add_time_to_fun(list1, value / 2)
                     add_time_to_fun(list2, value / 2)

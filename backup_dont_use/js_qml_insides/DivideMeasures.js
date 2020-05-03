@@ -1,7 +1,7 @@
 function default_divide(number, result){
     //default_divide(3, [1/2]) // [3]
     if(result.length === number) return result
-    all_equal = true
+    var all_equal = true
     for(var i = 0; i < result.length-1; i++){
         if(result[i] > result[i+1]){
             if(result[i]<=1) {
@@ -45,14 +45,14 @@ function find_division_point(list){
             last = 1
         }
     }
-    return last===0?back+1:front-1
+    return last===0?back+1:front
 }
 
 function divide_fun_changed(measure){
     var funList = []
     var changes_counter = 0
     if(measure.length === 1) return [[1, 0]]
-    for(var i = 0; i < measure.length-1; i++){
+    for(var i = 0; i < measure.length; i++){
         var one_fun_counter = 0
         //while(i < measure.length-1 && measure[i].harmonicFunction.equals(measure[i+1])){
         while(i < measure.length-1 && measure[i].functionName === measure[i+1].functionName){
@@ -66,28 +66,29 @@ function divide_fun_changed(measure){
 }
 
 //todo na prawdziwych obiektach, a nie jsonach
-var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3},{"functionName":"T","position":1},{"functionName":"T","position":5},{"functionName":"S","position":3},{"functionName":"D","position":-1},{"functionName":"D","position":3}],[{"functionName":"T","degree":"","extra":""},{"functionName":"T","degree":"","extra":""}],[{"functionName":"S","degree":"","extra":""}]]}
-//var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3}]]}
-var upperTime = ex.mode[0]
-var lowerTime = ex.mode[1]
+//var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3},{"functionName":"T","position":1},{"functionName":"T","position":5},{"functionName":"S","position":3},{"functionName":"D","position":-1},{"functionName":"D","position":3}],[{"functionName":"T","degree":"","extra":""},{"functionName":"T","degree":"","extra":""}],[{"functionName":"S","degree":"","extra":""}]]}
+var ex = {"mode":"major","key":"C","meter":[5,4],"measures":[[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"D","degree":5,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"D","degree":5,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}],[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}],[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}]]}
+var upperTime = ex.meter[0]
+var lowerTime = ex.meter[1]
 var measures = ex.measures
 
 console.log("append "+(measures.length-1)+" measures - curScore.appendMeasures(measures.length-1)")
 
 for(var measure_id = 0; measure_id < measures.length; measure_id++){
     var current_measure = measures[measure_id]
-    var funList = divide_fun_changed(current_measure)
+    const funList = divide_fun_changed(current_measure)
     function add_time_to_fun(list, value){
         if(list.length === 1) {
             funList[list[0][1]].push(value)
             return
         }
         var index = find_division_point(list)
+        console.log(index)
         var list1 = list.slice(0, index)
         var list2 = list.slice(index, list.length)
         if(value > 1){
-            add_time_to_fun(list1, Math.floor(value / 2))
-            add_time_to_fun(list2, Math.ceil(value / 2))
+            add_time_to_fun(list1, Math.ceil(value / 2))
+            add_time_to_fun(list2, Math.floor(value / 2))
         }else {
             add_time_to_fun(list1, value / 2)
             add_time_to_fun(list2, value / 2)
