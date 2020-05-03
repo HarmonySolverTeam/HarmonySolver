@@ -48,7 +48,7 @@ function parseChord(string) {
     //ret.delay = delay
     ret.extra = arguments_json["extra"] === undefined ? [] : arguments_json["extra"]
     ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
-    ret.down = arguments_json["down"] === undefined ? [] : arguments_json["down"]
+    ret.down = arguments_json["down"] === undefined ? false : arguments_json["down"]
     ret.system = arguments_json["extra"]
 
     return ret
