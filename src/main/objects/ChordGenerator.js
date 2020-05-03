@@ -35,6 +35,12 @@ function ChordGenerator(key){
         var needToAdd = ['1', '3', '5'];
 
         for(var i=0; i<harmonicFunction.extra.length; i++){
+            //Chopin chord
+            if(harmonicFunction.extra[i].length > 2){
+                if(harmonicFunction.extra[i][0] == "1" && harmonicFunction.extra[i][1] == "3")
+                    soprano = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
+                    continue;
+            }
             needToAdd.push(harmonicFunction.extra[i]);
         }
 
@@ -60,9 +66,6 @@ function ChordGenerator(key){
         bass = harmonicFunction.revolution;
         needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
 
-        
-        console.log("Need to add");
-        console.log(needToAdd);
         return [[soprano, alto, tenor, bass], needToAdd]
 
     }
@@ -199,9 +202,9 @@ function ChordGenerator(key){
             }
         }
 
-        console.log("SHEMAS:");
-        schemas.forEach(function(x){ console.log(x)});
-        console.log("SCHEMAS END");
+        //console.log("SHEMAS:");
+        //schemas.forEach(function(x){ console.log(x)});
+        //console.log("SCHEMAS END");
         return schemas;
     }
 
@@ -209,21 +212,12 @@ function ChordGenerator(key){
         
         //TODO minor scale
         var scale = new Scale.MajorScale(this.key);
-        var basicNote = scale.tonicPitch;
-
-        switch(harmonicFunction.functionName){
-            case 'T':
-                basicNote += scale.pitches[0];
-                break;
-            case 'S':
-                basicNote += scale.pitches[3];
-                break;
-            case 'D':
-                basicNote += scale.pitches[4];
-                break;
-        };
+        var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree -1];
         
-        var chordType = Consts.basicDurChord;
+        var chordType;
+        var d = harmonicFunction.degree;
+        if(d === 1 || d === 4 || d === 5) chordType = Consts.basicMajorChord;
+        else chordType = Consts.basicMinorChord;
         var components = {
             '1' : chordType[0],
             '3' : chordType[1],
@@ -249,9 +243,9 @@ function ChordGenerator(key){
             })
         }
 
-         console.log("SHEMAS MAPPED:");
-        schemas_cp.forEach(function(x){ console.log(x)});
-        console.log("SCHEMAS MAPPED END");
+        // console.log("SHEMAS MAPPED:");
+        // schemas_cp.forEach(function(x){ console.log(x)});
+        // console.log("SCHEMAS MAPPED END");
 
         return schemas_cp;
 
@@ -317,14 +311,22 @@ function ChordGenerator(key){
                 }
             }
         }
+
+        //filtering in case of given system (open/close)
+        if(harmonicFunction.system !== undefined){
+            if(harmonicFunction.system == "open"){
+
+            }
+            if(harmonicFunction.system == 'close'){
+                
+            }
+        }
     
-        console.log("CHORDS:");
-        chords.forEach(function(x){ console.log(x.toString())});
-        console.log("CHORDS END:");
+        // console.log("CHORDS:");
+        // chords.forEach(function(x){ console.log(x.toString())});
+        // console.log("CHORDS END:");
 
         return chords;
-
+        
     }
 }
-
-///////////////////////TEST///////////////////////////////////

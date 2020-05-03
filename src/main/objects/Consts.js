@@ -79,4 +79,5 @@ var possible_keys_minor = ['c', 'c#', 'db',
 
 var possible_systems = ['close', 'open']
 
-var basicDurChord = [0,4,7];
+var basicMajorChord = [0,4,7];
+var basicMinorChord =  [0,3,7];
