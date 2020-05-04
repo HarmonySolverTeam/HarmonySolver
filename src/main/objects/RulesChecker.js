@@ -111,6 +111,16 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
     return 0;
 }
 
+function checkDoubled3(chord){
+    var terCounter = 0
+    for(var i = 0; i < chord.notes.length; i++){
+        if(chord.notes[i].chordComponent === "3"){
+            terCounter ++
+        }
+    }
+    return terCounter > 1
+}
+
 function checkConnection(prevChord, currentChord){
     var getSymbol = function(harmonicFunction){
         return harmonicFunction.down?(harmonicFunction.functionName+"down"+harmonicFunction.extra):(harmonicFunction.functionName+harmonicFunction.extra)
@@ -121,12 +131,12 @@ function checkConnection(prevChord, currentChord){
         case "D->T":
             var dominantVoiceWith3 = -1;
             for(var i = 0; i < 4; i++){
-                if(prevChord.notes[i].chordComponent === 3) {
+                if(prevChord.notes[i].chordComponent === "3") {
                     dominantVoiceWith3 = i;
                     break;
                 }
             }
-            if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== 1){
+            if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1"){
                 result += 1;
             }
             break;
@@ -136,26 +146,27 @@ function checkConnection(prevChord, currentChord){
         case "D7->T":
             var dominantVoiceWith3 = -1;
             for(var i = 0; i < 4; i++){
-                if(prevChord.notes[i].chordComponent === 3) {
+                if(prevChord.notes[i].chordComponent === "3") {
                     dominantVoiceWith3 = i;
                     break;
                 }
             }
-            if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== 1){
+            if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1"){
                 result += 1;
             }
             var dominantVoiceWith7 = -1;
             for(var i = 0; i < 4; i++){
-                if(prevChord.notes[i].chordComponent === 7) {
+                if(prevChord.notes[i].chordComponent === "7") {
                     dominantVoiceWith7 = i;
                     break;
                 }
             }
-            if(dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent !== 3){
+            if(dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent !== "3"){
                 result += 1;
             }
             break;
     }
+    if(checkDoubled3(currentChord)) return -1;
     return result;
 }
 
@@ -172,6 +183,9 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
             if (currentResult === -1) return -1;
             result += currentResult;
         }
+    }
+    else{
+        if(checkDoubled3(currentChord)) return -1;
     }
     return result
 }
