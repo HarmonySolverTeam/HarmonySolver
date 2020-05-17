@@ -1,3 +1,4 @@
+//G
 var keyStrPitch = {
     'C'  : 60,
     'C#' : 61,
@@ -16,6 +17,7 @@ var keyStrPitch = {
     'Cb' : 71
 }
 
+//G
 var keyStrBase = { 
     'C'  : (new BASE_NOTES()).C,
     'C#' : (new BASE_NOTES()).C,
@@ -45,14 +47,14 @@ function VoicesBoundary(){
     this.bassMin = 41;
 }
 
-
+//G
 var VOICES = {
     SOPRANO: 0,
     ALTO: 1,
     TENOR: 2,
     BASS: 3
 }
-
+//G
 var FUNCTION_NAMES = {
     TONIC: "T",
     SUBDOMINANT: "S",
@@ -69,15 +71,19 @@ function BASE_NOTES() {
     this.B = 6;
 }
 
+//G
 var possible_keys_major = ['C', 'C#', 'Db',
     'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A',
     'Bb', 'B', 'Cb']
 
+//G
 var possible_keys_minor = ['c', 'c#', 'db',
     'd', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'ab', 'a',
     'bb', 'b', 'cb']
 
+//G
 var possible_systems = ['close', 'open']
-
+//G
 var basicMajorChord = [0,4,7];
+//G
 var basicMinorChord =  [0,3,7];

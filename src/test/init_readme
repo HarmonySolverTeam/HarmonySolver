@@ -1,0 +1,9 @@
+init.py was preapred in order to made it possible to run/test classes written in js compatible with qml
+
+Its main goal it to traslate imports, add exports for all the functions in file with declaration stats with keyword "function" with no
+white characters befere it (line have to start with "function"), and also export all variable marked as "//G" f.e. : 
+
+//G
+var majorScalePitches = [1, 2, 3, 4]
+
+It is simple concept, could not working properly at all.

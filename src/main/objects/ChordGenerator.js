@@ -251,7 +251,7 @@ function ChordGenerator(key){
 
     }
 
-    this.generate = function(harmonicFunction){
+    this.generate = function(harmonicFunction, givenPitches){
 
         var chords = [];
         var temp = this.getChordTemplate(harmonicFunction);
@@ -325,6 +325,20 @@ function ChordGenerator(key){
         // console.log("CHORDS:");
         // chords.forEach(function(x){ console.log(x.toString())});
         // console.log("CHORDS END:");
+
+        // filtering chords with given pitches
+        if(givenPitches != undefined){
+            chords = chords.filter(  (chord) => {
+                function eq(x, y){
+                    return x == y || y == undefined
+                }
+
+                return eq(chord.bassNote.pitch, chord[0]) && 
+                       eq(chord.tenorNote.pitch, chord[1]) && 
+                       eq(chord.altoNote.pitch, chord[2]) && 
+                       eq(chord.sopranoNote.pitch, chord[3])
+            })
+        }
 
         return chords;
         
