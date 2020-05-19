@@ -328,7 +328,7 @@ function ChordGenerator(key){
 
         // filtering chords with given pitches
         if(givenPitches != undefined){
-            chords = chords.filter(  (chord) => {
+            chords = chords.filter(  function(chord) {
                 function eq(x, y){
                     return x == y || y == undefined
                 }
