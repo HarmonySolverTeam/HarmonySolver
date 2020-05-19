@@ -49,6 +49,10 @@ function Solver(exercise){
                 next_chords.unshift(good_chords[i][1])
                 return next_chords
             }
+            //just to get partial solution in case of critical error (-1)
+            else{
+                return [good_chords[i][1]]
+            }
 
         }
 

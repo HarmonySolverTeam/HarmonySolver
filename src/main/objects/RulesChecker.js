@@ -126,7 +126,6 @@ function checkConnection(prevChord, currentChord){
         return harmonicFunction.down?(harmonicFunction.functionName+"down"+harmonicFunction.extra):(harmonicFunction.functionName+harmonicFunction.extra)
     }
     var connection = getSymbol(prevChord.harmonicFunction)+"->"+getSymbol(currentChord.harmonicFunction);
-    var result = 0;
     switch (connection) {
         case "D->T":
             var dominantVoiceWith3 = -1;
@@ -137,7 +136,7 @@ function checkConnection(prevChord, currentChord){
                 }
             }
             if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1"){
-                result += 1;
+                return -1;
             }
             break;
         case "D->S":
@@ -152,7 +151,7 @@ function checkConnection(prevChord, currentChord){
                 }
             }
             if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1"){
-                result += 1;
+                return -1;
             }
             var dominantVoiceWith7 = -1;
             for(var i = 0; i < 4; i++){
@@ -162,12 +161,12 @@ function checkConnection(prevChord, currentChord){
                 }
             }
             if(dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent !== "3"){
-                result += 1;
+                return -1;
             }
             break;
     }
     if(checkDoubled3(currentChord)) return -1;
-    return result;
+    return 0;
 }
 
 function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpRule){

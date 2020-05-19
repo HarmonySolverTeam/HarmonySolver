@@ -44,7 +44,7 @@ function parseChord(string) {
 
     ret.degree = get_valid_degree(arguments_json, chord_type)
     ret.position = arguments_json["position"] === undefined ? -1 : arguments_json["position"]
-    ret.revolution = arguments_json["revolution"] === undefined ? 1 : arguments_json["revolution"]
+    ret.revolution = arguments_json["revolution"] === undefined ? "1" : arguments_json["revolution"]
     //ret.delay = delay
     ret.extra = arguments_json["extra"] === undefined ? [] : arguments_json["extra"]
     ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
@@ -55,6 +55,7 @@ function parseChord(string) {
 }
 
 //todo obsluga i wyswietlanie bledow co i gdzie jest nie tak dokladnie w pliku
+
 function parse(input) {
     //       try {
     var lines = input.split("\n")
