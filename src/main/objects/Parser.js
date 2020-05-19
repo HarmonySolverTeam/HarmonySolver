@@ -111,9 +111,3 @@ function parse(input) {
 //            return null
 //        }
 }
-
-
-
-extra = ["9"]
-addExtraNotesIfNecessary(extra)
-console.log(extra)
