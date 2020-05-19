@@ -16,9 +16,17 @@ function get_valid_degree(arguments_json, chord_type) {
             return 4
         case "D":
             return 5
+
     }
 }
 
+function addExtraNotesIfNecessary(extra){
+
+    if (contains(extra, "9") && !contains(extra, "7")){
+        extra.push("7")
+    }
+
+}
 
 function parseChord(string) {
     var i = 0
@@ -47,6 +55,7 @@ function parseChord(string) {
     ret.revolution = arguments_json["revolution"] === undefined ? "1" : arguments_json["revolution"]
     //ret.delay = delay
     ret.extra = arguments_json["extra"] === undefined ? [] : arguments_json["extra"]
+    addExtraNotesIfNecessary(ret.extra)
     ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
     ret.down = arguments_json["down"] === undefined ? false : arguments_json["down"]
     ret.system = arguments_json["extra"]
@@ -102,3 +111,9 @@ function parse(input) {
 //            return null
 //        }
 }
+
+
+
+extra = ["9"]
+addExtraNotesIfNecessary(extra)
+console.log(extra)
