@@ -1,18 +1,18 @@
-function BassoContinuoElement(bassNote, numbers) {
+function FiguredBassElement(bassNote, symbols) {
 
-    this.bassNote = bassNotes
-    this.numbers = numbers
+    this.bassNote = bassNote;
+    this.symbols = symbols;
 
 
     this.toString = function () {
-        return this.bassNote + " " + this.numbers
+        return this.bassNote + " " + this.symbols
     }
 
 }
 
-function BassoContinuoTask(mode, key, meter, measures){
-    this.mode = mode
-    this.key = key
-    this.meter = meter
-    this.measures = measures //tutaj moze niech beda listy z BassoContinuoElement
+function FiguredBassExercise(mode, key, meter, elements){
+    this.mode = mode;
+    this.key = key;
+    this.meter = meter;
+    this.elements = elements;
 }
