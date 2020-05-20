@@ -72,6 +72,7 @@ MuseScore {
                  durations.push([cursor.element.duration.numerator,cursor.element.duration.denominator]);
                  if(cursor.element.parent.annotations[0] !== undefined)
                       symbols = cursor.element.parent.annotations[0].text;
+                      if(!Parser.check_figured_bass_symbols(symbols)) throw ("Wrong symbols: "+symbols)
                  lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);
                  lastPitch = cursor.element.notes[0].pitch;
                  bassNote = new Note.Note(lastPitch, lastBaseNote, 0);

@@ -3,6 +3,11 @@
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Utils.js" as Utils
 
+function check_figured_bass_symbols(symbols){
+    var figured_bass_symbols = /\s*((((#|b)?\d+)|(#|b))\s*)+/;
+    return figured_bass_symbols.test(symbols);
+}
+
 
 function get_valid_degree(arguments_json, chord_type) {
     if (arguments_json["degree"] !== undefined){
