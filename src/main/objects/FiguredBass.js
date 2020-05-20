@@ -10,8 +10,10 @@ function FiguredBassElement(bassNote, symbols) {
 
 }
 
-function FiguredBassExercise(mode, key, meter, elements){
+function FiguredBassExercise(mode, key, meter, elements, durations){
+    this.mode = mode;
     this.key = key;
     this.meter = meter;
     this.elements = elements;
+    this.durations = durations;
 }

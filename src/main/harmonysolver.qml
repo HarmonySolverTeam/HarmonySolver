@@ -25,7 +25,10 @@ MuseScore {
     id:window
     width:  800; height: 500;
     onRun: {
-      read_figured_bass();
+      var ex = read_figured_bass();
+      // translate (remember about durations attribute!)
+      // solve first exercise
+      // print solution (remember about durations)
     }
 
 
@@ -63,18 +66,32 @@ MuseScore {
             var elements = [];
             var symbols, bassNote, key, mode;
             var durations = [];
-            var lastBaseNote;
-            var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
+            var lastBaseNote, lastPitch;
+            var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
             do {
                  durations.push([cursor.element.duration.numerator,cursor.element.duration.denominator]);
                  if(cursor.element.parent.annotations[0] !== undefined)
                       symbols = cursor.element.parent.annotations[0].text;
                  lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);
-                 bassNote = new Note.Note(cursor.element.notes[0].pitch, lastBaseNote, 0);
+                 lastPitch = cursor.element.notes[0].pitch;
+                 bassNote = new Note.Note(lastPitch, lastBaseNote, 0);
                  elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols));
             } while(cursor.next())
-            console.log(curScore.keysig)
-            
+            lastPitch = lastPitch%12
+            var majorKey = Consts.majorKeyBySignature(curScore.keysig);
+            var minorKey = Consts.minorKeyBySignature(curScore.keysig);
+            if(Consts.keyStrPitch[majorKey]%12 === lastPitch && Consts.keyStrBase[majorKey] === lastBaseNote){
+                  key = majorKey;
+                  mode = "major";
+            } else{
+                  if(Consts.keyStrPitch[minorKey]%12 === lastPitch && Consts.keyStrBase[minorKey] === lastBaseNote){
+                        key = minorKey;
+                        mode = "minor";
+                  } else {
+                        throw ("Wrong last note. Bass line should end on Tonic.")
+                  }
+            }
+            return new FiguredBass.FiguredBassExercise(mode, key, meter, elements, durations);
     }
 
     function get_solution_date(){
