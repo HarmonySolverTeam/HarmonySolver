@@ -1,21 +1,22 @@
 //G
 var keyStrPitch = {
-    'C'  : 60,
-    'C#' : 61,
-    'Db' : 61,
-    'D'  : 62, 
-    'Eb' : 63,
-    'E'  : 64,
-    'F'  : 65, 
-    'F#' : 66, 
-    'Gb' : 66, 
-    'G'  : 67, 
-    'Ab' : 68, 
-    'A'  : 69,
-    'Bb' : 70,
-    'B'  : 71, 
-    'Cb' : 71
+    'C': 60,
+    'C#': 61,
+    'Db': 61,
+    'D': 62,
+    'Eb': 63,
+    'E': 64,
+    'F': 65,
+    'F#': 66,
+    'Gb': 66,
+    'G': 67,
+    'Ab': 68,
+    'A': 69,
+    'Bb': 70,
+    'B': 71,
+    'Cb': 71
 }
+
 function minorKeyBySignature(signature) {
     switch (signature) {
         case 0:
@@ -52,7 +53,7 @@ function minorKeyBySignature(signature) {
 }
 
 function majorKeyBySignature(signature) {
-    switch(signature){
+    switch (signature) {
         case 0:
             return "C";
         case 1:
@@ -87,35 +88,35 @@ function majorKeyBySignature(signature) {
 }
 
 var BASE_NOTES = {
-    C : 0,
-    D : 1,
-    E : 2,
-    F : 3,
-    G : 4,
-    A : 5,
-    B : 6
+    C: 0,
+    D: 1,
+    E: 2,
+    F: 3,
+    G: 4,
+    A: 5,
+    B: 6
 }
 
 //G
-var keyStrBase = { 
-    'C'  : BASE_NOTES.C,
-    'C#' : BASE_NOTES.C,
-    'Db' : BASE_NOTES.D,
-    'D'  : BASE_NOTES.D,
-    'Eb' : BASE_NOTES.E,
-    'E'  : BASE_NOTES.E,
-    'F'  : BASE_NOTES.F,
-    'F#' : BASE_NOTES.F,
-    'Gb' : BASE_NOTES.G,
-    'G'  : BASE_NOTES.G,
-    'Ab' : BASE_NOTES.A,
-    'A'  : BASE_NOTES.A,
-    'Bb' : BASE_NOTES.B,
-    'B'  : BASE_NOTES.B,
-    'Cb' : BASE_NOTES.C
+var keyStrBase = {
+    'C': BASE_NOTES.C,
+    'C#': BASE_NOTES.C,
+    'Db': BASE_NOTES.D,
+    'D': BASE_NOTES.D,
+    'Eb': BASE_NOTES.E,
+    'E': BASE_NOTES.E,
+    'F': BASE_NOTES.F,
+    'F#': BASE_NOTES.F,
+    'Gb': BASE_NOTES.G,
+    'G': BASE_NOTES.G,
+    'Ab': BASE_NOTES.A,
+    'A': BASE_NOTES.A,
+    'Bb': BASE_NOTES.B,
+    'B': BASE_NOTES.B,
+    'Cb': BASE_NOTES.C
 }
 
-function VoicesBoundary(){
+function VoicesBoundary() {
     this.sopranoMax = 81;
     this.sopranoMin = 60;
     this.altoMax = 74;
@@ -153,6 +154,6 @@ var possible_keys_minor = ['c', 'c#', 'db',
 //G
 var possible_systems = ['close', 'open']
 //G
-var basicMajorChord = [0,4,7];
+var basicMajorChord = [0, 4, 7];
 //G
-var basicMinorChord =  [0,3,7];
+var basicMinorChord = [0, 3, 7];

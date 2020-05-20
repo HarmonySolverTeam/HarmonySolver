@@ -53,7 +53,7 @@ function parseChord(string) {
     //     if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
     //         ret[variable] = arguments_json[variable]
     //     }
-    // }
+    // }m
 
     ret.degree = get_valid_degree(arguments_json, chord_type)
     ret.position = arguments_json["position"] === undefined ? -1 : arguments_json["position"]

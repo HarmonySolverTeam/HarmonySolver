@@ -31,7 +31,15 @@ MuseScore {
       var exercise = Translator.createExerciseFromFiguredBass(ex)
       console.log(exercise)
 
+      var solver = new Solver.Solver(exercise);
+      var solution = solver.solve();
+      var solution_date = get_solution_date()
 
+      prepare_score_for_solution(filePath, solution, solution_date)
+
+      fill_score_with_solution(solution)
+
+      writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
 
       // translate (remember about durations attribute!)
       // solve first exercise

@@ -288,10 +288,12 @@ function createHarmonicFunctionOrFunctions(chordElement) {
         toAdd.position = posAndRev[0].toString()
         toAdd.revolution = posAndRev[1].toString()
         toAdd.omit = chordElement.omit
-        //toAdd.down = ?
-        //toAdd.system = ?
-        //toAdd.delay = ?
+        toAdd.down = false
+        toAdd.system = ?
+        toAdd.delay = ?
+        toAdd.extra = ?
 
+        ret.push(toAdd)
     }
 
     return ret
@@ -305,15 +307,26 @@ function convertToFunctions(figuredBassExercise) {
     var bassElements = figuredBassExercise.elements
 
     for (var i = 0; i < bassElements.length; i++) {
+
+        console.log(bassElements[i])
         completeFiguredBassNumbers(bassElements[i])
+        console.log(bassElements[i])
 
         var chordElement = buildChordElement(bassElements[i])
+        console.log(chordElement)
 
         completeUntillTwoNextThirds(chordElement)
+        console.log(chordElement)
 
         findPrime(chordElement)
+        console.log(chordElement)
 
-        ret.push(createHarmonicFunctionOrFunctions(chordElement)) //todo moze sie tez pozniej przyda figuredbassexercise?
+        var harmFunction = createHarmonicFunctionOrFunctions(chordElement)
+
+        console.log(harmFunction)
+
+        ret.push(harmFunction) //todo moze sie tez pozniej przyda figuredbassexercise?
+
     }
 
     return ret
@@ -323,6 +336,8 @@ function convertToFunctions(figuredBassExercise) {
 function convertBassToHarmonicFunctions(figuredBassExercise) {
 
     var functions = convertToFunctions(figuredBassExercise)
+
+    console.log(functions)
 
     return makeChoiceAndSplit(functions)
 }
