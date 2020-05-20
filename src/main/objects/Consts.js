@@ -16,24 +16,103 @@ var keyStrPitch = {
     'B'  : 71, 
     'Cb' : 71
 }
+function minorKeyBySignature(signature) {
+    switch (signature) {
+        case 0:
+            return "A";
+        case 1:
+            return "E";
+        case 2:
+            return "B";
+        case 3:
+            return "F#";
+        case 4:
+            return "C#";
+        case 5:
+            return "G#";
+        case 6:
+            return "D#";
+        case 7:
+            return "A#";
+        case -1:
+            return "D";
+        case -2:
+            return "G";
+        case -3:
+            return "C";
+        case -4:
+            return "F";
+        case -5:
+            return "Bb";
+        case -6:
+            return "Eb";
+        case -7:
+            return "Ab";
+    }
+}
+
+function majorKeyBySignature(signature) {
+    switch(signature){
+        case 0:
+            return "C";
+        case 1:
+            return "G";
+        case 2:
+            return "D";
+        case 3:
+            return "A";
+        case 4:
+            return "E";
+        case 5:
+            return "B";
+        case 6:
+            return "F#";
+        case 7:
+            return "C#";
+        case -1:
+            return "F";
+        case -2:
+            return "Bb";
+        case -3:
+            return "Eb";
+        case -4:
+            return "Ab";
+        case -5:
+            return "Db";
+        case -6:
+            return "Gb";
+        case -7:
+            return "Cb";
+    }
+}
+
+var BASE_NOTES = {
+    C : 0,
+    D : 1,
+    E : 2,
+    F : 3,
+    G : 4,
+    A : 5,
+    B : 6
+}
 
 //G
 var keyStrBase = { 
-    'C'  : (new BASE_NOTES()).C,
-    'C#' : (new BASE_NOTES()).C,
-    'Db' : (new BASE_NOTES()).D,
-    'D'  : (new BASE_NOTES()).D, 
-    'Eb' : (new BASE_NOTES()).E,
-    'E'  : (new BASE_NOTES()).E,
-    'F'  : (new BASE_NOTES()).F, 
-    'F#' : (new BASE_NOTES()).F, 
-    'Gb' : (new BASE_NOTES()).G, 
-    'G'  : (new BASE_NOTES()).G, 
-    'Ab' : (new BASE_NOTES()).A, 
-    'A'  : (new BASE_NOTES()).A,
-    'Bb' : (new BASE_NOTES()).B,
-    'B'  : (new BASE_NOTES()).B, 
-    'Cb' : (new BASE_NOTES()).C
+    'C'  : BASE_NOTES.C,
+    'C#' : BASE_NOTES.C,
+    'Db' : BASE_NOTES.D,
+    'D'  : BASE_NOTES.D,
+    'Eb' : BASE_NOTES.E,
+    'E'  : BASE_NOTES.E,
+    'F'  : BASE_NOTES.F,
+    'F#' : BASE_NOTES.F,
+    'Gb' : BASE_NOTES.G,
+    'G'  : BASE_NOTES.G,
+    'Ab' : BASE_NOTES.A,
+    'A'  : BASE_NOTES.A,
+    'Bb' : BASE_NOTES.B,
+    'B'  : BASE_NOTES.B,
+    'Cb' : BASE_NOTES.C
 }
 
 function VoicesBoundary(){
@@ -59,16 +138,6 @@ var FUNCTION_NAMES = {
     TONIC: "T",
     SUBDOMINANT: "S",
     DOMINANT: "D"
-}
-
-function BASE_NOTES() {
-    this.C = 0;
-    this.D = 1;
-    this.E = 2;
-    this.F = 3;
-    this.G = 4;
-    this.A = 5;
-    this.B = 6;
 }
 
 //G

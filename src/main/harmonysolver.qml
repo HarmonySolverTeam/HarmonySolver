@@ -8,6 +8,9 @@ import QtQuick.Controls 1.0
 
 import "./objects/Solver.js" as Solver
 import "./objects/Parser.js" as Parser
+import "./objects/FiguredBass.js" as FiguredBass
+import "./objects/Note.js" as Note
+import "./objects/Consts.js" as Consts
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -21,7 +24,58 @@ MuseScore {
     property var exercise : ({})
     id:window
     width:  800; height: 500;
-    onRun: {}
+    onRun: {
+      read_figured_bass();
+    }
+
+
+    function getBaseNote(museScoreBaseNote){
+            var result;
+            switch(museScoreBaseNote){
+                case 0:
+                      result = Consts.BASE_NOTES.F;
+                      break;
+                case 1:
+                      result = Consts.BASE_NOTES.C;
+                      break;
+                case 2:
+                      result = Consts.BASE_NOTES.G;
+                      break;
+                case 3:
+                      result = Consts.BASE_NOTES.D;
+                      break;
+                case 4:
+                      result = Consts.BASE_NOTES.A;
+                      break;
+                case 5:
+                      result = Consts.BASE_NOTES.E;
+                      break;
+                case 6:
+                      result = Consts.BASE_NOTES.B;
+                      break;
+            }
+            return result;
+    }
+
+    function read_figured_bass(){
+            var cursor = curScore.newCursor();
+            cursor.rewind(0);
+            var elements = [];
+            var symbols, bassNote, key, mode;
+            var durations = [];
+            var lastBaseNote;
+            var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
+            do {
+                 durations.push([cursor.element.duration.numerator,cursor.element.duration.denominator]);
+                 if(cursor.element.parent.annotations[0] !== undefined)
+                      symbols = cursor.element.parent.annotations[0].text;
+                 lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);
+                 bassNote = new Note.Note(cursor.element.notes[0].pitch, lastBaseNote, 0);
+                 elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols));
+            } while(cursor.next())
+            console.log(curScore.keysig)
+            
+    }
 
     function get_solution_date(){
             var date = new Date()
