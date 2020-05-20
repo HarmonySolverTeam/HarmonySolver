@@ -8,8 +8,9 @@
 
 var DEBUG = false;
 
-function Solver(exercise){
-    this.exercise = exercise
+function Solver(exercise, bassLine){
+    this.exercise = exercise;
+    this.bassLine = bassLine;
     this.harmonicFunctions = exercise.measures[0];
     for(var i=1; i<exercise.measures.length; i++){
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
@@ -29,7 +30,9 @@ function Solver(exercise){
     }
 
     this.findSolution = function(curr_index, prev_prev_chord, prev_chord){
-        var chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
+        var chords;
+        if(typeof this.bassLine !== "undefined") chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [this.bassLine[curr_index], undefined, undefined, undefined])
+        else chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
         var good_chords = []
         
         if(DEBUG){
