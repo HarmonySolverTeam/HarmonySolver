@@ -22,7 +22,7 @@ function get_valid_degree(arguments_json, chord_type) {
 
 function addExtraNotesIfNecessary(extra){
 
-    if (contains(extra, "9") && !contains(extra, "7")){
+    if (Utils.contains(extra, "9") && !Utils.contains(extra, "7")){
         extra.push("7")
     }
 

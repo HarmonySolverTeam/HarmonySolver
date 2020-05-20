@@ -16,6 +16,13 @@ function Solver(exercise){
 
     this.solve = function(){
         var sol_chords =  this.findSolution(0, undefined, undefined);
+        //dopełenienie pustymi chordami
+        var N = sol_chords.length;
+        for(var i=0; i<this.harmonicFunctions.length - N; i++){
+            var n = new Note.Note(undefined, undefined, undefined)
+            sol_chords.push(new Chord.Chord(n,n,n,n, this.harmonicFunctions[N + i]));
+        }
+
         return new ExerciseSolution.ExerciseSolution(this.exercise, -12321, sol_chords);
     }
 
@@ -41,21 +48,25 @@ function Solver(exercise){
             return [good_chords[0][1]];
         }
 
+        var longest_next_chords = []
         for (var i = 0; i< good_chords.length; i++){
 
             var next_chords = this.findSolution( curr_index + 1, prev_chord, good_chords[i][1])
 
-            if (next_chords.length !== 0){
+            if (next_chords.length == this.harmonicFunctions.length - curr_index - 1){
                 next_chords.unshift(good_chords[i][1])
                 return next_chords
             }
             //just to get partial solution in case of critical error (-1)
             else{
-                return [good_chords[i][1]]
+                if(next_chords.length + 1 > longest_next_chords.length){
+                    next_chords.unshift(good_chords[i][1]);
+                    longest_next_chords = next_chords;
+                }
             }
 
         }
-
-        return []
+    
+        return longest_next_chords
     }
 }
