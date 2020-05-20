@@ -26,6 +26,7 @@ MuseScore {
     width:  800; height: 500;
     onRun: {
       var ex = read_figured_bass();
+      console.log(ex.elements);
       // translate (remember about durations attribute!)
       // solve first exercise
       // print solution (remember about durations)
@@ -64,15 +65,27 @@ MuseScore {
             var cursor = curScore.newCursor();
             cursor.rewind(0);
             var elements = [];
-            var symbols, bassNote, key, mode;
+            var bassNote, key, mode;
             var durations = [];
             var lastBaseNote, lastPitch;
             var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
             do {
+                 var symbols = [];
                  durations.push([cursor.element.duration.numerator,cursor.element.duration.denominator]);
-                 if(cursor.element.parent.annotations[0] !== undefined)
-                      symbols = cursor.element.parent.annotations[0].text;
-                      if(!Parser.check_figured_bass_symbols(symbols)) throw ("Wrong symbols: "+symbols)
+                 if(typeof cursor.element.parent.annotations[0] !== "undefined"){
+                      var readSymbols = cursor.element.parent.annotations[0].text;
+                      if(!Parser.check_figured_bass_symbols(readSymbols)) throw ("Wrong symbols: "+symbols)
+                      for(var i = 0; i < readSymbols.length; i++){
+                        var symbol = "";
+                        while(i < readSymbols.length && readSymbols[i] !== "\n"){
+                              if(readSymbols[i] !== " " && readSymbols[i] !== "\t"){
+                                    symbol += readSymbols[i];
+                              }
+                              i++;
+                        }
+                        symbols.push(symbol);
+                      }
+                 }
                  lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);
                  lastPitch = cursor.element.notes[0].pitch;
                  bassNote = new Note.Note(lastPitch, lastBaseNote, 0);
