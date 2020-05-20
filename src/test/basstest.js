@@ -1,5 +1,27 @@
-.import "./Exercise.js" as Exercise
-.import "./HarmonicFunction.js" as HarmonicFunction
+
+function contains(list, obj){
+
+    for (var i = 0; i< list.length; i++){
+        if (list[i] === obj){
+            return true
+        }
+    }
+    return false
+
+}
+
+function abs(a){
+    return a>0?a:-a;
+}
+
+function Exercise(key, meter, mode,measures)
+{
+    this.mode = mode
+    this.key = key
+    this.meter = meter
+    this.measures = measures
+}
+
 
 
 function makeChoiceAndSplit(functions) {
@@ -330,7 +352,6 @@ function convertBassToHarmonicFunctions(figuredBassExercise) {
 }
 
 function createExerciseFromFiguredBass(figuredBassExercise) {
-
     var harmonicFunctions = convertBassToHarmonicFunctions(figuredBassExercise)
 
     return new Exercise(figuredBassExercise.key, figuredBassExercise.meter,
