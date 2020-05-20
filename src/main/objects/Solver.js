@@ -6,6 +6,8 @@
 .import "./ChordGenerator.js" as ChordGenerator
 .import "./RulesChecker.js" as Checker
 
+var DEBUG = false;
+
 function Solver(exercise){
     this.exercise = exercise
     this.harmonicFunctions = exercise.measures[0];
@@ -29,6 +31,12 @@ function Solver(exercise){
     this.findSolution = function(curr_index, prev_prev_chord, prev_chord){
         var chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
         var good_chords = []
+        
+        if(DEBUG){
+            var log = "";
+            for(var x=0;x<curr_index;x++) log += "   "
+            if(curr_index < 6) console.log(log + curr_index)
+        }
 
         for (var j = 0; j < chords.length; j++){
             console.log(chords[j].toString())
@@ -53,7 +61,7 @@ function Solver(exercise){
 
             var next_chords = this.findSolution( curr_index + 1, prev_chord, good_chords[i][1])
 
-            if (next_chords.length == this.harmonicFunctions.length - curr_index - 1){
+            if (next_chords.length == this.harmonicFunctions.length - curr_index - 1 && next_chords[next_chords.length -1].sopranoNote.pitch !== undefined){
                 next_chords.unshift(good_chords[i][1])
                 return next_chords
             }

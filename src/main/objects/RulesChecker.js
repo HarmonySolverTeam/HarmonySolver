@@ -1,12 +1,14 @@
 .import "./Utils.js" as Utils
 
+var DEBUG = true;
+
 function concurrentOctaves(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
             if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 0){
                 if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 0){
-                    console.log("concurrentOctaves"+i+" "+j)
+                    if(DEBUG) console.log("concurrentOctaves"+i+" "+j)
                     return -1;
                 }
             }
@@ -21,7 +23,7 @@ function concurrentFifths(prevChord, currentChord){
         for(var j = i + 1; j < 4; j++){
             if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 7){
                 if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 7){
-                    console.log("concurrentFifths"+i+" "+j)
+                    if(DEBUG) console.log("concurrentFifths"+i+" "+j)
 
                     return -1;
                 }
@@ -34,13 +36,13 @@ function concurrentFifths(prevChord, currentChord){
 function crossingVoices(prevChord, currentChord){
     for(var i = 0; i < 3; i++){
         if(currentChord.notes[i].pitch>prevChord.notes[i+1].pitch){
-            console.log("crossingVoices")
+            if(DEBUG) console.log("crossingVoices")
             return -1
         }
     }
     for(var i = 3; i > 0; i--){
         if(currentChord.notes[i].pitch<prevChord.notes[i-1].pitch){
-            console.log("crossingVoices")
+            if(DEBUG) console.l("crossingVoices")
             return -1
         }
     }
@@ -52,7 +54,7 @@ function oneDirection(prevChord, currentChord){
         && currentChord.altoNote.pitch>prevChord.altoNote.pitch && currentChord.bassNote.pitch>prevChord.bassNote.pitch)
         ||(currentChord.bassNote.pitch<prevChord.bassNote.pitch && currentChord.tenorNote.pitch<prevChord.tenorNote.pitch
             && currentChord.altoNote.pitch<prevChord.altoNote.pitch && currentChord.bassNote.pitch<prevChord.bassNote.pitch)){
-        console.log("oneDirection")
+        if(DEBUG) console.l("oneDirection")
 
         return -1;
     }
@@ -104,7 +106,7 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
         if(((prevPrevChord.notes[i].pitch>prevChord.notes[i].pitch && prevChord.notes[i].pitch>currentChord.notes[i].pitch) ||
             (prevPrevChord.notes[i].pitch<prevChord.notes[i].pitch && prevChord.notes[i].pitch<currentChord.notes[i].pitch))
             && forbiddenJump(prevPrevChord, currentChord)){
-            console.log("forbiddenSumJump")
+            if(DEBUG) console.l("forbiddenSumJump")
             return -1;
         }
     }

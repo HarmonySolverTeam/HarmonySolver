@@ -96,12 +96,14 @@ MuseScore {
         }
 
         function fill_score_with_solution(solution){
-            curScore.appendMeasures(solution.exercise.measures.length - 1);
             var cursor = curScore.newCursor();
             cursor.rewind(0)
             var ts = newElement(Element.TIMESIG)
             ts.timesig = fraction(solution.exercise.meter[0], solution.exercise.meter[1])
             cursor.add(ts)
+
+            curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+
             cursor.rewind(0)
             var lastSegment = false
             for(var i=0; i<solution.chords.length; i++){

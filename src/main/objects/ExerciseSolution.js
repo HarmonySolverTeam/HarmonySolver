@@ -6,6 +6,7 @@ function ExerciseSolution(exercise, rating, chords){
     this.setDurations = function(){
         function default_divide(number, result){
             //default_divide(3, [1/2]) // [3]
+            var newElement;
             if(result.length === number) return result
             var all_equal = true
             for(var i = 0; i < result.length-1; i++){
