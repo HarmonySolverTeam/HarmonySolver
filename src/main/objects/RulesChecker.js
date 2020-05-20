@@ -42,7 +42,7 @@ function crossingVoices(prevChord, currentChord){
     }
     for(var i = 3; i > 0; i--){
         if(currentChord.notes[i].pitch<prevChord.notes[i-1].pitch){
-            if(DEBUG) console.l("crossingVoices")
+            if(DEBUG) console.log("crossingVoices")
             return -1
         }
     }
@@ -54,7 +54,7 @@ function oneDirection(prevChord, currentChord){
         && currentChord.altoNote.pitch>prevChord.altoNote.pitch && currentChord.bassNote.pitch>prevChord.bassNote.pitch)
         ||(currentChord.bassNote.pitch<prevChord.bassNote.pitch && currentChord.tenorNote.pitch<prevChord.tenorNote.pitch
             && currentChord.altoNote.pitch<prevChord.altoNote.pitch && currentChord.bassNote.pitch<prevChord.bassNote.pitch)){
-        if(DEBUG) console.l("oneDirection")
+        if(DEBUG) console.log("oneDirection")
 
         return -1;
     }
@@ -106,7 +106,7 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
         if(((prevPrevChord.notes[i].pitch>prevChord.notes[i].pitch && prevChord.notes[i].pitch>currentChord.notes[i].pitch) ||
             (prevPrevChord.notes[i].pitch<prevChord.notes[i].pitch && prevChord.notes[i].pitch<currentChord.notes[i].pitch))
             && forbiddenJump(prevPrevChord, currentChord)){
-            if(DEBUG) console.l("forbiddenSumJump")
+            if(DEBUG) console.log("forbiddenSumJump")
             return -1;
         }
     }
