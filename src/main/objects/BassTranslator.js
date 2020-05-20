@@ -1,7 +1,3 @@
-.import "./Exercise.js" as Exercise
-.import "./HarmonicFunction.js" as HarmonicFunction
-
-
 function makeChoiceAndSplit(functions) {
 
     var ret = []
@@ -39,42 +35,42 @@ function makeChoiceAndSplit(functions) {
 function completeFiguredBassNumbers(element) {
 
     //empty -> 3,5
-    if (element.numbers.length === 0) {
-        element.numbers = ["3", "5"]
+    if (element.symbols.length === 0) {
+        element.symbols = ["3", "5"]
         return
     }
 
-    if (element.numbers.length === 1) {
+    if (element.symbols.length === 1) {
         // 5 -> 3,5
-        if (contains(element.numbers, "5")) {
-            element.numbers = ["3", "5"]
+        if (contains(element.symbols, "5")) {
+            element.symbols = ["3", "5"]
             return
         }
 
         // 6 -> 3,6
-        if (contains(element.numbers, '6')) {
-            element.numbers = ["3", '6']
+        if (contains(element.symbols, '6')) {
+            element.symbols = ["3", '6']
             return
         }
 
         // 7 -> 3,5,7
-        if (contains(element.numbers, "7")) {
-            element.numbers = ['3', "5", '7']
+        if (contains(element.symbols, "7")) {
+            element.symbols = ['3', "5", '7']
             return
         }
 
         //2 -> 2,4,6
-        if (contains(element.numbers, "2")) {
-            element.numbers = ["2", "4", "6"]
+        if (contains(element.symbols, "2")) {
+            element.symbols = ["2", "4", "6"]
             return
         }
     }
 
-    if (element.numbers.length === 2) {
-        if (contains(element.numbers, "3")) {
+    if (element.symbols.length === 2) {
+        if (contains(element.symbols, "3")) {
             //3,4 -> 3,4,6
-            if (contains(element.numbers, "4")) {
-                element.numbers = ["3", "4", "6"]
+            if (contains(element.symbols, "4")) {
+                element.symbols = ["3", "4", "6"]
                 return
             } else {
                 // 3,5 -> 3,5
@@ -83,10 +79,10 @@ function completeFiguredBassNumbers(element) {
             }
         }
 
-        if (contains(element.numbers, "4")) {
+        if (contains(element.symbols, "4")) {
             //2,4 -> 2,4,6
-            if (contains(element.numbers, "4")) {
-                element.numbers = ["2", "4", "6"]
+            if (contains(element.symbols, "4")) {
+                element.symbols = ["2", "4", "6"]
                 return
             } else {
                 //4,6 -> 4,6
@@ -94,33 +90,33 @@ function completeFiguredBassNumbers(element) {
             }
         }
 
-        if (contains(element.numbers, "5")) {
+        if (contains(element.symbols, "5")) {
             //5,7 -> 3,5,7
-            if (contains(element.numbers, "7")) {
-                element.numbers = ["3", "5", "7"]
+            if (contains(element.symbols, "7")) {
+                element.symbols = ["3", "5", "7"]
                 return
-            } else if (contains(element.numbers, "6")) {
+            } else if (contains(element.symbols, "6")) {
                 //5,6 -> 3,5,6
-                element.numbers = ["3", "5", "6"]
+                element.symbols = ["3", "5", "6"]
                 return
             }
         }
 
         //2,10 -> 2,4,10
-        if (contains(element.numbers, "2")) {
-            element.numbers = ["2", "4", "10"]
+        if (contains(element.symbols, "2")) {
+            element.symbols = ["2", "4", "10"]
             return
         }
 
     }
 
-    if (element.numbers.length === 3) {
+    if (element.symbols.length === 3) {
 
         //6,5,7 -> 6,5,7 (but we save 5,6,7)
 
-        if (contains(element.numbers, "6") && contains(element.numbers, "6")
-            && contains(element.numbers, "6")) {
-            element.numbers = ["5", "6", "7"]
+        if (contains(element.symbols, "6") && contains(element.symbols, "6")
+            && contains(element.symbols, "6")) {
+            element.symbols = ["5", "6", "7"]
         }
 
         //3,5,7 -> 3,5,7
@@ -141,8 +137,8 @@ function buildChordElement(element) {
 
     chordElement.bassElement = element
 
-    for (var i = 0; i < element.numbers.length; i++) {
-        chordElement.notesNumbers.push(parseInt(element.numbers[i]))
+    for (var i = 0; i < element.symbols.length; i++) {
+        chordElement.notesNumbers.push(parseInt(element.symbols[i]))
     }
 
     return chordElement
@@ -262,8 +258,8 @@ function getValidPositionAndRevolution(harmonicFunction, chordElement) {
 
     var position = -1
 
-    if (chordElement.numbers === ["5", "6", "7"] ||
-        chordElement.numbers === ["2", "4", "10"]) {
+    if (chordElement.symbols === ["5", "6", "7"] ||
+        chordElement.symbols === ["2", "4", "10"]) {
         position = 9
     }
 
@@ -330,7 +326,6 @@ function convertBassToHarmonicFunctions(figuredBassExercise) {
 }
 
 function createExerciseFromFiguredBass(figuredBassExercise) {
-
     var harmonicFunctions = convertBassToHarmonicFunctions(figuredBassExercise)
 
     return new Exercise(figuredBassExercise.key, figuredBassExercise.meter,
