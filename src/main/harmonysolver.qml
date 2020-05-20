@@ -11,6 +11,7 @@ import "./objects/Parser.js" as Parser
 import "./objects/FiguredBass.js" as FiguredBass
 import "./objects/Note.js" as Note
 import "./objects/Consts.js" as Consts
+import "./objects/BassTranslator.js" as Translator
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -25,7 +26,24 @@ MuseScore {
     id:window
     width:  800; height: 500;
     onRun: {
-      read_figured_bass();
+      var ex = read_figured_bass();
+      console.log(ex.elements);
+      var exercise = Translator.createExerciseFromFiguredBass(ex)
+      console.log(exercise)
+
+      var solver = new Solver.Solver(exercise);
+      var solution = solver.solve();
+      var solution_date = get_solution_date()
+
+      prepare_score_for_solution(filePath, solution, solution_date, false)
+
+      fill_score_with_solution(solution, ex.durations)
+
+      writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
+
+      // translate (remember about durations attribute!)
+      // solve first exercise
+      // print solution (remember about durations)
     }
 
 
@@ -61,20 +79,47 @@ MuseScore {
             var cursor = curScore.newCursor();
             cursor.rewind(0);
             var elements = [];
-            var symbols, bassNote, key, mode;
+            var bassNote, key, mode;
             var durations = [];
-            var lastBaseNote;
-            var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
+            var lastBaseNote, lastPitch;
+            var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
             do {
+                 var symbols = [];
                  durations.push([cursor.element.duration.numerator,cursor.element.duration.denominator]);
-                 if(cursor.element.parent.annotations[0] !== undefined)
-                      symbols = cursor.element.parent.annotations[0].text;
+                 if(typeof cursor.element.parent.annotations[0] !== "undefined"){
+                      var readSymbols = cursor.element.parent.annotations[0].text;
+                      if(!Parser.check_figured_bass_symbols(readSymbols)) throw ("Wrong symbols: "+symbols)
+                      for(var i = 0; i < readSymbols.length; i++){
+                        var symbol = "";
+                        while(i < readSymbols.length && readSymbols[i] !== "\n"){
+                              if(readSymbols[i] !== " " && readSymbols[i] !== "\t"){
+                                    symbol += readSymbols[i];
+                              }
+                              i++;
+                        }
+                        symbols.push(symbol);
+                      }
+                 }
                  lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);
-                 bassNote = new Note.Note(cursor.element.notes[0].pitch, lastBaseNote, 0);
+                 lastPitch = cursor.element.notes[0].pitch;
+                 bassNote = new Note.Note(lastPitch, lastBaseNote, 0);
                  elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols));
             } while(cursor.next())
-            console.log(curScore.keysig)
-            
+            lastPitch = lastPitch%12
+            var majorKey = Consts.majorKeyBySignature(curScore.keysig);
+            var minorKey = Consts.minorKeyBySignature(curScore.keysig);
+            if(Consts.keyStrPitch[majorKey]%12 === lastPitch && Consts.keyStrBase[majorKey] === lastBaseNote){
+                  key = majorKey;
+                  mode = "major";
+            } else{
+                  if(Consts.keyStrPitch[minorKey]%12 === lastPitch && Consts.keyStrBase[minorKey] === lastBaseNote){
+                        key = minorKey;
+                        mode = "minor";
+                  } else {
+                        throw ("Wrong last note. Bass line should end on Tonic.")
+                  }
+            }
+            return new FiguredBass.FiguredBassExercise(mode, key, meter, elements, durations);
     }
 
     function get_solution_date(){
@@ -87,15 +132,17 @@ MuseScore {
         }
 
 
-        function prepare_score_for_solution(filePath, solution, solution_date){
+        function prepare_score_for_solution(filePath, solution, solution_date, setDurations){
             readScore(filePath+"/template scores/"+solution.exercise.key+"_"+solution.exercise.mode+".mscz")
             writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
             closeScore(curScore)
             readScore(filePath+"/solutions/harmonic functions exercise/solution"+solution_date+".mscz")
-            solution.setDurations();
+            if (setDurations){
+               solution.setDurations();
+            }
         }
 
-        function fill_score_with_solution(solution){
+        function fill_score_with_solution(solution, durations){
             var cursor = curScore.newCursor();
             cursor.rewind(0)
             var ts = newElement(Element.TIMESIG)
@@ -108,6 +155,9 @@ MuseScore {
             var lastSegment = false
             for(var i=0; i<solution.chords.length; i++){
                 var curChord = solution.chords[i]
+                if (durations !== undefined){
+                  var dur = durations[i]
+                }
                 if(i === solution.chords.length - 1) lastSegment = true
 
                 function selectSoprano(cursor){
@@ -122,22 +172,38 @@ MuseScore {
                 function selectBass(cursor){
                     cursor.track = 5;
                 }
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectSoprano(cursor);
                 cursor.addNote(curChord.sopranoNote.pitch, false);
                 if(!lastSegment) cursor.prev();
 
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectAlto(cursor);
                 cursor.addNote(curChord.altoNote.pitch, false);
                 if(!lastSegment) cursor.prev()
 
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectTenor(cursor);
                 cursor.addNote(curChord.tenorNote.pitch, false);
                 if(!lastSegment) cursor.prev()
 
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectBass(cursor);
                 cursor.addNote(curChord.bassNote.pitch, false);
             }
@@ -247,7 +313,7 @@ MuseScore {
                 var solution = solver.solve();
                 var solution_date = get_solution_date()
 
-                prepare_score_for_solution(filePath, solution, solution_date)
+                prepare_score_for_solution(filePath, solution, solution_date, true)
 
                 fill_score_with_solution(solution)
 

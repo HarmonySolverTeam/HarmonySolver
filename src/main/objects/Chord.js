@@ -1,4 +1,3 @@
-
 function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     this.sopranoNote = sopranoNote
     this.altoNote = altoNote
@@ -8,7 +7,7 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     this.notes = [bassNote, tenorNote, altoNote, sopranoNote]
     this.duration = undefined
 
-    this.toString = function(){
+    this.toString = function () {
         var chordStr = "CHORD: \n";
         chordStr += this.sopranoNote.toString() + "\n";
         chordStr += this.altoNote.toString() + "\n";

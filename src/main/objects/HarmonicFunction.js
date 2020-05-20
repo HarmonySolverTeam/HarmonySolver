@@ -1,4 +1,3 @@
-
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
     this.functionName = functionName // "T", "S", "D"
     this.degree = degree             // int 
@@ -10,10 +9,22 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     this.down = down                 //true or false
     this.system = system             // "open" | "close"
 
-    this.getSymbol = function(){
-        return this.down?(this.functionName+"down"+this.extra):(this.functionName+this.extra)
+    this.getSymbol = function () {
+        return this.down ? (this.functionName + "down" + this.extra) : (this.functionName + this.extra)
     }
-    this.equals = function(other){
+    this.equals = function (other) {
         return this.functionName === other.functionName && this.degree === other.degree && this.down === other.down
+    }
+
+    this.toString = function () {
+        return this.functionName + " " +
+            this.degree + " " +
+            this.position + " " +
+            this.revolution + " " +
+            this.delay + " " +
+            this.extra + " " +
+            this.omit + " " +
+            this.down + " " +
+            this.system
     }
 }

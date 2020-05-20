@@ -3,6 +3,11 @@
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Utils.js" as Utils
 
+function check_figured_bass_symbols(symbols){
+    var figured_bass_symbols = /\s*((((#|b)?\d+)|(#|b))\s*)+/;
+    return figured_bass_symbols.test(symbols);
+}
+
 
 function get_valid_degree(arguments_json, chord_type) {
     if (arguments_json["degree"] !== undefined){
@@ -48,7 +53,7 @@ function parseChord(string) {
     //     if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
     //         ret[variable] = arguments_json[variable]
     //     }
-    // }
+    // }m
 
     ret.degree = get_valid_degree(arguments_json, chord_type)
     ret.position = arguments_json["position"] === undefined ? -1 : arguments_json["position"]
@@ -58,7 +63,7 @@ function parseChord(string) {
     addExtraNotesIfNecessary(ret.extra)
     ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
     ret.down = arguments_json["down"] === undefined ? false : arguments_json["down"]
-    ret.system = arguments_json["extra"]
+    ret.system = arguments_json["system"]
 
     return ret
 }

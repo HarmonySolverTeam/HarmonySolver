@@ -1,8 +1,7 @@
+function contains(list, obj) {
 
-function contains(list, obj){
-
-    for (var i = 0; i< list.length; i++){
-        if (list[i] === obj){
+    for (var i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
             return true
         }
     }
@@ -10,7 +9,7 @@ function contains(list, obj){
 
 }
 
-function abs(a){
-    return a>0?a:-a;
+function abs(a) {
+    return a > 0 ? a : -a;
 }
 
