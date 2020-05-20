@@ -338,6 +338,8 @@ function convertToFunctions(figuredBassExercise) {
 
         var harmFunction = createHarmonicFunctionOrFunctions(chordElement)
 
+        bassElements[i].bassNote.chordComponent = parseInt(harmFunction[0].revolution)
+
         console.log(harmFunction)
 
         ret.push(harmFunction) //todo moze sie tez pozniej przyda figuredbassexercise?
