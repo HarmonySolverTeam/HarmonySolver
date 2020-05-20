@@ -29,7 +29,7 @@ MuseScore {
       var ex = read_figured_bass();
       console.log(ex.elements);
       var exercise = Translator.createExerciseFromFiguredBass(ex)
-      console.log(exercise)
+      console.log(JSON.stringify(exercise))
 
       var solver = new Solver.Solver(exercise);
       var solution = solver.solve();

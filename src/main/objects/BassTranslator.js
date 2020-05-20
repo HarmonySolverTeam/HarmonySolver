@@ -78,20 +78,26 @@ function completeFiguredBassNumbers(element) {
             if (Utils.contains(element.symbols, "4")) {
                 element.symbols = ["3", "4", "6"]
                 return
-            } else {
+            } else if (Utils.contains(element.symbols, "5")){
                 // 3,5 -> 3,5
+                element.symbols = ["3", "5"]
+                return
+            } else if (Utils.contains(element.symbols, "6")) {
                 // 3,6 -> 3,6
+                element.symbols = ["3", "6"]
                 return
             }
+
         }
 
         if (Utils.contains(element.symbols, "4")) {
             //2,4 -> 2,4,6
-            if (Utils.contains(element.symbols, "4")) {
+            if (Utils.contains(element.symbols, "2")) {
                 element.symbols = ["2", "4", "6"]
                 return
             } else {
                 //4,6 -> 4,6
+                element.symbols = ["4", "6"]
                 return
             }
         }
@@ -120,10 +126,14 @@ function completeFiguredBassNumbers(element) {
 
         //6,5,7 -> 6,5,7 (but we save 5,6,7)
 
-        if (Utils.contains(element.symbols, "6") && Utils.contains(element.symbols, "6")
-            && Utils.contains(element.symbols, "6")) {
+        if (Utils.contains(element.symbols, "6") && Utils.contains(element.symbols, "5")
+            && Utils.contains(element.symbols, "7")) {
             element.symbols = ["5", "6", "7"]
+            return;
         }
+
+
+        element.symbols.sort(function(a,b){(parseInt(a) > parseInt(b)) ? 1 : -1})
 
         //3,5,7 -> 3,5,7
         //3,5,6 -> 3,5,6
@@ -140,7 +150,8 @@ function buildChordElement(bassElement) {
     var chordElement = new FiguredBass.ChordElement([bassElement.bassNote.baseNote], [], bassElement)
 
     for (var i = 0; i < bassElement.symbols.length; i++) {
-        chordElement.notesNumbers.push(parseInt(bassElement.symbols[i]))
+        chordElement.notesNumbers.push(bassElement.bassNote.baseNote
+            + parseInt(bassElement.symbols[i]) - 1)
     }
 
     return chordElement
@@ -203,12 +214,16 @@ function findPrime(chordElement) {
         scaleNotes.push(chordElement.notesNumbers[i] % 7)
     }
 
+    console.log(scaleNotes)
+
     for (var i = 0; i < scaleNotes.length; i++) {
         var note = scaleNotes[i]
+        console.log(note)
 
         while (Utils.contains(scaleNotes, (note - 2) % 7)) {
             note = (note - 2) % 7
         }
+        console.log(note)
 
         if (Utils.contains(scaleNotes, (note + 2) % 7) && Utils.contains(scaleNotes, (note + 4) % 7)) {
             primeNote = note
