@@ -29,8 +29,11 @@ MuseScore {
       var ex = read_figured_bass();
       console.log(ex.elements);
       var exercise = Translator.createExerciseFromFiguredBass(ex)
-      console.log(exercise)
-
+      console.log(JSON.stringify(exercise))
+      var bassLine = [];
+      for(var i = 0; i < ex.elements.length; i++){
+        bassLine.push(ex.elements[i].bassNote)
+      }
       var solver = new Solver.Solver(exercise);
       var solution = solver.solve();
       var solution_date = get_solution_date()
@@ -149,7 +152,10 @@ MuseScore {
             ts.timesig = fraction(solution.exercise.meter[0], solution.exercise.meter[1])
             cursor.add(ts)
 
-            curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+//todo change this to counting from durtaions
+//todo right now type in valid number
+            //curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+            curScore.appendMeasures(1)
 
             cursor.rewind(0)
             var lastSegment = false
