@@ -35,7 +35,7 @@ function makeChoiceAndSplit(functions) {
             }
         }
     }
-    return ret
+    return [ret]
 }
 
 function completeFiguredBassNumbers(element) {

@@ -35,9 +35,9 @@ MuseScore {
       var solution = solver.solve();
       var solution_date = get_solution_date()
 
-      prepare_score_for_solution(filePath, solution, solution_date)
+      prepare_score_for_solution(filePath, solution, solution_date, false)
 
-      fill_score_with_solution(solution)
+      fill_score_with_solution(solution, ex.durations)
 
       writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
 
@@ -132,15 +132,17 @@ MuseScore {
         }
 
 
-        function prepare_score_for_solution(filePath, solution, solution_date){
+        function prepare_score_for_solution(filePath, solution, solution_date, setDurations){
             readScore(filePath+"/template scores/"+solution.exercise.key+"_"+solution.exercise.mode+".mscz")
             writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
             closeScore(curScore)
             readScore(filePath+"/solutions/harmonic functions exercise/solution"+solution_date+".mscz")
-            solution.setDurations();
+            if (setDurations){
+               solution.setDurations();
+            }
         }
 
-        function fill_score_with_solution(solution){
+        function fill_score_with_solution(solution, durations){
             curScore.appendMeasures(solution.exercise.measures.length - 1);
             var cursor = curScore.newCursor();
             cursor.rewind(0)
@@ -151,6 +153,9 @@ MuseScore {
             var lastSegment = false
             for(var i=0; i<solution.chords.length; i++){
                 var curChord = solution.chords[i]
+                if (durations !== undefined){
+                  var dur = durations[i]
+                }
                 if(i === solution.chords.length - 1) lastSegment = true
 
                 function selectSoprano(cursor){
@@ -165,22 +170,38 @@ MuseScore {
                 function selectBass(cursor){
                     cursor.track = 5;
                 }
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectSoprano(cursor);
                 cursor.addNote(curChord.sopranoNote.pitch, false);
                 if(!lastSegment) cursor.prev();
 
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectAlto(cursor);
                 cursor.addNote(curChord.altoNote.pitch, false);
                 if(!lastSegment) cursor.prev()
 
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectTenor(cursor);
                 cursor.addNote(curChord.tenorNote.pitch, false);
                 if(!lastSegment) cursor.prev()
 
-                cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                if (durations !== undefined){
+                   cursor.setDuration(dur[0],dur[1])
+                } else {
+                   cursor.setDuration(curChord.duration[0],curChord.duration[1])
+                }
                 selectBass(cursor);
                 cursor.addNote(curChord.bassNote.pitch, false);
             }
@@ -290,7 +311,7 @@ MuseScore {
                 var solution = solver.solve();
                 var solution_date = get_solution_date()
 
-                prepare_score_for_solution(filePath, solution, solution_date)
+                prepare_score_for_solution(filePath, solution, solution_date, true)
 
                 fill_score_with_solution(solution)
 
