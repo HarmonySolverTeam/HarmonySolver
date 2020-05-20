@@ -11,7 +11,7 @@ import "./objects/Parser.js" as Parser
 import "./objects/FiguredBass.js" as FiguredBass
 import "./objects/Note.js" as Note
 import "./objects/Consts.js" as Consts
-import ".objects/BassTranslator.js" as Translator
+import "./objects/BassTranslator.js" as Translator
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
