@@ -300,7 +300,7 @@ function createHarmonicFunctionOrFunctions(chordElement) {
 
         var posAndRev = getValidPositionAndRevolution(toAdd, chordElement)
 
-        toAdd.position = posAndRev[0].toString()
+        toAdd.position = posAndRev[0]
         toAdd.revolution = posAndRev[1].toString()
         toAdd.omit = chordElement.omit
         toAdd.down = false
