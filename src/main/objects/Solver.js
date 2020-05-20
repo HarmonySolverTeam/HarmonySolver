@@ -31,7 +31,7 @@ function Solver(exercise, bassLine){
 
     this.findSolution = function(curr_index, prev_prev_chord, prev_chord){
         var chords;
-        if(typeof this.bassLine !== "undefined") chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [this.bassLine[curr_index], undefined, undefined, undefined])
+        if(this.bassLine != undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [this.bassLine[curr_index], undefined, undefined, undefined])
         else chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
         var good_chords = []
         

@@ -9,7 +9,7 @@ function Note(pitch, baseNote, chordComponent) {
     }
 
     this.equals = function(other){
-        return this.pitch == other.pitch && this.baseNote == other.baseNote && this.chordComponent == other.chordComponent;
+        return this.pitch == other.pitch;
     }
 
 }
