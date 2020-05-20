@@ -269,7 +269,7 @@ function getValidPositionAndRevolution(harmonicFunction, chordElement) {
     var bass = chordElement.bassElement.bassNote.baseNote
 
     while (bass !== prime) {
-        bass = (bass + 1) % 7
+        bass = (bass - 1) % 7
         revolution++
     }
 
