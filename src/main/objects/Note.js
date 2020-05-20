@@ -5,6 +5,7 @@ function Note(pitch, baseNote, chordComponent) {
     this.chordComponent = chordComponent
 
     this.toString = function(){
+        if(this.pitch == undefined) return undefined;
         return this.pitch + " " + this.baseNote + " " + this.chordComponent;
     }
 
