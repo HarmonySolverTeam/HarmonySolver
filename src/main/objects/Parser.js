@@ -63,7 +63,7 @@ function parseChord(string) {
     addExtraNotesIfNecessary(ret.extra)
     ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
     ret.down = arguments_json["down"] === undefined ? false : arguments_json["down"]
-    ret.system = arguments_json["extra"]
+    ret.system = arguments_json["system"]
 
     return ret
 }

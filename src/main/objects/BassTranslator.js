@@ -289,9 +289,9 @@ function createHarmonicFunctionOrFunctions(chordElement) {
         toAdd.revolution = posAndRev[1].toString()
         toAdd.omit = chordElement.omit
         toAdd.down = false
-        toAdd.system = ?
-        toAdd.delay = ?
-        toAdd.extra = ?
+        toAdd.system = undefined
+        //toAdd.delay = ?
+        toAdd.extra = []
 
         ret.push(toAdd)
     }
