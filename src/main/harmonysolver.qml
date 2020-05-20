@@ -149,7 +149,10 @@ MuseScore {
             ts.timesig = fraction(solution.exercise.meter[0], solution.exercise.meter[1])
             cursor.add(ts)
 
-            curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+//todo change this to counting from durtaions
+//todo right now type in valid number
+            //curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+            curScore.appendMeasures(1)
 
             cursor.rewind(0)
             var lastSegment = false
