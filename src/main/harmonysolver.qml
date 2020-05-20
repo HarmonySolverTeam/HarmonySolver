@@ -30,7 +30,10 @@ MuseScore {
       console.log(ex.elements);
       var exercise = Translator.createExerciseFromFiguredBass(ex)
       console.log(JSON.stringify(exercise))
-
+      var bassLine = [];
+      for(var i = 0; i < ex.elements.length; i++){
+        bassLine.push(ex.elements[i].bassNote)
+      }
       var solver = new Solver.Solver(exercise);
       var solution = solver.solve();
       var solution_date = get_solution_date()
