@@ -246,7 +246,7 @@ function ChordGenerator(key) {
 
     }
 
-    this.generate = function (harmonicFunction, givenPitches) {
+    this.generate = function (harmonicFunction, givenNotes) {
 
         var chords = [];
         var temp = this.getChordTemplate(harmonicFunction);
@@ -308,12 +308,45 @@ function ChordGenerator(key) {
 
         //filtering in case of given system (open/close)
         if (harmonicFunction.system !== undefined) {
-            if (harmonicFunction.system == "open") {
 
-            }
-            if (harmonicFunction.system == 'close') {
+            chords = chords.filter(function (chord) {
+                // console.log("\n");
+                // console.log(chord.toString());
+                var isInOpenInterval = function(pitch, interval){
+                    for(var i= interval[0] + 1; i<interval[1];i++){
+                        if( (i % 12) == (pitch % 12) ) return true;
+                    }
+                    return false;
+                }
 
-            }
+                var xor = function(p,q){
+                    return (p || q) && !(p && q)
+                }
+
+                var interval1 = [chord.altoNote.pitch, chord.sopranoNote.pitch];
+                var interval2 = [chord.tenorNote.pitch, chord.altoNote.pitch];
+                // console.log(interval1)
+                // console.log(interval2)
+                
+                var p = isInOpenInterval(chord.bassNote.pitch, interval1);
+                var q = isInOpenInterval(chord.tenorNote.pitch, interval1);
+                
+                var r = isInOpenInterval(chord.bassNote.pitch, interval2);
+                var s = isInOpenInterval(chord.sopranoNote.pitch, interval2);
+                // console.log( p + " " + q + " " + r + " " + s)
+
+                if(chord.harmonicFunction.system == "open") {
+                    var t = (chord.bassNote.chordComponent == chord.tenorNote.chordComponent);
+                    var u = (chord.bassNote.chordComponent == chord.sopranoNote.chordComponent); 
+                    
+                    return (xor(p,q) || (t && p && q)) && (xor(r,s) || (u && r && s));
+                }
+                if(chord.harmonicFunction.system == "close") return (!p && !q && !r && !s);
+                console.log("ILLEGAL system in harmonicFunction: " + chord.harmonicFunction.system)
+                return true;
+            });
+
+
         }
 
         // console.log("CHORDS:");
@@ -321,16 +354,16 @@ function ChordGenerator(key) {
         // console.log("CHORDS END:");
 
         // filtering chords with given pitches
-        if (givenPitches != undefined) {
+        if (givenNotes != undefined) {
             chords = chords.filter(function (chord) {
                 function eq(x, y) {
-                    return x == y || y == undefined
+                    return y == undefined || x.equals(y)
                 }
 
-                return eq(chord.bassNote.pitch, chord[0]) &&
-                    eq(chord.tenorNote.pitch, chord[1]) &&
-                    eq(chord.altoNote.pitch, chord[2]) &&
-                    eq(chord.sopranoNote.pitch, chord[3])
+                return eq(chord.bassNote, givenNotes[0]) &&
+                    eq(chord.tenorNote, givenNotes[1]) &&
+                    eq(chord.altoNote, givenNotes[2]) &&
+                    eq(chord.sopranoNote, givenNotes[3])
             })
         }
 
