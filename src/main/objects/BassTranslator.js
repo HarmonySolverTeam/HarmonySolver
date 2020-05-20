@@ -1,3 +1,9 @@
+.import "./objects/FiguredBass.js" as FiguredBass
+.import "./Utils.js" as Utils
+.import "./HarmonicFunction.js" as HarmonicFunction
+.import "./Exercise.js" as Exercise
+
+
 function makeChoiceAndSplit(functions) {
 
     var ret = []
@@ -42,34 +48,34 @@ function completeFiguredBassNumbers(element) {
 
     if (element.symbols.length === 1) {
         // 5 -> 3,5
-        if (contains(element.symbols, "5")) {
+        if (Utils.contains(element.symbols, "5")) {
             element.symbols = ["3", "5"]
             return
         }
 
         // 6 -> 3,6
-        if (contains(element.symbols, '6')) {
+        if (Utils.contains(element.symbols, '6')) {
             element.symbols = ["3", '6']
             return
         }
 
         // 7 -> 3,5,7
-        if (contains(element.symbols, "7")) {
+        if (Utils.contains(element.symbols, "7")) {
             element.symbols = ['3', "5", '7']
             return
         }
 
         //2 -> 2,4,6
-        if (contains(element.symbols, "2")) {
+        if (Utils.contains(element.symbols, "2")) {
             element.symbols = ["2", "4", "6"]
             return
         }
     }
 
     if (element.symbols.length === 2) {
-        if (contains(element.symbols, "3")) {
+        if (Utils.contains(element.symbols, "3")) {
             //3,4 -> 3,4,6
-            if (contains(element.symbols, "4")) {
+            if (Utils.contains(element.symbols, "4")) {
                 element.symbols = ["3", "4", "6"]
                 return
             } else {
@@ -79,9 +85,9 @@ function completeFiguredBassNumbers(element) {
             }
         }
 
-        if (contains(element.symbols, "4")) {
+        if (Utils.contains(element.symbols, "4")) {
             //2,4 -> 2,4,6
-            if (contains(element.symbols, "4")) {
+            if (Utils.contains(element.symbols, "4")) {
                 element.symbols = ["2", "4", "6"]
                 return
             } else {
@@ -90,12 +96,12 @@ function completeFiguredBassNumbers(element) {
             }
         }
 
-        if (contains(element.symbols, "5")) {
+        if (Utils.contains(element.symbols, "5")) {
             //5,7 -> 3,5,7
-            if (contains(element.symbols, "7")) {
+            if (Utils.contains(element.symbols, "7")) {
                 element.symbols = ["3", "5", "7"]
                 return
-            } else if (contains(element.symbols, "6")) {
+            } else if (Utils.contains(element.symbols, "6")) {
                 //5,6 -> 3,5,6
                 element.symbols = ["3", "5", "6"]
                 return
@@ -103,7 +109,7 @@ function completeFiguredBassNumbers(element) {
         }
 
         //2,10 -> 2,4,10
-        if (contains(element.symbols, "2")) {
+        if (Utils.contains(element.symbols, "2")) {
             element.symbols = ["2", "4", "10"]
             return
         }
@@ -114,8 +120,8 @@ function completeFiguredBassNumbers(element) {
 
         //6,5,7 -> 6,5,7 (but we save 5,6,7)
 
-        if (contains(element.symbols, "6") && contains(element.symbols, "6")
-            && contains(element.symbols, "6")) {
+        if (Utils.contains(element.symbols, "6") && Utils.contains(element.symbols, "6")
+            && Utils.contains(element.symbols, "6")) {
             element.symbols = ["5", "6", "7"]
         }
 
@@ -129,30 +135,26 @@ function completeFiguredBassNumbers(element) {
     }
 }
 
-function buildChordElement(element) {
+function buildChordElement(bassElement) {
 
-    var chordElement = Object()
-    chordElement.notesNumbers = [element.bassNote.baseNote]
-    chordElement.omit = []
+    var chordElement = new FiguredBass.ChordElement([bassElement.bassNote.baseNote], [], bassElement)
 
-    chordElement.bassElement = element
-
-    for (var i = 0; i < element.symbols.length; i++) {
-        chordElement.notesNumbers.push(parseInt(element.symbols[i]))
+    for (var i = 0; i < bassElement.symbols.length; i++) {
+        chordElement.notesNumbers.push(parseInt(bassElement.symbols[i]))
     }
 
     return chordElement
 }
 
-function hasTwoNextThirds(chordelement) {
-    for (var i = 0; i < chordelement.notesNumbers.length; i++) {
+function hasTwoNextThirds(chordElement) {
+    for (var i = 0; i < chordElement.notesNumbers.length; i++) {
 
-        var n1 = chordelement.notesNumbers[i] % 7
-        var n2 = chordelement.notesNumbers[(i + 1) % chordelement.notesNumbers.length] % 7
-        var n3 = chordelement.notesNumbers[(i + 2) % chordelement.notesNumbers.length] % 7
+        var n1 = chordElement.notesNumbers[i] % 7
+        var n2 = chordElement.notesNumbers[(i + 1) % chordElement.notesNumbers.length] % 7
+        var n3 = chordElement.notesNumbers[(i + 2) % chordElement.notesNumbers.length] % 7
 
-        if ((abs(n2 - n1) === 2 || abs(n2 - n1) === 5)
-            && (abs(n3 - n2) === 2 || abs(n3 - n2) === 5)) {
+        if ((Utils.abs(n2 - n1) === 2 || Utils.abs(n2 - n1) === 5)
+            && (Utils.abs(n3 - n2) === 2 || Utils.abs(n3 - n2) === 5)) {
             return true
         }
 
@@ -204,11 +206,11 @@ function findPrime(chordElement) {
     for (var i = 0; i < scaleNotes.length; i++) {
         var note = scaleNotes[i]
 
-        while (contains(scaleNotes, (note - 2) % 7)) {
+        while (Utils.contains(scaleNotes, (note - 2) % 7)) {
             note = (note - 2) % 7
         }
 
-        if (contains(scaleNotes, (note + 2) % 7) && contains(scaleNotes, (note + 4) % 7)) {
+        if (Utils.contains(scaleNotes, (note + 2) % 7) && Utils.contains(scaleNotes, (note + 4) % 7)) {
             primeNote = note
             break
         }
@@ -249,7 +251,7 @@ function getValidPositionAndRevolution(harmonicFunction, chordElement) {
 
     var prime = chordElement.primeNote
 
-    var bass = chordElement.bassNote.baseNote
+    var bass = chordElement.bassElement.bassNote.baseNote
 
     while (bass !== prime) {
         bass = (bass + 1) % 7
@@ -275,7 +277,7 @@ function createHarmonicFunctionOrFunctions(chordElement) {
 
     for (var i = 0; i < functions.length; i++) {
 
-        var toAdd = new HarmonicFuntion()
+        var toAdd = new HarmonicFunction.HarmonicFunction()
 
         toAdd.functionName = functions[i]
 
@@ -311,7 +313,7 @@ function convertToFunctions(figuredBassExercise) {
 
         findPrime(chordElement)
 
-        ret.push(createHarmonicFunctionOrFunctions(chordElement)) //todo moze sie tez przyda figuredbassexercise?
+        ret.push(createHarmonicFunctionOrFunctions(chordElement)) //todo moze sie tez pozniej przyda figuredbassexercise?
     }
 
     return ret
@@ -328,6 +330,6 @@ function convertBassToHarmonicFunctions(figuredBassExercise) {
 function createExerciseFromFiguredBass(figuredBassExercise) {
     var harmonicFunctions = convertBassToHarmonicFunctions(figuredBassExercise)
 
-    return new Exercise(figuredBassExercise.key, figuredBassExercise.meter,
+    return new Exercise.Exercise(figuredBassExercise.key, figuredBassExercise.meter,
         figuredBassExercise.mode, harmonicFunctions)
 }

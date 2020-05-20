@@ -17,3 +17,10 @@ function FiguredBassExercise(mode, key, meter, elements, durations){
     this.elements = elements;
     this.durations = durations;
 }
+
+function ChordElement(notesNumbers, omit, bassElement){
+    this.notesNumbers = notesNumbers
+    this.omit = omit
+    this.bassElement = bassElement
+    this.primeNote = undefined
+}

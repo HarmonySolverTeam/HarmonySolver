@@ -34,6 +34,15 @@ function FiguredBassElement(bassNote, symbols) {
 
 }
 
+
+function ChordElement(notesNumbers, omit, bassElement){
+    this.notesNumbers = notesNumbers
+    this.omit = omit
+    this.bassElement = bassElement
+    this.primeNote = undefined
+}
+
+
 function makeChoiceAndSplit(functions) {
 
     var ret = []
@@ -165,27 +174,23 @@ function completeFiguredBassNumbers(element) {
     }
 }
 
-function buildChordElement(element) {
+function buildChordElement(bassElement) {
 
-    var chordElement = Object()
-    chordElement.notesNumbers = [element.bassNote.baseNote]
-    chordElement.omit = []
+    var chordElement = new ChordElement([bassElement.bassNote.baseNote], [], bassElement)
 
-    chordElement.bassElement = element
-
-    for (var i = 0; i < element.symbols.length; i++) {
-        chordElement.notesNumbers.push(parseInt(element.symbols[i]))
+    for (var i = 0; i < bassElement.symbols.length; i++) {
+        chordElement.notesNumbers.push(parseInt(bassElement.symbols[i]))
     }
 
     return chordElement
 }
 
-function hasTwoNextThirds(chordelement) {
-    for (var i = 0; i < chordelement.notesNumbers.length; i++) {
+function hasTwoNextThirds(chordElement) {
+    for (var i = 0; i < chordElement.notesNumbers.length; i++) {
 
-        var n1 = chordelement.notesNumbers[i] % 7
-        var n2 = chordelement.notesNumbers[(i + 1) % chordelement.notesNumbers.length] % 7
-        var n3 = chordelement.notesNumbers[(i + 2) % chordelement.notesNumbers.length] % 7
+        var n1 = chordElement.notesNumbers[i] % 7
+        var n2 = chordElement.notesNumbers[(i + 1) % chordElement.notesNumbers.length] % 7
+        var n3 = chordElement.notesNumbers[(i + 2) % chordElement.notesNumbers.length] % 7
 
         if ((abs(n2 - n1) === 2 || abs(n2 - n1) === 5)
             && (abs(n3 - n2) === 2 || abs(n3 - n2) === 5)) {
@@ -285,7 +290,7 @@ function getValidPositionAndRevolution(harmonicFunction, chordElement) {
 
     var prime = chordElement.primeNote
 
-    var bass = chordElement.bassNote.baseNote
+    var bass = chordElement.bassElement.bassNote.baseNote
 
     while (bass !== prime) {
         bass = (bass + 1) % 7
@@ -347,7 +352,7 @@ function convertToFunctions(figuredBassExercise) {
 
         findPrime(chordElement)
 
-        ret.push(createHarmonicFunctionOrFunctions(chordElement)) //todo moze sie tez przyda figuredbassexercise?
+        ret.push(createHarmonicFunctionOrFunctions(chordElement)) //todo moze sie tez pozniej przyda figuredbassexercise?
     }
 
     return ret
@@ -395,7 +400,30 @@ function test_completeFiguredBassNumbers(){
     console.log(test_complete.symbols)
 }
 
+function test_makeChoiceAndSplit() {
+
+    var ton = new Object()
+    ton.functionName = "T"
+    var sub = new Object()
+    sub.functionName = "S"
+    var dom = new Object()
+    dom.functionName = "D"
+
+    var functions = [[ton,sub],[sub],[ton, sub],[dom],[ton,sub],[sub],[ton, dom],[sub],[ton, dom],[sub],[ton,dom]]
+
+    var test = makeChoiceAndSplit(functions)
+
+    console.log(test)
+
+}
 
 
 
 
+
+
+
+
+///tests
+test_completeFiguredBassNumbers()
+test_makeChoiceAndSplit()

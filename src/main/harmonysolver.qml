@@ -11,6 +11,7 @@ import "./objects/Parser.js" as Parser
 import "./objects/FiguredBass.js" as FiguredBass
 import "./objects/Note.js" as Note
 import "./objects/Consts.js" as Consts
+import ".objects/BassTranslator.js" as Translator
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -27,6 +28,11 @@ MuseScore {
     onRun: {
       var ex = read_figured_bass();
       console.log(ex.elements);
+      var exercise = Translator.createExerciseFromFiguredBass(ex)
+      console.log(exercise)
+
+
+
       // translate (remember about durations attribute!)
       // solve first exercise
       // print solution (remember about durations)
