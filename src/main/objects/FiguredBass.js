@@ -1,7 +1,22 @@
+var ALTERATION_TYPE = {
+  SHARP : "#",
+  FLAT : 'b',
+  NATURAL : 'h'
+};
+
+function BassSymbol(component, alteration){
+    this.component = component;
+    this.alteration = alteration;
+
+    this.toString = function() {
+        return this.component + " " + this.alteration
+    }
+}
+
 function FiguredBassElement(bassNote, symbols) {
 
     this.bassNote = bassNote;
-    this.symbols = symbols;
+    this.symbols = symbols; //list of BassSymbols
 
 
     this.toString = function () {

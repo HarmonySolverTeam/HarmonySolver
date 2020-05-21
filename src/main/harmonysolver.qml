@@ -26,7 +26,6 @@ MuseScore {
     id:window
     width:  800; height: 500;
     onRun: {
-      
     }
 
 
@@ -64,6 +63,7 @@ MuseScore {
             var elements = [];
             var bassNote, key, mode;
             var durations = [];
+            var has3component = false;
             var lastBaseNote, lastPitch;
             var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
             do {
@@ -73,14 +73,23 @@ MuseScore {
                       var readSymbols = cursor.element.parent.annotations[0].text;
                       if(!Parser.check_figured_bass_symbols(readSymbols)) throw ("Wrong symbols: "+symbols)
                       for(var i = 0; i < readSymbols.length; i++){
-                        var symbol = "";
+                        var component = "", alteration = undefined;
                         while(i < readSymbols.length && readSymbols[i] !== "\n"){
                               if(readSymbols[i] !== " " && readSymbols[i] !== "\t"){
-                                    symbol += readSymbols[i];
+                                    if(readSymbols[i] === "#" || readSymbols[i] === "b" || readSymbols === "h")
+                                          alteration = readSymbols[i];
+                                    else component += readSymbols[i];
                               }
                               i++;
                         }
-                        symbols.push(symbol);
+                        if(component === ""){
+                              if(has3component) throw ("Cannot twice define 3: "+symbols)
+                              else{
+                                    symbols.push(new FiguredBass.BassSymbol(3, alteration));
+                                    has3component = true;    
+                              }
+                        }
+                        else symbols.push(new FiguredBass.BassSymbol(parseInt(component), alteration));
                       }
                  }
                  lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);

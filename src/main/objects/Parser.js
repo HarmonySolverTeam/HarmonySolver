@@ -4,7 +4,7 @@
 .import "./Utils.js" as Utils
 
 function check_figured_bass_symbols(symbols){
-    var figured_bass_symbols = /\s*((((#|b)?\d+)|(#|b))\s*)+/;
+    var figured_bass_symbols = /\s*(((([#bh])?\d+)|([#bh]))\s*)+/;
     return figured_bass_symbols.test(symbols);
 }
 
