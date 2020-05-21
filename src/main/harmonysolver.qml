@@ -26,27 +26,7 @@ MuseScore {
     id:window
     width:  800; height: 500;
     onRun: {
-      var ex = read_figured_bass();
-      console.log(ex.elements);
-      var exercise = Translator.createExerciseFromFiguredBass(ex)
-      console.log(JSON.stringify(exercise))
-      var bassLine = [];
-      for(var i = 0; i < ex.elements.length; i++){
-        bassLine.push(ex.elements[i].bassNote)
-      }
-      var solver = new Solver.Solver(exercise, bassLine);
-      var solution = solver.solve();
-      var solution_date = get_solution_date()
-
-      prepare_score_for_solution(filePath, solution, solution_date, false)
-
-      fill_score_with_solution(solution, ex.durations)
-
-      writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
-
-      // translate (remember about durations attribute!)
-      // solve first exercise
-      // print solution (remember about durations)
+      
     }
 
 
@@ -327,6 +307,39 @@ MuseScore {
                 Qt.quit()
                 }
               }
+            Button {
+              id : buttonRunFiguredBass
+              text: qsTr("FiguredBass")
+              anchors.bottom: window.bottom
+              anchors.left: buttonRun.right
+              anchors.topMargin: 10
+              anchors.bottomMargin: 10
+              anchors.leftMargin: 40
+              onClicked: {
+                var ex = read_figured_bass();
+                console.log(ex.elements);
+                var exercise = Translator.createExerciseFromFiguredBass(ex)
+                console.log(JSON.stringify(exercise))
+                var bassLine = [];
+                for(var i = 0; i < ex.elements.length; i++){
+                    bassLine.push(ex.elements[i].bassNote)
+                }
+                var solver = new Solver.Solver(exercise, bassLine);
+                var solution = solver.solve();
+                var solution_date = get_solution_date()
+                console.log(solution)
+
+                prepare_score_for_solution(filePath, solution, solution_date, false)
+
+                fill_score_with_solution(solution, ex.durations)
+
+                writeScore(curScore, filePath+"/solutions/harmonic functions exercise/solution"+solution_date,"mscz")
+
+                // translate (remember about durations attribute!)
+                // solve first exercise
+                // print solution (remember about durations)
+            }
+          }
 
           Button {
               id : buttonCancel
