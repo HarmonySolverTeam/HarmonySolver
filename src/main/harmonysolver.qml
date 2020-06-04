@@ -174,10 +174,24 @@ MuseScore {
             ts.timesig = fraction(solution.exercise.meter[0], solution.exercise.meter[1])
             cursor.add(ts)
 
-//todo change this to counting from durtaions
 //todo right now type in valid number
-            //curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
-            curScore.appendMeasures(1)
+
+            if(durations !== undefined){
+                var countMeasures = function(durations){
+                    var sum = 0;
+                    for(var i=0; i<durations.length;i++){
+                       console.log(durations[i][0]/durations[i][1])
+                       sum += durations[i][0]/durations[i][1];
+                    }
+                    return Math.round(sum);
+                }
+
+                var sum = countMeasures(durations);
+                curScore.appendMeasures(sum - curScore.nmeasures)
+            }
+            else{
+                curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+            }
 
             cursor.rewind(0)
             var lastSegment = false

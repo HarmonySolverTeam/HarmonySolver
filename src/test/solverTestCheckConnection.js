@@ -5,7 +5,13 @@ var HarmonicFunction = require("./objects/HarmonicFunction")
 var Parser = require("./objects/Parser")
 var Solver = require("./objects/Solver")
 
-var input ="C\n3/4\nT{}\nD{}\nT{}\n";
+var fs = require('fs');
+var path = process.cwd();
+var buffer = fs.readFileSync(path + "\\examples\\targosz_p61_ex16.txt");
+
+var input = buffer.toString();
+input = input.replace("\r\n", "\n")
+
 console.log(input);
 
 var ex = Parser.parse(input);
@@ -17,7 +23,8 @@ console.log(solution)
 
 solution.chords.forEach(element => {
     console.log("\n\n");
-    console.log(element);
-    
+    console.log(element);    
 });
+
+console.log(solution.chords.length)
 
