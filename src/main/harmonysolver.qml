@@ -12,6 +12,7 @@ import "./objects/FiguredBass.js" as FiguredBass
 import "./objects/Note.js" as Note
 import "./objects/Consts.js" as Consts
 import "./objects/BassTranslator.js" as Translator
+import "./objects/SopranoExercise.js" as SopranoExercise
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -26,6 +27,38 @@ MuseScore {
     id:window
     width:  800; height: 500;
     onRun: {
+      var cursor = curScore.newCursor();
+      cursor.rewind(0);
+      var sopranoNote, key, mode;
+      var durations = [];
+      var lastBaseNote, lastPitch;
+      var lastPitch, lastBaseNote;
+      var notes = [];
+      var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
+      do {
+            durations.push([cursor.element.duration.numerator,cursor.element.duration.denominator]);
+            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc+1)%7);
+            lastPitch = cursor.element.notes[0].pitch;
+            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0);
+            notes.push(sopranoNote);
+      } while(cursor.next())
+      lastPitch = lastPitch%12
+      var majorKey = Consts.majorKeyBySignature(curScore.keysig);
+      var minorKey = Consts.minorKeyBySignature(curScore.keysig);
+      if(Consts.keyStrPitch[majorKey]%12 === lastPitch && Consts.keyStrBase[majorKey] === lastBaseNote){
+            key = majorKey;
+            mode = "major";
+      } else{
+            if(Consts.keyStrPitch[minorKey]%12 === lastPitch && Consts.keyStrBase[minorKey] === lastBaseNote){
+                  key = minorKey;
+                  mode = "minor";
+            } else {
+                  throw ("Wrong last note. Bass line should end on Tonic.")
+            }
+      }
+      var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key, meter, notes, durations);
+      console.log(sopranoExercise)
+      
     }
 
 
