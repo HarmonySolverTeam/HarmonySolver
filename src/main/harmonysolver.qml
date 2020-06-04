@@ -27,12 +27,12 @@ MuseScore {
     id:window
     width:  800; height: 500;
     onRun: {
+      var mode = "major"; //should be read from input
       var cursor = curScore.newCursor();
       cursor.rewind(0);
       var sopranoNote, key, mode;
       var durations = [];
       var lastBaseNote, lastPitch;
-      var lastPitch, lastBaseNote;
       var notes = [];
       var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator];
       do {
@@ -42,20 +42,9 @@ MuseScore {
             sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0);
             notes.push(sopranoNote);
       } while(cursor.next())
-      lastPitch = lastPitch%12
-      var majorKey = Consts.majorKeyBySignature(curScore.keysig);
-      var minorKey = Consts.minorKeyBySignature(curScore.keysig);
-      if(Consts.keyStrPitch[majorKey]%12 === lastPitch && Consts.keyStrBase[majorKey] === lastBaseNote){
-            key = majorKey;
-            mode = "major";
-      } else{
-            if(Consts.keyStrPitch[minorKey]%12 === lastPitch && Consts.keyStrBase[minorKey] === lastBaseNote){
-                  key = minorKey;
-                  mode = "minor";
-            } else {
-                  throw ("Wrong last note. Bass line should end on Tonic.")
-            }
-      }
+      var key;
+      if(mode === "major") key = Consts.majorKeyBySignature(curScore.keysig);
+      else key = Consts.minorKeyBySignature(curScore.keysig);
       var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key, meter, notes, durations);
       console.log(sopranoExercise)
       
@@ -174,27 +163,13 @@ MuseScore {
             ts.timesig = fraction(solution.exercise.meter[0], solution.exercise.meter[1])
             cursor.add(ts)
 
+//todo change this to counting from durtaions
 //todo right now type in valid number
+            //curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
+            curScore.appendMeasures(1)
 
-            if(durations !== undefined){
-                var countMeasures = function(durations){
-                    var sum = 0;
-                    for(var i=0; i<durations.length;i++){
-                       console.log(durations[i][0]/durations[i][1])
-                       sum += durations[i][0]/durations[i][1];
-                    }
-                    return Math.round(sum);
-                }
-
-                var sum = countMeasures(durations);
-                curScore.appendMeasures(sum - curScore.nmeasures)
-            }
-            else{
-                curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
-            }
-
-            cursor.rewind(0)
-            var lastSegment = false
+            cursor.rewind(0);
+            var lastSegment = false;
             for(var i=0; i<solution.chords.length; i++){
                 var curChord = solution.chords[i]
                 if (durations !== undefined){
@@ -228,6 +203,7 @@ MuseScore {
                 } else {
                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
                 }
+                addComponentToScore(cursor, curChord.sopranoNote.chordComponent);
                 selectAlto(cursor);
                 cursor.addNote(curChord.altoNote.pitch, false);
                 if(!lastSegment) cursor.prev()
@@ -237,6 +213,7 @@ MuseScore {
                 } else {
                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
                 }
+                addComponentToScore(cursor, curChord.altoNote.chordComponent);
                 selectTenor(cursor);
                 cursor.addNote(curChord.tenorNote.pitch, false);
                 if(!lastSegment) cursor.prev()
@@ -246,10 +223,25 @@ MuseScore {
                 } else {
                    cursor.setDuration(curChord.duration[0],curChord.duration[1])
                 }
+                addComponentToScore(cursor, curChord.tenorNote.chordComponent);
                 selectBass(cursor);
                 cursor.addNote(curChord.bassNote.pitch, false);
             }
-
+            
+            //sth was not working when I added this in upper "for loop"
+            cursor.rewind(0);
+            for(var i = 0; i < solution.chords.length; i++){
+                addComponentToScore(cursor, solution.chords[i].bassNote.chordComponent);
+                cursor.next();
+            }
+        }
+        
+        function addComponentToScore(cursor, componentValue){
+            var component = newElement(Element.FINGERING);
+            component.text = componentValue;
+            curScore.startCmd();
+            cursor.add(component);
+            curScore.endCmd();
         }
 
         FileIO {
