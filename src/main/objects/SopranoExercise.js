@@ -6,7 +6,7 @@ function SopranoExercise(mode, key, meter, notes, durations){
     this.durations = durations; // list of durations corresponding to notes
 
     this.toString = function(){
-        return this.mode+" "+this.key+" "+this.meter+" "+this.notes+" "+durations;
+        return this.mode+" "+this.key+" "+this.meter+" "+this.notes+" "+this.durations;
     }
 }
 
