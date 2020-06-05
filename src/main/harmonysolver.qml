@@ -264,7 +264,9 @@ MuseScore {
                                                                   meter, notes,
                                                                   durations)
 
-        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise, [], functionsList)
+        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
+                                                                    [],
+                                                                    functionsList)
         console.log(sopranoExercise)
     }
 
@@ -313,22 +315,30 @@ MuseScore {
         return true
     }
 
-    function getPossibleChordsList(){
-        //todo
+    function getPossibleChordsList() {
 
-        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [], [], false)
-        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [], false)
-        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [], false)
+        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [],
+                                                      [], false)
+        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [],
+                                                      [], false)
+        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+                                                      [], false)
 
-        var D7 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], ["7"], [],false)
-        var D9 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], ["7","9"], [],false)
+        var D7 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+                                                       ["7"], [], false)
+        var D9 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+                                                       ["7", "9"], [], false)
         //todo jak to uzupelnic?
-        var T6 = new HarmonicFunction.HarmonicFunction("T", 6, -1, "1", [], [], [],false)
-        var S2 = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", [], [], [],false)
-        var chopin = new HarmonicFunction.HarmonicFunction("D", 1, -1, "1", [], [], [],false)
-        var neapol = new HarmonicFunction.HarmonicFunction("S", 1, -1, "1", [], [], [],false)
-        var S6 = new HarmonicFunction.HarmonicFunction("S", 6, -1, "1", [], [], [],false)
-
+        var T6 = new HarmonicFunction.HarmonicFunction("T", 6, -1, "1", [], [],
+                                                       [], false)
+        var S2 = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", [], [],
+                                                       [], false)
+        var chopin = new HarmonicFunction.HarmonicFunction("D", 1, -1, "1", [],
+                                                           [], [], false)
+        var neapol = new HarmonicFunction.HarmonicFunction("S", 1, -1, "1", [],
+                                                           [], [], false)
+        var S6 = new HarmonicFunction.HarmonicFunction("S", 6, -1, "1", [], [],
+                                                       [], false)
 
         var chordsList = []
         chordsList.push(T)
@@ -358,8 +368,6 @@ MuseScore {
         }
 
         //todo later also revolutions and delays
-
-
         return chordsList
     }
 
@@ -566,31 +574,28 @@ MuseScore {
                 Rectangle {
                     id: tabRectangle3
 
-                    function getCheckboxState(function_name){
-                        if (function_name === "D7"){
+                    function getCheckboxState(function_name) {
+                        if (function_name === "D7") {
                             return d7Checkbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "D9"){
+                        if (function_name === "D9") {
                             return d9Checkbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "T6"){
+                        if (function_name === "T6") {
                             return t6Checkbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "S2"){
+                        if (function_name === "S2") {
                             return s2Checkbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "Chopin"){
+                        if (function_name === "Chopin") {
                             return chopinCheckbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "S6"){
+                        if (function_name === "S6") {
                             return s6Checkbox.checkedState === Qt.Checked
-
                         }
-                        if (function_name === "Neapol"){
+                        if (function_name === "Neapol") {
                             return neapolitanCheckbox.checkedState === Qt.Checked
-
                         }
-
                     }
 
                     Label {
@@ -605,7 +610,7 @@ MuseScore {
                         anchors.topMargin: 20
                         font.pixelSize: 20
                     }
-//todo pododawac id do checkboxow
+
                     Column {
                         id: tColumnt
                         anchors.top: textLabelSoprano.bottom
