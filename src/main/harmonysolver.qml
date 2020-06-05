@@ -300,15 +300,15 @@ MuseScore {
         // print solution (remember about durations)
     }
 
-    function isFiguredBassScore(){
-
-
-
-
-
+    function isFiguredBassScore() {
+        //todo
+        return true
     }
 
-
+    function isSopranoScore() {
+        //todo
+        return true
+    }
 
     FileIO {
         id: myFileAbc
@@ -420,9 +420,10 @@ MuseScore {
                         id: buttonRun
                         text: qsTr("Solve")
                         anchors.bottom: tabRectangle1.bottom
-                        anchors.left: buttonParse.right
+                        anchors.right: tabRectangle1.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
+                        anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
                             var solver = new Solver.Solver(exercise)
@@ -456,13 +457,12 @@ MuseScore {
                         anchors.right: tabRectangle2.right
                         anchors.bottom: tabRectangle2.bottom
                         onClicked: {
-                            if (isFiguredBassScore()){
+                            if (isFiguredBassScore()) {
+                                textAreaFigured.text = ""
                                 figuredBassSolve()
                             } else {
-                                infoText.text = "ERROR! No score with figured bass!"
+                                textAreaFigured.text = "ERROR! No score with figured bass!"
                             }
-
-
                         }
                     }
 
@@ -490,7 +490,7 @@ MuseScore {
                     }
 
                     TextArea {
-                        id: textArea
+                        id: textAreaFigured
                         anchors.top: infoText.bottom
                         anchors.left: tabRectangle2.left
                         anchors.right: tabRectangle2.right
@@ -504,10 +504,7 @@ MuseScore {
                         readOnly: true
                         font.pixelSize: 14
                     }
-
-
                 }
-
             }
             Tab {
 
@@ -519,7 +516,7 @@ MuseScore {
                     Label {
                         id: textLabelSoprano
                         wrapMode: Text.WordWrap
-                        text: qsTr("Select all harmonic functions that you want to use for soprano harmonization:")
+                        text: qsTr("Select all harmonic functions that you want to use for soprano\nharmonization:")
                         font.pointSize: 12
                         anchors.left: tabRectangle3.left
                         anchors.top: tabRectangle3.top
@@ -528,19 +525,198 @@ MuseScore {
                         anchors.topMargin: 20
                         font.pixelSize: 20
                     }
+//todo pododawac id do checkboxow
+                    Column {
+                        id: tColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: tabRectangle3.left
+                        anchors.leftMargin: 10
+                        CheckBox {
+                            checked: true
+                            enabled: false
+                            text: qsTr("T")
+                        }
+                        CheckBox {
+                            checked: true
+                            enabled: false
+                            text: qsTr("?")
+                        }
+                        CheckBox {
+                            checked: true
+                            enabled: false
+                            text: qsTr("?")
+                        }
+                    }
 
+                    Column {
+                        id: sColumn
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: tColumnt.right
+                        anchors.leftMargin: 30
+                        CheckBox {
+                            checked: false
+                            text: qsTr("S")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("S6")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("Neapolitan chord")
+                        }
+                    }
 
+                    Column {
+                        id: dColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: sColumn.right
+                        anchors.leftMargin: 30
+                        CheckBox {
+                            checked: false
+                            text: qsTr("D")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("D7")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("D9")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("Chopin chord")
+                        }
+                    }
+
+                    Text {
+                        id: revolutionsTextLabel
+                        anchors.bottom: revolutionsColumnt.top
+                        anchors.left: dColumnt.right
+                        text: qsTr("Revolutions")
+                    }
+
+                    Column {
+                        id: revolutionsColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: dColumnt.right
+                        anchors.leftMargin: 20
+                        CheckBox {
+                            checked: false
+                            text: qsTr("3")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("5")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("7")
+                        }
+                    }
+
+                    Text {
+                        id: delaysTextLabel
+                        anchors.bottom: delaysColumnt.top
+                        anchors.left: revolutionsTextLabel.right
+                        anchors.leftMargin: 20
+                        text: qsTr("Delays")
+                    }
+
+                    Column {
+                        id: delaysColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: revolutionsColumnt.right
+                        anchors.leftMargin: 60
+                        CheckBox {
+                            checked: false
+                            text: qsTr("6-5")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("4-3")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("?")
+                        }
+                    }
+
+                    Text {
+                        anchors.bottom: extraColumnt.top
+                        anchors.left: delaysTextLabel.right
+                        anchors.leftMargin: 20
+                        text: qsTr("Extra chords")
+                    }
+
+                    Column {
+                        id: extraColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: delaysColumnt.right
+                        anchors.leftMargin: 40
+                        CheckBox {
+                            checked: false
+                            text: qsTr("T-VI")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("S-II")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("?")
+                        }
+                    }
+
+                    Text {
+                        id: infoTextSoprano
+                        anchors.bottom: textAreaSoprano.top
+                        anchors.left: tabRectangle3.left
+                        anchors.topMargin: 40
+                        anchors.leftMargin: 20
+                        text: qsTr("Info")
+                        font.pixelSize: 20
+                    }
+
+                    TextArea {
+                        id: textAreaSoprano
+                        anchors.bottom: buttorSoprano.top
+                        anchors.left: tabRectangle3.left
+                        anchors.right: tabRectangle3.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        width: parent.width
+                        text: qsTr("")
+                        activeFocusOnPress: false
+                        readOnly: true
+                        font.pixelSize: 14
+                    }
 
                     Button {
 
                         id: buttorSoprano
                         text: qsTr("Solve")
                         anchors.bottom: tabRectangle3.bottom
+                        anchors.right: tabRectangle3.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
-                        anchors.leftMargin: 40
+                        anchors.rightMargin: 40
                         onClicked: {
-                            sopranoHarmonization()
+                            if (isSopranoScore()) {
+                                textAreaSoprano.text = ""
+                                sopranoHarmonization()
+                            } else {
+                                textAreaSoprano.text = "ERROR! No score with soprano!"
+                            }
                         }
                     }
                 }
@@ -548,11 +724,12 @@ MuseScore {
         }
         Button {
             id: buttonCancel
-            text: qsTr("Cancel")
+            text: qsTr("Quit")
             anchors.top: tabView.bottom
             anchors.left: tabView.right
             anchors.topMargin: 20
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 10
+            anchors.rightMargin: 40
             onClicked: {
                 Qt.quit()
             }
