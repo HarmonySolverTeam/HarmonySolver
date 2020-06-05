@@ -236,7 +236,7 @@ MuseScore {
         }
     }
 
-    function sopranoHarmonization(map) {
+    function sopranoHarmonization(functionsMap) {
         var mode = "major"
         //should be read from input
         var cursor = curScore.newCursor()
@@ -262,6 +262,8 @@ MuseScore {
         var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
                                                                   meter, notes,
                                                                   durations)
+
+        var shex = new SopranoExercie.SopranoHarmonizationExercise(sopranoExercise, [], functionsMap)
         console.log(sopranoExercise)
     }
 
@@ -313,9 +315,9 @@ MuseScore {
     function getPossibleChordsMap(){
         //todo
 
-        var T = new HarmonicFunction.HarmonicFunction("T")
-        var S = new HarmonicFunction.HarmonicFunction("S")
-        var D = new HarmonicFunction.HarmonicFunction("D")
+        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [], false)
+        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [], false)
+        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [], false)
 
 
         return {0: [T], 1: [S], 2 : [T], 3: [S], 4: [D], 5: [S], 6: [D]}
