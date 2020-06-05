@@ -26,32 +26,7 @@ MuseScore {
     width: 800
     height: 500
     onRun: {
-        var mode = "major"
-        //should be read from input
-        var cursor = curScore.newCursor()
-        cursor.rewind(0)
-        var sopranoNote, key, mode
-        var durations = []
-        var lastBaseNote, lastPitch
-        var notes = []
-        var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
-        do {
-            durations.push(
-                        [cursor.element.duration.numerator, cursor.element.duration.denominator])
-            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc + 1) % 7)
-            lastPitch = cursor.element.notes[0].pitch
-            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0)
-            notes.push(sopranoNote)
-        } while (cursor.next())
-        var key
-        if (mode === "major")
-            key = Consts.majorKeyBySignature(curScore.keysig)
-        else
-            key = Consts.minorKeyBySignature(curScore.keysig)
-        var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
-                                                                  meter, notes,
-                                                                  durations)
-        console.log(sopranoExercise)
+
     }
 
     function getBaseNote(museScoreBaseNote) {
@@ -261,6 +236,35 @@ MuseScore {
         }
     }
 
+    function sopranoHarmonization() {
+        var mode = "major"
+        //should be read from input
+        var cursor = curScore.newCursor()
+        cursor.rewind(0)
+        var sopranoNote, key, mode
+        var durations = []
+        var lastBaseNote, lastPitch
+        var notes = []
+        var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+        do {
+            durations.push(
+                        [cursor.element.duration.numerator, cursor.element.duration.denominator])
+            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc + 1) % 7)
+            lastPitch = cursor.element.notes[0].pitch
+            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0)
+            notes.push(sopranoNote)
+        } while (cursor.next())
+        var key
+        if (mode === "major")
+            key = Consts.majorKeyBySignature(curScore.keysig)
+        else
+            key = Consts.minorKeyBySignature(curScore.keysig)
+        var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
+                                                                  meter, notes,
+                                                                  durations)
+        console.log(sopranoExercise)
+    }
+
     function addComponentToScore(cursor, componentValue) {
         var component = newElement(Element.FINGERING)
         component.text = componentValue
@@ -268,6 +272,43 @@ MuseScore {
         cursor.add(component)
         curScore.endCmd()
     }
+
+    function figuredBassSolve() {
+        var ex = read_figured_bass()
+        console.log(ex.elements)
+        var exercise = Translator.createExerciseFromFiguredBass(ex)
+        console.log(JSON.stringify(exercise))
+        var bassLine = []
+        for (var i = 0; i < ex.elements.length; i++) {
+            bassLine.push(ex.elements[i].bassNote)
+        }
+        var solver = new Solver.Solver(exercise, bassLine)
+        var solution = solver.solve()
+        var solution_date = get_solution_date()
+        console.log(solution)
+
+        prepare_score_for_solution(filePath, solution, solution_date, false)
+
+        fill_score_with_solution(solution, ex.durations)
+
+        writeScore(curScore,
+                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                   "mscz")
+
+        // translate (remember about durations attribute!)
+        // solve first exercise
+        // print solution (remember about durations)
+    }
+
+    function isFiguredBassScore(){
+
+
+
+
+
+    }
+
+
 
     FileIO {
         id: myFileAbc
@@ -283,7 +324,7 @@ MuseScore {
                 myFileAbc.source = filename
 
                 var input_text = String(myFileAbc.read())
-                abcText.text = input_text
+                tab1.item.setText(input_text)
                 exercise = Parser.parse(input_text)
             }
         }
@@ -298,132 +339,223 @@ MuseScore {
                 myFileAbc.source = filename
                 var input_text = String(myFileAbc.read())
                 exercise = Parser.parse(input_text)
-                abcText.text = JSON.stringify(exercise)
+                tab1.item.setText(JSON.stringify(exercise))
             }
         }
     }
 
-    Label {
-        id: textLabel
-        wrapMode: Text.WordWrap
-        text: qsTr("Your task will show here")
-        font.pointSize: 12
-        anchors.left: window.left
-        anchors.top: window.top
-        anchors.leftMargin: 10
-        anchors.topMargin: 10
-    }
+    Rectangle {
 
-    TextArea {
-        id: abcText
-        anchors.top: textLabel.bottom
-        anchors.left: window.left
-        anchors.right: window.right
-        anchors.bottom: buttonOpenFile.top
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        width: parent.width
-        height: 400
-        wrapMode: TextEdit.WrapAnywhere
-        textFormat: TextEdit.PlainText
-    }
+        TabView {
+            id: tabView
+            width: 700
+            height: 450
 
-    Button {
-        id: buttonOpenFile
-        text: qsTr("Open file")
-        anchors.bottom: window.bottom
-        anchors.left: abcText.left
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        onClicked: {
-            fileDialog.open()
-        }
-    }
+            Tab {
+                title: "Harmonic Functions"
+                id: tab1
+                active: true
 
-    Button {
-        id: buttonParse
-        text: qsTr("Parse file")
-        anchors.bottom: window.bottom
-        anchors.left: buttonOpenFile.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        onClicked: {
-            fileDialogParse.open()
-        }
-    }
+                Rectangle {
+                    id: tabRectangle1
 
-    Button {
-        id: buttonRun
-        text: qsTr("Solve")
-        anchors.bottom: window.bottom
-        anchors.left: buttonParse.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        onClicked: {
-            var solver = new Solver.Solver(exercise)
-            var solution = solver.solve()
-            var solution_date = get_solution_date()
+                    function setText(text) {
+                        abcText.text = text
+                    }
 
-            prepare_score_for_solution(filePath, solution, solution_date, true)
+                    Label {
+                        id: textLabel
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Your task will show here")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle1.left
+                        anchors.top: tabRectangle1.top
+                        anchors.leftMargin: 10
+                        anchors.topMargin: 10
+                    }
 
-            fill_score_with_solution(solution)
+                    TextArea {
+                        id: abcText
+                        anchors.top: textLabel.bottom
+                        anchors.left: tabRectangle1.left
+                        anchors.right: tabRectangle1.right
+                        anchors.bottom: buttonOpenFile.top
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        width: parent.width
+                        height: 400
+                        wrapMode: TextEdit.WrapAnywhere
+                        textFormat: TextEdit.PlainText
+                    }
 
-            writeScore(curScore,
-                       filePath + "/solutions/harmonic functions exercise/solution"
-                       + solution_date, "mscz")
-            Qt.quit()
-        }
-    }
-    Button {
-        id: buttonRunFiguredBass
-        text: qsTr("FiguredBass")
-        anchors.bottom: window.bottom
-        anchors.left: buttonRun.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 40
-        onClicked: {
-            var ex = read_figured_bass()
-            console.log(ex.elements)
-            var exercise = Translator.createExerciseFromFiguredBass(ex)
-            console.log(JSON.stringify(exercise))
-            var bassLine = []
-            for (var i = 0; i < ex.elements.length; i++) {
-                bassLine.push(ex.elements[i].bassNote)
+                    Button {
+                        id: buttonOpenFile
+                        text: qsTr("Open file")
+                        anchors.bottom: tabRectangle1.bottom
+                        anchors.left: abcText.left
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        onClicked: {
+                            fileDialog.open()
+                        }
+                    }
+
+                    Button {
+                        id: buttonParse
+                        text: qsTr("Parse file")
+                        anchors.bottom: tabRectangle1.bottom
+                        anchors.left: buttonOpenFile.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        onClicked: {
+                            fileDialogParse.open()
+                        }
+                    }
+
+                    Button {
+                        id: buttonRun
+                        text: qsTr("Solve")
+                        anchors.bottom: tabRectangle1.bottom
+                        anchors.left: buttonParse.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        onClicked: {
+                            var solver = new Solver.Solver(exercise)
+                            var solution = solver.solve()
+                            var solution_date = get_solution_date()
+
+                            prepare_score_for_solution(filePath, solution,
+                                                       solution_date, true)
+
+                            fill_score_with_solution(solution)
+
+                            writeScore(curScore,
+                                       filePath + "/solutions/harmonic functions exercise/solution"
+                                       + solution_date, "mscz")
+                            Qt.quit()
+                        }
+                    }
+                }
             }
-            var solver = new Solver.Solver(exercise, bassLine)
-            var solution = solver.solve()
-            var solution_date = get_solution_date()
-            console.log(solution)
+            Tab {
+                title: "Figured Bass"
 
-            prepare_score_for_solution(filePath, solution, solution_date, false)
+                Rectangle {
+                    id: tabRectangle2
 
-            fill_score_with_solution(solution, ex.durations)
+                    Button {
+                        id: buttonRunFiguredBass
+                        text: qsTr("Solve")
+                        anchors.bottomMargin: 10
+                        anchors.rightMargin: 40
+                        anchors.right: tabRectangle2.right
+                        anchors.bottom: tabRectangle2.bottom
+                        onClicked: {
+                            if (isFiguredBassScore()){
+                                figuredBassSolve()
+                            } else {
+                                infoText.text = "ERROR! No score with figured bass!"
+                            }
 
-            writeScore(curScore,
-                       filePath + "/solutions/harmonic functions exercise/solution"
-                       + solution_date, "mscz")
 
-            // translate (remember about durations attribute!)
-            // solve first exercise
-            // print solution (remember about durations)
+                        }
+                    }
+
+                    Label {
+                        id: textLabelFiguredBass
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Here you can solve figured bass exercises. \nRemember that current opened score\nshould contain figured bass exercise.")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle2.left
+                        anchors.top: tabRectangle2.top
+                        //anchors.bottom: infoText.top
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 20
+                        font.pixelSize: 20
+                    }
+
+                    Text {
+                        id: infoText
+                        anchors.top: textLabelFiguredBass.bottom
+                        anchors.left: tabRectangle2.left
+                        anchors.topMargin: 40
+                        anchors.leftMargin: 20
+                        text: qsTr("Info")
+                        font.pixelSize: 20
+                    }
+
+                    TextArea {
+                        id: textArea
+                        anchors.top: infoText.bottom
+                        anchors.left: tabRectangle2.left
+                        anchors.right: tabRectangle2.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        width: parent.width
+                        text: qsTr("")
+                        activeFocusOnPress: false
+                        readOnly: true
+                        font.pixelSize: 14
+                    }
+
+
+                }
+
+            }
+            Tab {
+
+                title: "Sopran Harmonization"
+
+                Rectangle {
+                    id: tabRectangle3
+
+                    Label {
+                        id: textLabelSoprano
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Select all harmonic functions that you want to use for soprano harmonization:")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle3.left
+                        anchors.top: tabRectangle3.top
+                        //anchors.bottom: infoText.top
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 20
+                        font.pixelSize: 20
+                    }
+
+
+
+                    Button {
+
+                        id: buttorSoprano
+                        text: qsTr("Solve")
+                        anchors.bottom: tabRectangle3.bottom
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 40
+                        onClicked: {
+                            sopranoHarmonization()
+                        }
+                    }
+                }
+            }
         }
-    }
-
-    Button {
-        id: buttonCancel
-        text: qsTr("Cancel")
-        anchors.bottom: window.bottom
-        anchors.right: abcText.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        onClicked: {
-            Qt.quit()
+        Button {
+            id: buttonCancel
+            text: qsTr("Cancel")
+            anchors.top: tabView.bottom
+            anchors.left: tabView.right
+            anchors.topMargin: 20
+            anchors.bottomMargin: 20
+            onClicked: {
+                Qt.quit()
+            }
         }
     }
 }
