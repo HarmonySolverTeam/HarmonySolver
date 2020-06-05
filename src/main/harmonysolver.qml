@@ -12,6 +12,7 @@ import "./objects/Note.js" as Note
 import "./objects/Consts.js" as Consts
 import "./objects/BassTranslator.js" as Translator
 import "./objects/SopranoExercise.js" as SopranoExercise
+import "./objects/HarmonicFunction.js" as HarmonicFunction
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -263,7 +264,7 @@ MuseScore {
                                                                   meter, notes,
                                                                   durations)
 
-        var shex = new SopranoExercie.SopranoHarmonizationExercise(sopranoExercise, [], functionsList)
+        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise, [], functionsList)
         console.log(sopranoExercise)
     }
 
@@ -315,11 +316,51 @@ MuseScore {
     function getPossibleChordsList(){
         //todo
 
-        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [], false)
+        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [], [], false)
         var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [], false)
         var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [], false)
 
-        return [T, S, D]
+        var D7 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], ["7"], [],false)
+        var D9 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], ["7","9"], [],false)
+        //todo jak to uzupelnic?
+        var T6 = new HarmonicFunction.HarmonicFunction("T", 6, -1, "1", [], [], [],false)
+        var S2 = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", [], [], [],false)
+        var chopin = new HarmonicFunction.HarmonicFunction("D", 1, -1, "1", [], [], [],false)
+        var neapol = new HarmonicFunction.HarmonicFunction("S", 1, -1, "1", [], [], [],false)
+        var S6 = new HarmonicFunction.HarmonicFunction("S", 6, -1, "1", [], [], [],false)
+
+
+        var chordsList = []
+        chordsList.push(T)
+        chordsList.push(S)
+        chordsList.push(D)
+
+        if (tab3.item.getCheckboxState("D7") === true) {
+            chordsList.push(D7)
+        }
+        if (tab3.item.getCheckboxState("D9") === true) {
+            chordsList.push(D9)
+        }
+        if (tab3.item.getCheckboxState("T6") === true) {
+            chordsList.push(T6)
+        }
+        if (tab3.item.getCheckboxState("S2") === true) {
+            chordsList.push(S2)
+        }
+        if (tab3.item.getCheckboxState("Chopin") === true) {
+            chordsList.push(chopin)
+        }
+        if (tab3.item.getCheckboxState("S6") === true) {
+            chordsList.push(S6)
+        }
+        if (tab3.item.getCheckboxState("Neapol") === true) {
+            chordsList.push(neapol)
+        }
+
+        //todo later also revolutions and delays
+
+
+        return chordsList
     }
 
     FileIO {
@@ -485,7 +526,6 @@ MuseScore {
                         font.pointSize: 12
                         anchors.left: tabRectangle2.left
                         anchors.top: tabRectangle2.top
-                        //anchors.bottom: infoText.top
                         anchors.leftMargin: 20
                         anchors.topMargin: 20
                         font.pixelSize: 20
@@ -520,10 +560,38 @@ MuseScore {
             }
             Tab {
 
-                title: "Sopran Harmonization"
+                title: "Soprano Harmonization"
+                id: tab3
 
                 Rectangle {
                     id: tabRectangle3
+
+                    function getCheckboxState(function_name){
+                        if (function_name === "D7"){
+                            return d7Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "D9"){
+                            return d9Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "T6"){
+                            return t6Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "S2"){
+                            return s2Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "Chopin"){
+                            return chopinCheckbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "S6"){
+                            return s6Checkbox.checkedState === Qt.Checked
+
+                        }
+                        if (function_name === "Neapol"){
+                            return neapolitanCheckbox.checkedState === Qt.Checked
+
+                        }
+
+                    }
 
                     Label {
                         id: textLabelSoprano
@@ -550,13 +618,11 @@ MuseScore {
                             text: qsTr("T")
                         }
                         CheckBox {
-                            checked: true
-                            enabled: false
+                            checked: false
                             text: qsTr("?")
                         }
                         CheckBox {
-                            checked: true
-                            enabled: false
+                            checked: false
                             text: qsTr("?")
                         }
                     }
@@ -568,14 +634,17 @@ MuseScore {
                         anchors.left: tColumnt.right
                         anchors.leftMargin: 30
                         CheckBox {
-                            checked: false
+                            checked: true
+                            enabled: false
                             text: qsTr("S")
                         }
                         CheckBox {
+                            id: s6Checkbox
                             checked: false
                             text: qsTr("S6")
                         }
                         CheckBox {
+                            id: neapolitanCheckbox
                             checked: false
                             text: qsTr("Neapolitan chord")
                         }
@@ -588,18 +657,22 @@ MuseScore {
                         anchors.left: sColumn.right
                         anchors.leftMargin: 30
                         CheckBox {
-                            checked: false
+                            checked: true
+                            enabled: false
                             text: qsTr("D")
                         }
                         CheckBox {
+                            id: d7Checkbox
                             checked: false
                             text: qsTr("D7")
                         }
                         CheckBox {
+                            id: d9Checkbox
                             checked: false
                             text: qsTr("D9")
                         }
                         CheckBox {
+                            id: chopinCheckbox
                             checked: false
                             text: qsTr("Chopin chord")
                         }
@@ -619,14 +692,17 @@ MuseScore {
                         anchors.left: dColumnt.right
                         anchors.leftMargin: 20
                         CheckBox {
+                            id: revolution3Checkbox
                             checked: false
                             text: qsTr("3")
                         }
                         CheckBox {
+                            id: revolution5Checkbox
                             checked: false
                             text: qsTr("5")
                         }
                         CheckBox {
+                            id: revolution7Checkbox
                             checked: false
                             text: qsTr("7")
                         }
@@ -647,10 +723,12 @@ MuseScore {
                         anchors.left: revolutionsColumnt.right
                         anchors.leftMargin: 60
                         CheckBox {
+                            id: delay65Checkbox
                             checked: false
                             text: qsTr("6-5")
                         }
                         CheckBox {
+                            id: delay43Checkbox
                             checked: false
                             text: qsTr("4-3")
                         }
@@ -674,10 +752,12 @@ MuseScore {
                         anchors.left: delaysColumnt.right
                         anchors.leftMargin: 40
                         CheckBox {
+                            id: t6Checkbox
                             checked: false
                             text: qsTr("T-VI")
                         }
                         CheckBox {
+                            id: s2Checkbox
                             checked: false
                             text: qsTr("S-II")
                         }
@@ -725,7 +805,10 @@ MuseScore {
                         onClicked: {
                             if (isSopranoScore()) {
                                 textAreaSoprano.text = ""
-                                sopranoHarmonization(getPossibleChordsList())
+                                var func_list = getPossibleChordsList()
+                                //debug
+                                //textAreaSoprano.text = func_list.toString()
+                                sopranoHarmonization(func_list)
                             } else {
                                 textAreaSoprano.text = "ERROR! No score with soprano!"
                             }
