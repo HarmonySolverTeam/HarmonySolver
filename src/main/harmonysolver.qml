@@ -236,7 +236,7 @@ MuseScore {
         }
     }
 
-    function sopranoHarmonization(functionsMap) {
+    function sopranoHarmonization(functionsList) {
         var mode = "major"
         //should be read from input
         var cursor = curScore.newCursor()
@@ -263,7 +263,7 @@ MuseScore {
                                                                   meter, notes,
                                                                   durations)
 
-        var shex = new SopranoExercie.SopranoHarmonizationExercise(sopranoExercise, [], functionsMap)
+        var shex = new SopranoExercie.SopranoHarmonizationExercise(sopranoExercise, [], functionsList)
         console.log(sopranoExercise)
     }
 
@@ -312,15 +312,14 @@ MuseScore {
         return true
     }
 
-    function getPossibleChordsMap(){
+    function getPossibleChordsList(){
         //todo
 
         var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [], false)
         var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [], false)
         var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [], false)
 
-
-        return {0: [T], 1: [S], 2 : [T], 3: [S], 4: [D], 5: [S], 6: [D]}
+        return [T, S, D]
     }
 
     FileIO {
@@ -726,7 +725,7 @@ MuseScore {
                         onClicked: {
                             if (isSopranoScore()) {
                                 textAreaSoprano.text = ""
-                                sopranoHarmonization(getPossibleChordsMap())
+                                sopranoHarmonization(getPossibleChordsList())
                             } else {
                                 textAreaSoprano.text = "ERROR! No score with soprano!"
                             }
