@@ -2,6 +2,7 @@
 .import "./Chord.js" as Chord
 .import "./Note.js" as Note
 .import "./Consts.js" as Consts
+.import "./Utils.js" as Utils
 
 function ChordGenerator(key) {
     this.key = key;
@@ -59,12 +60,14 @@ function ChordGenerator(key) {
         //Position is given
         if (harmonicFunction.position !== -1) {
             soprano = harmonicFunction.position;
-            needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.position), 1);
+            if(Utils.contains(needToAdd, harmonicFunction.position))
+                needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.position), 1);
         }
 
         //I'm not shure if revolution is int or string - assume that string
         bass = harmonicFunction.revolution;
-        needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
+        if(Utils.contains(needToAdd, harmonicFunction.revolution))
+            needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
 
         return [[soprano, alto, tenor, bass], needToAdd]
 
@@ -132,6 +135,7 @@ function ChordGenerator(key) {
 
     this.getSchemas = function (harmonicFunction, chordTemplate) {
 
+        console.log(chordTemplate);
         var schemas = []
 
         var chord = chordTemplate[0];
@@ -197,9 +201,9 @@ function ChordGenerator(key) {
             }
         }
 
-        //console.log("SHEMAS:");
-        //schemas.forEach(function(x){ console.log(x)});
-        //console.log("SCHEMAS END");
+        console.log("SHEMAS:");
+        schemas.forEach(function(x){ console.log(x)});
+        console.log("SCHEMAS END");
         return schemas;
     }
 

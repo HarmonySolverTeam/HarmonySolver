@@ -331,13 +331,14 @@ MuseScore {
     }
 
     function getPossibleChordsList() {
+// function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
 
         var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [],
-                                                      [], false)
-        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [],
-                                                      [], false)
-        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
-                                                      [], false)
+                                                      [], false, undefined)
+        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [],
+                                                      [], false, undefined)
+        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [],
+                                                      [], false, undefined)
 
         var D7 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
                                                        ["7"], [], false)
