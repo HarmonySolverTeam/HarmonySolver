@@ -47,7 +47,11 @@ function Solver(exercise, bassLine, sopranoLine){
             // console.log(chords[j].toString())
             var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
-            if (score !== -1 ) good_chords.push([score,chords[j]]);
+            if (score !== -1 ) {
+                console.log("OK!");
+                console.log( curr_index + " -> " + chords[j]);
+                good_chords.push([score,chords[j]]);
+            }
         }
 
         if (good_chords.length === 0){
