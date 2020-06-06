@@ -13,6 +13,7 @@ import "./objects/Consts.js" as Consts
 import "./objects/BassTranslator.js" as Translator
 import "./objects/SopranoExercise.js" as SopranoExercise
 import "./objects/HarmonicFunction.js" as HarmonicFunction
+import "./objects/Soprano.js" as Soprano
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -267,6 +268,20 @@ MuseScore {
         var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
                                                                     [],
                                                                     functionsList)
+
+        var solver = new Soprano.SopranoSolver(shex)
+
+        var solution = solver.solve()
+        var solution_date = get_solution_date()
+
+        prepare_score_for_solution(filePath, solution, solution_date, false)
+
+        fill_score_with_solution(solution, ex.durations)
+
+        writeScore(curScore,
+                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                   "mscz")
+
         console.log(sopranoExercise)
     }
 

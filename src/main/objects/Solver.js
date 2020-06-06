@@ -32,8 +32,8 @@ function Solver(exercise, bassLine, sopranoLine){
 
     this.findSolution = function(curr_index, prev_prev_chord, prev_chord){
         var chords;
-        if(this.bassLine != undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [this.bassLine[curr_index], undefined, undefined, undefined])
-        else if (this.sopranoLine != undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [undefined, undefined, undefined, this.sopranoLine[curr_index]])
+        if(this.bassLine !== undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [this.bassLine[curr_index], undefined, undefined, undefined])
+        else if (this.sopranoLine !== undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [undefined, undefined, undefined, this.sopranoLine[curr_index]])
         else chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
         var good_chords = []
         
@@ -66,7 +66,7 @@ function Solver(exercise, bassLine, sopranoLine){
 
             var next_chords = this.findSolution( curr_index + 1, prev_chord, good_chords[i][1])
 
-            if (next_chords.length == this.harmonicFunctions.length - curr_index - 1 && next_chords[next_chords.length -1].sopranoNote.pitch !== undefined){
+            if (next_chords.length === this.harmonicFunctions.length - curr_index - 1 && next_chords[next_chords.length -1].sopranoNote.pitch !== undefined){
                 next_chords.unshift(good_chords[i][1])
                 return next_chords
             }

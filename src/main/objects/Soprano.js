@@ -12,45 +12,45 @@ function RulesChecker(){
     this.checkBasicCadention = function(prev, curr, ex_length){
 
         //pierwsza i ostatnia tonika
-        if(prev === undefined || prev.length + 1 == ex_length) {
-            if(curr.functionName == "T") return 0;
-            if(curr.functionName == "S") return 1;
-            if(curr.functionName == "D") return 1;
+        if(prev === undefined || prev.length + 1 === ex_length) {
+            if(curr.functionName === "T") return 0;
+            if(curr.functionName === "S") return 1;
+            if(curr.functionName === "D") return 1;
         }
 
-        if(prev.functionName == "T"){
-            if(curr.functionName == "T") return 1;
-            if(curr.functionName == "S") return 0;
-            if(curr.functionName == "D") return -1;
+        if(prev.functionName === "T"){
+            if(curr.functionName === "T") return 1;
+            if(curr.functionName === "S") return 0;
+            if(curr.functionName === "D") return -1;
         }
 
-        if(prev.functionName == "S"){
-            if(curr.functionName == "T") return -1;
-            if(curr.functionName == "S") return 1;
-            if(curr.functionName == "D") return 0;
+        if(prev.functionName === "S"){
+            if(curr.functionName === "T") return -1;
+            if(curr.functionName === "S") return 1;
+            if(curr.functionName === "D") return 0;
         }
 
-        if(prev.functionName == "D"){
+        if(prev.functionName === "D"){
             //prev is not D7
             if(!Utils.contains(prev.extra, "7")){
-                if(curr.functionName == "T") return 0;
-                if(curr.functionName == "S") return -1;
-                if(curr.functionName == "D" && !Utils.contains(curr.extra, "7")) return 1;
-                if(curr.functionName == "D" && Utils.contains(curr.extra, "7")) return 0;
+                if(curr.functionName === "T") return 0;
+                if(curr.functionName === "S") return -1;
+                if(curr.functionName === "D" && !Utils.contains(curr.extra, "7")) return 1;
+                if(curr.functionName === "D" && Utils.contains(curr.extra, "7")) return 0;
             }
             //prev is D7
             else{
-                if(curr.functionName == "T") return 0;
-                if(curr.functionName == "S") return -1;
-                if(curr.functionName == "D" && !Utils.contains(curr.extra, "7")) return -1;
-                if(curr.functionName == "D" && Utils.contains(curr.extra, "7")) return 1;
+                if(curr.functionName === "T") return 0;
+                if(curr.functionName === "S") return -1;
+                if(curr.functionName === "D" && !Utils.contains(curr.extra, "7")) return -1;
+                if(curr.functionName === "D" && Utils.contains(curr.extra, "7")) return 1;
             }
 
         }
     }
 
     this.checkAllRules = function(prevs, curr, ex_length){
-        if(prevs.length == 0)  this.checkBasicCadention(undefined, curr, ex_length);
+        if(prevs.length === 0)  this.checkBasicCadention(undefined, curr, ex_length);
         return this.checkBasicCadention(prevs[prevs.length - 1], curr, ex_length);
     }
 }
@@ -87,7 +87,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
         for (var i = 0; i < harmonicFunction.extra.length; i++) {
             //Chopin chord
             if (harmonicFunction.extra[i].length > 2) {
-                if (harmonicFunction.extra[i][0] == "1" && harmonicFunction.extra[i][1] == "3")
+                if (harmonicFunction.extra[i][0] === "1" && harmonicFunction.extra[i][1] === "3")
                     chordElement = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
                 continue;
             }
@@ -159,7 +159,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
     this.solve = function(){
         this.prepareMap(this.harmonizationExercise.harmonicFunctions)
         var solution = this.findSolution(0, [], 0);
-        if(solution.length == 0){
+        if(solution.length === 0){
             console.log("Solution not exists");
             return -1;
         }
@@ -211,9 +211,9 @@ function SopranoSolver(sopranoHarmonizationExercise){
         //     console.log(element[1].toString() + "    " + element[0]);
         // });
 
-        if(goodChords.length == 0) return [];
+        if(goodChords.length === 0) return [];
 
-        if(curr_index + 1 == notes.length){
+        if(curr_index + 1 === notes.length){
             for(var i=0;i<goodChords.length;i++){
                 var resArray = prev_chords.slice();
                 resArray.push(goodChords[i][0]);
