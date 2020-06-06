@@ -10,7 +10,8 @@ function SopranoExercise(mode, key, meter, notes, durations){
     }
 }
 
-function SopranoHarmonizationExercise(sopranoExercise, harmonicFunctions){
+function SopranoHarmonizationExercise(sopranoExercise, harmonicFunctions, possibleFunctionsList){
     this.sopranoExercise = sopranoExercise;
     this.harmonicFunctions = harmonicFunctions;
+    this.possibleFunctionsList = possibleFunctionsList;
 }

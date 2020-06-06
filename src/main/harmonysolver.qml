@@ -12,6 +12,7 @@ import "./objects/Note.js" as Note
 import "./objects/Consts.js" as Consts
 import "./objects/BassTranslator.js" as Translator
 import "./objects/SopranoExercise.js" as SopranoExercise
+import "./objects/HarmonicFunction.js" as HarmonicFunction
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -26,32 +27,7 @@ MuseScore {
     width: 800
     height: 500
     onRun: {
-        var mode = "major"
-        //should be read from input
-        var cursor = curScore.newCursor()
-        cursor.rewind(0)
-        var sopranoNote, key, mode
-        var durations = []
-        var lastBaseNote, lastPitch
-        var notes = []
-        var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
-        do {
-            durations.push(
-                        [cursor.element.duration.numerator, cursor.element.duration.denominator])
-            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc + 1) % 7)
-            lastPitch = cursor.element.notes[0].pitch
-            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0)
-            notes.push(sopranoNote)
-        } while (cursor.next())
-        var key
-        if (mode === "major")
-            key = Consts.majorKeyBySignature(curScore.keysig)
-        else
-            key = Consts.minorKeyBySignature(curScore.keysig)
-        var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
-                                                                  meter, notes,
-                                                                  durations)
-        console.log(sopranoExercise)
+
     }
 
     function getBaseNote(museScoreBaseNote) {
@@ -261,12 +237,138 @@ MuseScore {
         }
     }
 
+    function sopranoHarmonization(functionsList) {
+        var mode = "major"
+        //should be read from input
+        var cursor = curScore.newCursor()
+        cursor.rewind(0)
+        var sopranoNote, key, mode
+        var durations = []
+        var lastBaseNote, lastPitch
+        var notes = []
+        var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+        do {
+            durations.push(
+                        [cursor.element.duration.numerator, cursor.element.duration.denominator])
+            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc + 1) % 7)
+            lastPitch = cursor.element.notes[0].pitch
+            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0)
+            notes.push(sopranoNote)
+        } while (cursor.next())
+        var key
+        if (mode === "major")
+            key = Consts.majorKeyBySignature(curScore.keysig)
+        else
+            key = Consts.minorKeyBySignature(curScore.keysig)
+        var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
+                                                                  meter, notes,
+                                                                  durations)
+
+        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
+                                                                    [],
+                                                                    functionsList)
+        console.log(sopranoExercise)
+    }
+
     function addComponentToScore(cursor, componentValue) {
         var component = newElement(Element.FINGERING)
         component.text = componentValue
         curScore.startCmd()
         cursor.add(component)
         curScore.endCmd()
+    }
+
+    function figuredBassSolve() {
+        var ex = read_figured_bass()
+        console.log(ex.elements)
+        var exercise = Translator.createExerciseFromFiguredBass(ex)
+        console.log(JSON.stringify(exercise))
+        var bassLine = []
+        for (var i = 0; i < ex.elements.length; i++) {
+            bassLine.push(ex.elements[i].bassNote)
+        }
+        var solver = new Solver.Solver(exercise, bassLine)
+        var solution = solver.solve()
+        var solution_date = get_solution_date()
+        console.log(solution)
+
+        prepare_score_for_solution(filePath, solution, solution_date, false)
+
+        fill_score_with_solution(solution, ex.durations)
+
+        writeScore(curScore,
+                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                   "mscz")
+
+        // translate (remember about durations attribute!)
+        // solve first exercise
+        // print solution (remember about durations)
+    }
+
+    function isFiguredBassScore() {
+        //todo
+        return true
+    }
+
+    function isSopranoScore() {
+        //todo
+        return true
+    }
+
+    function getPossibleChordsList() {
+
+        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [],
+                                                      [], false)
+        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [],
+                                                      [], false)
+        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+                                                      [], false)
+
+        var D7 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+                                                       ["7"], [], false)
+        var D9 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+                                                       ["7", "9"], [], false)
+        //todo jak to uzupelnic?
+        var T6 = new HarmonicFunction.HarmonicFunction("T", 6, -1, "1", [], [],
+                                                       [], false)
+        var S2 = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", [], [],
+                                                       [], false)
+        var chopin = new HarmonicFunction.HarmonicFunction("D", 1, -1, "1", [],
+                                                           [], [], false)
+        var neapol = new HarmonicFunction.HarmonicFunction("S", 1, -1, "1", [],
+                                                           [], [], false)
+        var S6 = new HarmonicFunction.HarmonicFunction("S", 6, -1, "1", [], [],
+                                                       [], false)
+
+        var chordsList = []
+        chordsList.push(T)
+        chordsList.push(S)
+        chordsList.push(D)
+
+        if (tab3.item.getCheckboxState("D7") === true) {
+            chordsList.push(D7)
+        }
+        if (tab3.item.getCheckboxState("D9") === true) {
+            chordsList.push(D9)
+        }
+        if (tab3.item.getCheckboxState("T6") === true) {
+            chordsList.push(T6)
+        }
+        if (tab3.item.getCheckboxState("S2") === true) {
+            chordsList.push(S2)
+        }
+        if (tab3.item.getCheckboxState("Chopin") === true) {
+            chordsList.push(chopin)
+        }
+        if (tab3.item.getCheckboxState("S6") === true) {
+            chordsList.push(S6)
+        }
+        if (tab3.item.getCheckboxState("Neapol") === true) {
+            chordsList.push(neapol)
+        }
+
+        //todo later also revolutions and delays
+        return chordsList
     }
 
     FileIO {
@@ -283,7 +385,7 @@ MuseScore {
                 myFileAbc.source = filename
 
                 var input_text = String(myFileAbc.read())
-                abcText.text = input_text
+                tab1.item.setText(input_text)
                 exercise = Parser.parse(input_text)
             }
         }
@@ -298,132 +400,439 @@ MuseScore {
                 myFileAbc.source = filename
                 var input_text = String(myFileAbc.read())
                 exercise = Parser.parse(input_text)
-                abcText.text = JSON.stringify(exercise)
+                tab1.item.setText(JSON.stringify(exercise))
             }
         }
     }
 
-    Label {
-        id: textLabel
-        wrapMode: Text.WordWrap
-        text: qsTr("Your task will show here")
-        font.pointSize: 12
-        anchors.left: window.left
-        anchors.top: window.top
-        anchors.leftMargin: 10
-        anchors.topMargin: 10
-    }
+    Rectangle {
 
-    TextArea {
-        id: abcText
-        anchors.top: textLabel.bottom
-        anchors.left: window.left
-        anchors.right: window.right
-        anchors.bottom: buttonOpenFile.top
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        width: parent.width
-        height: 400
-        wrapMode: TextEdit.WrapAnywhere
-        textFormat: TextEdit.PlainText
-    }
+        TabView {
+            id: tabView
+            width: 700
+            height: 450
 
-    Button {
-        id: buttonOpenFile
-        text: qsTr("Open file")
-        anchors.bottom: window.bottom
-        anchors.left: abcText.left
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        onClicked: {
-            fileDialog.open()
-        }
-    }
+            Tab {
+                title: "Harmonic Functions"
+                id: tab1
+                active: true
 
-    Button {
-        id: buttonParse
-        text: qsTr("Parse file")
-        anchors.bottom: window.bottom
-        anchors.left: buttonOpenFile.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        onClicked: {
-            fileDialogParse.open()
-        }
-    }
+                Rectangle {
+                    id: tabRectangle1
 
-    Button {
-        id: buttonRun
-        text: qsTr("Solve")
-        anchors.bottom: window.bottom
-        anchors.left: buttonParse.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 10
-        onClicked: {
-            var solver = new Solver.Solver(exercise)
-            var solution = solver.solve()
-            var solution_date = get_solution_date()
+                    function setText(text) {
+                        abcText.text = text
+                    }
 
-            prepare_score_for_solution(filePath, solution, solution_date, true)
+                    Label {
+                        id: textLabel
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Your task will show here")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle1.left
+                        anchors.top: tabRectangle1.top
+                        anchors.leftMargin: 10
+                        anchors.topMargin: 10
+                    }
 
-            fill_score_with_solution(solution)
+                    TextArea {
+                        id: abcText
+                        anchors.top: textLabel.bottom
+                        anchors.left: tabRectangle1.left
+                        anchors.right: tabRectangle1.right
+                        anchors.bottom: buttonOpenFile.top
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        width: parent.width
+                        height: 400
+                        wrapMode: TextEdit.WrapAnywhere
+                        textFormat: TextEdit.PlainText
+                    }
 
-            writeScore(curScore,
-                       filePath + "/solutions/harmonic functions exercise/solution"
-                       + solution_date, "mscz")
-            Qt.quit()
-        }
-    }
-    Button {
-        id: buttonRunFiguredBass
-        text: qsTr("FiguredBass")
-        anchors.bottom: window.bottom
-        anchors.left: buttonRun.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        anchors.leftMargin: 40
-        onClicked: {
-            var ex = read_figured_bass()
-            console.log(ex.elements)
-            var exercise = Translator.createExerciseFromFiguredBass(ex)
-            console.log(JSON.stringify(exercise))
-            var bassLine = []
-            for (var i = 0; i < ex.elements.length; i++) {
-                bassLine.push(ex.elements[i].bassNote)
+                    Button {
+                        id: buttonOpenFile
+                        text: qsTr("Open file")
+                        anchors.bottom: tabRectangle1.bottom
+                        anchors.left: abcText.left
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        onClicked: {
+                            fileDialog.open()
+                        }
+                    }
+
+                    Button {
+                        id: buttonParse
+                        text: qsTr("Parse file")
+                        anchors.bottom: tabRectangle1.bottom
+                        anchors.left: buttonOpenFile.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        onClicked: {
+                            fileDialogParse.open()
+                        }
+                    }
+
+                    Button {
+                        id: buttonRun
+                        text: qsTr("Solve")
+                        anchors.bottom: tabRectangle1.bottom
+                        anchors.right: tabRectangle1.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.rightMargin: 40
+                        anchors.leftMargin: 10
+                        onClicked: {
+                            var solver = new Solver.Solver(exercise)
+                            var solution = solver.solve()
+                            var solution_date = get_solution_date()
+
+                            prepare_score_for_solution(filePath, solution,
+                                                       solution_date, true)
+
+                            fill_score_with_solution(solution)
+
+                            writeScore(curScore,
+                                       filePath + "/solutions/harmonic functions exercise/solution"
+                                       + solution_date, "mscz")
+                            Qt.quit()
+                        }
+                    }
+                }
             }
-            var solver = new Solver.Solver(exercise, bassLine)
-            var solution = solver.solve()
-            var solution_date = get_solution_date()
-            console.log(solution)
+            Tab {
+                title: "Figured Bass"
 
-            prepare_score_for_solution(filePath, solution, solution_date, false)
+                Rectangle {
+                    id: tabRectangle2
 
-            fill_score_with_solution(solution, ex.durations)
+                    Button {
+                        id: buttonRunFiguredBass
+                        text: qsTr("Solve")
+                        anchors.bottomMargin: 10
+                        anchors.rightMargin: 40
+                        anchors.right: tabRectangle2.right
+                        anchors.bottom: tabRectangle2.bottom
+                        onClicked: {
+                            if (isFiguredBassScore()) {
+                                textAreaFigured.text = ""
+                                figuredBassSolve()
+                            } else {
+                                textAreaFigured.text = "ERROR! No score with figured bass!"
+                            }
+                        }
+                    }
 
-            writeScore(curScore,
-                       filePath + "/solutions/harmonic functions exercise/solution"
-                       + solution_date, "mscz")
+                    Label {
+                        id: textLabelFiguredBass
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Here you can solve figured bass exercises. \nRemember that current opened score\nshould contain figured bass exercise.")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle2.left
+                        anchors.top: tabRectangle2.top
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 20
+                        font.pixelSize: 20
+                    }
 
-            // translate (remember about durations attribute!)
-            // solve first exercise
-            // print solution (remember about durations)
+                    Text {
+                        id: infoText
+                        anchors.top: textLabelFiguredBass.bottom
+                        anchors.left: tabRectangle2.left
+                        anchors.topMargin: 40
+                        anchors.leftMargin: 20
+                        text: qsTr("Info")
+                        font.pixelSize: 20
+                    }
+
+                    TextArea {
+                        id: textAreaFigured
+                        anchors.top: infoText.bottom
+                        anchors.left: tabRectangle2.left
+                        anchors.right: tabRectangle2.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        width: parent.width
+                        text: qsTr("")
+                        activeFocusOnPress: false
+                        readOnly: true
+                        font.pixelSize: 14
+                    }
+                }
+            }
+            Tab {
+
+                title: "Soprano Harmonization"
+                id: tab3
+
+                Rectangle {
+                    id: tabRectangle3
+
+                    function getCheckboxState(function_name) {
+                        if (function_name === "D7") {
+                            return d7Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "D9") {
+                            return d9Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "T6") {
+                            return t6Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "S2") {
+                            return s2Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "Chopin") {
+                            return chopinCheckbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "S6") {
+                            return s6Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "Neapol") {
+                            return neapolitanCheckbox.checkedState === Qt.Checked
+                        }
+                    }
+
+                    Label {
+                        id: textLabelSoprano
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Select all harmonic functions that you want to use for soprano\nharmonization:")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle3.left
+                        anchors.top: tabRectangle3.top
+                        //anchors.bottom: infoText.top
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 20
+                        font.pixelSize: 20
+                    }
+
+                    Column {
+                        id: tColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: tabRectangle3.left
+                        anchors.leftMargin: 10
+                        CheckBox {
+                            checked: true
+                            enabled: false
+                            text: qsTr("T")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("?")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("?")
+                        }
+                    }
+
+                    Column {
+                        id: sColumn
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: tColumnt.right
+                        anchors.leftMargin: 30
+                        CheckBox {
+                            checked: true
+                            enabled: false
+                            text: qsTr("S")
+                        }
+                        CheckBox {
+                            id: s6Checkbox
+                            checked: false
+                            text: qsTr("S6")
+                        }
+                        CheckBox {
+                            id: neapolitanCheckbox
+                            checked: false
+                            text: qsTr("Neapolitan chord")
+                        }
+                    }
+
+                    Column {
+                        id: dColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: sColumn.right
+                        anchors.leftMargin: 30
+                        CheckBox {
+                            checked: true
+                            enabled: false
+                            text: qsTr("D")
+                        }
+                        CheckBox {
+                            id: d7Checkbox
+                            checked: false
+                            text: qsTr("D7")
+                        }
+                        CheckBox {
+                            id: d9Checkbox
+                            checked: false
+                            text: qsTr("D9")
+                        }
+                        CheckBox {
+                            id: chopinCheckbox
+                            checked: false
+                            text: qsTr("Chopin chord")
+                        }
+                    }
+
+                    Text {
+                        id: revolutionsTextLabel
+                        anchors.bottom: revolutionsColumnt.top
+                        anchors.left: dColumnt.right
+                        text: qsTr("Revolutions")
+                    }
+
+                    Column {
+                        id: revolutionsColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: dColumnt.right
+                        anchors.leftMargin: 20
+                        CheckBox {
+                            id: revolution3Checkbox
+                            checked: false
+                            text: qsTr("3")
+                        }
+                        CheckBox {
+                            id: revolution5Checkbox
+                            checked: false
+                            text: qsTr("5")
+                        }
+                        CheckBox {
+                            id: revolution7Checkbox
+                            checked: false
+                            text: qsTr("7")
+                        }
+                    }
+
+                    Text {
+                        id: delaysTextLabel
+                        anchors.bottom: delaysColumnt.top
+                        anchors.left: revolutionsTextLabel.right
+                        anchors.leftMargin: 20
+                        text: qsTr("Delays")
+                    }
+
+                    Column {
+                        id: delaysColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: revolutionsColumnt.right
+                        anchors.leftMargin: 60
+                        CheckBox {
+                            id: delay65Checkbox
+                            checked: false
+                            text: qsTr("6-5")
+                        }
+                        CheckBox {
+                            id: delay43Checkbox
+                            checked: false
+                            text: qsTr("4-3")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("?")
+                        }
+                    }
+
+                    Text {
+                        anchors.bottom: extraColumnt.top
+                        anchors.left: delaysTextLabel.right
+                        anchors.leftMargin: 20
+                        text: qsTr("Extra chords")
+                    }
+
+                    Column {
+                        id: extraColumnt
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: delaysColumnt.right
+                        anchors.leftMargin: 40
+                        CheckBox {
+                            id: t6Checkbox
+                            checked: false
+                            text: qsTr("T-VI")
+                        }
+                        CheckBox {
+                            id: s2Checkbox
+                            checked: false
+                            text: qsTr("S-II")
+                        }
+                        CheckBox {
+                            checked: false
+                            text: qsTr("?")
+                        }
+                    }
+
+                    Text {
+                        id: infoTextSoprano
+                        anchors.bottom: textAreaSoprano.top
+                        anchors.left: tabRectangle3.left
+                        anchors.topMargin: 40
+                        anchors.leftMargin: 20
+                        text: qsTr("Info")
+                        font.pixelSize: 20
+                    }
+
+                    TextArea {
+                        id: textAreaSoprano
+                        anchors.bottom: buttorSoprano.top
+                        anchors.left: tabRectangle3.left
+                        anchors.right: tabRectangle3.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        width: parent.width
+                        text: qsTr("")
+                        activeFocusOnPress: false
+                        readOnly: true
+                        font.pixelSize: 14
+                    }
+
+                    Button {
+
+                        id: buttorSoprano
+                        text: qsTr("Solve")
+                        anchors.bottom: tabRectangle3.bottom
+                        anchors.right: tabRectangle3.right
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.rightMargin: 40
+                        onClicked: {
+                            if (isSopranoScore()) {
+                                textAreaSoprano.text = ""
+                                var func_list = getPossibleChordsList()
+                                //debug
+                                //textAreaSoprano.text = func_list.toString()
+                                sopranoHarmonization(func_list)
+                            } else {
+                                textAreaSoprano.text = "ERROR! No score with soprano!"
+                            }
+                        }
+                    }
+                }
+            }
         }
-    }
-
-    Button {
-        id: buttonCancel
-        text: qsTr("Cancel")
-        anchors.bottom: window.bottom
-        anchors.right: abcText.right
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        onClicked: {
-            Qt.quit()
+        Button {
+            id: buttonCancel
+            text: qsTr("Quit")
+            anchors.top: tabView.bottom
+            anchors.left: tabView.right
+            anchors.topMargin: 20
+            anchors.bottomMargin: 10
+            anchors.rightMargin: 40
+            onClicked: {
+                Qt.quit()
+            }
         }
     }
 }
