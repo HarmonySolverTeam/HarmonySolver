@@ -276,7 +276,7 @@ MuseScore {
 
         prepare_score_for_solution(filePath, solution, solution_date, false)
 
-        fill_score_with_solution(solution, ex.durations)
+        fill_score_with_solution(solution, sopranoExercise.durations)
 
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + solution_date,

@@ -157,7 +157,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
     }
 
     this.solve = function(){
-        this.prepareMap(this.harmonizationExercise.harmonicFunctions)
+        this.prepareMap(this.harmonizationExercise.possibleFunctionsList)
         var solution = this.findSolution(0, [], 0);
         if(solution.length === 0){
             console.log("Solution not exists");
@@ -186,7 +186,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
 
 
 
-        return solution;
+        return sol;
     }
 
     this.findSolution = function(curr_index, prev_chords, penalty){
