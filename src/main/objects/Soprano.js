@@ -159,7 +159,11 @@ function SopranoSolver(sopranoHarmonizationExercise){
     }
 
     this.solve = function(){
+<<<<<<< HEAD
         this.prepareMap(this.harmonizationExercise.possibleFunctionsList);
+=======
+        this.prepareMap(this.harmonizationExercise.possibleFunctionsList)
+>>>>>>> de4a03434e9fd8a0dc93dc84c81926c1d5da6d71
         var solution = this.findSolution(0, [], 0);
         if(solution.length === 0){
             console.log("Solution not exists");
@@ -175,6 +179,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
             });
         });
 
+<<<<<<< HEAD
         var i=0
         for(; i<solution.length; i++){
             var ex = new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, [solution[i][0]]);
@@ -195,6 +200,19 @@ function SopranoSolver(sopranoHarmonizationExercise){
         // })
         // console.log(sol.chords);
         // // function Exercise(key, meter, mode, measures) {
+=======
+
+
+        var ex = new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, [solution[0][0]]);
+        var solver = new Solver.Solver(ex, undefined, this.exercise.notes);
+        var sol = solver.solve();
+
+        console.log("SOLUT")
+        console.log(sol.chords + "");
+        // function Exercise(key, meter, mode, measures) {
+
+
+>>>>>>> de4a03434e9fd8a0dc93dc84c81926c1d5da6d71
 
         return sol;
     }

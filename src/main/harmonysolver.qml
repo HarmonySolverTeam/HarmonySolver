@@ -138,14 +138,14 @@ MuseScore {
         return ret
     }
 
-    function prepare_score_for_solution(filePath, solution, solution_date, setDurations) {
+    function prepare_score_for_solution(filePath, solution, solution_date, setDurations, taskType) {
         readScore(filePath + "/template scores/" + solution.exercise.key + "_"
                   + solution.exercise.mode + ".mscz")
         writeScore(curScore,
-                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                   filePath + "/solutions/harmonic functions exercise/solution" + taskType + solution_date,
                    "mscz")
         closeScore(curScore)
-        readScore(filePath + "/solutions/harmonic functions exercise/solution"
+        readScore(filePath + "/solutions/harmonic functions exercise/solution" + taskType
                   + solution_date + ".mscz")
         if (setDurations) {
             solution.setDurations()
@@ -274,9 +274,9 @@ MuseScore {
         var solution = solver.solve()
         var solution_date = get_solution_date()
 
-        prepare_score_for_solution(filePath, solution, solution_date, false)
+        prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
 
-        fill_score_with_solution(solution, ex.durations)
+        fill_score_with_solution(solution, sopranoExercise.durations)
 
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
@@ -307,7 +307,7 @@ MuseScore {
         var solution_date = get_solution_date()
         console.log(solution)
 
-        prepare_score_for_solution(filePath, solution, solution_date, false)
+        prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
 
         fill_score_with_solution(solution, ex.durations)
 
@@ -507,7 +507,7 @@ MuseScore {
                             var solution_date = get_solution_date()
 
                             prepare_score_for_solution(filePath, solution,
-                                                       solution_date, true)
+                                                       solution_date, true, "_hfunc")
 
                             fill_score_with_solution(solution)
 
