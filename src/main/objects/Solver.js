@@ -44,7 +44,7 @@ function Solver(exercise, bassLine, sopranoLine){
         }
 
         for (var j = 0; j < chords.length; j++){
-            console.log(chords[j].toString())
+            // console.log(chords[j].toString())
             var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
             if (score !== -1 ) good_chords.push([score,chords[j]]);

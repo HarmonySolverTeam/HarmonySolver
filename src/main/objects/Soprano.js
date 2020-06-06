@@ -9,23 +9,25 @@
 
 function RulesChecker(){
 
-    this.checkBasicCadention = function(prev, curr, ex_length){
+    this.checkBasicCadention = function(prevs, curr, ex_length){
 
         //pierwsza i ostatnia tonika
-        if(prev === undefined || prev.length + 1 === ex_length) {
+        if(prevs.length === 0 || prevs.length === ex_length - 1) {
             if(curr.functionName === "T") return 0;
-            if(curr.functionName === "S") return 1;
-            if(curr.functionName === "D") return 1;
+            if(curr.functionName === "S") return 10;
+            if(curr.functionName === "D") return 10;
         }
+
+        var prev = prevs[prevs.length - 1];
 
         if(prev.functionName === "T"){
             if(curr.functionName === "T") return 1;
             if(curr.functionName === "S") return 0;
-            if(curr.functionName === "D") return -1;
+            if(curr.functionName === "D") return 3;
         }
 
         if(prev.functionName === "S"){
-            if(curr.functionName === "T") return -1;
+            if(curr.functionName === "T") return 3;
             if(curr.functionName === "S") return 1;
             if(curr.functionName === "D") return 0;
         }
@@ -50,8 +52,8 @@ function RulesChecker(){
     }
 
     this.checkAllRules = function(prevs, curr, ex_length){
-        if(prevs.length === 0)  this.checkBasicCadention(undefined, curr, ex_length);
-        return this.checkBasicCadention(prevs[prevs.length - 1], curr, ex_length);
+        // if(prevs.length === 0)  this.checkBasicCadention(undefined, curr, ex_length);
+        return this.checkBasicCadention(prevs, curr, ex_length);
     }
 }
 
@@ -157,7 +159,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
     }
 
     this.solve = function(){
-        this.prepareMap(this.harmonizationExercise.harmonicFunctions)
+        this.prepareMap(this.harmonizationExercise.possibleFunctionsList);
         var solution = this.findSolution(0, [], 0);
         if(solution.length === 0){
             console.log("Solution not exists");
@@ -165,28 +167,36 @@ function SopranoSolver(sopranoHarmonizationExercise){
         }
 
         solution.sort(function(a,b){ return (a[1] > b[1]) ? 1 : -1} );
-        console.log(solution[0][1]);
 
-        solution.forEach(element => {
+        solution.forEach(function(element) {
             console.log("solution with rating " + element[1]);
-            element[0].forEach(element1 => {
+            element[0].forEach(function(element1){
                 console.log(element1.toString());
             });
         });
 
+        var i=0
+        for(; i<solution.length; i++){
+            var ex = new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, [solution[i][0]]);
+            var solver = new Solver.Solver(ex, undefined, this.exercise.notes);
+            var sol = solver.solve();
+            
+            //temporary condition for full solution
+            if(sol.chords[sol.chords.length-1].bassNote.pitch !== undefined) break;
+        }
+        
+        // solution[i][0].forEach(el => {
+        //     console.log(el.toString())
+        // })
 
+        // console.log("SOLUT")
+        // sol.chords.forEach(el => {
+        //     console.log(el.harmonicFunction.functionName);
+        // })
+        // console.log(sol.chords);
+        // // function Exercise(key, meter, mode, measures) {
 
-        var ex = new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, [solution[0][0]]);
-        var solver = new Solver.Solver(ex, undefined, this.exercise.notes);
-        var sol = solver.solve();
-
-        console.log("SOLUT")
-        console.log(sol.chords + "");
-        // function Exercise(key, meter, mode, measures) {
-
-
-
-        return solution;
+        return sol;
     }
 
     this.findSolution = function(curr_index, prev_chords, penalty){
