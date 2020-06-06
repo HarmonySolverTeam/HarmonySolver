@@ -2,10 +2,64 @@
 .import "./Chord.js" as Chord
 .import "./Note.js" as Note
 .import "./Consts.js" as Consts
+.import "./SopranoExercise.js" as SopranoExercise
+.import "./Utils.js" as Utils
+.import "./Solver.js" as Solver
+.import "./Exercise.js" as Exercise
 
-function SopranoSolver(key){
+function RulesChecker(){
+
+    this.checkBasicCadention = function(prev, curr, ex_length){
+
+        //pierwsza i ostatnia tonika
+        if(prev === undefined || prev.length + 1 == ex_length) {
+            if(curr.functionName == "T") return 0;
+            if(curr.functionName == "S") return 1;
+            if(curr.functionName == "D") return 1;
+        }
+
+        if(prev.functionName == "T"){
+            if(curr.functionName == "T") return 1;
+            if(curr.functionName == "S") return 0;
+            if(curr.functionName == "D") return -1;
+        }
+
+        if(prev.functionName == "S"){
+            if(curr.functionName == "T") return -1;
+            if(curr.functionName == "S") return 1;
+            if(curr.functionName == "D") return 0;
+        }
+
+        if(prev.functionName == "D"){
+            //prev is not D7
+            if(!Utils.contains(prev.extra, "7")){
+                if(curr.functionName == "T") return 0;
+                if(curr.functionName == "S") return -1;
+                if(curr.functionName == "D" && !Utils.contains(curr.extra, "7")) return 1;
+                if(curr.functionName == "D" && Utils.contains(curr.extra, "7")) return 0;
+            }
+            //prev is D7
+            else{
+                if(curr.functionName == "T") return 0;
+                if(curr.functionName == "S") return -1;
+                if(curr.functionName == "D" && !Utils.contains(curr.extra, "7")) return -1;
+                if(curr.functionName == "D" && Utils.contains(curr.extra, "7")) return 1;
+            }
+
+        }
+    }
+
+    this.checkAllRules = function(prevs, curr, ex_length){
+        if(prevs.length == 0)  this.checkBasicCadention(undefined, curr, ex_length);
+        return this.checkBasicCadention(prevs[prevs.length - 1], curr, ex_length);
+    }
+}
+
+function SopranoSolver(sopranoHarmonizationExercise){
     
-    this.key = key;
+    this.harmonizationExercise = sopranoHarmonizationExercise;
+    this.exercise = sopranoHarmonizationExercise.sopranoExercise;
+    this.rulesChecker = new RulesChecker();
 
     this.chordsMap = {
         0:[],
@@ -55,7 +109,7 @@ function SopranoSolver(key){
         chordElement = chordElement;
 
         //TODO minor scale
-        var scale = new Scale.MajorScale(this.key);
+        var scale = new Scale.MajorScale(this.exercise.key);
         var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
         var chordType;
@@ -102,5 +156,83 @@ function SopranoSolver(key){
         }
     }
 
-    
+    this.solve = function(){
+        this.prepareMap(this.harmonizationExercise.harmonicFunctions)
+        var solution = this.findSolution(0, [], 0);
+        if(solution.length == 0){
+            console.log("Solution not exists");
+            return -1;
+        }
+
+        solution.sort(function(a,b){ return (a[1] > b[1]) ? 1 : -1} );
+        console.log(solution[0][1]);
+
+        solution.forEach(element => {
+            console.log("solution with rating " + element[1]);
+            element[0].forEach(element1 => {
+                console.log(element1.toString());
+            });
+        });
+
+
+
+        var ex = new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, [solution[0][0]]);
+        var solver = new Solver.Solver(ex, undefined, this.exercise.notes);
+        var sol = solver.solve();
+
+        console.log("SOLUT")
+        console.log(sol.chords + "");
+        // function Exercise(key, meter, mode, measures) {
+
+
+
+        return solution;
+    }
+
+    this.findSolution = function(curr_index, prev_chords, penalty){
+
+        var result = [];
+        var notes = this.exercise.notes;
+
+        // if(curr_index == notes.length) return [prev_chords, penalty];
+
+        var basePitch = (notes[curr_index].pitch - Consts.keyStrPitch[this.exercise.key]) % 12;
+        var possibleChords  = this.chordsMap[basePitch];
+
+        var goodChords = []
+
+        for(var i=0; i<possibleChords.length; i++){
+            var score = this.rulesChecker.checkAllRules(prev_chords, possibleChords[i], notes.length);
+            if(score !== -1){
+                goodChords.push([possibleChords[i], score])
+            }
+        }
+        // goodChords.forEach(element => {
+        //     console.log(element[1].toString() + "    " + element[0]);
+        // });
+
+        if(goodChords.length == 0) return [];
+
+        if(curr_index + 1 == notes.length){
+            for(var i=0;i<goodChords.length;i++){
+                var resArray = prev_chords.slice();
+                resArray.push(goodChords[i][0]);
+                result.push( [resArray, penalty + goodChords[i][1]] );
+            }
+            return result;
+        }  
+
+        for(var i=0; i<goodChords.length; i++){
+            prev_chords.push(goodChords[i][0]);
+            console.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
+            var sol = this.findSolution(curr_index+1, prev_chords, penalty + goodChords[i][1]);
+            // console.log("SOL: " + sol);
+            result = result.concat(sol);
+            // console.log("RES: " + result);
+            prev_chords.pop();
+        }
+
+        return result;
+    }
+
 }
