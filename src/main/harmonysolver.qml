@@ -26,7 +26,7 @@ MuseScore {
     property var exercise: ({})
     id: window
     width: 800
-    height: 500
+    height: 600
     onRun: {
 
     }
@@ -257,11 +257,12 @@ MuseScore {
     }
 
     function sopranoHarmonization(functionsList) {
-        var mode = "major"
+
+        var mode = tab3.item.getSelectedSystem()
         //should be read from input
         var cursor = curScore.newCursor()
         cursor.rewind(0)
-        var sopranoNote, key, mode
+        var sopranoNote, key
         var durations = []
         var lastBaseNote, lastPitch
         var notes = []
@@ -443,8 +444,8 @@ MuseScore {
 
         TabView {
             id: tabView
-            width: 700
-            height: 450
+            width: 750
+            height: 550
 
             Tab {
                 title: "Harmonic Functions"
@@ -632,6 +633,14 @@ MuseScore {
                         }
                     }
 
+                    function getSelectedSystem(){
+                        if (useMinorCheckbox.checkedState === Qt.Checked) {
+                            return "minor";
+                        } else {
+                            return "major";
+                        }
+                    }
+
                     Label {
                         id: textLabelSoprano
                         wrapMode: Text.WordWrap
@@ -803,6 +812,19 @@ MuseScore {
                         CheckBox {
                             checked: false
                             text: qsTr("?")
+                        }
+                    }
+
+                    Column {
+                        id: extraOptions
+                        anchors.top: textLabelSoprano.bottom
+                        anchors.topMargin: 30
+                        anchors.left: extraColumnt.right
+                        anchors.leftMargin: 20
+                        CheckBox {
+                            id: useMinorCheckbox
+                            checked: false
+                            text: qsTr("use minor scale")
                         }
                     }
 
