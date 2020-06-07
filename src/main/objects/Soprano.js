@@ -161,7 +161,8 @@ function SopranoSolver(sopranoHarmonizationExercise){
             
             var basePitches = this.getChordBasePitch(harmonicFunctions[i]); 
             for(var j=0; j < basePitches.length; j++){
-                this.chordsMap[basePitches[j]].push(harmonicFunctions[i])
+                this.chordsMap[basePitches[j]].push(harmonicFunctions[i]);
+                console.log(basePitches[j] + " : " + harmonicFunctions[i].functionName);
             }
 
         }
@@ -194,17 +195,17 @@ function SopranoSolver(sopranoHarmonizationExercise){
             if(sol.chords[sol.chords.length-1].bassNote.pitch !== undefined) break;
         }
         
-        // solution[i][0].forEach(el => {
-        //     console.log(el.toString())
-        // })
+        solution[i][0].forEach(function(el) {
+            console.log(el.toString())
+        })
 
-        // console.log("SOLUT")
-        // sol.chords.forEach(el => {
-        //     console.log(el.harmonicFunction.functionName);
-        // })
-        // console.log(sol.chords);
-        // // function Exercise(key, meter, mode, measures) {
-
+        console.log("SOLUT")
+        sol.chords.forEach(function(el) {
+            console.log(el.harmonicFunction.functionName);
+        })
+        console.log(sol.chords);
+        // function Exercise(key, meter, mode, measures) {
+        console.log("SOLUTION LENGTH = " + sol.chords.length);
         return sol;
     }
 
@@ -215,9 +216,10 @@ function SopranoSolver(sopranoHarmonizationExercise){
 
         // if(curr_index == notes.length) return [prev_chords, penalty];
 
-        var basePitch = (notes[curr_index].pitch - Consts.keyStrPitch[this.exercise.key]) % 12;
+        var basePitch = (notes[curr_index].pitch - 0) % 12;
+        console.log("BasePitch: "+basePitch);
         var possibleChords  = this.chordsMap[basePitch];
-
+        console.log("possible chords: " + possibleChords);
         var goodChords = []
 
         for(var i=0; i<possibleChords.length; i++){
@@ -226,9 +228,9 @@ function SopranoSolver(sopranoHarmonizationExercise){
                 goodChords.push([possibleChords[i], score])
             }
         }
-        // goodChords.forEach(element => {
-        //     console.log(element[1].toString() + "    " + element[0]);
-        // });
+        goodChords.forEach(function(element){
+            console.log(element[1].toString() + "    " + element[0]);
+        });
 
         if(goodChords.length === 0) return [];
 
