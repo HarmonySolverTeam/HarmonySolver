@@ -14,6 +14,8 @@ import "./objects/BassTranslator.js" as Translator
 import "./objects/SopranoExercise.js" as SopranoExercise
 import "./objects/HarmonicFunction.js" as HarmonicFunction
 import "./objects/Soprano.js" as Soprano
+import "./objects/PluginConfiguration.js" as PLuginConfiguration
+import "./objects/PluginConfigurationUtils.js" as PluginConfigurationUtils
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -28,7 +30,8 @@ MuseScore {
     width: 800
     height: 600
     onRun: {
-
+        var conf = PluginConfigurationUtils.readConfiguration()
+        console.log(JSON.stringify(PluginConfigurationUtils.configuration_holder))
     }
 
     function getBaseNote(museScoreBaseNote) {
