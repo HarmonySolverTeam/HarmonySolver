@@ -64,7 +64,7 @@ function parseChord(string) {
     ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
     ret.down = arguments_json["down"] === undefined ? false : arguments_json["down"]
     ret.system = arguments_json["system"]
-    ret.mode = arguments_json["mode"] === undefined ? "major" : arguments_json["mode"]
+    ret.mode = arguments_json["mode"]
 
     return ret
 }
