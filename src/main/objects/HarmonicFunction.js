@@ -1,4 +1,4 @@
-function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
+function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode) {
     this.functionName = functionName // "T", "S", "D"
     this.degree = degree             // int 
     this.position = position         // should be string f.e. "7<" 
@@ -8,6 +8,7 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     this.omit = omit                 //omitted components list [] | ["7>", "9"]
     this.down = down                 //true or false
     this.system = system             // "open" | "close"
+    this.mode = mode                // "major" | "minor"
 
     this.getSymbol = function () {
         return this.down ? (this.functionName + "down" + this.extra) : (this.functionName + this.extra)
@@ -25,6 +26,7 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
             this.extra + " " +
             this.omit + " " +
             this.down + " " +
-            this.system
+            this.system + " " +
+            this.mode
     }
 }
