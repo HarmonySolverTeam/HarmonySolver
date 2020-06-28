@@ -14,7 +14,7 @@ import "./objects/BassTranslator.js" as Translator
 import "./objects/SopranoExercise.js" as SopranoExercise
 import "./objects/HarmonicFunction.js" as HarmonicFunction
 import "./objects/Soprano.js" as Soprano
-import "./objects/PluginConfiguration.js" as PLuginConfiguration
+import "./objects/PluginConfiguration.js" as PluginConfiguration
 import "./objects/PluginConfigurationUtils.js" as PluginConfigurationUtils
 
 MuseScore {
@@ -30,7 +30,12 @@ MuseScore {
     width: 800
     height: 600
     onRun: {
-        var conf = PluginConfigurationUtils.readConfiguration()
+        readPluginConfiguration()
+    }
+
+
+    function readPluginConfiguration(){
+        PluginConfigurationUtils.readConfiguration()
         console.log(JSON.stringify(PluginConfigurationUtils.configuration_holder))
     }
 
@@ -413,6 +418,7 @@ MuseScore {
         id: myFileAbc
         onError: console.log(msg + "  Filename = " + myFileAbc.source)
     }
+
 
     FileDialog {
         id: fileDialog
@@ -878,6 +884,56 @@ MuseScore {
                             }
                         }
                     }
+                }
+            }
+            Tab {
+
+                itle: "Plugin Settings"
+                id: tab4
+
+                function showConfiguration(){
+                    savePathTextArea.text = PluginConfigurationUtils.configuration_holder.solutionPath
+                }
+
+                Rectangle{
+                    id: tabRectangle4
+
+                    Label{
+                        id: savePathLabel
+                        anchors.top: tabRectangle4.top
+                        anchors.left: tabRectangle4.left
+                        anchors.topMargin: 10
+                        anchors.leftMargin: 10
+                        text: qsTr("Solution Path")
+                    }
+
+
+                    TextArea {
+                        id: savePathTextArea
+                        anchors.top: savePathLabel.bottom
+                        anchors.left: tabRectangle4.left
+
+                        anchors.topMargin: 10
+                        anchors.leftMargin: 10
+                        width: 200
+                        height: 40
+                        wrapMode: TextEdit.WrapAnywhere
+                        textFormat: TextEdit.PlainText
+                    }
+
+                    Button {
+                        id: saveConfigurationButton
+                        text: qsTr("Save Configuration")
+                        anchors.bottom: tabRectangle4.bottom
+                        anchors.left: tabRectangle4.left
+                        anchors.bottomMargin: 20
+                        anchors.leftMargin: 40
+                        onClicked: {
+                            PluginConfigurationUtils.configuration_holder.solutionPath = savePathTextArea.text
+                            PluginConfigurationUtils.saveConfiguration()
+                        }
+                    }
+
                 }
             }
         }
