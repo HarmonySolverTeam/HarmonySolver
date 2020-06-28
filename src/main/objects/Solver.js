@@ -16,7 +16,7 @@ function Solver(exercise, bassLine, sopranoLine){
     for(var i=1; i<exercise.measures.length; i++){
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
-    this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key);
+    this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 
     this.solve = function(){
         var sol_chords =  this.findSolution(0, undefined, undefined);
