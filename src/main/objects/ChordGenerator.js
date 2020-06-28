@@ -5,8 +5,9 @@
 .import "./Utils.js" as Utils
 
 function ChordGenerator(key, mode) {
-    this.key = key;
+    this.key = key.toUpperCase();
     this.mode = mode;
+    console.log(this.key + "   " + this.mode);
 
     function getPossiblePitchValuesFromInterval(note, minPitch, maxPitch) {
 
