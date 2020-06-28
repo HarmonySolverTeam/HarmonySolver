@@ -16,3 +16,14 @@ function MajorScale(key){
     this.pitches = [0, 2, 4, 5, 7, 9, 11]
 }
 
+function MinorScale(baseNote, tonicPitch) {
+    Scale.call(this.baseNote)
+    this.tonicPitch = tonicPitch
+    this.pitches = [0, 2, 3, 5, 7, 9, 10]
+}
+
+function MinorScale(key){
+    Scale.call(this, Consts.keyStrBase[key])
+    this.tonicPitch = Consts.keyStrPitch[key]
+    this.pitches = [0, 2, 3, 5, 7, 9, 10]
+}

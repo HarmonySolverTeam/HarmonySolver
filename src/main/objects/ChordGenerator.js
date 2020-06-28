@@ -4,8 +4,9 @@
 .import "./Consts.js" as Consts
 .import "./Utils.js" as Utils
 
-function ChordGenerator(key) {
+function ChordGenerator(key, mode) {
     this.key = key;
+    this.mode = mode;
 
     function getPossiblePitchValuesFromInterval(note, minPitch, maxPitch) {
 
@@ -209,14 +210,33 @@ function ChordGenerator(key) {
 
     this.mapSchemas = function (harmonicFunction, schemas) {
 
-        //TODO minor scale
-        var scale = new Scale.MajorScale(this.key);
+        var scale;
+        if(this.mode === 'major'){
+            scale = new Scale.MajorScale(this.key);
+        }
+        if(this.mode === 'minor'){
+            scale = new Scale.MinorScale(this.key);
+        }
         var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
         var chordType;
-        var d = harmonicFunction.degree;
-        if (d === 1 || d === 4 || d === 5) chordType = Consts.basicMajorChord;
-        else chordType = Consts.basicMinorChord;
+        if (harmonicFunction.mode === undefined){
+            var d = harmonicFunction.degree;
+            if (this.mode === 'major'){
+                if (d === 1 || d === 4 || d === 5) chordType = Consts.basicMajorChord;
+                else chordType = Consts.basicMinorChord;
+            }
+            else if(this.mode === 'minor'){
+                if (d === 3 || d === 6 || d === 7) chordType = Consts.basicMajorChord;
+                else chordType = Consts.basicMinorChord;
+            }
+        }
+        else{
+            if(harmonicFunction.mode == 'major') chordType = Consts.basicMajorChord;
+            if(harmonicFunction.mode == 'minor') chordType = Consts.basicMinorChord;   
+        }
+
+
         var components = {
             '1': chordType[0],
             '3': chordType[1],
@@ -256,8 +276,15 @@ function ChordGenerator(key) {
         var temp = this.getChordTemplate(harmonicFunction);
         var schemas = this.getSchemas(harmonicFunction, temp);
         var schemas_mapped = this.mapSchemas(harmonicFunction, schemas);
-        var scale = new Scale.MajorScale(this.key);
-
+        
+        var scale;
+        if(this.mode === 'major'){
+            scale = new Scale.MajorScale(this.key);
+        }
+        if(this.mode === 'minor'){
+            scale = new Scale.MinorScale(this.key);
+        }
+        
         for (var i = 0; i < schemas_mapped.length; i++) {
             var schema_mapped = schemas_mapped[i];
             var vb = new Consts.VoicesBoundary()
