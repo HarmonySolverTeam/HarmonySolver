@@ -1,4 +1,0 @@
-C
-4/4
-D{"position":"5", "extra":["7"]}
-T{"position":"1"}
