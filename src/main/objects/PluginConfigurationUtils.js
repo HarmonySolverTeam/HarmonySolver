@@ -2,7 +2,8 @@
 
 var configuration_holder
 
-var configuration_path = "../resources/configuration.json"
+var configuration_path = "../resources/harmony_solver_plugin_configuration.json"
+var configuration_save_path = "resources/harmony_solver_plugin_configuration.json"
 
 function readTextFile(file)
 {
@@ -11,15 +12,6 @@ function readTextFile(file)
     request.send(null);
     return request.responseText;
 }
-
-function save_text_file(file_name, content){
-    var a = document.createElement("a");
-    var file = new Blob([content], {type: "application/json"});
-    a.href = URL.createObjectURL(file);
-    a.download = file_name;
-    a.click();
-}
-
 
 function readConfiguration(){
     var conf_text = readTextFile(configuration_path)

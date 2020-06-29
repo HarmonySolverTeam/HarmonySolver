@@ -38,6 +38,19 @@ MuseScore {
         PluginConfigurationUtils.readConfiguration()
         console.log(JSON.stringify(PluginConfigurationUtils.configuration_holder))
     }
+    
+    FileIO{
+      id: outConfFile
+      onError: console.log(msg + "  Filename = " + outConfFile.source)
+    }
+    
+    function savePluginConfiguration(){
+       var json_conf = String(JSON.stringify(PluginConfigurationUtils.configuration_holder))
+       //ale drut ja piernicze...
+       outConfFile.setSource(Qt.resolvedUrl(".") + PluginConfigurationUtils.configuration_save_path)
+              console.log(outConfFile.source)
+       console.log(outConfFile.write(json_conf))
+    }
 
     function getBaseNote(museScoreBaseNote) {
         var result
@@ -168,12 +181,6 @@ MuseScore {
                               solution.exercise.meter[1])
         cursor.add(ts)
 
-        //todo change this to counting from durtaions
-        //todo right now type in valid number
-        //curScore.appendMeasures(solution.exercise.measures.length - curScore.nmeasures)
-        // curScore.appendMeasures(1)
-
-    
         if(durations !== undefined){
             var countMeasures = function(durations){
                 var sum = 0;
@@ -888,7 +895,7 @@ MuseScore {
             }
             Tab {
 
-                itle: "Plugin Settings"
+                title: "Plugin Settings"
                 id: tab4
 
                 function showConfiguration(){
@@ -930,7 +937,7 @@ MuseScore {
                         anchors.leftMargin: 40
                         onClicked: {
                             PluginConfigurationUtils.configuration_holder.solutionPath = savePathTextArea.text
-                            PluginConfigurationUtils.saveConfiguration()
+                            savePluginConfiguration()
                         }
                     }
 

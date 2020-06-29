@@ -8,7 +8,7 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     this.omit = omit                 //omitted components list [] | ["7>", "9"]
     this.down = down                 //true or false
     this.system = system             // "open" | "close"
-    this.mode = mode                // "major" | "minor"
+    this.mode = mode                // "major" | "minor" | undefined
 
     this.getSymbol = function () {
         return this.down ? (this.functionName + "down" + this.extra) : (this.functionName + this.extra)

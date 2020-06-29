@@ -23,7 +23,7 @@ function MinorScale(baseNote, tonicPitch) {
 }
 
 function MinorScale(key){
-    Scale.call(this, Consts.keyStrBase[key])
-    this.tonicPitch = Consts.keyStrPitch[key]
+    Scale.call(this, Consts.keyStrBase[key.toUpperCase()])
+    this.tonicPitch = Consts.keyStrPitch[key.toUpperCase()]
     this.pitches = [0, 2, 3, 5, 7, 9, 10]
 }
