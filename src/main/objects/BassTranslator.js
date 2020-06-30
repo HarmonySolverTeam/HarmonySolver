@@ -239,9 +239,11 @@ function findPrime(chordElement) {
 }
 
 
-function getValidFunctions(chordElement) {
-
-    switch (chordElement.primeNote) {
+function getValidFunctions(chordElement, mode) {
+    var primeNote = chordElement.primeNote
+    if(mode === "minor") primeNote += 2
+    primeNote = primeNote % 7
+    switch (primeNote) {
         case 0:
             return ["T"]
         case 1:
@@ -284,11 +286,10 @@ function getValidPositionAndRevolution(harmonicFunction, chordElement) {
 }
 
 
-function createHarmonicFunctionOrFunctions(chordElement) {
-
+function createHarmonicFunctionOrFunctions(chordElement, mode) {
     var ret = []
 
-    var functions = getValidFunctions(chordElement)
+    var functions = getValidFunctions(chordElement, mode)
 
     for (var i = 0; i < functions.length; i++) {
 
@@ -297,6 +298,7 @@ function createHarmonicFunctionOrFunctions(chordElement) {
         toAdd.functionName = functions[i]
 
         toAdd.degree = chordElement.primeNote + 1
+        if(mode === "minor") {toAdd.degree += 2; toAdd.degree = toAdd.degree%7;}
 
         var posAndRev = getValidPositionAndRevolution(toAdd, chordElement)
 
@@ -336,7 +338,7 @@ function convertToFunctions(figuredBassExercise) {
         findPrime(chordElement)
         console.log(chordElement)
 
-        var harmFunction = createHarmonicFunctionOrFunctions(chordElement)
+        var harmFunction = createHarmonicFunctionOrFunctions(chordElement, figuredBassExercise.mode)
 
         bassElements[i].bassNote.chordComponent = parseInt(harmFunction[0].revolution)
 
