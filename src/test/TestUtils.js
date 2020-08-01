@@ -2,7 +2,9 @@
 Example usage:
     var x1 = new UnitTest(()=>{return assertNotEqualsPrimitives(5,1)}, "5!=1 Test")
     var x2 = new UnitTest(()=>{return assertTrue(false)}, "Wrong Test")
-    var suite = new TestSuite([x1, x2]);
+    var suite = new TestSuite();
+    suite.addTest(x1);
+    suite.addTest(x2);
     suite.run()
  */
 
@@ -56,19 +58,23 @@ function UnitTest(fun, name){
     }
 }
 
-function TestSuite(tests){
-    this.tests = tests; // [Test]
+function TestSuite(){
+    this.tests = []; // [Test]
+
+    this.addTest = function(test){
+        this.tests.push(test)
+    };
 
     this.run = function () {
         var passed = 0, failed = 0;
-        for (var i = 0; i < tests.length; i++) {
-            var x = tests[i].run();
-            if (x) {
+        for (var i = 0; i < this.tests.length; i++) {
+            var currentTest = this.tests[i].run();
+            if (currentTest) {
                 passed += 1;
-                console.log("\"" + tests[i].name + "\"" + " passed.")
+                console.log("\"" + this.tests[i].name + "\"" + " passed.")
             } else {
                 failed += 1;
-                console.log("\"" + tests[i].name + "\"" + " failed.")
+                console.log("\"" + this.tests[i].name + "\"" + " failed.")
             }
         }
         console.log("\n");
