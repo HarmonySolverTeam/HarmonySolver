@@ -53,6 +53,9 @@ function ChordGenerator(key, mode) {
                 case "1":
                     needToAdd.splice(needToAdd.indexOf('1'), 1)
                     break;
+                case "3":
+                    needToAdd.splice(needToAdd.indexOf('3'), 1)
+                    break;
                 case "5":
                     needToAdd.splice(needToAdd.indexOf('5'), 1)
                     break;
