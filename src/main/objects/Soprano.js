@@ -120,7 +120,13 @@ function SopranoSolver(sopranoHarmonizationExercise){
         chordElement = chordElement;
 
         //TODO minor scale
-        var scale = new Scale.MajorScale(this.exercise.key);
+        var scale;
+        if (this.exercise.mode === 'major'){
+            scale = new Scale.MajorScale(this.exercise.key);
+        }
+        else if(this.exercise.mode === 'minor'){
+            scale = new Scale.MinorScale(this.exercise.key.toUpperCase());
+        }
         var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
         var chordType;

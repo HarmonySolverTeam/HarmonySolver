@@ -1,12 +1,12 @@
 d
 4/4
-T{"position":5, "system":"close"};T{"position":3};S{}
+T{"position":"5", "system":"close"};T{"position":"3"};S{}
 D{};T{}
-S{};S{"position":3};D{};D{"position":3}
+S{};S{"position":"3"};D{};D{"position":"3"}
 T{}
-T{"position":5};T{"position":1};D{}
-T{};T{"position":5};S{};S{"position":1}
+T{"position":"5"};T{"position":"1"};D{}
+T{};T{"position":"5"};S{};S{"position":"1"}
 T{};S{};D{}
-T{};{"position":5};T{"position":1};{"position":3}
-D{};D{"position":3}
+T{};T{"position":"5"};T{"position":"1"};T{"position":"3"}
+D{};D{"position":"3"}
 T{}
