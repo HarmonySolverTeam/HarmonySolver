@@ -40,7 +40,7 @@ function Solver(exercise, bassLine, sopranoLine){
         if(DEBUG){
             var log = "";
             for(var x=0;x<curr_index;x++) log += "   "
-            if(curr_index < 6) console.log(log + curr_index)
+            if(curr_index < 6) Utils.log("Log", log + curr_index)
         }
 
         for (var j = 0; j < chords.length; j++){
@@ -48,8 +48,7 @@ function Solver(exercise, bassLine, sopranoLine){
             var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
             if (score !== -1 ) {
-                console.log("OK!");
-                console.log( curr_index + " -> " + chords[j]);
+                Utils.log("OK!", curr_index + " -> " + chords[j]);
                 good_chords.push([score,chords[j]]);
             }
         }

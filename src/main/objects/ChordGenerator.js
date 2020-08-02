@@ -7,7 +7,7 @@
 function ChordGenerator(key, mode) {
     this.key = key.toUpperCase();
     this.mode = mode;
-    console.log(this.key + "   " + this.mode);
+    Utils.log("Key: " + this.key + " Mode: " + this.mode);
 
     function getPossiblePitchValuesFromInterval(note, minPitch, maxPitch) {
 
@@ -137,7 +137,7 @@ function ChordGenerator(key, mode) {
 
     this.getSchemas = function (harmonicFunction, chordTemplate) {
 
-        console.log(chordTemplate);
+       // console.log(chordTemplate);
         var schemas = []
 
         var chord = chordTemplate[0];
@@ -203,9 +203,9 @@ function ChordGenerator(key, mode) {
             }
         }
 
-        console.log("SHEMAS:");
-        schemas.forEach(function(x){ console.log(x)});
-        console.log("SCHEMAS END");
+       // console.log("SHEMAS:");
+      //  schemas.forEach(function(x){ console.log(x)});
+      //  console.log("SCHEMAS END");
         return schemas;
     }
 
@@ -218,6 +218,9 @@ function ChordGenerator(key, mode) {
         if(this.mode === 'minor'){
             scale = new Scale.MinorScale(this.key);
         }
+       // console.log("tonic pith " + scale.tonicPitch)
+       // console.log("scale pithes " + scale.pitches[harmonicFunction.degree - 1])
+      //  console.log("harm func degree " + harmonicFunction.degree)
         var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
         var chordType;
@@ -233,8 +236,8 @@ function ChordGenerator(key, mode) {
             }
         }
         else{
-            if(harmonicFunction.mode == 'major') chordType = Consts.basicMajorChord;
-            if(harmonicFunction.mode == 'minor') chordType = Consts.basicMinorChord;   
+            if(harmonicFunction.mode === 'major') chordType = Consts.basicMajorChord;
+            if(harmonicFunction.mode === 'minor') chordType = Consts.basicMinorChord;
         }
 
 
@@ -250,22 +253,28 @@ function ChordGenerator(key, mode) {
         var schemas_cp = schemas.slice();
         for (var i = 0; i < schemas.length; i++) {
             schemas_cp[i] = schemas[i].map(function (scheme) {
-
+                //console.log("scheme" + scheme)
                 if (scheme.length > 1) {
                     var intervalPitch = components[scheme.charAt(0)];
+                   // console.log("interval pith" + intervalPitch)
                     for (var j = 1; j < scheme.length; j++) {
+                     //   console.log(scheme[j])
                         if (scheme[j] === '<') intervalPitch++;
                         if (scheme[j] === '>') intervalPitch--;
                     }
+                   // console.log("basicnote" + basicNote)
                     return basicNote + intervalPitch;
                 }
+              //  console.log("basicnote" + basicNote)
+              //  console.log("components [scheme]" + components[scheme])
+
                 return basicNote + components[scheme];
             })
         }
 
-        // console.log("SHEMAS MAPPED:");
-        // schemas_cp.forEach(function(x){ console.log(x)});
-        // console.log("SCHEMAS MAPPED END");
+       // console.log("SHEMAS MAPPED:");
+      //  schemas_cp.forEach(function(x){ console.log(x)});
+       // console.log("SCHEMAS MAPPED END");
 
         return schemas_cp;
 
@@ -374,7 +383,7 @@ function ChordGenerator(key, mode) {
                     return (xor(p,q) || (t && p && q)) && (xor(r,s) || (u && r && s));
                 }
                 if(chord.harmonicFunction.system == "close") return (!p && !q && !r && !s);
-                console.log("ILLEGAL system in harmonicFunction: " + chord.harmonicFunction.system)
+                Utils.log("ILLEGAL system in harmonicFunction: " + chord.harmonicFunction.system)
                 return true;
             });
 

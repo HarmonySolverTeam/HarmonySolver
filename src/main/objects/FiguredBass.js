@@ -37,13 +37,3 @@ function FiguredBassExercise(mode, key, meter, elements, durations) {
     }
 }
 
-function ChordElement(notesNumbers, omit, bassElement) {
-    this.notesNumbers = notesNumbers
-    this.omit = omit
-    this.bassElement = bassElement
-    this.primeNote = undefined
-
-    this.toString = function () {
-        return this.notesNumbers + " " + this.omit + " " + this.bassElement + " " + this.primeNote
-    }
-}
