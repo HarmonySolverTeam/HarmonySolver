@@ -13,7 +13,7 @@ function Solver(exercise, bassLine, sopranoLine){
     this.bassLine = bassLine;
     this.sopranoLine = sopranoLine;
     this.harmonicFunctions = exercise.measures[0];
-    for(var i=1; i<exercise.measures.length; i++){
+    for(var i = 1; i < exercise.measures.length; i++){
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
@@ -22,7 +22,7 @@ function Solver(exercise, bassLine, sopranoLine){
         var sol_chords =  this.findSolution(0, undefined, undefined);
         //dopełenienie pustymi chordami
         var N = sol_chords.length;
-        for(var i=0; i<this.harmonicFunctions.length - N; i++){
+        for(var i = 0; i<this.harmonicFunctions.length - N; i++){
             var n = new Note.Note(undefined, undefined, undefined)
             sol_chords.push(new Chord.Chord(n,n,n,n, this.harmonicFunctions[N + i]));
         }
@@ -39,7 +39,7 @@ function Solver(exercise, bassLine, sopranoLine){
         
         if(DEBUG){
             var log = "";
-            for(var x=0;x<curr_index;x++) log += "   "
+            for(var x = 0; x<curr_index; x++) log += "   "
             if(curr_index < 6) Utils.log("Log", log + curr_index)
         }
 

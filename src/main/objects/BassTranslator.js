@@ -2,6 +2,7 @@
 .import "./Utils.js" as Utils
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Exercise.js" as Exercise
+.import "./Consts.js" as Consts
 
 //TODO jest jest sam # bez liczby (albo przy 3), to zmienić tylko mode
 //TODO OGARNIAC znaki chromatyczne
@@ -56,6 +57,9 @@ function BassTranslator() {
     }
 
     this.completeFiguredBassNumbers = function (element) {
+
+        Utils.log("element.symbols.length: " + element.symbols.length)
+        Utils.log("element.symbols before: " + element.symbols)
 
         //empty -> 3,5
         if (element.symbols.length === 0) {
@@ -180,9 +184,9 @@ function BassTranslator() {
     this.hasTwoNextThirds = function (chordElement) {
         for (var i = 0; i < chordElement.notesNumbers.length; i++) {
 
-            var n1 = chordElement.notesNumbers[i] % 7
-            var n2 = chordElement.notesNumbers[(i + 1) % chordElement.notesNumbers.length] % 7
-            var n3 = chordElement.notesNumbers[(i + 2) % chordElement.notesNumbers.length] % 7
+            var n1 = Utils.mod(chordElement.notesNumbers[i], 7)
+            var n2 = Utils.mod(chordElement.notesNumbers[Utils.mod(i + 1, chordElement.notesNumbers.length)], 7)
+            var n3 = Utils.mod(chordElement.notesNumbers[Utils.mod(i + 2, chordElement.notesNumbers.length)], 7)
 
             if ((Utils.abs(n2 - n1) === 2 || Utils.abs(n2 - n1) === 5)
                 && (Utils.abs(n3 - n2) === 2 || Utils.abs(n3 - n2) === 5)) {
@@ -205,14 +209,14 @@ function BassTranslator() {
                 }
                 chordElement.notesNumbers = temp
                 if (chordElement.notesNumbers.length >= 5) {
-                    chordElement.omit.push((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]) % 7 + 1)
+                    chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
                 }
                 return
             }
         }
         chordElement.notesNumbers.push(chordElement.notesNumbers[chordElement.notesNumbers.length - 1] + 2)
         if (chordElement.notesNumbers.length >= 5) {
-            chordElement.omit.push((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]) % 7 + 1)
+            chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
         }
     }
 
@@ -229,7 +233,7 @@ function BassTranslator() {
         var primeNote = undefined //from 0 to 6
 
         for (var i = 0; i < chordElement.notesNumbers.length; i++) {
-            scaleNotes.push(chordElement.notesNumbers[i] % 7)
+            scaleNotes.push(Utils.mod(chordElement.notesNumbers[i], 7))
         }
 
         Utils.log( "Scale Notes: ", scaleNotes.toString())
@@ -238,12 +242,12 @@ function BassTranslator() {
             var note = scaleNotes[i]
             //console.log(note)
 
-            while (Utils.contains(scaleNotes, (note - 2) % 7)) {
-                note = (note - 2) % 7
+            while (Utils.contains(scaleNotes, Utils.mod((note - 2), 7))) {
+                note = Utils.mod((note - 2), 7)
             }
             //console.log(note)
 
-            if (Utils.contains(scaleNotes, (note + 2) % 7) && Utils.contains(scaleNotes, (note + 4) % 7)) {
+            if (Utils.contains(scaleNotes, Utils.mod((note + 2), 7)) && Utils.contains(scaleNotes, Utils.mod((note + 4), 7))) {
                 primeNote = note
                 break
             }
@@ -258,10 +262,16 @@ function BassTranslator() {
     }
 
     //TODO change
-    this.getValidFunctions = function (chordElement, mode) {
+    this.getValidFunctions = function (chordElement, key) {
             var primeNote = chordElement.primeNote
-            if (mode === "minor") primeNote += 2
-            primeNote = primeNote % 7
+        Utils.log("Chordelement:",chordElement)
+        Utils.log("key: " + key)
+
+            primeNote -= Consts.keyStrBase[key]
+        Utils.log("primeNote: " + primeNote)
+        Utils.log("Consts.keyStrBase[key]: " + Consts.keyStrBase[key])
+
+        primeNote = Utils.mod(primeNote, 7)
             switch (primeNote) {
                 case 0:
                     return ["T"]
@@ -279,6 +289,7 @@ function BassTranslator() {
                     return ["D"]
             }
         }
+
     //TODO change
     this.getValidPositionAndRevolution = function (harmonicFunction, chordElement) {
 
@@ -289,7 +300,7 @@ function BassTranslator() {
         var bass = chordElement.bassElement.bassNote.baseNote
 
         while (bass !== prime) {
-            bass = (bass - 1) % 7
+            bass = Utils.mod((bass - 1), 7)
             revolution++
         }
 
@@ -303,10 +314,10 @@ function BassTranslator() {
         return [position, revolution]
     }
 
-    this.createHarmonicFunctionOrFunctions = function (chordElement, mode) {
+    this.createHarmonicFunctionOrFunctions = function (chordElement, mode, key) {
         var ret = []
 
-        var functions = this.getValidFunctions(chordElement, mode)
+        var functions = this.getValidFunctions(chordElement, key)
 
         for (var i = 0; i < functions.length; i++) {
 
@@ -317,7 +328,7 @@ function BassTranslator() {
             toAdd.degree = chordElement.primeNote + 1
             if (mode === "minor") {
                 toAdd.degree += 2;
-                toAdd.degree = toAdd.degree % 7;
+                toAdd.degree = Utils.mod(toAdd.degree, 7);
             }
 
             var posAndRev = this.getValidPositionAndRevolution(toAdd, chordElement)
@@ -348,6 +359,7 @@ function BassTranslator() {
             Utils.log("Bass elements before complete:", bassElements[i])
             this.completeFiguredBassNumbers(bassElements[i])
             Utils.log("Bass elements after complete ", bassElements[i])
+            Utils.log("element.symbols after: " + bassElements[i].symbols)
 
             var chordElement = this.buildChordElement(bassElements[i])
             Utils.log("Chord element ", chordElement)
@@ -357,7 +369,7 @@ function BassTranslator() {
             this.findPrime(chordElement)
             Utils.log("Chord element:",chordElement)
 
-            var harmFunction = this.createHarmonicFunctionOrFunctions(chordElement, figuredBassExercise.mode)
+            var harmFunction = this.createHarmonicFunctionOrFunctions(chordElement, figuredBassExercise.mode, figuredBassExercise.key)
 
             bassElements[i].bassNote.chordComponent = parseInt(harmFunction[0].revolution)
 

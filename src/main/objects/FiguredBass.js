@@ -9,7 +9,7 @@ function BassSymbol(component, alteration){
     this.alteration = alteration;
 
     this.toString = function() {
-        return this.component + " " + this.alteration
+        return "Component: " + this.component + " Alteration: " + this.alteration
     }
 }
 
@@ -20,7 +20,7 @@ function FiguredBassElement(bassNote, symbols) {
 
 
     this.toString = function () {
-        return this.bassNote + " " + this.symbols
+        return "Bass note: "+ this.bassNote + " Symbols: " + this.symbols
     }
 
 }
@@ -33,7 +33,7 @@ function FiguredBassExercise(mode, key, meter, elements, durations) {
     this.durations = durations;
 
     this.toString = function () {
-        return this.mode + " " + this.key + " " + this.meter + " " + this.elements + " " + this.durations
+        return "Mode: " + this.mode + " Key: " + this.key + " Meter: " + this.meter + " Elements: " + this.elements + " Durations: " + this.durations
     }
 }
 

@@ -6,8 +6,8 @@ function concurrentOctaves(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
-            if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 0){
-                if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 0){
+            if(Utils.mod((prevChord.notes[j].pitch-prevChord.notes[i].pitch), 12) === 0){
+                if(Utils.mod((currentChord.notes[j].pitch-currentChord.notes[i].pitch), 12) === 0){
                     if(DEBUG) {
                         Utils.log("concurrentOctaves "+i+" "+j, prevChord + " -> " + currentChord );
                     }
@@ -23,8 +23,8 @@ function concurrentFifths(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
-            if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 7){
-                if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 7){
+            if(Utils.mod((prevChord.notes[j].pitch-prevChord.notes[i].pitch), 12) === 7){
+                if(Utils.mod((currentChord.notes[j].pitch-currentChord.notes[i].pitch, 12) === 7){
                     if(DEBUG) {
                         Utils.log("concurrentFifths "+i+" "+j, prevChord + " -> " + currentChord);
                     }
@@ -75,7 +75,7 @@ function forbiddenJump(prevChord, currentChord){
     function getBaseDistance(first, second ){
         var i = 0
         while(first!==second) {
-            first = (first+1)%7
+            first = Utils.mod((first+1), 7)
             i++
         }
         return i
@@ -83,8 +83,8 @@ function forbiddenJump(prevChord, currentChord){
 
     function checkAlteration(halfToneDist, baseDist){
         if(halfToneDist > 12){
-            if(halfToneDist%12===0) halfToneDist = 12
-            else halfToneDist = halfToneDist % 12
+            if(Utils.mod(halfToneDist, 12) === 0) halfToneDist = 12
+            else halfToneDist = Utils.mod(halfToneDist, 12)
         }
         var alteredIntervals = {1:0, 3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
         return alteredIntervals[halfToneDist] === baseDist

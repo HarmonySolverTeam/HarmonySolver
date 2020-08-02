@@ -13,6 +13,13 @@ function abs(a) {
     return a >= 0 ? a : -a;
 }
 
+function mod(a, b){
+    while(a < 0){
+        a += b
+    }
+    return a % b
+}
+
 function log(message, longMessage){
     var lineAndSource = ((new Error).stack.split("\n")[1].split("/")).reverse()[0]
     console.log("[" + lineAndSource + "] " + message + (longMessage === undefined ? "" : "\n" + longMessage + "\n"))

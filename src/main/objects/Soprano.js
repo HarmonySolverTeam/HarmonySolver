@@ -117,8 +117,6 @@ function SopranoSolver(sopranoHarmonizationExercise){
             }
         }
 
-        chordElement = chordElement;
-
         //TODO minor scale
         var scale;
         if (this.exercise.mode === 'major'){
@@ -152,9 +150,9 @@ function SopranoSolver(sopranoHarmonizationExercise){
                     if (scheme[j] === '<') intervalPitch++;
                     if (scheme[j] === '>') intervalPitch--;
                 }
-                return (basicNote + intervalPitch) % 12;
+                return Utils.mod((basicNote + intervalPitch), 12);
             }
-            return (basicNote + components[scheme]) % 12;
+            return Utils.mod((basicNote + components[scheme]), 12);
         })
         
         return chordElement_cp;
@@ -222,7 +220,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
 
         // if(curr_index == notes.length) return [prev_chords, penalty];
 
-        var basePitch = (notes[curr_index].pitch - 0) % 12;
+        var basePitch = Utils.mod((notes[curr_index].pitch - 0), 12);
         Utils.log("BasePitch: "+basePitch);
         var possibleChords  = this.chordsMap[basePitch];
         Utils.log("possible chords: " + possibleChords);

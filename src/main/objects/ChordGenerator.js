@@ -40,7 +40,7 @@ function ChordGenerator(key, mode) {
         for (var i = 0; i < harmonicFunction.extra.length; i++) {
             //Chopin chord
             if (harmonicFunction.extra[i].length > 2) {
-                if (harmonicFunction.extra[i][0] == "1" && harmonicFunction.extra[i][1] == "3")
+                if (harmonicFunction.extra[i][0] === "1" && harmonicFunction.extra[i][1] === "3")
                     soprano = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
                 continue;
             }
@@ -66,7 +66,7 @@ function ChordGenerator(key, mode) {
                 needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.position), 1);
         }
 
-        //I'm not shure if revolution is int or string - assume that string
+        //I'm not sure if revolution is int or string - assume that string
         bass = harmonicFunction.revolution;
         if(Utils.contains(needToAdd, harmonicFunction.revolution))
             needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
@@ -92,7 +92,7 @@ function ChordGenerator(key, mode) {
                 res.push(res_element)
                 // console.log(res_element)
             }
-        } else if (indices.length == 2) {
+        } else if (indices.length === 2) {
             var p = [[0, 1], [1, 0]];
             for (var j = 0; j < p.length; j++) {
                 res_element = []
@@ -111,7 +111,7 @@ function ChordGenerator(key, mode) {
         //delete repeating
         var comparator = function (a, b) {
             for (var i = 0; i < 4; i++) {
-                if (a[i] == b[i]) continue;
+                if (a[i] === b[i]) continue;
                 if (a[i] < b[i]) return -1;
                 else return 1
             }
@@ -320,7 +320,7 @@ function ChordGenerator(key, mode) {
                     '9': 8
                 }
 
-                return (scaleBaseNote + (harmonicFunction.degree - 1) + intervalToBaseNote[int]) % 7;
+                return Utils.mod((scaleBaseNote + (harmonicFunction.degree - 1) + intervalToBaseNote[int]), 7);
             }
 
 
@@ -355,7 +355,7 @@ function ChordGenerator(key, mode) {
                 // console.log(chord.toString());
                 var isInOpenInterval = function(pitch, interval){
                     for(var i= interval[0] + 1; i<interval[1];i++){
-                        if( (i % 12) == (pitch % 12) ) return true;
+                        if( Utils.mod(i, 12) === Utils.mod(pitch, 12) ) return true;
                     }
                     return false;
                 }
@@ -376,13 +376,13 @@ function ChordGenerator(key, mode) {
                 var s = isInOpenInterval(chord.sopranoNote.pitch, interval2);
                 // console.log( p + " " + q + " " + r + " " + s)
 
-                if(chord.harmonicFunction.system == "open") {
-                    var t = (chord.bassNote.chordComponent == chord.tenorNote.chordComponent);
-                    var u = (chord.bassNote.chordComponent == chord.sopranoNote.chordComponent); 
+                if(chord.harmonicFunction.system === "open") {
+                    var t = (chord.bassNote.chordComponent === chord.tenorNote.chordComponent);
+                    var u = (chord.bassNote.chordComponent === chord.sopranoNote.chordComponent);
                     
                     return (xor(p,q) || (t && p && q)) && (xor(r,s) || (u && r && s));
                 }
-                if(chord.harmonicFunction.system == "close") return (!p && !q && !r && !s);
+                if(chord.harmonicFunction.system === "close") return (!p && !q && !r && !s);
                 Utils.log("ILLEGAL system in harmonicFunction: " + chord.harmonicFunction.system)
                 return true;
             });
@@ -395,10 +395,10 @@ function ChordGenerator(key, mode) {
         // console.log("CHORDS END:");
 
         // filtering chords with given pitches
-        if (givenNotes != undefined) {
+        if (givenNotes !== undefined) {
             chords = chords.filter(function (chord) {
                 function eq(x, y) {
-                    return y == undefined || x.equals(y)
+                    return y === undefined || x.equals(y)
                 }
 
                 return eq(chord.bassNote, givenNotes[0]) &&
