@@ -130,12 +130,17 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
     return 0;
 }
 
-function checkDoubled3(chord){
-    var terCounter = 0
+function checkIllegalDoubled3(chord){
+    var terCounter = 0;
     for(var i = 0; i < chord.notes.length; i++){
         if(chord.notes[i].chordComponent === "3"){
             terCounter ++
         }
+    }
+    //neapolitan chord handler
+    if(chord.harmonicFunction.degree === 2 && chord.harmonicFunction.down
+        && chord.harmonicFunction.functionName === 'S' && chord.harmonicFunction.mode === 'minor'){
+         return chord.bassNote.chordComponent === '3' && terCounter === 2
     }
     return terCounter > 1
 }
@@ -184,7 +189,7 @@ function checkConnection(prevChord, currentChord){
             }
             break;
     }
-    if(checkDoubled3(currentChord)) return -1;
+    if(checkIllegalDoubled3(currentChord)) return -1;
     return 0;
 }
 
@@ -203,7 +208,7 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
         }
     }
     else{
-        if(checkDoubled3(currentChord)) return -1;
+        if(checkIllegalDoubled3(currentChord)) return -1;
     }
     return result
 }
