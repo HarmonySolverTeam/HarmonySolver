@@ -213,13 +213,12 @@ function checkDelayCorrectness(prevChord, currentChord){
     for(var i=0; i<delay.length; i++){
         var prevComponent = delay[i][0];
         var currentComponent = delay[i][1];
-        var voice = -1;
-        for(var i=0; i<4; i++){
-            if(prevChord.notes[i].chordComponent === prevComponent) {
-                if(currentChord.notes[i].chordComponent !== currentComponent) return -1;
+        for(var j=0; j<4; j++){
+            if(prevChord.notes[j].chordComponent === prevComponent) {
+                if(currentChord.notes[j].chordComponent !== currentComponent) return -1;
             }
             else{
-                if(!prevChord.notes[i].equals(currentChord.notes[i] || i === 0)) return -1;
+                if(!prevChord.notes[j].equals(currentChord.notes[j]) && j !== 0) return -1;
             }
         }
     }
