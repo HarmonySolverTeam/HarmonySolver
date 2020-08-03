@@ -208,8 +208,26 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
     return result
 }
 
+function checkDelayCorrectness(prevChord, currentChord){
+    var delay = prevChord.harmonicFunction.delay;
+    for(var i=0; i<delay.length; i++){
+        var prevComponent = delay[i][0];
+        var currentComponent = delay[i][1];
+        var voice = -1;
+        for(var i=0; i<4; i++){
+            if(prevChord.notes[i].chordComponent === prevComponent) {
+                if(currentChord.notes[i].chordComponent !== currentComponent) return -1;
+            }
+            else{
+                if(!prevChord.notes[i].equals(currentChord.notes[i] || i === 0)) return -1;
+            }
+        }
+    }
+    return 0;
+}
+
 function checkAllRules(prevPrevChord, prevChord, currentChord){
-    var chosenRules = [concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
+    var chosenRules = [checkDelayCorrectness, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
     var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
     return result
 }
