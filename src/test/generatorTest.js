@@ -8,7 +8,7 @@ var UnitTest = require("./TestUtils")
 var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", undefined, [], [], true, undefined, undefined);
+    var hf = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", undefined, [], [], true, undefined, 'minor');
     var res = gen.generate(hf);
     // res.forEach((x) => {console.log(x.toString())})
 
