@@ -7,7 +7,7 @@
 function ChordGenerator(key, mode) {
     this.key = key.toUpperCase();
     this.mode = mode;
-    console.log(this.key + "   " + this.mode);
+    //console.log(this.key + "   " + this.mode);
 
     function getPossiblePitchValuesFromInterval(note, minPitch, maxPitch) {
 
@@ -73,6 +73,14 @@ function ChordGenerator(key, mode) {
         bass = harmonicFunction.revolution;
         if(Utils.contains(needToAdd, harmonicFunction.revolution))
             needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
+            
+        if(harmonicFunction.down){
+            if(soprano === "1" || soprano === "5") soprano = soprano + ">";
+            if(bass === "1" || bass === "5") bass = bass + ">";
+
+            for(var i=0; i<needToAdd.length; i++)
+                if(needToAdd[i] === "1" || needToAdd[i] === "5") needToAdd[i] = needToAdd[i] + ">";
+        }
 
         return [[soprano, alto, tenor, bass], needToAdd]
 
@@ -140,7 +148,7 @@ function ChordGenerator(key, mode) {
 
     this.getSchemas = function (harmonicFunction, chordTemplate) {
 
-        console.log(chordTemplate);
+        // console.log(chordTemplate);
         var schemas = []
 
         var chord = chordTemplate[0];
@@ -206,9 +214,9 @@ function ChordGenerator(key, mode) {
             }
         }
 
-        console.log("SHEMAS:");
-        schemas.forEach(function(x){ console.log(x)});
-        console.log("SCHEMAS END");
+        // console.log("SHEMAS:");
+        // schemas.forEach(function(x){ console.log(x)});
+        // console.log("SCHEMAS END");
         return schemas;
     }
 
