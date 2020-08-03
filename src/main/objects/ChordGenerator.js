@@ -64,8 +64,8 @@ function ChordGenerator(key, mode) {
 
         //Position is given
         if (harmonicFunction.position !== -1) {
-            soprano = harmonicFunction.position;
-            if(Utils.contains(needToAdd, harmonicFunction.position))
+            soprano = harmonicFunction.position+"";
+            if(Utils.contains(needToAdd, harmonicFunction.position+""))
                 needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.position), 1);
         }
 
@@ -252,6 +252,7 @@ function ChordGenerator(key, mode) {
         var components = {
             '1': chordType[0],
             '3': chordType[1],
+            '4': 5,
             '5': chordType[2],
             '6': 9,
             '7': 10,
