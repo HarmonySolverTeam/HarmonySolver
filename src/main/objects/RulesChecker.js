@@ -146,50 +146,66 @@ function checkIllegalDoubled3(chord){
 }
 
 function checkConnection(prevChord, currentChord){
-    var getSymbol = function(harmonicFunction){
-        return harmonicFunction.down?(harmonicFunction.functionName+"down"+harmonicFunction.extra):(harmonicFunction.functionName+harmonicFunction.extra)
-    }
-    var connection = getSymbol(prevChord.harmonicFunction)+"->"+getSymbol(currentChord.harmonicFunction);
-    switch (connection) {
-        case "D->T":
+    var couldHaveDouble3 = false;
+    if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T"){
+        if(Utils.contains([4,-3], currentChord.harmonicFunction.degree - currentChord.harmonicFunction.degree)) {
             var dominantVoiceWith3 = -1;
-            for(var i = 0; i < 4; i++){
-                if(prevChord.notes[i].chordComponent === "3") {
+            for (var i = 0; i < 4; i++) {
+                if (prevChord.notes[i].chordComponent === "3") {
                     dominantVoiceWith3 = i;
                     break;
                 }
             }
-            if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1"){
-                return -1;
+            if (dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1") return -1;
+
+            if (Utils.contains(prevChord.harmonicFunction.extra, "7")) {
+                var dominantVoiceWith7 = -1;
+                for (var i = 0; i < 4; i++) {
+                    if (prevChord.notes[i].chordComponent === "7") {
+                        dominantVoiceWith7 = i;
+                        break;
+                    }
+                }
+                if (dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent !== "3") return -1;
             }
-            break;
-        case "D->S":
-            throw "Forbidden connection: "+connection;
-            break;
-        case "D7->T":
+        }
+
+        if(currentChord.harmonicFunction.degree === 6 && prevChord.harmonicFunction.degree === 5) {
+            couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
-            for(var i = 0; i < 4; i++){
-                if(prevChord.notes[i].chordComponent === "3") {
+            for (var i = 0; i < 4; i++) {
+                if (prevChord.notes[i].chordComponent === "3") {
                     dominantVoiceWith3 = i;
                     break;
                 }
             }
-            if(dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "1"){
-                return -1;
-            }
-            var dominantVoiceWith7 = -1;
-            for(var i = 0; i < 4; i++){
-                if(prevChord.notes[i].chordComponent === "7") {
-                    dominantVoiceWith7 = i;
+            if (dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent !== "3") return -1;
+
+            var dominantVoiceWith5 = -1;
+            for (var i = 0; i < 4; i++) {
+                if (prevChord.notes[i].chordComponent === "5") {
+                    dominantVoiceWith5 = i;
                     break;
                 }
             }
-            if(dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent !== "3"){
-                return -1;
+            if (dominantVoiceWith5 > -1 && currentChord.notes[dominantVoiceWith5].chordComponent !== "3") return -1;
+
+            if (Utils.contains(prevChord.harmonicFunction.extra, "7")) {
+                var dominantVoiceWith7 = -1;
+                for (var i = 0; i < 4; i++) {
+                    if (prevChord.notes[i].chordComponent === "7") {
+                        dominantVoiceWith7 = i;
+                        break;
+                    }
+                }
+                if (dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent !== "5") return -1;
             }
-            break;
+        }
     }
-    if(checkIllegalDoubled3(currentChord)) return -1;
+    if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "S")
+        throw new Error("Forbidden connection: S->D");
+
+    if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;
     return 0;
 }
 
