@@ -18,6 +18,7 @@ function validateDelays(harmonicFunction){
     var mainComponents = ["1","3","5"];
     var pitchCounter = mainComponents.length;
     var pitches = [];
+    if(harmonicFunction.delay.length > 3) return false; //triple delay is maximal
     for(var i=0; i<harmonicFunction.delay.length; i++){
         if(harmonicFunction.delay[i].length !== 2) return false; //wrong size of delay
         pitches.push(harmonicFunction.delay[i][1]);
