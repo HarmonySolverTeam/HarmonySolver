@@ -70,6 +70,8 @@ const doubleDelayedFunctionTest = () => {
         UnitTest.assertEqualsPrimitives(exercise.measures[0][0].delay, hf[0].delay)
 };
 
+delayTestSuite.addTest(new UnitTest.UnitTest(doubleDelayedFunctionTest, "Double delayed function transformation"));
+
 const tripleDelayedFunctionTest = () => {
     var exercise = new Exercise.Exercise("C", [3,4],"major",[[new HarmonicFunction.HarmonicFunction("T",1,-1,'1',[["6","5"],["4","3"],["2","1"]],[],[],false,undefined,undefined)]]);
     var solver = new Solver.Solver(exercise, undefined, undefined);
