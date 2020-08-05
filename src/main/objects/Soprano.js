@@ -7,6 +7,8 @@
 .import "./Solver.js" as Solver
 .import "./Exercise.js" as Exercise
 
+var DEBUG = false;
+
 function RulesChecker(){
 
     this.checkBasicCadention = function(prevs, curr, ex_length){
@@ -168,7 +170,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
             var basePitches = this.getChordBasePitch(harmonicFunctions[i]); 
             for(var j=0; j < basePitches.length; j++){
                 this.chordsMap[basePitches[j]].push(harmonicFunctions[i]);
-                console.log(basePitches[j] + " : " + harmonicFunctions[i].functionName);
+                if(DEBUG) console.log(basePitches[j] + " : " + harmonicFunctions[i].functionName);
             }
 
         }
@@ -178,16 +180,16 @@ function SopranoSolver(sopranoHarmonizationExercise){
         this.prepareMap(this.harmonizationExercise.possibleFunctionsList);
         var solution = this.findSolution(0, [], 0);
         if(solution.length === 0){
-            console.log("Solution not exists");
+            if(DEBUG) console.log("Solution not exists");
             return -1;
         }
 
         solution.sort(function(a,b){ return (a[1] > b[1]) ? 1 : -1} );
 
         solution.forEach(function(element) {
-            console.log("solution with rating " + element[1]);
+            if(DEBUG) console.log("solution with rating " + element[1]);
             element[0].forEach(function(element1){
-                console.log(element1.toString());
+                if(DEBUG) console.log(element1.toString());
             });
         });
 
@@ -202,16 +204,16 @@ function SopranoSolver(sopranoHarmonizationExercise){
         }
         
         solution[i][0].forEach(function(el) {
-            console.log(el.toString())
+            if(DEBUG) console.log(el.toString())
         })
 
-        console.log("SOLUT")
+        if(DEBUG) console.log("SOLUT")
         sol.chords.forEach(function(el) {
-            console.log(el.harmonicFunction.functionName);
+            if(DEBUG) console.log(el.harmonicFunction.functionName);
         })
-        console.log(sol.chords);
+        if(DEBUG) console.log(sol.chords);
         // function Exercise(key, meter, mode, measures) {
-        console.log("SOLUTION LENGTH = " + sol.chords.length);
+        if(DEBUG) console.log("SOLUTION LENGTH = " + sol.chords.length);
         return sol;
     }
 
@@ -223,9 +225,9 @@ function SopranoSolver(sopranoHarmonizationExercise){
         // if(curr_index == notes.length) return [prev_chords, penalty];
 
         var basePitch = (notes[curr_index].pitch - 0) % 12;
-        console.log("BasePitch: "+basePitch);
+        if(DEBUG) console.log("BasePitch: "+basePitch);
         var possibleChords  = this.chordsMap[basePitch];
-        console.log("possible chords: " + possibleChords);
+        if(DEBUG) console.log("possible chords: " + possibleChords);
         var goodChords = []
 
         for(var i=0; i<possibleChords.length; i++){
@@ -235,7 +237,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
             }
         }
         goodChords.forEach(function(element){
-            console.log(element[1].toString() + "    " + element[0]);
+            if(DEBUG) console.log(element[1].toString() + "    " + element[0]);
         });
 
         if(goodChords.length === 0) return [];
@@ -251,11 +253,11 @@ function SopranoSolver(sopranoHarmonizationExercise){
 
         for(var i=0; i<goodChords.length; i++){
             prev_chords.push(goodChords[i][0]);
-            console.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
+            if(DEBUG) console.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
             var sol = this.findSolution(curr_index+1, prev_chords, penalty + goodChords[i][1]);
-            // console.log("SOL: " + sol);
+            // if(DEBUG) console.log("SOL: " + sol);
             result = result.concat(sol);
-            // console.log("RES: " + result);
+            // if(DEBUG) console.log("RES: " + result);
             prev_chords.pop();
         }
 

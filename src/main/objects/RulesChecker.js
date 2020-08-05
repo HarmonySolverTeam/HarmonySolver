@@ -1,6 +1,6 @@
 .import "./Utils.js" as Utils
 
-var DEBUG = true;
+var DEBUG = false;
 
 function concurrentOctaves(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
