@@ -66,8 +66,9 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(oneDirectionTest, "One direc
 
 const forbiddenJumpTest = () => {
     //Incorrect chord definitions only for this test case - only pitch and baseNote is important of soprano
-    var hf1 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[],false,undefined,undefined);
-    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[],false,undefined,undefined);
+    var hf1 = new HarmonicFunction.HarmonicFunction("cokolwiek innego",1,-1,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
     var ch2 = new Chord.Chord(new Note.Note(85,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     //altered up
     var ch3up = new Chord.Chord(new Note.Note(72,1,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
@@ -88,6 +89,8 @@ const forbiddenJumpTest = () => {
     var ch9down = new Chord.Chord(new Note.Note(61,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch10down = new Chord.Chord(new Note.Note(60,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
 
+    var ch10downSameFun = new Chord.Chord(new Note.Note(60,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+
     return UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch2)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch3up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch4up)) &&
@@ -104,21 +107,26 @@ const forbiddenJumpTest = () => {
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch7down)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch8down)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch9down)) &&
-        UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch10down))
+        UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch10down)) &&
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.forbiddenJump(ch1, ch10downSameFun))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenJumpTest, "Forbidden jump test"));
 
 const forbiddenSumJumpTest = () => {
-    var hf1 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[],false,undefined,undefined);
-    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[],false,undefined,undefined);
+    var hf1 = new HarmonicFunction.HarmonicFunction("cokolwiek innego",1,-1,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
     var ch2up = new Chord.Chord(new Note.Note(75,2,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch2down = new Chord.Chord(new Note.Note(69,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch3down = new Chord.Chord(new Note.Note(66,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch2downSameFun = new Chord.Chord(new Note.Note(69,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+    var ch3downSameFun = new Chord.Chord(new Note.Note(66,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
 
     return UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenSumJump(ch1, ch2up, ch3up)) &&
-        UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenSumJump(ch1, ch2down, ch3down))
+        UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenSumJump(ch1, ch2down, ch3down)) &&
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.forbiddenSumJump(ch1, ch2downSameFun, ch3downSameFun))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenSumJumpTest, "Forbidden sum jump test"));
@@ -134,5 +142,99 @@ const checkIllegalDouble3Test = () => {
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkIllegalDouble3Test, "Illegal double 3 test"));
+
+const checkConnectionDSTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",1,-1,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(undefined, undefined, undefined, undefined, hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("S",1,-1,"1",[],[],[],false,undefined,undefined);
+    var ch2 = new Chord.Chord(undefined, undefined, undefined, undefined, hf2);
+
+    return UnitTest.assertThrows("Forbidden connection: S->D", RulesChecker.checkConnection, [ch1,ch2]);
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDSTest, "D->S connection test"));
+
+const checkConnectionDTTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[7],[],false,undefined,undefined);
+    var d7 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[5],false,undefined,undefined);
+    var t1 = new Chord.Chord(new Note.Note(64,2,"3"), new Note.Note(60,0,"1"), new Note.Note(60,0,"1"),new Note.Note(48,1,"1"), hf2);
+    hf2.omit = [];
+    var hf3 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[],[],false,undefined,undefined);
+    var d = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
+    var t2 = new Chord.Chord(new Note.Note(67,4,"5"), new Note.Note(64,2,"3"), new Note.Note(60,0,"1"),new Note.Note(48,1,"1"), hf2);
+
+    return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(d7,t1)) &&
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(d,t2))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTTest, "D->T connection test"));
+
+const checkConnectionDTVITest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[7],[],false,undefined,undefined);
+    var d7 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T",6,-1,"1",[],[],[],false,undefined,undefined);
+    var t1 = new Chord.Chord(new Note.Note(64,2,"5"), new Note.Note(60,0,"3"), new Note.Note(60,0,"3"),new Note.Note(57,5,"1"), hf2);
+    var hf3 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[],[],false,undefined,undefined);
+    var d = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
+
+    return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(d7,t1)) &&
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(d,t1))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVITest, "D->TVI connection test"));
+
+const checkConnectionDTVIDownTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[7],[],false,undefined,undefined);
+    var d7 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T",6,-1,"1",[],[],[],true,undefined,undefined);
+    var t1 = new Chord.Chord(new Note.Note(63,2,"5"), new Note.Note(60,0,"3"), new Note.Note(60,0,"3"),new Note.Note(56,5,"1"), hf2);
+    var hf3 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[],[],false,undefined,undefined);
+    var d = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
+
+    return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(d7,t1)) &&
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(d,t1))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVITest, "D->TVI(down) connection test"));
+
+const checkDelayCorrectnessTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[["6","5"],["4","3"]],[6,4],[4,3],false,undefined,undefined);
+    var hf2 = new HarmonicFunction.HarmonicFunction("D",5,-1,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(64,2,"6"), new Note.Note(60, 0,"4"), new Note.Note(55,4,"1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
+
+    var ch3 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
+    var ch4 = new Chord.Chord(new Note.Note(69, 4,"3"), new Note.Note(62,1,"5"), new Note.Note(55, 6,"1"), new Note.Note(43,4,"1"), hf2);
+
+    return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkDelayCorrectness(ch1, ch2)) &&
+        UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkDelayCorrectness(ch1, ch3)) &&
+        UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkDelayCorrectness(ch1, ch4))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkDelayCorrectnessTest, "Delay correctness test"));
+
+const hiddenOctavesTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,-1,"3",[],[],[],false,undefined,undefined);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(62,1,"5"), new Note.Note(55, 4,"1"), new Note.Note(47,6,"3"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(64,2,"3"), new Note.Note(55, 4,"5"), new Note.Note(48,0,"1"), hf2);
+
+    return UnitTest.assertEqualsPrimitives(-1, RulesChecker.hiddenOctaves(ch1, ch2))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(hiddenOctavesTest, "Hidden octaves test"));
+
+const falseRelationTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("S",2,-1,"3",[],[],[],true,undefined,'minor');
+    var hf2 = new HarmonicFunction.HarmonicFunction("D",1,-1,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(new Note.Note(68, 5,">5"), new Note.Note(65,3,"3"), new Note.Note(61, 1,">1"), new Note.Note(41,3,"3"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
+
+    return UnitTest.assertEqualsPrimitives(-1, RulesChecker.falseRelation(ch1, ch2))
+
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(falseRelationTest, "False relation test"));
 
 rulesCheckerTestSuite.run();

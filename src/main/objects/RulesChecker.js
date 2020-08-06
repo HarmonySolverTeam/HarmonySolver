@@ -78,8 +78,8 @@ function oneDirection(prevChord, currentChord){
 }
 
 //TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka
-function forbiddenJump(prevChord, currentChord){
-    if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction))
+function forbiddenJump(prevChord, currentChord, notNeighbourChords){
+    if(!notNeighbourChords && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     function getBaseDistance(first, second ){
         var i = 0
         while(first!==second) {
@@ -122,10 +122,11 @@ function forbiddenJump(prevChord, currentChord){
 
 //TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka
 function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
+    if(prevPrevChord.harmonicFunction.equals(prevChord.harmonicFunction) && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 4; i++){
         if(((prevPrevChord.notes[i].pitch>prevChord.notes[i].pitch && prevChord.notes[i].pitch>currentChord.notes[i].pitch) ||
             (prevPrevChord.notes[i].pitch<prevChord.notes[i].pitch && prevChord.notes[i].pitch<currentChord.notes[i].pitch))
-            && forbiddenJump(prevPrevChord, currentChord)){
+            && forbiddenJump(prevPrevChord, currentChord, true)){
             if(DEBUG) {
                 console.log("forbiddenSumJump");
                 console.log(prevPrevChord + " -> " + prevChord + " -> " + currentChord);
@@ -215,6 +216,63 @@ function checkConnection(prevChord, currentChord){
     return 0;
 }
 
+function checkDelayCorrectness(prevChord, currentChord){
+    var delay = prevChord.harmonicFunction.delay;
+    if(delay.length === 0) return 0;
+    var delayedVoices = [];
+    for(var i=0; i<delay.length; i++){
+        var prevComponent = delay[i][0];
+        var currentComponent = delay[i][1];
+        for(var j=0; j<4; j++){
+            if(prevChord.notes[j].chordComponent === prevComponent) {
+                if(currentChord.notes[j].chordComponent !== currentComponent){
+                    if(DEBUG) {
+                        console.log("delay error"+i+" "+j);
+                        console.log(prevChord + " -> " + currentChord);
+                    }
+                    return -1;
+                }
+                else delayedVoices.push(j);
+            }
+        }
+    }
+    for(var i=0; i<4; i++){
+        if(Utils.contains(delayedVoices, i)) continue;
+        if(!prevChord.notes[i].equals(currentChord.notes[i]) && i !== 0) {
+            if(DEBUG) {
+                console.log("delay error"+i+" "+j);
+                console.log(prevChord + " -> " + currentChord);
+            }
+            return -1;
+        }
+    }
+    return 0;
+}
+
+function hiddenOctaves(prevChord, currentChord){
+    var sameDirection = (prevChord.bassNote < currentChord.bassNote && prevChord.sopranoNote < currentChord.sopranoNote) ||
+        (prevChord.bassNote > currentChord.bassNote && prevChord.sopranoNote > currentChord.sopranoNote);
+    if(sameDirection && Utils.abs(prevChord.sopranoNote.pitch-currentChord.sopranoNote.pitch)>2 &&
+        (currentChord.bassNote.pitch-currentChord.sopranoNote.pitch)%12===0){
+        if(DEBUG) {
+            console.log("hiddenOctaves");
+            console.log(prevChord + " -> " + currentChord);
+        }
+        return -1;
+    }
+    return 0;
+}
+
+function falseRelation(prevChord, currentChord){
+    for(var i=0; i<4; i++){
+        for(var j=i; j<4; j++){
+            if(Utils.abs(prevChord.notes[i].pitch-currentChord.notes[j].pitch) === 1 &&
+                prevChord.notes[i].baseNote === currentChord.notes[j].baseNote) return -1;
+        }
+    }
+    return 0;
+}
+
 function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpRule){
     var result = 0;
     if(prevChord !== undefined){
@@ -235,25 +293,8 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
     return result
 }
 
-function checkDelayCorrectness(prevChord, currentChord){
-    var delay = prevChord.harmonicFunction.delay;
-    for(var i=0; i<delay.length; i++){
-        var prevComponent = delay[i][0];
-        var currentComponent = delay[i][1];
-        for(var j=0; j<4; j++){
-            if(prevChord.notes[j].chordComponent === prevComponent) {
-                if(currentChord.notes[j].chordComponent !== currentComponent) return -1;
-            }
-            else{
-                if(!prevChord.notes[j].equals(currentChord.notes[j]) && j !== 0) return -1;
-            }
-        }
-    }
-    return 0;
-}
-
 function checkAllRules(prevPrevChord, prevChord, currentChord){
-    var chosenRules = [checkDelayCorrectness, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
+    var chosenRules = [falseRelation, hiddenOctaves, checkDelayCorrectness, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
     var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
     return result
 }
