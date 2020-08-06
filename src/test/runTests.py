@@ -3,7 +3,9 @@ import subprocess
 subprocess.call(["python", "init.py"])
 print("-"*100)
 
-suites = ["generatorTest", "preprocessingTest"]
+
+suites = ["generatorTest", "preprocessingTest", "delayTest"]
+
 
 for s in suites:
     subprocess.call(["node", "./"+s+".js"])
