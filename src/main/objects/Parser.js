@@ -9,7 +9,7 @@ function check_figured_bass_symbols(symbols){
 }
 
 function validate_chord_component(chordComponent){
-    var chordComponentTest = /(>|<|>>|<)?\d+/;
+    var chordComponentTest = /(>|<|>>|<<)?\d+/;
     return chordComponentTest.test(chordComponent)
 }
 
