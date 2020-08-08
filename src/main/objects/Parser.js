@@ -34,7 +34,7 @@ function validateDelays(harmonicFunction){
         second = parseInt(second);
         if(Utils.abs(first-second)!==1) return false; //too large difference in delay
     }
-    if(harmonicFunction.position > 0 && !Utils.contains(pitches, harmonicFunction.position) &&
+    if(harmonicFunction.position !== undefined && !Utils.contains(pitches, harmonicFunction.position) &&
         !Utils.contains(mainComponents, harmonicFunction.position)) pitches.push(harmonicFunction.position)
     if(!Utils.contains(pitches, harmonicFunction.revolution) &&
         !Utils.contains(mainComponents, harmonicFunction.revolution)) pitches.push(harmonicFunction.revolution)
