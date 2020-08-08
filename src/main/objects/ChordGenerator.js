@@ -63,10 +63,10 @@ function ChordGenerator(key, mode) {
         }
 
         //Position is given
-        if (harmonicFunction.position !== -1) {
-            soprano = harmonicFunction.position+"";
-            if(Utils.contains(needToAdd, harmonicFunction.position+""))
-                needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.position), 1);
+        if (harmonicFunction.position !== undefined) {
+            soprano = harmonicFunction.position;
+            if(Utils.contains(needToAdd, harmonicFunction.position))
+                needToAdd.splice(needToAdd.indexOf(harmonicFunction.position), 1);
         }
 
         //I'm not shure if revolution is int or string - assume that string

@@ -34,8 +34,8 @@ function validateDelays(harmonicFunction){
         second = parseInt(second);
         if(Utils.abs(first-second)!==1) return false; //too large difference in delay
     }
-    if(harmonicFunction.position > 0 && !Utils.contains(pitches, harmonicFunction.position+"") &&
-        !Utils.contains(mainComponents, harmonicFunction.position+"")) pitches.push(harmonicFunction.position)
+    if(harmonicFunction.position > 0 && !Utils.contains(pitches, harmonicFunction.position) &&
+        !Utils.contains(mainComponents, harmonicFunction.position)) pitches.push(harmonicFunction.position)
     if(!Utils.contains(pitches, harmonicFunction.revolution) &&
         !Utils.contains(mainComponents, harmonicFunction.revolution)) pitches.push(harmonicFunction.revolution)
     harmonicFunction.extra.forEach((x)=>{
@@ -97,7 +97,6 @@ function parseChord(string) {
     // }m
 
     ret.degree = get_valid_degree(arguments_json, chord_type)
-    ret.position = arguments_json["position"] === undefined ? -1 : arguments_json["position"]
     ret.revolution = arguments_json["revolution"] === undefined ? "1" : arguments_json["revolution"]
     //ret.delay = delay
     ret.delay = arguments_json["delay"] === undefined ? [] : arguments_json["delay"]

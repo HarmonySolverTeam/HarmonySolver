@@ -7,9 +7,9 @@ var TestUtils = require("./TestUtils");
 var testSuite  = new TestUtils.TestSuite("Soprano exercise tests");
 
 var sopranoUnitTest = () => {
-    var t = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [], [], false, undefined);
-    var s = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [], [], false, undefined);
-    var d = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [], [], false, undefined);
+    var t = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", [], [], [], false, undefined);
+    var s = new HarmonicFunction.HarmonicFunction("S", 4, undefined, "1", [], [], [], false, undefined);
+    var d = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", [], [], [], false, undefined);
 
     var notes = [
         new Note.Note(60, 0),
