@@ -31,7 +31,7 @@ function Solver(exercise, bassLine, sopranoLine){
             for(var j=0; j<delays.length; j++){
                 functions[i].extra.push(delays[j][0]);
                 functions[i].omit.push(delays[j][1]);
-                if(delays[j][1] === functions[i].position.toString()) functions[i].position = delays[j][0];
+                if(delays[j][1] === functions[i].position) functions[i].position = delays[j][0];
                 if(delays[j][1] === functions[i].revolution) functions[i].revolution = delays[j][0];
             }
             newFunctions.splice(i+addedChords+1, 0, newFunction);

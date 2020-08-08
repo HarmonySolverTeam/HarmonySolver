@@ -275,7 +275,7 @@ function getValidPositionAndRevolution(harmonicFunction, chordElement) {
         revolution++
     }
 
-    var position = -1
+    var position = undefined
 
     if (chordElement.symbols === ["5", "6", "7"] ||
         chordElement.symbols === ["2", "4", "10"]) {
@@ -301,8 +301,7 @@ function createHarmonicFunctionOrFunctions(chordElement, mode) {
         if(mode === "minor") {toAdd.degree += 2; toAdd.degree = toAdd.degree%7;}
 
         var posAndRev = getValidPositionAndRevolution(toAdd, chordElement)
-
-        toAdd.position = posAndRev[0]
+        toAdd.position = posAndRev[0] === undefined? undefined:posAndRev[0].toString()
         toAdd.revolution = posAndRev[1].toString()
         toAdd.omit = chordElement.omit
         toAdd.down = false

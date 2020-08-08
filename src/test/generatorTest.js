@@ -10,7 +10,7 @@ var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", undefined, [], [], true, undefined, 'minor');
+    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "1", undefined, [], [], true, undefined, 'minor');
     var res = gen.generate(hf);
     // res.forEach((x) => {console.log(x.toString())})
 
