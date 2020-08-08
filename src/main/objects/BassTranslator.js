@@ -301,8 +301,7 @@ function createHarmonicFunctionOrFunctions(chordElement, mode) {
         if(mode === "minor") {toAdd.degree += 2; toAdd.degree = toAdd.degree%7;}
 
         var posAndRev = getValidPositionAndRevolution(toAdd, chordElement)
-
-        toAdd.position = posAndRev[0].toString()
+        toAdd.position = posAndRev[0] === undefined? undefined:posAndRev[0].toString()
         toAdd.revolution = posAndRev[1].toString()
         toAdd.omit = chordElement.omit
         toAdd.down = false
