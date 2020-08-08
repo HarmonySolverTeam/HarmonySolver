@@ -3,7 +3,9 @@ var Consts = require("./objects/Consts")
 var Chord = require("./objects/Chord")
 var HarmonicFunction = require("./objects/HarmonicFunction")
 var Note = require("./objects/Note")
-var UnitTest = require("./TestUtils")
+var TestUtils = require("./TestUtils")
+
+var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 
 var neapolitanTest = () => {
 
@@ -12,10 +14,9 @@ var neapolitanTest = () => {
     var res = gen.generate(hf);
     // res.forEach((x) => {console.log(x.toString())})
 
-    return UnitTest.assertEqualsPrimitives(res.length, 27);
+    return TestUtils.assertEqualsPrimitives(res.length, 27);
 }
 
-var test1 = new UnitTest.UnitTest(neapolitanTest, "Neapolitan chord test");
-var suite = new UnitTest.TestSuite("ChordGenerator tests");
-suite.addTest(test1);
-suite.run();
+generatorTestSuite.addTest(new TestUtils.UnitTest(neapolitanTest, "Neapolitan chord test"));
+
+generatorTestSuite.run();

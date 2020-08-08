@@ -3,6 +3,8 @@
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Utils.js" as Utils
 
+var DEBUG = false;
+
 function check_figured_bass_symbols(symbols){
     var figured_bass_symbols = /\s*(((([#bh])?\d+)|([#bh]))\s*)+/;
     return figured_bass_symbols.test(symbols);
@@ -145,7 +147,7 @@ function parse(input) {
             chords_parsed.push(parseChord(chords[j]))
         }measures.push(chords_parsed)
     }
-    console.log(measures)
+    if(DEBUG) console.log(measures)
 
     var ret = new Exercise.Exercise(key, metre, mode, measures)
 

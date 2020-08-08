@@ -79,8 +79,10 @@ function Solver(exercise, bassLine, sopranoLine){
             var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
             if (score !== -1 ) {
-                console.log("OK!");
-                console.log( curr_index + " -> " + chords[j]);
+                if(DEBUG) {
+                    console.log("OK!");
+                    console.log(curr_index + " -> " + chords[j]);
+                }
                 good_chords.push([score,chords[j]]);
             }
         }
