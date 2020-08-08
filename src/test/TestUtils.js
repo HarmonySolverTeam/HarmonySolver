@@ -34,13 +34,8 @@ exports.assertNotEqualsPrimitives = function assertNotEqualsPrimitives(expected,
 // message - expected error message, fun - function reference, args - arguments of fun as list
 exports.assertThrows = function assertThrows(message, fun, args){
     try {
-        if(args.length === 0){
-            fun();
-            return false;
-        }
-        for (var i = 0; i < args.length; i++)
-            fun = fun.apply(args[i]);
-        return false
+        fun(...args);
+        return false;
     } catch(error){
         return message === error.message;
     }
