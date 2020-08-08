@@ -98,7 +98,7 @@ function parseChord(string) {
 
     ret.degree = get_valid_degree(arguments_json, chord_type)
     ret.revolution = arguments_json["revolution"] === undefined ? "1" : arguments_json["revolution"]
-    //ret.delay = delay
+    ret.position = arguments_json["position"]
     ret.delay = arguments_json["delay"] === undefined ? [] : arguments_json["delay"]
     ret.extra = arguments_json["extra"] === undefined ? [] : arguments_json["extra"]
     addExtraNotesIfNecessary(ret.extra)
