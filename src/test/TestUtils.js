@@ -53,6 +53,14 @@ exports.fail = function fail(message){
     throw new Error("Test failed: " + message)
 }
 
+exports.assertDefined = function assertDefined(object){
+    return object !== undefined
+}
+
+exports.assertUndefined = function assertUndefined(object){
+    return object === undefined
+}
+
 //fun should be arg-free function returning boolean (passed or not)
 exports.UnitTest = function UnitTest(fun, name){
     this.fun = fun;
