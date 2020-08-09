@@ -24,7 +24,7 @@ function concurrentFifths(prevChord, currentChord){
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
             if(Utils.mod((prevChord.notes[j].pitch-prevChord.notes[i].pitch), 12) === 7){
-                if(Utils.mod((currentChord.notes[j].pitch-currentChord.notes[i].pitch, 12) === 7){
+                if(Utils.mod(currentChord.notes[j].pitch-currentChord.notes[i].pitch, 12) === 7){
                     if(DEBUG) {
                         Utils.log("concurrentFifths "+i+" "+j, prevChord + " -> " + currentChord);
                     }

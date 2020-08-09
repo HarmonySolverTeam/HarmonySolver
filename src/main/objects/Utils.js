@@ -19,6 +19,24 @@ function mod(a, b){
     }
     return a % b
 }
+//not applicable to [[],]
+function arrayEquals(a, b) {
+
+    if ((!a && b) || (a && !b)) {
+        return false
+    }
+
+    if (a.length !== b.length) {
+        return false
+    }
+
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false
+        }
+    }
+    return true
+}
 
 function log(message, longMessage){
     var lineAndSource = ((new Error).stack.split("\n")[1].split("/")).reverse()[0]

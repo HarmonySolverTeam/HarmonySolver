@@ -5,6 +5,7 @@
 .import "./Chord.js" as Chord
 .import "./ChordGenerator.js" as ChordGenerator
 .import "./RulesChecker.js" as Checker
+.import "./Utils.js" as Utils
 
 var DEBUG = false;
 

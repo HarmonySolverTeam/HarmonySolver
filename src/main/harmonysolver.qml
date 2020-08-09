@@ -106,12 +106,14 @@ MuseScore {
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
                         if (readSymbols[i] !== " " && readSymbols[i] !== "\t") {
                             if (readSymbols[i] === "#" || readSymbols[i] === "b"
-                                    || readSymbols === "h")
+                                    || readSymbols === "h") {
                                 alteration = readSymbols[i]
                                 console.log("alteration: " + alteration)
-                            else
+                                }
+                            else {
                                 component += readSymbols[i]
                                 console.log("component: " + component)
+                            }
                         }
                         i++
                     }
@@ -339,6 +341,8 @@ MuseScore {
         var ex = read_figured_bass()
         Utils.log("ex.elements:",ex.elements)
         var bassTranslator = new Translator.BassTranslator()
+        Utils.log("figured bass exercise:", JSON.stringify(ex))
+
         var exercise = bassTranslator.createExerciseFromFiguredBass(ex)
         Utils.log("exercise:", JSON.stringify(exercise))
         var bassLine = []
@@ -356,7 +360,7 @@ MuseScore {
 
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                   "mscz")
+                   "mscz") 
 
         // translate (remember about durations attribute!)
         // solve first exercise
