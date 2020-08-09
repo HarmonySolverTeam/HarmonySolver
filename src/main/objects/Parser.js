@@ -38,15 +38,15 @@ function validateDelays(harmonicFunction){
         !Utils.contains(mainComponents, harmonicFunction.position)) pitches.push(harmonicFunction.position)
     if(!Utils.contains(pitches, harmonicFunction.revolution) &&
         !Utils.contains(mainComponents, harmonicFunction.revolution)) pitches.push(harmonicFunction.revolution)
-    harmonicFunction.extra.forEach((x)=>{
-        if(!Utils.contains(pitches, x)) pitches.push(x)
-    });
-    var errorInOmits = false;
-    harmonicFunction.omit.forEach((x)=>{
-        if(Utils.contains(pitches, x)) errorInOmits = true; //cannot omit component used in delay, position, resolution, extra
+    for(var j=0; j<harmonicFunction.extra.length; j++){
+        var x = harmonicFunction.extra[j];
+        if(!Utils.contains(pitches, x)) pitches.push(x);
+    }
+    for(var k=0; k<harmonicFunction.omit.length; k++){
+        if(Utils.contains(pitches, harmonicFunction.omit[k])) return false; //cannot omit component used in delay, position, resolution, extra
         pitchCounter--;
-    });
-    return !errorInOmits && pitchCounter+pitches.length <= 4; //we have only 4 voices
+    }
+    return pitchCounter+pitches.length <= 4; //we have only 4 voices
 }
 
 
