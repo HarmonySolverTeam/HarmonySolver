@@ -4,16 +4,6 @@
 .import "./Exercise.js" as Exercise
 .import "./Consts.js" as Consts
 
-//TODO jest jest sam # bez liczby (albo przy 3), to zmienić tylko mode
-//TODO OGARNIAC znaki chromatyczne
-
-
-//1. bemol w danym takcie obowiązuje przez cały czas, chyba, ze jest kasownik => trzeba to ogarniać => krzyżyk obowiązuje we wszystkich oktawach!
-//3. obsługiwanie chromatycznych: b5 -> omit 5 extra b5 itd
-//4.Jeśli molowa i 3 z # albo dorowa i 3 z b -> zmienić tylko mode!
-
-
-
 
 function ChordElement(notesNumbers, omit, bassElement) {
     this.notesNumbers = notesNumbers
@@ -74,6 +64,11 @@ function BassTranslator() {
         if (bassNumbers.length === 1) {
             // 5 -> 3,5
             if (Utils.contains(bassNumbers, 5)) {
+                return [3, 5]
+            }
+
+            // 3 -> 3,5 (only alteration symbol)
+            if (Utils.contains(bassNumbers, 3)) {
                 return [3, 5]
             }
 
@@ -494,7 +489,6 @@ function BassTranslator() {
             }
 
             //Utils.log("chordNotesToConsider", JSON.stringify(chordNotesToConsider))
-//todo poprawic, prawdopodobnie daje o 1 za wysoko
             for (var a = 0; a < alterationsInCurrentMeasure.length; a++) {
                 for (var b = 0; b < chordNotesToConsider.length; b++) {
                     if (Utils.mod(chordNotesToConsider[b] + chordElements[i].primeNote, 7) === alterationsInCurrentMeasure[a][0]) {
@@ -507,14 +501,14 @@ function BassTranslator() {
             for (var j = 0; j < chordElements[i].bassElement.symbols.length; j++) {
 
                 if (chordElements[i].bassElement.symbols[j].alteration !== undefined) {
+
                     var number = chordElements[i].bassElement.symbols[j].component !== undefined ? chordElements[i].bassElement.symbols[j].component : 3;
                     var alteration = undefined
 
                     var baseNoteToAlter = Utils.mod(number + chordElements[i].bassElement.bassNote.baseNote, 7)
-
-                    if (chordElements[i].bassElement.symbols[j].alteration === 'h') {
+                    if (chordElements[i].bassElement.symbols[j].alteration === Consts.ALTERATIONS.NATURAL) {
                         //nothing?
-                    } else if (chordElements[i].bassElement.symbols[j].alteration === '#') {
+                    } else if (chordElements[i].bassElement.symbols[j].alteration === Consts.ALTERATIONS.SHARP) {
                         alteration = ">"
                     } else {
                         alteration = "<"
@@ -523,12 +517,11 @@ function BassTranslator() {
                     var index = undefined
 
                     for (var a = 0; a < alterationsInCurrentMeasure.length; a++) {
-                        if (alterationsInCurrentMeasure[a][0] === number) {
+                        if (alterationsInCurrentMeasure[a][0] === baseNoteToAlter) {
                             index = a
                             break
                         }
                     }
-
                     //todo przy krzyzyku i bemolu dopisac ogarnianie w przypadku, gdy takie cus juz jest
 
                     if (alteration !== undefined) {

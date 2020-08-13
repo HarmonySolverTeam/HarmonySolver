@@ -136,6 +136,7 @@ MuseScore {
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote, 0)
             elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols))
+            has3component = false
         } while (cursor.next())
         lastPitch = Utils.mod(lastPitch, 12)
         var majorKey = Consts.majorKeyBySignature(curScore.keysig)
