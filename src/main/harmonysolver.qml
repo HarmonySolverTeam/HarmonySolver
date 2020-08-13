@@ -16,6 +16,7 @@ import "./objects/HarmonicFunction.js" as HarmonicFunction
 import "./objects/Soprano.js" as Soprano
 import "./objects/PluginConfiguration.js" as PluginConfiguration
 import "./objects/PluginConfigurationUtils.js" as PluginConfigurationUtils
+import "./objects/Errors.js" as Errors
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -96,7 +97,7 @@ MuseScore {
             if (typeof cursor.element.parent.annotations[0] !== "undefined") {
                 var readSymbols = cursor.element.parent.annotations[0].text
                 if (!Parser.check_figured_bass_symbols(readSymbols))
-                    throw ("Wrong symbols: " + symbols)
+                    throw new Errors.FiguredBassInputError("Wrong symbols", symbols)
                 for (var i = 0; i < readSymbols.length; i++) {
                     var component = "", alteration = undefined
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
@@ -111,7 +112,7 @@ MuseScore {
                     }
                     if (component === "") {
                         if (has3component)
-                            throw ("Cannot twice define 3: " + symbols)
+                            throw new Errors.FiguredBassInputError("Cannot twice define 3", symbols)
                         else {
                             symbols.push(new FiguredBass.BassSymbol(3,
                                                                     alteration))
@@ -141,7 +142,7 @@ MuseScore {
                 key = minorKey
                 mode = "minor"
             } else {
-                throw ("Wrong last note. Bass line should end on Tonic.")
+                throw new Errors.FiguredBassInputError("Wrong last note. Bass line should end on Tonic.")
             }
         }
         return new FiguredBass.FiguredBassExercise(mode, key, meter, elements,
@@ -331,31 +332,29 @@ MuseScore {
 
         try {
             var ex = read_figured_bass()
+
+            console.log(ex.elements)
+            var exercise = Translator.createExerciseFromFiguredBass(ex)
+            console.log(JSON.stringify(exercise))
+            var bassLine = []
+            for (var i = 0; i < ex.elements.length; i++) {
+                bassLine.push(ex.elements[i].bassNote)
+            }
+            var solver = new Solver.Solver(exercise, bassLine)
+            var solution = solver.solve()
+            var solution_date = get_solution_date()
+            console.log(solution)
+
+            prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
+
+            fill_score_with_solution(solution, ex.durations)
+
+            writeScore(curScore,
+                       filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                       "mscz")
         } catch (error) {
-            //todo show error popup with proper message
-            errorDialog.text = error
-            errorDialog.open()
+            showError(error)
         }
-        console.log(ex.elements)
-        var exercise = Translator.createExerciseFromFiguredBass(ex)
-        console.log(JSON.stringify(exercise))
-        var bassLine = []
-        for (var i = 0; i < ex.elements.length; i++) {
-            bassLine.push(ex.elements[i].bassNote)
-        }
-        var solver = new Solver.Solver(exercise, bassLine)
-        var solution = solver.solve()
-        var solution_date = get_solution_date()
-        console.log(solution)
-
-        prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
-
-        fill_score_with_solution(solution, ex.durations)
-
-        writeScore(curScore,
-                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                   "mscz")
-
         // translate (remember about durations attribute!)
         // solve first exercise
         // print solution (remember about durations)
@@ -444,7 +443,11 @@ MuseScore {
 
                 var input_text = String(myFileAbc.read())
                 tab1.item.setText(input_text)
-                exercise = Parser.parse(input_text)
+                try{
+                    exercise = Parser.parse(input_text)
+                } catch (error) {
+                    showError(error)
+                }
             }
         }
     }
@@ -457,15 +460,30 @@ MuseScore {
             if (filename) {
                 myFileAbc.source = filename
                 var input_text = String(myFileAbc.read())
-                exercise = Parser.parse(input_text)
-                tab1.item.setText(JSON.stringify(exercise))
+                try{
+                    exercise = Parser.parse(input_text)
+                    tab1.item.setText(JSON.stringify(exercise))
+                } catch (error) {
+                    showError(error)
+                }
             }
         }
     }
+    
+    function showError(error) {
+      while (error.message.length !== 120) {
+            error.message += " "
+      }
+      errorDialog.text = error.source + "\n" + error.message + "\n" + error.details
+      errorDialog.open()
+    }
+    
 
     MessageDialog {
         id: errorDialog
-        title: "Error"
+        width: 300
+        height: 400
+        title: "HarmonySolver - Error"
         text: ""
         icon: StandardIcon.Critical
     }
@@ -553,19 +571,22 @@ MuseScore {
                         anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
-                            var solver = new Solver.Solver(exercise)
-                            var solution = solver.solve()
-                            var solution_date = get_solution_date()
+                            try {
+                                var solver = new Solver.Solver(exercise)
+                                var solution = solver.solve()
+                                var solution_date = get_solution_date()
 
-                            prepare_score_for_solution(filePath, solution,
-                                                       solution_date, true, "_hfunc")
+                                prepare_score_for_solution(filePath, solution,
+                                                           solution_date, true, "_hfunc")
 
-                            fill_score_with_solution(solution)
+                                fill_score_with_solution(solution)
 
-                            writeScore(curScore,
-                                       filePath + "/solutions/harmonic functions exercise/solution"
-                                       + solution_date, "mscz")
-                            Qt.quit()
+                                writeScore(curScore,
+                                           filePath + "/solutions/harmonic functions exercise/solution"
+                                           + solution_date, "mscz")
+                            } catch (error) {
+                                showError(error)
+                            }
                         }
                     }
                 }
@@ -588,7 +609,7 @@ MuseScore {
                                 textAreaFigured.text = ""
                                 figuredBassSolve()
                             } else {
-                                textAreaFigured.text = "ERROR! No score with figured bass!"
+                                showError(new Errors.FiguredBassInputError("No score with figured bass"))
                             }
                         }
                     }
@@ -900,9 +921,13 @@ MuseScore {
                                 var func_list = getPossibleChordsList()
                                 //debug
                                 //textAreaSoprano.text = func_list.toString()
-                                sopranoHarmonization(func_list)
+                                try{
+                                    sopranoHarmonization(func_list)
+                                } catch (error) {
+                                    showError(error)
+                                }
                             } else {
-                                textAreaSoprano.text = "ERROR! No score with soprano!"
+                                showError(new Errors.SopranoHarmonizationInputError("No score with soprano"))
                             }
                         }
                     }

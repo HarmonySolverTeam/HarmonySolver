@@ -1,4 +1,5 @@
 .import "./Utils.js" as Utils
+.import "./Errors.js" as Errors
 
 var DEBUG = false;
 
@@ -210,7 +211,7 @@ function checkConnection(prevChord, currentChord){
         }
     }
     if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "S")
-        throw new Error("Forbidden connection: S->D");
+        throw new Errors.RulesCheckerError("Forbidden connection: S->D");
 
     if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;
     return 0;
