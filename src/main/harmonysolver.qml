@@ -626,31 +626,6 @@ MuseScore {
                         font.pixelSize: 20
                     }
 
-                    Text {
-                        id: infoText
-                        anchors.top: textLabelFiguredBass.bottom
-                        anchors.left: tabRectangle2.left
-                        anchors.topMargin: 40
-                        anchors.leftMargin: 20
-                        text: qsTr("Info")
-                        font.pixelSize: 20
-                    }
-
-                    TextArea {
-                        id: textAreaFigured
-                        anchors.top: infoText.bottom
-                        anchors.left: tabRectangle2.left
-                        anchors.right: tabRectangle2.right
-                        anchors.topMargin: 10
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        width: parent.width
-                        text: qsTr("")
-                        activeFocusOnPress: false
-                        readOnly: true
-                        font.pixelSize: 14
-                    }
                 }
             }
             Tab {
@@ -880,31 +855,6 @@ MuseScore {
                         }
                     }
 
-                    Text {
-                        id: infoTextSoprano
-                        anchors.bottom: textAreaSoprano.top
-                        anchors.left: tabRectangle3.left
-                        anchors.topMargin: 40
-                        anchors.leftMargin: 20
-                        text: qsTr("Info")
-                        font.pixelSize: 20
-                    }
-
-                    TextArea {
-                        id: textAreaSoprano
-                        anchors.bottom: buttorSoprano.top
-                        anchors.left: tabRectangle3.left
-                        anchors.right: tabRectangle3.right
-                        anchors.topMargin: 10
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        width: parent.width
-                        text: qsTr("")
-                        activeFocusOnPress: false
-                        readOnly: true
-                        font.pixelSize: 14
-                    }
 
                     Button {
 
