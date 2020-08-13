@@ -3,6 +3,10 @@ function ExerciseSolution(exercise, rating, chords) {
     this.rating = rating;
     this.chords = chords;
 
+    this.success = true //todo for later use
+    this.infoMessages = []
+    this.errorMessages = []
+
     this.setDurations = function () {
         function default_divide(number, result) {
             //default_divide(3, [1/2]) // [3]
@@ -116,4 +120,13 @@ function ExerciseSolution(exercise, rating, chords) {
             offset += current_measure.length
         }
     }
+
+    this.addInfoMessage = function (message) {
+        this.infoMessages.push(message)
+    }
+
+    this.addErrorMessage = function (message) {
+        this.errorMessages.push(message)
+    }
+
 }

@@ -1,8 +1,8 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import MuseScore 3.0
 import FileIO 3.0
-import QtQuick.Dialogs 1.0
-import QtQuick.Controls 1.0
+import QtQuick.Dialogs 1.1
+import QtQuick.Controls 1.1
 
 //import "./qml_components"
 import "./objects/Solver.js" as Solver
@@ -328,7 +328,14 @@ MuseScore {
     }
 
     function figuredBassSolve() {
-        var ex = read_figured_bass()
+
+        try {
+            var ex = read_figured_bass()
+        } catch (error) {
+            //todo show error popup with proper message
+            errorDialog.text = error
+            errorDialog.open()
+        }
         console.log(ex.elements)
         var exercise = Translator.createExerciseFromFiguredBass(ex)
         console.log(JSON.stringify(exercise))
@@ -455,6 +462,14 @@ MuseScore {
             }
         }
     }
+
+    MessageDialog {
+        id: errorDialog
+        title: "Error"
+        text: ""
+        icon: StandardIcon.Critical
+    }
+
 
     Rectangle {
 
