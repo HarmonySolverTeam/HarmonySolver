@@ -94,7 +94,7 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
             if(halfToneDist%12===0) halfToneDist = 12
             else halfToneDist = halfToneDist % 12
         }
-        var alteredIntervals = {0:1, 1:0, 3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
+        var alteredIntervals = {1:0, 3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
         return alteredIntervals[halfToneDist] === baseDist
     }
 
