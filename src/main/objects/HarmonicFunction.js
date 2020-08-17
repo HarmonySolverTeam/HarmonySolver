@@ -135,6 +135,50 @@ function HarmonicFunction2(params){
         var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
         validator.validate(this);
     }
+
+    this.getSimpleChordName = function() {
+    //    functionName [p<position>] [r<revolution>] [e<extra>] [moll] [deg<degree>] [down] [om<omit>] [open | close]
+        var functionNameAdapter = { "T" : "A", "S" : "B", "D":"D", "same_as_prev" : "C"};
+        var res = functionNameAdapter[this.functionName];
+
+        if(this.position !== undefined) res += "p" + this.position;
+
+        if(this.revolution !== undefined) res += "r" + this.revolution;
+
+        if(this.extra !== undefined && this.extra.length > 0){
+            var extra_cp = this.extra.slice();
+
+            extra_cp.splice(extra_cp.indexOf(this.position), 1)
+            extra_cp.splice(extra_cp.indexOf(this.revolution), 1)
+
+            if(extra_cp.length !== 1){
+                console.log("Cannot render chord name - extra list is to long");
+                return "err"
+            }
+            res += "e" + this.extra[0];
+        }
+
+        if(this.mode === "minor") res += "moll";
+
+        var degreeAdapter = {2:"II", 3:"III", 6:"VI", 7:"VII"};
+        if(this.degree !== undefined && this.degree !== 1 && this.degree !== 4 && this.degree !== 5)
+            res += "deg" + degreeAdapter[this.degree];
+
+        if(this.down) res += "down";
+
+        if(this.omit !== undefined && this.omit.length > 0){
+            if(omit.length !== 1) {
+                console.log("Cannot render chord name - omit list is to long");
+                return "err";
+            }
+            res += "om" + this.omit[0];
+        }
+
+        if(this.system !== undefined) res += this.system;
+
+        console.log(res);
+        return res;
+    }
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key) {

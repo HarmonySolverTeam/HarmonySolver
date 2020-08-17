@@ -302,6 +302,13 @@ MuseScore {
             }
             addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
+            
+            var text = newElement(Element.HARMONY)
+            text.text = curChord.harmonicFunction.getSimpleChordName();
+            text.offsetY = 7;
+            text.placement = Placement.BELOW;
+            cursor.add(text);
+
             cursor.addNote(curChord.bassNote.pitch, false)
         }
 
