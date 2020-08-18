@@ -1,0 +1,22 @@
+Aby stworzyć zestaw testów jednostkowych, należy stworzyć nowy plik .js, w którym należy zaimportować funkcje i obiekty
+z TestUtils.js, następnie zdefiniować testy jednostkowe i na końcu stworzyć zestaw testów złożony z nich. Na końcu pliku
+należy wywołać na obiekcie zestawu testów metodę run().
+Ważne jest, aby funkcje używane przez testy jednostkowe zwracały zmienną logiczną, a najlepiej gdyby zwracały
+wyrażenie logiczne złożone z asercji stworzonych w TestUtils.js
+Przykład takiego pliku:
+
+
+
+var test = require("./TestUtils")
+
+var x1 = new test.UnitTest(()=>{return test.assertNotEqualsPrimitives(5,1)}, "5!=1 Test")
+var x2 = new test.UnitTest(()=>{return test.assertTrue(false)}, "Wrong Test")
+var suite = new test.TestSuite("Example");
+suite.addTest(x1);
+suite.addTest(x2);
+suite.run()
+
+
+
+Następnie w skrypcie runTests.py należy dodać do listy "suites" nazwy stworzonych plików bez rozszerzeń.
+Skrypt należy uruchomić z poziomu src/test.

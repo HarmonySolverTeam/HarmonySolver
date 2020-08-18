@@ -370,7 +370,7 @@ function BassTranslator() {
             toAdd.omit = chordElement.omit
             toAdd.down = false
             toAdd.system = undefined
-            //toAdd.delay = ?
+            toAdd.delay = []
             toAdd.extra = []
             //toAdd.mode = mode
 
@@ -379,6 +379,7 @@ function BassTranslator() {
 
         return ret
     }
+
 
     this.convertToFunctions = function (figuredBassExercise) {
 
@@ -394,6 +395,7 @@ function BassTranslator() {
             this.completeFiguredBassSymbol(bassElements[i])
             Utils.log("Bass elements after complete ", bassElements[i])
             Utils.log("element.symbols after: " + bassElements[i].symbols)
+
 
             var chordElement = this.buildChordElement(bassElements[i])
             Utils.log("Chord element ", chordElement)
@@ -446,12 +448,14 @@ function BassTranslator() {
         return [a[0] * y + b[0] * x, x * y]
     }
 
+
     this.notesLengthEqual = function(a,b) {
         var x = a.slice(0)
         var y = b.slice(0)
 
         var den1 = x[1]
         var den2 = y[1]
+
 
         x[0] = x[0] * den2
         x[1] = x[1] * den2

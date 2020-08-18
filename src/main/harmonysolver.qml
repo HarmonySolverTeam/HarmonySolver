@@ -381,27 +381,27 @@ MuseScore {
     function getPossibleChordsList() {
 // function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
 
-        var T = new HarmonicFunction.HarmonicFunction("T", 1, -1, "1", [], [],
+        var T = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", [], [],
                                                       [], false, undefined)
-        var S = new HarmonicFunction.HarmonicFunction("S", 4, -1, "1", [], [],
+        var S = new HarmonicFunction.HarmonicFunction("S", 4, undefined, "1", [], [],
                                                       [], false, undefined)
-        var D = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [], [],
+        var D = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", [], [],
                                                       [], false, undefined)
 
-        var D7 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+        var D7 = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", [],
                                                        ["7"], [], false)
-        var D9 = new HarmonicFunction.HarmonicFunction("D", 5, -1, "1", [],
+        var D9 = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", [],
                                                        ["7", "9"], [], false)
         //todo jak to uzupelnic?
-        var T6 = new HarmonicFunction.HarmonicFunction("T", 6, -1, "1", [], [],
+        var T6 = new HarmonicFunction.HarmonicFunction("T", 6, undefined, "1", [], [],
                                                        [], false)
-        var S2 = new HarmonicFunction.HarmonicFunction("S", 2, -1, "1", [], [],
+        var S2 = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "1", [], [],
                                                        [], false)
-        var chopin = new HarmonicFunction.HarmonicFunction("D", 1, -1, "1", [],
+        var chopin = new HarmonicFunction.HarmonicFunction("D", 1, undefined, "1", [],
                                                            [], [], false)
-        var neapol = new HarmonicFunction.HarmonicFunction("S", 1, -1, "1", [],
+        var neapol = new HarmonicFunction.HarmonicFunction("S", 1, undefined, "1", [],
                                                            [], [], false)
-        var S6 = new HarmonicFunction.HarmonicFunction("S", 6, -1, "1", [], [],
+        var S6 = new HarmonicFunction.HarmonicFunction("S", 6, undefined, "1", [], [],
                                                        [], false)
 
         var chordsList = []

@@ -10,11 +10,44 @@
 var DEBUG = false;
 
 function Solver(exercise, bassLine, sopranoLine){
+
+    function getFunctionsWithDelays(functions){
+        var newFunctions = functions.slice();
+        var addedChords = 0;
+        for(var i=0; i<functions.length; i++){
+            var delays = functions[i].delay;
+            if(delays.length === 0) continue;
+            var newFunction = new HarmonicFunction.HarmonicFunction(
+                functions[i].functionName,
+                functions[i].degree,
+                functions[i].position,
+                functions[i].revolution,
+                [],
+                functions[i].extra.slice(),
+                functions[i].omit.slice(),
+                functions[i].down,
+                functions[i].system,
+                functions[i].mode
+            );
+            for(var j=0; j<delays.length; j++){
+                functions[i].extra.push(delays[j][0]);
+                functions[i].omit.push(delays[j][1]);
+                if(delays[j][1] === functions[i].position) functions[i].position = delays[j][0];
+                if(delays[j][1] === functions[i].revolution) functions[i].revolution = delays[j][0];
+            }
+            newFunctions.splice(i+addedChords+1, 0, newFunction);
+            addedChords++;
+        }
+        return newFunctions;
+    }
     this.exercise = exercise;
     this.bassLine = bassLine;
     this.sopranoLine = sopranoLine;
-    this.harmonicFunctions = exercise.measures[0];
-    for(var i = 1; i < exercise.measures.length; i++){
+
+    this.harmonicFunctions = [];
+    for(var i=0; i<exercise.measures.length; i++){
+        exercise.measures[i] = getFunctionsWithDelays(exercise.measures[i]);
+
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
@@ -49,7 +82,12 @@ function Solver(exercise, bassLine, sopranoLine){
             var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
 
             if (score !== -1 ) {
-                Utils.log("OK!", curr_index + " -> " + chords[j]);
+
+                if(DEBUG) {
+                    console.log("OK!");
+                    console.log(curr_index + " -> " + chords[j]);
+                }
+
                 good_chords.push([score,chords[j]]);
             }
         }

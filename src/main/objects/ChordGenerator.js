@@ -5,9 +5,12 @@
 .import "./Utils.js" as Utils
 
 function ChordGenerator(key, mode) {
-    this.key = key.toUpperCase();
+    this.key = key
+    this.key[0] = key[0].toUpperCase();
     this.mode = mode;
-    Utils.log("Key: " + this.key + " Mode: " + this.mode);
+
+    //console.log(this.key + "   " + this.mode);
+
 
     function getPossiblePitchValuesFromInterval(note, minPitch, maxPitch) {
 
@@ -53,6 +56,9 @@ function ChordGenerator(key, mode) {
                 case "1":
                     needToAdd.splice(needToAdd.indexOf('1'), 1)
                     break;
+                case "3":
+                    needToAdd.splice(needToAdd.indexOf('3'), 1)
+                    break;
                 case "5":
                     needToAdd.splice(needToAdd.indexOf('5'), 1)
                     break;
@@ -60,16 +66,24 @@ function ChordGenerator(key, mode) {
         }
 
         //Position is given
-        if (harmonicFunction.position !== -1) {
+        if (harmonicFunction.position !== undefined) {
             soprano = harmonicFunction.position;
             if(Utils.contains(needToAdd, harmonicFunction.position))
-                needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.position), 1);
+                needToAdd.splice(needToAdd.indexOf(harmonicFunction.position), 1);
         }
 
         //I'm not sure if revolution is int or string - assume that string
         bass = harmonicFunction.revolution;
         if(Utils.contains(needToAdd, harmonicFunction.revolution))
             needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
+            
+        if(harmonicFunction.down){
+            if(soprano === "1" || soprano === "5") soprano = soprano + ">";
+            if(bass === "1" || bass === "5") bass = bass + ">";
+
+            for(var i=0; i<needToAdd.length; i++)
+                if(needToAdd[i] === "1" || needToAdd[i] === "5") needToAdd[i] = needToAdd[i] + ">";
+        }
 
         return [[soprano, alto, tenor, bass], needToAdd]
 
@@ -137,7 +151,9 @@ function ChordGenerator(key, mode) {
 
     this.getSchemas = function (harmonicFunction, chordTemplate) {
 
-       // console.log(chordTemplate);
+
+        // console.log(chordTemplate);
+
         var schemas = []
 
         var chord = chordTemplate[0];
@@ -203,9 +219,11 @@ function ChordGenerator(key, mode) {
             }
         }
 
-       // console.log("SHEMAS:");
-      //  schemas.forEach(function(x){ console.log(x)});
-      //  console.log("SCHEMAS END");
+
+        // console.log("SHEMAS:");
+        // schemas.forEach(function(x){ console.log(x)});
+        // console.log("SCHEMAS END");
+
         return schemas;
     }
 
@@ -244,6 +262,7 @@ function ChordGenerator(key, mode) {
         var components = {
             '1': chordType[0],
             '3': chordType[1],
+            '4': 5,
             '5': chordType[2],
             '6': 9,
             '7': 10,
@@ -253,16 +272,14 @@ function ChordGenerator(key, mode) {
         var schemas_cp = schemas.slice();
         for (var i = 0; i < schemas.length; i++) {
             schemas_cp[i] = schemas[i].map(function (scheme) {
-                //console.log("scheme" + scheme)
-                if (scheme.length > 1) {
-                    var intervalPitch = components[scheme.charAt(0)];
-                   // console.log("interval pith" + intervalPitch)
-                    for (var j = 1; j < scheme.length; j++) {
-                     //   console.log(scheme[j])
-                        if (scheme[j] === '<') intervalPitch++;
-                        if (scheme[j] === '>') intervalPitch--;
-                    }
-                   // console.log("basicnote" + basicNote)
+
+                if (scheme.length === 2) {
+                    var intervalPitch;
+                    if(scheme[0] === '<')
+                        intervalPitch = components[scheme.charAt(1)] + 1;
+                    if(scheme[1] === '>')
+                        intervalPitch = components[scheme.charAt(0)] - 1;
+
                     return basicNote + intervalPitch;
                 }
               //  console.log("basicnote" + basicNote)
