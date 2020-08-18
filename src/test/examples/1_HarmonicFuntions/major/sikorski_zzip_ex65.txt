@@ -1,0 +1,5 @@
+D
+3/4
+T{"system":"open"}
+S{"position":"1", "revolution":"3"};D{"position":"1","revolution":"3"}
+T{};T{"position":"5"}
