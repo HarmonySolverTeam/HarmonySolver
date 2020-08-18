@@ -263,13 +263,12 @@ function ChordGenerator(key, mode) {
         var schemas_cp = schemas.slice();
         for (var i = 0; i < schemas.length; i++) {
             schemas_cp[i] = schemas[i].map(function (scheme) {
-
-                if (scheme.length > 1) {
-                    var intervalPitch = components[scheme.charAt(0)];
-                    for (var j = 1; j < scheme.length; j++) {
-                        if (scheme[j] === '<') intervalPitch++;
-                        if (scheme[j] === '>') intervalPitch--;
-                    }
+                if (scheme.length === 2) {
+                    var intervalPitch;
+                    if(scheme[0] === '<')
+                        intervalPitch = components[scheme.charAt(1)] + 1;
+                    if(scheme[1] === '>')
+                        intervalPitch = components[scheme.charAt(0)] - 1;
                     return basicNote + intervalPitch;
                 }
                 return basicNote + components[scheme];
