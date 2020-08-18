@@ -157,3 +157,10 @@ var possible_systems = ['close', 'open']
 var basicMajorChord = [0, 4, 7];
 //G
 var basicMinorChord = [0, 3, 7];
+
+var ALTERATIONS = {
+    SHARP: "#",
+    FLAT: "b",
+    NATURAL: "h"
+}
+

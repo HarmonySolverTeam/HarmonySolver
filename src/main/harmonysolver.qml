@@ -16,6 +16,7 @@ import "./objects/HarmonicFunction.js" as HarmonicFunction
 import "./objects/Soprano.js" as Soprano
 import "./objects/PluginConfiguration.js" as PluginConfiguration
 import "./objects/PluginConfigurationUtils.js" as PluginConfigurationUtils
+import "./objects/Utils.js" as Utils
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -36,20 +37,22 @@ MuseScore {
 
     function readPluginConfiguration(){
         PluginConfigurationUtils.readConfiguration()
-        console.log(JSON.stringify(PluginConfigurationUtils.configuration_holder))
+        Utils.info(JSON.stringify(PluginConfigurationUtils.configuration_holder))
     }
     
     FileIO{
       id: outConfFile
-      onError: console.log(msg + "  Filename = " + outConfFile.source)
+      onError: Utils.warn(msg + "  Filename = " + outConfFile.source)
     }
     
     function savePluginConfiguration(){
        var json_conf = String(JSON.stringify(PluginConfigurationUtils.configuration_holder))
        //ale drut ja piernicze...
-       outConfFile.setSource(Qt.resolvedUrl(".") + PluginConfigurationUtils.configuration_save_path)
-              console.log(outConfFile.source)
-       console.log(outConfFile.write(json_conf))
+       outConfFile.setSource(String(Qt.resolvedUrl(".") + PluginConfigurationUtils.configuration_save_path))
+//              console.log(outConfFile.source)
+//              console.log(filePath)
+//              console.log(outConfFile.exists())
+       Utils.log(outConfFile.write(json_conf))
     }
 
     function getBaseNote(museScoreBaseNote) {
@@ -95,6 +98,7 @@ MuseScore {
                         [cursor.element.duration.numerator, cursor.element.duration.denominator])
             if (typeof cursor.element.parent.annotations[0] !== "undefined") {
                 var readSymbols = cursor.element.parent.annotations[0].text
+                Utils.log("readSymbols:", readSymbols)
                 if (!Parser.check_figured_bass_symbols(readSymbols))
                     throw ("Wrong symbols: " + symbols)
                 for (var i = 0; i < readSymbols.length; i++) {
@@ -102,10 +106,14 @@ MuseScore {
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
                         if (readSymbols[i] !== " " && readSymbols[i] !== "\t") {
                             if (readSymbols[i] === "#" || readSymbols[i] === "b"
-                                    || readSymbols === "h")
+                                    || readSymbols === "h") {
                                 alteration = readSymbols[i]
-                            else
+                                console.log("alteration: " + alteration)
+                                }
+                            else {
                                 component += readSymbols[i]
+                                console.log("component: " + component)
+                            }
                         }
                         i++
                     }
@@ -121,22 +129,24 @@ MuseScore {
                         symbols.push(new FiguredBass.BassSymbol(parseInt(
                                                                     component),
                                                                 alteration))
+                        Utils.log("symbols:", symbols)
                 }
             }
-            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc + 1) % 7)
+            lastBaseNote = getBaseNote(Utils.mod((cursor.element.notes[0].tpc + 1), 7))
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote, 0)
             elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols))
+            has3component = false
         } while (cursor.next())
-        lastPitch = lastPitch % 12
+        lastPitch = Utils.mod(lastPitch, 12)
         var majorKey = Consts.majorKeyBySignature(curScore.keysig)
         var minorKey = Consts.minorKeyBySignature(curScore.keysig)
-        if (Consts.keyStrPitch[majorKey] % 12 === lastPitch
+        if (Utils.mod(Consts.keyStrPitch[majorKey], 12) === lastPitch
                 && Consts.keyStrBase[majorKey] === lastBaseNote) {
             key = majorKey
             mode = "major"
         } else {
-            if (Consts.keyStrPitch[minorKey] % 12 === lastPitch
+            if (Utils.mod(Consts.keyStrPitch[minorKey], 12) === lastPitch
                     && Consts.keyStrBase[minorKey] === lastBaseNote) {
                 key = minorKey
                 mode = "minor"
@@ -155,7 +165,7 @@ MuseScore {
                     ) + "_" + (date.getMonth() + 1) + "_" + date.getDate() + "_"
         ret += date.getHours() + "_" + date.getMinutes(
                     ) + "_" + date.getSeconds()
-        console.log(ret)
+        Utils.log("Solution date - " + ret)
         return ret
     }
 
@@ -185,7 +195,7 @@ MuseScore {
             var countMeasures = function(durations){
                 var sum = 0;
                 for(var i=0; i<durations.length;i++){
-                    console.log(durations[i][0]/durations[i][1])
+                    Utils.log(durations[i][0]/durations[i][1])
                     sum += durations[i][0]/durations[i][1];
                 }
                 return Math.round(sum);
@@ -202,6 +212,7 @@ MuseScore {
         var lastSegment = false
         for (var i = 0; i < solution.chords.length; i++) {
             var curChord = solution.chords[i]
+            Utils.log("curChord:",curChord)
             if (durations !== undefined) {
                 var dur = durations[i]
             }
@@ -285,7 +296,7 @@ MuseScore {
         do {
             durations.push(
                         [cursor.element.duration.numerator, cursor.element.duration.denominator])
-            lastBaseNote = getBaseNote((cursor.element.notes[0].tpc + 1) % 7)
+            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0)
             notes.push(sopranoNote)
@@ -316,7 +327,7 @@ MuseScore {
                    filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                    "mscz")
 
-        console.log(sopranoExercise)
+        Utils.log("sopranoExercise:",sopranoExercise)
     }
 
     function addComponentToScore(cursor, componentValue) {
@@ -329,9 +340,12 @@ MuseScore {
 
     function figuredBassSolve() {
         var ex = read_figured_bass()
-        console.log(ex.elements)
-        var exercise = Translator.createExerciseFromFiguredBass(ex)
-        console.log(JSON.stringify(exercise))
+        Utils.log("ex.elements:",ex.elements)
+        var bassTranslator = new Translator.BassTranslator()
+        Utils.log("figured bass exercise:", JSON.stringify(ex))
+
+        var exercise = bassTranslator.createExerciseFromFiguredBass(ex)
+        Utils.log("exercise:", JSON.stringify(exercise))
         var bassLine = []
         for (var i = 0; i < ex.elements.length; i++) {
             bassLine.push(ex.elements[i].bassNote)
@@ -339,7 +353,7 @@ MuseScore {
         var solver = new Solver.Solver(exercise, bassLine)
         var solution = solver.solve()
         var solution_date = get_solution_date()
-        console.log(solution)
+        Utils.log("solution", solution)
 
         prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
 
@@ -347,7 +361,7 @@ MuseScore {
 
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                   "mscz")
+                   "mscz") 
 
         // translate (remember about durations attribute!)
         // solve first exercise
@@ -423,7 +437,7 @@ MuseScore {
 
     FileIO {
         id: myFileAbc
-        onError: console.log(msg + "  Filename = " + myFileAbc.source)
+        onError: Utils.warn(msg + "  Filename = " + myFileAbc.source)
     }
 
 

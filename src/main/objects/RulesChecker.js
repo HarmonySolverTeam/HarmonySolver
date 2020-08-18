@@ -6,11 +6,10 @@ function concurrentOctaves(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
-            if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 0){
-                if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 0){
+            if(Utils.mod((prevChord.notes[j].pitch-prevChord.notes[i].pitch), 12) === 0){
+                if(Utils.mod((currentChord.notes[j].pitch-currentChord.notes[i].pitch), 12) === 0){
                     if(DEBUG) {
-                        console.log("concurrentOctaves"+i+" "+j);
-                        console.log(prevChord + " -> " + currentChord);
+                        Utils.log("concurrentOctaves "+i+" "+j, prevChord + " -> " + currentChord );
                     }
                     return -1;
                 }
@@ -24,11 +23,10 @@ function concurrentFifths(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
-            if((prevChord.notes[j].pitch-prevChord.notes[i].pitch)%12 === 7){
-                if((currentChord.notes[j].pitch-currentChord.notes[i].pitch)%12 === 7){
+            if(Utils.mod((prevChord.notes[j].pitch-prevChord.notes[i].pitch), 12) === 7){
+                if(Utils.mod(currentChord.notes[j].pitch-currentChord.notes[i].pitch, 12) === 7){
                     if(DEBUG) {
-                        console.log("concurrentFifths"+i+" "+j);
-                        console.log(prevChord + " -> " + currentChord);
+                        Utils.log("concurrentFifths "+i+" "+j, prevChord + " -> " + currentChord);
                     }
 
                     return -1;
@@ -43,8 +41,7 @@ function crossingVoices(prevChord, currentChord){
     for(var i = 0; i < 3; i++){
         if(currentChord.notes[i].pitch>prevChord.notes[i+1].pitch){
             if(DEBUG) {
-                console.log("crossingVoices");
-                console.log(prevChord + " -> " + currentChord);
+                Utils.log("crossingVoices",prevChord + " -> " + currentChord);
             }
             return -1
         }
@@ -52,8 +49,7 @@ function crossingVoices(prevChord, currentChord){
     for(var i = 3; i > 0; i--){
         if(currentChord.notes[i].pitch<prevChord.notes[i-1].pitch){
             if(DEBUG){
-                console.log("crossingVoices");
-                console.log(prevChord + " -> " + currentChord);
+                Utils.log("crossingVoices", prevChord + " -> " + currentChord);
             }
             return -1
         }
@@ -68,8 +64,7 @@ function oneDirection(prevChord, currentChord){
         ||(currentChord.bassNote.pitch<prevChord.bassNote.pitch && currentChord.tenorNote.pitch<prevChord.tenorNote.pitch
             && currentChord.altoNote.pitch<prevChord.altoNote.pitch && currentChord.bassNote.pitch<prevChord.bassNote.pitch)){
         if(DEBUG){
-            console.log("oneDirection");
-            console.log(prevChord + " -> " + currentChord);
+            Utils.log("oneDirection", prevChord + " -> " + currentChord);
         }
         return -1;
     }
@@ -83,7 +78,7 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
     function getBaseDistance(first, second ){
         var i = 0
         while(first!==second) {
-            first = (first+1)%7
+            first = Utils.mod((first+1), 7)
             i++
         }
         return i
@@ -91,8 +86,8 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
 
     function checkAlteration(halfToneDist, baseDist){
         if(halfToneDist > 12){
-            if(halfToneDist%12===0) halfToneDist = 12
-            else halfToneDist = halfToneDist % 12
+            if(Utils.mod(halfToneDist, 12) === 0) halfToneDist = 12
+            else halfToneDist = Utils.mod(halfToneDist, 12)
         }
         var alteredIntervals = {1:0, 3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
         return alteredIntervals[halfToneDist] === baseDist
@@ -128,8 +123,7 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
             (prevPrevChord.notes[i].pitch<prevChord.notes[i].pitch && prevChord.notes[i].pitch<currentChord.notes[i].pitch))
             && forbiddenJump(prevPrevChord, currentChord, true)){
             if(DEBUG) {
-                console.log("forbiddenSumJump");
-                console.log(prevPrevChord + " -> " + prevChord + " -> " + currentChord);
+                Utils.log("forbiddenSumJump", prevPrevChord + " -> " + prevChord + " -> " + currentChord);
             }
             return -1;
         }

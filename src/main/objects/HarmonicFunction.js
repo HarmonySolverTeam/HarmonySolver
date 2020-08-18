@@ -18,15 +18,15 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     }
 
     this.toString = function () {
-        return this.functionName + " " +
-            this.degree + " " +
-            this.position + " " +
-            this.revolution + " " +
-            this.delay + " " +
-            this.extra + " " +
-            this.omit + " " +
-            this.down + " " +
-            this.system + " " +
-            this.mode
+        return "FunctionName: " + this.functionName + " " +
+            "Degree: " + this.degree + " " +
+            "Position: " + this.position + " " +
+            "Revolution: " + this.revolution + " " +
+            "Delay: " + this.delay + " " +
+            "Extra: " + this.extra + " " +
+            "Omit: " + this.omit + " " +
+            "Down: " + this.down + " " +
+            "System: " + this.system + " " +
+            "Mode: " + this.mode
     }
 }
