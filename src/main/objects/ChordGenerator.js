@@ -5,7 +5,8 @@
 .import "./Utils.js" as Utils
 
 function ChordGenerator(key, mode) {
-    this.key = key.toUpperCase();
+    this.key = key
+    this.key[0] = key[0].toUpperCase();
     this.mode = mode;
     //console.log(this.key + "   " + this.mode);
 
