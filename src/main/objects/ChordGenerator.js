@@ -8,7 +8,6 @@ function ChordGenerator(key, mode) {
     this.key = key
     this.key[0] = key[0].toUpperCase();
     this.mode = mode;
-    //console.log(this.key + "   " + this.mode);
 
     function getPossiblePitchValuesFromInterval(note, minPitch, maxPitch) {
 
@@ -36,7 +35,7 @@ function ChordGenerator(key, mode) {
         var alto = undefined;
         var soprano = undefined;
 
-        var needToAdd = ['1', '3', '5'];
+        var needToAdd = harmonicFunction.getBasicChordComponents();
 
         for (var i = 0; i < harmonicFunction.extra.length; i++) {
             //Chopin chord
@@ -74,14 +73,6 @@ function ChordGenerator(key, mode) {
         bass = harmonicFunction.revolution;
         if(Utils.contains(needToAdd, harmonicFunction.revolution))
             needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
-            
-        if(harmonicFunction.down){
-            if(soprano === "1" || soprano === "5") soprano = soprano + ">";
-            if(bass === "1" || bass === "5") bass = bass + ">";
-
-            for(var i=0; i<needToAdd.length; i++)
-                if(needToAdd[i] === "1" || needToAdd[i] === "5") needToAdd[i] = needToAdd[i] + ">";
-        }
 
         return [[soprano, alto, tenor, bass], needToAdd]
 
@@ -102,7 +93,6 @@ function ChordGenerator(key, mode) {
                     res_element[indices[i]] = array[indices[p[j][i]]]
                 }
                 res.push(res_element)
-                // console.log(res_element)
             }
         } else if (indices.length == 2) {
             var p = [[0, 1], [1, 0]];
@@ -116,7 +106,6 @@ function ChordGenerator(key, mode) {
                     res_element[indices[i]] = array[indices[p[j][i]]]
                 }
                 res.push(res_element)
-                // console.log(res_element)
             }
         }
 
@@ -155,6 +144,8 @@ function ChordGenerator(key, mode) {
         var chord = chordTemplate[0];
         var needToAdd = chordTemplate[1];
 
+        var possible_to_double = harmonicFunction.getPossibleToDouble();
+
         // if soprano is not set
         if (chord[0] === undefined) {
             var undefined_count = 3;
@@ -168,27 +159,31 @@ function ChordGenerator(key, mode) {
                 chord[0] = needToAdd[0];
                 chord[1] = needToAdd[1];
 
-                //repeated bass
-                chord[2] = chord[3];
-                schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
-                //repeated needToAdd[0]
-                chord[2] = chord[0];
-                schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
-                //repeated needToAdd[1]
-                chord[2] = chord[1];
-                schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                for(var i=0; i<possible_to_double.length; i++) {
+                    chord[2] = possible_to_double[i];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                }
 
             } else if (needToAdd.length === 1) {
                 chord[0] = needToAdd[0];
 
-                //repeated bass
-                chord[1] = chord[3];
-                chord[2] = chord[3];
-                schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
-                //repeated needToAdd[0]
-                chord[1] = chord[0];
-                chord[2] = chord[0];
-                schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                if(possible_to_double.length === 2){
+                    chord[1] = possible_to_double[0];
+                    chord[2] = possible_to_double[0];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                    chord[1] = possible_to_double[0];
+                    chord[2] = possible_to_double[1];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                    chord[1] = possible_to_double[1];
+                    chord[2] = possible_to_double[1];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                }
+                else if (possible_to_double.length === 1){
+                    chord[1] = possible_to_double[0];
+                    chord[2] = possible_to_double[0];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                }
+
 
             }
         } else {
@@ -202,15 +197,29 @@ function ChordGenerator(key, mode) {
             } else if (needToAdd.length === 1) {
                 chord[1] = needToAdd[0]
 
-                //repeated bass
-                chord[2] = chord[3];
-                schemas = schemas.concat(this.permutations(chord, [1, 2]));
-                //repeated needToAdd[0]
-                chord[2] = needToAdd[0];
-                schemas = schemas.concat(this.permutations(chord, [1, 2]));
-                //repeated soprano
-                chord[2] = chord[0];
-                schemas = schemas.concat(this.permutations(chord, [1, 2]));
+                for(var i=0; i<possible_to_double.length; i++) {
+                    chord[2] = possible_to_double[i];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                }
+
+            } else if (needToAdd.length === 0){
+
+                if(possible_to_double.length === 2){
+                    chord[1] = possible_to_double[0];
+                    chord[2] = possible_to_double[0];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                    chord[1] = possible_to_double[0];
+                    chord[2] = possible_to_double[1];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                    chord[1] = possible_to_double[1];
+                    chord[2] = possible_to_double[1];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                }
+                else if (possible_to_double.length === 1){
+                    chord[1] = possible_to_double[0];
+                    chord[2] = possible_to_double[0];
+                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                }
 
             }
         }
@@ -246,7 +255,7 @@ function ChordGenerator(key, mode) {
         }
         else{
             if(harmonicFunction.mode == 'major') chordType = Consts.basicMajorChord;
-            if(harmonicFunction.mode == 'minor') chordType = Consts.basicMinorChord;   
+            if(harmonicFunction.mode == 'minor') chordType = Consts.basicMinorChord;
         }
 
 
@@ -290,7 +299,7 @@ function ChordGenerator(key, mode) {
         var temp = this.getChordTemplate(harmonicFunction);
         var schemas = this.getSchemas(harmonicFunction, temp);
         var schemas_mapped = this.mapSchemas(harmonicFunction, schemas);
-        
+
         var scale;
         if(this.mode === 'major'){
             scale = new Scale.MajorScale(this.key);
@@ -298,7 +307,7 @@ function ChordGenerator(key, mode) {
         if(this.mode === 'minor'){
             scale = new Scale.MinorScale(this.key);
         }
-        
+
         for (var i = 0; i < schemas_mapped.length; i++) {
             var schema_mapped = schemas_mapped[i];
             var vb = new Consts.VoicesBoundary()
@@ -372,18 +381,18 @@ function ChordGenerator(key, mode) {
                 var interval2 = [chord.tenorNote.pitch, chord.altoNote.pitch];
                 // console.log(interval1)
                 // console.log(interval2)
-                
+
                 var p = isInOpenInterval(chord.bassNote.pitch, interval1);
                 var q = isInOpenInterval(chord.tenorNote.pitch, interval1);
-                
+
                 var r = isInOpenInterval(chord.bassNote.pitch, interval2);
                 var s = isInOpenInterval(chord.sopranoNote.pitch, interval2);
                 // console.log( p + " " + q + " " + r + " " + s)
 
                 if(chord.harmonicFunction.system == "open") {
                     var t = (chord.bassNote.chordComponent == chord.tenorNote.chordComponent);
-                    var u = (chord.bassNote.chordComponent == chord.sopranoNote.chordComponent); 
-                    
+                    var u = (chord.bassNote.chordComponent == chord.sopranoNote.chordComponent);
+
                     return (xor(p,q) || (t && p && q)) && (xor(r,s) || (u && r && s));
                 }
                 if(chord.harmonicFunction.system == "close") return (!p && !q && !r && !s);
