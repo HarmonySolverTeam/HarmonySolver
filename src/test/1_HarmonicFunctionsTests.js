@@ -116,6 +116,17 @@ var sikorski_zzip_ex77 = () => {
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex77, "HarmonicFunctions Major test 9 - from sikorski_zzip_ex77"));
 
 
+var delays_test = () => {
+    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\delay_test.txt");
+    var ex = Parser.parse(input);
+    var solver = new Solver.Solver(ex);
+    var solution = solver.solve();
+
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+}
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delays_test, "HarmonicFunctions Major test 10 - from delay_test.txt"));
+
+
 // MINOR
 var targosz_p61_ex17 = () => {
     var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\targosz_p61_ex17.txt");
