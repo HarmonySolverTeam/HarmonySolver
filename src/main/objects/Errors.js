@@ -22,5 +22,5 @@ function RulesCheckerError(message, details) {
 
 function SopranoHarmonizationInputError(message, details) {
     BasicError.call(this.message, this.details)
-    this.source = "Error is soprano harmonization input"
+    this.source = "Error in soprano harmonization input"
 }

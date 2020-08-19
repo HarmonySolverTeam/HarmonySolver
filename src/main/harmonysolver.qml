@@ -333,7 +333,7 @@ MuseScore {
         try {
             var ex = read_figured_bass()
 
-            console.log(ex.elements)
+            //console.log(ex.elements)
             var exercise = Translator.createExerciseFromFiguredBass(ex)
             console.log(JSON.stringify(exercise))
             var bassLine = []
