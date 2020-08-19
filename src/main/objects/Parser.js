@@ -2,6 +2,7 @@
 .import "./Exercise.js" as Exercise
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Utils.js" as Utils
+.import "./Errors.js" as Errors
 
 var DEBUG = false;
 
@@ -125,7 +126,7 @@ function parse(input) {
     } else if (Utils.contains(Consts.possible_keys_minor, key)){
         mode = "minor"
     } else {
-        throw new Error("Unrecognized key: " + key)
+        throw new Errors.HarmonicFunctionsParserError("Unrecognized key", key)
     }
 
     var metre = lines[1]
