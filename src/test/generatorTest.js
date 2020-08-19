@@ -7,6 +7,7 @@ var TestUtils = require("./TestUtils")
 var ChordComponentManager = require("./objects/ChordComponentManager")
 var Consts = require("./objects/Consts")
 var Utils = require("./objects/Utils")
+var Scale = require("./objects/Scale")
 
 var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 
@@ -126,5 +127,138 @@ var chordInKeyGivenByHarmonicFunctionInMinor = () => {
 
 generatorTestSuite.addTest(new TestUtils.UnitTest(chordInKeyGivenByHarmonicFunctionInMinor, "Generating harmonic function with given minor key test"));
 
+
+var extra7Test = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'major');
+    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7"], []);
+    var res = gen.generate(hf);
+
+    var scale = new Scale.MajorScale("C");
+    var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
+
+    var containsOnlyOne7 = (chord) => {
+        var counter = 0;
+        for(var i=0; i<chord.notes.length; i++)
+            if( (chord.notes[i].pitch - (basicNote % 12) - 1) % 12 === 9) counter++;
+        return counter === 1;
+    }
+
+    for(var i=0; i<res.length; i++)
+        if(!containsOnlyOne7(res[i])) return false;
+
+    return true;
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(extra7Test, "Generating extra 7 test"));
+
+
+var extra7doTest = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'major');
+    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7>"], []);
+    var res = gen.generate(hf);
+
+    var scale = new Scale.MajorScale("C");
+    var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
+
+    var containsOnlyOne7do = (chord) => {
+        var counter = 0;
+        for(var i=0; i<chord.notes.length; i++)
+            if( (chord.notes[i].pitch - (basicNote % 12) - 1) % 12 === 8) counter++;
+        return counter === 1;
+    }
+
+    for(var i=0; i<res.length; i++)
+        if(!containsOnlyOne7do(res[i])) return false;
+
+    return true;
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(extra7doTest, "Generating extra 7> test"));
+
+
+var extra7upTest = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'major');
+    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["<7"], []);
+    var res = gen.generate(hf);
+
+    var scale = new Scale.MajorScale("C");
+    var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
+
+    var containsOnlyOne7up = (chord) => {
+        var counter = 0;
+        for(var i=0; i<chord.notes.length; i++)
+            if( (chord.notes[i].pitch - (basicNote % 12) - 1) % 12 === 10) counter++;
+        return counter === 1;
+    }
+
+    for(var i=0; i<res.length; i++)
+        if(!containsOnlyOne7up(res[i])) return false;
+
+    return true;
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(extra7upTest, "Generating extra <7 test"));
+
+
+var extra7pos7Test = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'major');
+    var hf = new HarmonicFunction.HarmonicFunction("D", 5, "7", "1", undefined, ["7"], []);
+    var res = gen.generate(hf);
+
+    var scale = new Scale.MajorScale("C");
+    var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
+
+    var containsOnlyOne7AndInSoprano = (chord) => {
+        var counter = 0;
+        var is7inSoprano = (chord.sopranoNote.pitch - (basicNote % 12) - 1) % 12 === 9;
+        for(var i=0; i<chord.notes.length; i++)
+            if((chord.notes[i].pitch - (basicNote % 12) - 1) % 12 === 9) counter++;
+        return counter === 1 && is7inSoprano;
+    }
+
+    for(var i=0; i<res.length; i++)
+        if(!containsOnlyOne7AndInSoprano(res[i])) return false;
+
+    return true;
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(extra7pos7Test, "Generating extra 7 with 7 in soprano test"));
+
+
+var extra7rev7Test = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'major');
+    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "7", undefined, ["7"], []);
+    var res = gen.generate(hf);
+
+    var scale = new Scale.MajorScale("C");
+    var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
+
+    var containsOnlyOne7AndInBass = (chord) => {
+        var counter = 0;
+        var is7inBass = (chord.bassNote.pitch - (basicNote % 12) - 1) % 12 === 9;
+        for(var i=0; i<chord.notes.length; i++)
+            if((chord.notes[i].pitch - (basicNote % 12) - 1) % 12 === 9) counter++;
+        return counter === 1 && is7inBass;
+    }
+
+    for(var i=0; i<res.length; i++)
+        if(!containsOnlyOne7AndInBass(res[i])) return false;
+
+    return true;
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(extra7rev7Test, "Generating extra 7 with 7 in bass test"));
+
+//TODO: testy omit
+//TODO: testy down
+//TODO: testy systemu
+//TODO: testy mode
+//TODO: combo testy!!!
+//TODO: testy degree
 
 generatorTestSuite.run();
