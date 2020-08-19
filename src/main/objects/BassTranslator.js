@@ -372,7 +372,12 @@ function BassTranslator() {
             toAdd.system = undefined
             toAdd.delay = []
             toAdd.extra = []
-            //toAdd.mode = mode
+
+            if (functions[i] === "D") {
+                toAdd.mode = "major"
+            } else {
+                toAdd.mode = mode
+            }
 
             ret.push(toAdd)
         }
