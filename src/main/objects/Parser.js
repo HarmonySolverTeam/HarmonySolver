@@ -146,11 +146,11 @@ function parse(input) {
             chords_parsed.push(parseChord(chords[j]))
         }measures.push(chords_parsed)
     }
+
     if(DEBUG) console.log(measures)
 
-    var ret = new Exercise.Exercise(key, metre, mode, measures)
 
-    return ret
+    return new Exercise.Exercise(key, metre, mode, measures)
 
 //        } catch (error) {
 //            console.log("Error during parsing file!")

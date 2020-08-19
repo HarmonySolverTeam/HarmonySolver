@@ -4,8 +4,8 @@ function Note(pitch, baseNote, chordComponent) {
     this.chordComponent = chordComponent
 
     this.toString = function () {
-        if (this.pitch == undefined) return undefined;
-        return this.pitch + " " + this.baseNote + " " + this.chordComponent;
+        if (this.pitch === undefined) return undefined;
+        return "Pitch: " + this.pitch + " BaseNote: " + this.baseNote + " ChordComponent: " + this.chordComponent;
     }
 
     this.equals = function(other){

@@ -5,9 +5,9 @@ function Exercise(key, meter, mode, measures) {
     this.measures = measures
 
     this.toString = function () {
-        return this.mode + " " +
-            this.key + " " +
-            this.meter + " " +
-            this.measures
+        return "Mode: " + this.mode + " " +
+          "Key: " + this.key + " " +
+          "Meter: " + this.meter + " " +
+           "Measures: " + this.measures
     }
 }
