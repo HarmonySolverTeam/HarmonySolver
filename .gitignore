@@ -2,3 +2,4 @@
 *.jsc
 src/test/objects/*
 src/main/solutions/*
+.idea

@@ -23,7 +23,7 @@ var targosz_p61_ex13 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex13, "HarmonicFunctions Major test 1 - from targosz_p61_ex13"));
 
@@ -34,7 +34,7 @@ var targosz_p61_ex14 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex14, "HarmonicFunctions Major test 2 - from targosz_p61_ex14"));
 
@@ -45,7 +45,7 @@ var targosz_p61_ex15 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex15, "HarmonicFunctions Major test 3 - from targosz_p61_ex15"));
 
@@ -56,7 +56,7 @@ var targosz_p61_ex16 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex16, "HarmonicFunctions Major test 4 - from targosz_p61_ex16"));
 
@@ -67,7 +67,7 @@ var sikorski_zzip_ex1 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex1, "HarmonicFunctions Major test 5 - from sikorski_zzip_ex1"));
 
@@ -78,7 +78,7 @@ var sikorski_zzip_ex3 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex3, "HarmonicFunctions Major test 6 - from sikorski_zzip_ex3"));
 
@@ -89,7 +89,7 @@ var sikorski_zzip_ex53 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex53, "HarmonicFunctions Major test 7 - from sikorski_zzip_ex53"));
 
@@ -100,7 +100,7 @@ var sikorski_zzip_ex54 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex54, "HarmonicFunctions Major test 8 - from sikorski_zzip_ex54"));
 
@@ -111,9 +111,20 @@ var sikorski_zzip_ex77 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex77, "HarmonicFunctions Major test 9 - from sikorski_zzip_ex77"));
+
+
+var delays_test = () => {
+    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\delay_test.txt");
+    var ex = Parser.parse(input);
+    var solver = new Solver.Solver(ex);
+    var solution = solver.solve();
+
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+}
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delays_test, "HarmonicFunctions Major test 10 - from delay_test.txt"));
 
 
 // MINOR
@@ -123,7 +134,7 @@ var targosz_p61_ex17 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex17, "HarmonicFunctions Minor test 1 - from targosz_p61_ex17"));
 
@@ -134,7 +145,7 @@ var targosz_p61_ex18 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex18, "HarmonicFunctions Minor test 2 - from targosz_p61_ex18"));
 
@@ -145,7 +156,7 @@ var targosz_p61_ex19 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex19, "HarmonicFunctions Minor test 3 - from targosz_p61_ex19"));
 
@@ -156,7 +167,7 @@ var targosz_p61_ex20 = () => {
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex20, "HarmonicFunctions Minor test 4 - from targosz_p61_ex20"));
 

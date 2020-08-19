@@ -13,20 +13,33 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     this.getSymbol = function () {
         return this.down ? (this.functionName + "down" + this.extra) : (this.functionName + this.extra)
     }
+
+    this.getBasicChordComponents = function () {
+        if(down) return ["1>", "3", "5>"];
+        return ["1", "3", "5"];
+    }
+
+    this.getPossibleToDouble = function (){
+        var res = this.getBasicChordComponents();
+        for(var i=0; i<this.omit.length; i++)
+            res.splice(res.indexOf(this.omit[i]), 1);
+        return res;
+    }
+
     this.equals = function (other) {
         return this.functionName === other.functionName && this.degree === other.degree && this.down === other.down
     }
 
     this.toString = function () {
-        return this.functionName + " " +
-            this.degree + " " +
-            this.position + " " +
-            this.revolution + " " +
-            this.delay + " " +
-            this.extra + " " +
-            this.omit + " " +
-            this.down + " " +
-            this.system + " " +
-            this.mode
+        return "FunctionName: " + this.functionName + " " +
+            "Degree: " + this.degree + " " +
+            "Position: " + this.position + " " +
+            "Revolution: " + this.revolution + " " +
+            "Delay: " + this.delay + " " +
+            "Extra: " + this.extra + " " +
+            "Omit: " + this.omit + " " +
+            "Down: " + this.down + " " +
+            "System: " + this.system + " " +
+            "Mode: " + this.mode
     }
 }

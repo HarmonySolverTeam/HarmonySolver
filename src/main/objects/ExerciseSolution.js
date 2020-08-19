@@ -1,3 +1,5 @@
+.import "./Utils.js" as Utils
+
 function ExerciseSolution(exercise, rating, chords) {
     this.exercise = exercise;
     this.rating = rating;
@@ -111,7 +113,7 @@ function ExerciseSolution(exercise, rating, chords) {
                         } else {
                             this.chords[counter_measure + offset].duration = [1, this.exercise.meter[1] * (1 / len_list[j])]
                         }
-                        console.log("Duration added : " + this.chords[counter_measure + offset].toString())
+                        Utils.log("Duration added:", this.chords[counter_measure + offset].toString())
                         counter_measure++
                     }
                 }

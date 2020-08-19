@@ -9,10 +9,10 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
 
     this.toString = function () {
         var chordStr = "CHORD: \n";
-        chordStr += this.sopranoNote.toString() + "\n";
-        chordStr += this.altoNote.toString() + "\n";
-        chordStr += this.tenorNote.toString() + "\n";
-        chordStr += this.bassNote.toString() + "\n";
+        chordStr += "Soprano note: " + this.sopranoNote.toString() + "\n";
+        chordStr += "Alto note: " + this.altoNote.toString() + "\n";
+        chordStr += "Tenor note: " + this.tenorNote.toString() + "\n";
+        chordStr += "Bass note: " + this.bassNote.toString() + "\n";
         return chordStr;
     }
 }
