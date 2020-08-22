@@ -3,6 +3,7 @@ const HarmonicFunction = require("./objects/HarmonicFunction");
 const Chord = require("./objects/Chord");
 const Note = require("./objects/Note");
 const RulesChecker = require("./objects/RulesChecker")
+const Errors = require("./objects/Errors")
 
 var rulesCheckerTestSuite = new UnitTest.TestSuite("Rules Checker Tests");
 
@@ -145,7 +146,7 @@ const checkConnectionDSTest = () => {
     var hf2 = new HarmonicFunction.HarmonicFunction("S",1,undefined,"1",[],[],[],false,undefined,undefined);
     var ch2 = new Chord.Chord(undefined, undefined, undefined, undefined, hf2);
 
-    return UnitTest.assertThrows("Forbidden connection: S->D", RulesChecker.checkConnection, [ch1,ch2]);
+    return UnitTest.assertThrows("Error during checking connections between chords","Forbidden connection: S->D", RulesChecker.checkConnection, [ch1,ch2]);
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDSTest, "D->S connection test"));
