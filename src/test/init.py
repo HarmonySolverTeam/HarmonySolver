@@ -8,7 +8,7 @@ def count_brackets(line, bracket_type):
 
 def transform_file(file_name):
     input_file = open(FILES_ORIGIN_DIR + "/" + file_name + ".js", "r")
-    output_file = open(FILES_OUTPUT_DIR + "/" + file_name + ".js", "w")
+    output_file = open(FILES_OUTPUT_DIR + "/" + file_name + ".js", "w+")
 
     gState = 0
     brackets = 0
