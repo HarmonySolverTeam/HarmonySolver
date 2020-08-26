@@ -264,7 +264,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
         for(var i=0; i<goodChords.length; i++){
             prev_chords.push(goodChords[i][0]);
 
-            Utils.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
+            if(DEBUG) Utils.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
 
             var sol = this.findSolution(curr_index+1, prev_chords, penalty + goodChords[i][1]);
             // if(DEBUG) console.log("SOL: " + sol);

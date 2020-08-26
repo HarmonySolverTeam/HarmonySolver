@@ -50,31 +50,6 @@ function validateDelays(harmonicFunction){
     return pitchCounter+pitches.length <= 4; //we have only 4 voices
 }
 
-
-function get_valid_degree(arguments_json, chord_type) {
-    if (arguments_json["degree"] !== undefined){
-        return arguments_json["degree"]
-    }
-
-    switch (chord_type){
-        case "T":
-            return 1
-        case "S":
-            return 4
-        case "D":
-            return 5
-
-    }
-}
-
-function addExtraNotesIfNecessary(extra){
-
-    if (Utils.contains(extra, "9") && !Utils.contains(extra, "7")){
-        extra.push("7")
-    }
-
-}
-
 function parseChord(string) {
     var i = 0
     while (i < string.length && string[i] !== '{') {
@@ -83,30 +58,13 @@ function parseChord(string) {
     var chord_type = string.substring(0, i)
     var arguments = string.substring(i, string.length)
 
-    var ret = new HarmonicFunction.HarmonicFunction()
-    ret.functionName = chord_type
-
     if (arguments === null || arguments.length < 2) {
-        return ret
+        return undefined
     }
 
     var arguments_json = JSON.parse(arguments)
-    // for (var variable in ret){
-    //     if (variable !== "functionName" && variable !== "equals" && variable !== "getSymbol"){
-    //         ret[variable] = arguments_json[variable]
-    //     }
-    // }m
-
-    ret.degree = get_valid_degree(arguments_json, chord_type)
-    ret.revolution = arguments_json["revolution"] === undefined ? "1" : arguments_json["revolution"]
-    ret.position = arguments_json["position"]
-    ret.delay = arguments_json["delay"] === undefined ? [] : arguments_json["delay"]
-    ret.extra = arguments_json["extra"] === undefined ? [] : arguments_json["extra"]
-    addExtraNotesIfNecessary(ret.extra)
-    ret.omit = arguments_json["omit"] === undefined ? [] : arguments_json["omit"]
-    ret.down = arguments_json["down"] === undefined ? false : arguments_json["down"]
-    ret.system = arguments_json["system"]
-    ret.mode = arguments_json["mode"]
+    arguments_json["functionName"] = chord_type;
+    var ret = new HarmonicFunction.HarmonicFunction2(arguments_json);
 
     return ret
 }

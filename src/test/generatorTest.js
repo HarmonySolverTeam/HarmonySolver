@@ -10,10 +10,11 @@ var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, 'minor');
+    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3>", undefined, [], [], true, undefined, 'minor');
     var res = gen.generate(hf);
     // res.forEach((x) => {console.log(x.toString())})
 
+    //todo przepisać ten warunek
     return TestUtils.assertEqualsPrimitives(res.length, 38);
 };
 

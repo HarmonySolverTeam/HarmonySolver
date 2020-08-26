@@ -19,11 +19,11 @@ function MajorScale(key){
 function MinorScale(baseNote, tonicPitch) {
     Scale.call(this.baseNote)
     this.tonicPitch = tonicPitch
-    this.pitches = [0, 2, 3, 5, 7, 9, 10]
+    this.pitches = [0, 2, 3, 5, 7, 8, 10]
 }
 
 function MinorScale(key){
     Scale.call(this, Consts.keyStrBase[key.toUpperCase()])
     this.tonicPitch = Consts.keyStrPitch[key.toUpperCase()]
-    this.pitches = [0, 2, 3, 5, 7, 9, 10]
+    this.pitches = [0, 2, 3, 5, 7, 8, 10]
 }

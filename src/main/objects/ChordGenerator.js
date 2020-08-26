@@ -1,11 +1,12 @@
 .import "./Scale.js" as Scale
 .import "./Chord.js" as Chord
 .import "./Note.js" as Note
+.import "./ChordComponentManager.js" as ChordComponentManager
 .import "./Consts.js" as Consts
 .import "./Utils.js" as Utils
 
 function ChordGenerator(key, mode) {
-    this.key = key
+    this.key = key;
     this.key[0] = key[0].toUpperCase();
     this.mode = mode;
 
@@ -36,9 +37,13 @@ function ChordGenerator(key, mode) {
         var soprano = undefined;
 
         var needToAdd = harmonicFunction.getBasicChordComponents();
+        needToAdd = needToAdd.map(function (chordComponent) {
+            return chordComponent.chordComponentString;
+        })
+
 
         for (var i = 0; i < harmonicFunction.extra.length; i++) {
-            //Chopin chord
+            //Chopin chord todo przenieść w kostruktor HarmonicFunction (?)
             if (harmonicFunction.extra[i].length > 2) {
                 if (harmonicFunction.extra[i][0] === "1" && harmonicFunction.extra[i][1] === "3")
                     soprano = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
@@ -232,68 +237,20 @@ function ChordGenerator(key, mode) {
         // console.log("SCHEMAS END");
 
         return schemas;
-    }
+    };
 
     this.mapSchemas = function (harmonicFunction, schemas) {
 
-        var scale;
-        if(this.mode === 'major'){
-            scale = new Scale.MajorScale(this.key);
-        }
-        if(this.mode === 'minor'){
-            scale = new Scale.MinorScale(this.key);
-        }
-       // console.log("tonic pith " + scale.tonicPitch)
-       // console.log("scale pithes " + scale.pitches[harmonicFunction.degree - 1])
-      //  console.log("harm func degree " + harmonicFunction.degree)
-        var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
+        var scale = harmonicFunction.mode === 'major' ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
 
-        var chordType;
-        if (harmonicFunction.mode === undefined){
-            var d = harmonicFunction.degree;
-            if (this.mode === 'major'){
-                if (d === 1 || d === 4 || d === 5) chordType = Consts.basicMajorChord;
-                else chordType = Consts.basicMinorChord;
-            }
-            else if(this.mode === 'minor'){
-                if (d === 3 || d === 6 || d === 7) chordType = Consts.basicMajorChord;
-                else chordType = Consts.basicMinorChord;
-            }
-        }
-        else{
-            if(harmonicFunction.mode === 'major') chordType = Consts.basicMajorChord;
-            if(harmonicFunction.mode === 'minor') chordType = Consts.basicMinorChord;
-        }
-
-        //TODO: add all possible values or make it generic some how
-        var components = {
-            '1': chordType[0],
-            '3': chordType[1],
-            '4': 5,
-            '5': chordType[2],
-            '6': 9,
-            '7': 10,
-            '8': 12,
-            '9': 14,
-        }
+        var chordFirstPitch = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
         var schemas_cp = schemas.slice();
         for (var i = 0; i < schemas.length; i++) {
-            schemas_cp[i] = schemas[i].map(function (scheme) {
+            schemas_cp[i] = schemas[i].map(function (scheme_elem) {
 
-                if (scheme.length === 2) {
-                    var intervalPitch;
-                    if(scheme[0] === '<')
-                        intervalPitch = components[scheme.charAt(1)] + 1;
-                    if(scheme[1] === '>')
-                        intervalPitch = components[scheme.charAt(0)] - 1;
-
-                    return basicNote + intervalPitch;
-                }
-              //  console.log("basicnote" + basicNote)
-              //  console.log("components [scheme]" + components[scheme])
-
-                return basicNote + components[scheme];
+                var intervalPitch = (new ChordComponentManager.ChordComponentManager()).chordComponentFromString(scheme_elem).seminotesNumber;
+                return chordFirstPitch + intervalPitch;
             })
         }
 
@@ -303,7 +260,7 @@ function ChordGenerator(key, mode) {
 
         return schemas_cp;
 
-    }
+    };
 
     this.generate = function (harmonicFunction, givenNotes) {
 
@@ -312,13 +269,7 @@ function ChordGenerator(key, mode) {
         var schemas = this.getSchemas(harmonicFunction, temp);
         var schemas_mapped = this.mapSchemas(harmonicFunction, schemas);
 
-        var scale;
-        if(this.mode === 'major'){
-            scale = new Scale.MajorScale(this.key);
-        }
-        if(this.mode === 'minor'){
-            scale = new Scale.MinorScale(this.key);
-        }
+        var scale = harmonicFunction.mode === 'major' ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
 
         for (var i = 0; i < schemas_mapped.length; i++) {
             var schema_mapped = schemas_mapped[i];
@@ -329,9 +280,7 @@ function ChordGenerator(key, mode) {
             var soprano = getPossiblePitchValuesFromInterval(schema_mapped[0], vb.sopranoMin, vb.sopranoMax);
 
             var toBaseNote = function (scaleBaseNote, harmonicFunction, intervalName) {
-                var int;
-                if (intervalName.length > 1) int = intervalName.charAt(0);
-                else int = intervalName;
+                var int = (new ChordComponentManager.ChordComponentManager()).chordComponentFromString(intervalName).baseComponent;
 
                 var intervalToBaseNote = {
                     '1': 0,
