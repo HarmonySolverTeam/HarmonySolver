@@ -279,6 +279,15 @@ MuseScore {
         for (var i = 0; i < solution.chords.length; i++) {
             addComponentToScore(cursor,
                                 solution.chords[i].bassNote.chordComponent)
+            selectSoprano(cursor)
+            console.log(cursor.element)
+            cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].sopranoNote)
+            selectAlto(cursor)
+            cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].altoNote)
+            selectTenor(cursor)
+            cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].tenorNote)
+            selectBass(cursor)
+            cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].bassNote)
             cursor.next()
         }
     }

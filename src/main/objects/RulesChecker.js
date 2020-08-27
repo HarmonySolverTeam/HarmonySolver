@@ -20,6 +20,7 @@ function concurrentOctaves(prevChord, currentChord){
     return 0;
 }
 
+//TODO zmienic na gamowlasciwie
 function concurrentFifths(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
@@ -73,7 +74,7 @@ function oneDirection(prevChord, currentChord){
     return 0;
 }
 
-//TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka
+//TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka | problem z tą samą funkcją - dziwne skoki w basic
 function forbiddenJump(prevChord, currentChord, notNeighbourChords){
     if(!notNeighbourChords && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     function getBaseDistance(first, second ){
@@ -116,13 +117,13 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
     return 0;
 }
 
-//TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka
+//TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka, zmiana trybu
 function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
     if(prevPrevChord.harmonicFunction.equals(prevChord.harmonicFunction) && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 4; i++){
         if(((prevPrevChord.notes[i].pitch>prevChord.notes[i].pitch && prevChord.notes[i].pitch>currentChord.notes[i].pitch) ||
             (prevPrevChord.notes[i].pitch<prevChord.notes[i].pitch && prevChord.notes[i].pitch<currentChord.notes[i].pitch))
-            && forbiddenJump(prevPrevChord, currentChord, true)){
+            && forbiddenJump(prevPrevChord, currentChord, true) === -1){
             if(DEBUG) {
                 Utils.log("forbiddenSumJump", prevPrevChord + " -> " + prevChord + " -> " + currentChord);
             }
