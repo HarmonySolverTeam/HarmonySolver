@@ -32,12 +32,12 @@ exports.assertNotEqualsPrimitives = function assertNotEqualsPrimitives(expected,
 }
 
 // message - expected error message, fun - function reference, args - arguments of fun as list
-exports.assertThrows = function assertThrows(message, fun, args){
+exports.assertThrows = function assertThrows(source, message, fun, args){
     try {
         fun(...args);
         return false;
     } catch(error){
-        return message === error.message;
+        return source === error.source && message === error.message;
     }
 }
 
