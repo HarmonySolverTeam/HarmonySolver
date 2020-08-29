@@ -3,7 +3,7 @@
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Exercise.js" as Exercise
 .import "./Consts.js" as Consts
-
+.import "./Errors.js" as Errors
 
 function ChordElement(notesNumbers, omit, bassElement) {
     this.notesNumbers = notesNumbers
@@ -152,6 +152,7 @@ function BassTranslator() {
             return bassNumbers
         }
 
+        throw new Errors.FiguredBassInputError("Invalid bass symbols:", bassNumbers)
     }
 
     this.completeFiguredBassSymbol = function (element) {
@@ -318,8 +319,8 @@ function BassTranslator() {
             (a > b) ? 1 : -1
         })
 
-        if (Utils.arrayEquals(symbols, [5, 6, 7]) ||
-            Utils.arrayEquals(symbols, [2, 4, 10])) {
+        if (symbols.equals([5, 6, 7]) ||
+            symbols.equals([2, 4, 10])) {
             return 9
         } else {
             return undefined
@@ -346,7 +347,7 @@ function BassTranslator() {
     }
 
 
-    this.createHarmonicFunctionOrFunctions = function (chordElement, mode, key) {
+    this.createHarmonicFunctionOrFunctions = function (chordElement, mode, key, delays) {
         var ret = []
 
         var functions = this.getValidFunctions(chordElement, key)
@@ -370,7 +371,7 @@ function BassTranslator() {
             toAdd.omit = chordElement.omit
             toAdd.down = false
             toAdd.system = undefined
-            toAdd.delay = []
+            toAdd.delay = delays
             toAdd.extra = []
 
             if (functions[i] === "D") {
@@ -410,7 +411,10 @@ function BassTranslator() {
             this.findPrime(chordElement)
             Utils.log("Chord element:",chordElement)
 
-            var harmFunction = this.createHarmonicFunctionOrFunctions(chordElement, figuredBassExercise.mode, figuredBassExercise.key)
+            var harmFunction = this.createHarmonicFunctionOrFunctions(chordElement,
+                figuredBassExercise.mode,
+                figuredBassExercise.key,
+                bassElements[i].delays)
 
             bassElements[i].bassNote.chordComponent = parseInt(harmFunction[0].revolution)
 

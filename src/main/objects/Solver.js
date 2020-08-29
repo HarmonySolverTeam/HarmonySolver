@@ -40,8 +40,31 @@ function Solver(exercise, bassLine, sopranoLine){
         }
         return newFunctions;
     }
+
+    function handleDelaysInBassLine(bassLine, measures) {
+        if (bassLine === undefined) {
+            return undefined
+        }
+        var newBassLine = bassLine.slice()
+        var addedNotes = 0;
+
+        var i = 0;
+        for(var a=0; a<exercise.measures.length; a++){
+            for(var b=0; b<exercise.measures[a].length; b++, i++){
+                var delays = exercise.measures[a][b].delay;
+                if(delays.length === 0) continue;
+                var newNote = new Note.Note(bassLine[i].pitch, bassLine[i].baseNote, bassLine[i].chordComponent);
+                newBassLine.splice(i+addedNotes+1, 0, newNote);
+                addedNotes++;
+            }
+        }
+        return newBassLine;
+    }
+
+
     this.exercise = exercise;
-    this.bassLine = bassLine;
+    this.bassLine = handleDelaysInBassLine(bassLine, exercise.measures);
+
     this.sopranoLine = sopranoLine;
 
     this.harmonicFunctions = [];

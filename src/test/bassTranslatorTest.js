@@ -7,7 +7,7 @@ var bassTranslatorTestSuite = new UnitTest.TestSuite("Bass Translator Tests");
 
 var bassTranslator = new BassTranslator.BassTranslator()
 
-
+//tODO
 const handleAlterationsTest1 = () => {
 
     var harmonicFunctions = JSON.parse('[[{"functionName":"T","degree":1,"revolution":"1","extra":[],"omit":[],"down":false},{"functionName":"D","degree":5,"revolution":"1","extra":[],"omit":[],"down":false},{"functionName":"T","degree":1,"revolution":"5","extra":[],"omit":[],"down":false},{"functionName":"S","degree":4,"revolution":"3","extra":[],"omit":[],"down":false},{"functionName":"T","degree":1,"revolution":"1","extra":[],"omit":[],"down":false}]]')
