@@ -13,14 +13,15 @@ function BassSymbol(component, alteration){
     }
 }
 
-function FiguredBassElement(bassNote, symbols) {
+function FiguredBassElement(bassNote, symbols, delays) {
 
     this.bassNote = bassNote;
     this.symbols = symbols; //list of BassSymbols
+    this.delays = delays;
 
 
     this.toString = function () {
-        return "Bass note: "+ this.bassNote + " Symbols: " + this.symbols
+        return "Bass note: "+ this.bassNote + " Symbols: " + this.symbols + " Delays: " + this.delays
     }
 
 }

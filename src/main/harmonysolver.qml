@@ -36,25 +36,25 @@ MuseScore {
     }
 
 
-    function readPluginConfiguration(){
-        PluginConfigurationUtils.readConfiguration()
-        Utils.info(JSON.stringify(PluginConfigurationUtils.configuration_holder))
-    }
+//    function readPluginConfiguration(){
+//        PluginConfigurationUtils.readConfiguration()
+//        Utils.info(JSON.stringify(PluginConfigurationUtils.configuration_holder))
+//    }
     
     FileIO{
       id: outConfFile
       onError: Utils.warn(msg + "  Filename = " + outConfFile.source)
     }
     
-    function savePluginConfiguration(){
-       var json_conf = String(JSON.stringify(PluginConfigurationUtils.configuration_holder))
+//    function savePluginConfiguration(){
+//       var json_conf = String(JSON.stringify(PluginConfigurationUtils.configuration_holder))
        //ale drut ja piernicze...
-       outConfFile.setSource(String(Qt.resolvedUrl(".") + PluginConfigurationUtils.configuration_save_path))
+//       outConfFile.setSource(String(Qt.resolvedUrl(".") + PluginConfigurationUtils.configuration_save_path))
 //              console.log(outConfFile.source)
 //              console.log(filePath)
 //              console.log(outConfFile.exists())
-       Utils.log(outConfFile.write(json_conf))
-    }
+//       Utils.log(outConfFile.write(json_conf))
+//    }
 
     function getBaseNote(museScoreBaseNote) {
         var result
@@ -84,6 +84,11 @@ MuseScore {
         return result
     }
 
+    function isAlterationSymbol(character) {
+        return (character === '#' || character === 'b' || character ==='b')
+    }
+
+
     function read_figured_bass() {
         var cursor = curScore.newCursor()
         cursor.rewind(0)
@@ -93,6 +98,7 @@ MuseScore {
         var has3component = false
         var lastBaseNote, lastPitch
         var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+        var delays = []
         do {
             var symbols = []
             durations.push(
@@ -106,38 +112,62 @@ MuseScore {
                     var component = "", alteration = undefined
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
                         if (readSymbols[i] !== " " && readSymbols[i] !== "\t") {
-                            if (readSymbols[i] === "#" || readSymbols[i] === "b"
-                                    || readSymbols === "h") {
-                                alteration = readSymbols[i]
-                                console.log("alteration: " + alteration)
-                                }
-                            else {
-                                component += readSymbols[i]
-                                console.log("component: " + component)
-                            }
+                            component += readSymbols[i]
                         }
                         i++
                     }
-                    if (component === "") {
-                        if (has3component)
+                    Utils.log("component: " + component)
+
+
+                    if (component.length === 1 && isAlterationSymbol(component[0])) {
+                        if (has3component) {
                             throw new Errors.FiguredBassInputError("Cannot twice define 3", symbols)
-                        else {
-                            symbols.push(new FiguredBass.BassSymbol(3,
-                                                                    alteration))
+                        } else {
+                            symbols.push(new FiguredBass.BassSymbol(3, component[0]))
                             has3component = true
                         }
-                    } else
-                        symbols.push(new FiguredBass.BassSymbol(parseInt(
-                                                                    component),
-                                                                alteration))
+                    } else {
+                        //delays
+                        if (component.includes('-')) {
+                            var splittedSymbols = component.split('-')
+                            var firstSymbol = splittedSymbols[0]
+                            var secondSymbol = splittedSymbols[1]
+
+                            if (isAlterationSymbol(secondSymbol[0])) {
+                                symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[1]),
+                                                                        secondSymbol[0]))
+                            } else {
+                                symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol),
+                                                                        undefined))
+                            }
+                            delays.push([firstSymbol, secondSymbol])
+
+                        } else {
+                            if (isAlterationSymbol(component[0])) {
+                                symbols.push(new FiguredBass.BassSymbol(parseInt(component[1]), component[0]))
+                            } else {
+                                symbols.push(new FiguredBass.BassSymbol(parseInt(component), undefined))
+                            }
+                        }
+                    }
+
                         Utils.log("symbols:", symbols)
                 }
             }
             lastBaseNote = getBaseNote(Utils.mod((cursor.element.notes[0].tpc + 1), 7))
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote, 0)
-            elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols))
+            elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols, delays))
             has3component = false
+
+            if (delays.length !== 0) {
+                Utils.log("durations", durations)
+                durations[durations.length - 1][1]*=2
+                durations.push(durations[durations.length - 1])
+                Utils.log("durations", durations)
+            }
+
+            delays = []
         } while (cursor.next())
         lastPitch = Utils.mod(lastPitch, 12)
         var majorKey = Consts.majorKeyBySignature(curScore.keysig)
@@ -352,9 +382,9 @@ MuseScore {
 
         try {
             var ex = read_figured_bass()
-
+            var translator = new Translator.BassTranslator()
             //console.log(ex.elements)
-            var exercise = Translator.createExerciseFromFiguredBass(ex)
+            var exercise = translator.createExerciseFromFiguredBass(ex)
             console.log(JSON.stringify(exercise))
             var bassLine = []
             for (var i = 0; i < ex.elements.length; i++) {
@@ -363,7 +393,7 @@ MuseScore {
             var solver = new Solver.Solver(exercise, bassLine)
             var solution = solver.solve()
             var solution_date = get_solution_date()
-            console.log(solution)
+            Utils.log("Solution:", JSON.stringify(solution))
 
             prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
 
@@ -371,7 +401,7 @@ MuseScore {
 
             writeScore(curScore,
                        filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                       "mscz")
+                       "mscz") 
         } catch (error) {
             showError(error)
         }
@@ -494,7 +524,14 @@ MuseScore {
       while (error.message.length !== 120) {
             error.message += " "
       }
-      errorDialog.text = error.source + "\n" + error.message + "\n" + error.details
+      errorDialog.text = error.source !== undefined ? error.source + "\n" : ""
+      errorDialog.text +=  error.message + "\n"
+      errorDialog.text += error.details !== undefined ? error.details : ""
+
+      if (error.stack !== undefined) {
+        errorDialog.text += "\n Stack: \n" + error.stack
+      }
+
       errorDialog.open()
     }
     
@@ -626,7 +663,6 @@ MuseScore {
                         anchors.bottom: tabRectangle2.bottom
                         onClicked: {
                             if (isFiguredBassScore()) {
-                                textAreaFigured.text = ""
                                 figuredBassSolve()
                             } else {
                                 showError(new Errors.FiguredBassInputError("No score with figured bass"))
@@ -887,10 +923,7 @@ MuseScore {
                         anchors.rightMargin: 40
                         onClicked: {
                             if (isSopranoScore()) {
-                                textAreaSoprano.text = ""
                                 var func_list = getPossibleChordsList()
-                                //debug
-                                //textAreaSoprano.text = func_list.toString()
                                 try{
                                     sopranoHarmonization(func_list)
                                 } catch (error) {
