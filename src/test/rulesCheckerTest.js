@@ -204,6 +204,7 @@ const checkDelayCorrectnessTest = () => {
     var ch3 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
     var ch4 = new Chord.Chord(new Note.Note(69, 4,"3"), new Note.Note(62,1,"5"), new Note.Note(55, 6,"1"), new Note.Note(43,4,"1"), hf2);
 
+
     return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkDelayCorrectness(ch1, ch2)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkDelayCorrectness(ch1, ch3)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkDelayCorrectness(ch1, ch4))

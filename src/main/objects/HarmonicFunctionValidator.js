@@ -8,30 +8,50 @@ function HarmonicFunctionValidator(){
 
     var validFunctionNames = ["T", "S", "D"];
 
-    this.isValid = function(harmonicFunction){
+    this.validate = function(harmonicFunction){
         this.harmonicFunction = harmonicFunction;
         // functionName          "T", "S", "D"
+        validateFunctionName(this);
         // degree               int
+        validateDegree(this);
         // position             should be string f.e. "<7" or "7>" or just "7"
+        validatePosition(this);
         // revolution           should be string f.e. "<6" or "6>" or just "6"
+        validateRevolution(this);
         // delay                delayed components list
+        validateDelay(this);
         // extra                extra components list [] | ["9", "7>"]
+        validateExtra(this);
         // omit                 omitted components list [] | ["1", "5"]
+        validateOmit(this);
         // down                 true or false
+        validateDown(this);
         // system               "open" | "close" | undefined
+        validateSystem(this);
         // mode                 "major" | "minor"
-    }
+        validateMode(this);
+
+        //other checks
+        checkAllChordComponentNumber(this);
+        checkIfExtraContainsPosition(this);
+        checkIfExtraContainsRevolution(this);
+
+        return this.result;
+    };
     
     function handleValidationFailure(_this, msg){
         _this.result = false;
-        Utils.error("HarmonicFunction validation error: " + msg);
+        Utils.error("HarmonicFunction validation error: " + msg + "\n");
     }
 
-    function validateFunctionName(_this, functionName){
-        if(!Utils.contains( validFunctionNames, functionName)) handleValidationFailure(_this, "Invalid function name");
+    function validateFunctionName(_this){
+        var functionName = _this.harmonicFunction.functionName;
+        if(functionName === undefined) handleValidationFailure(_this, "FunctionName cannot be undefined");
+        if(!Utils.contains( validFunctionNames, functionName)) handleValidationFailure(_this, "Invalid function name: " + functionName);
     }
 
-    function validateDegree(_this, degree) {
+    function validateDegree(_this) {
+        var degree = _this.harmonicFunction.degree;
         if(! Number.isInteger(degree)){
             handleValidationFailure(_this, "Degree is not a number");
             return
@@ -39,15 +59,20 @@ function HarmonicFunctionValidator(){
         if( degree < 1 || degree > 7 ) handleValidationFailure(_this, "Invalid degree value");
     }
 
-    function validatePosition(_this, position) {
-        if(!isValidChordComponent(position))  handleValidationFailure(_this, "Invalid chordComponentString of position");
+    function validatePosition(_this) {
+        var position = _this.harmonicFunction.position;
+        if(position !== undefined && !isValidChordComponent(position))  handleValidationFailure(_this, "Invalid chordComponentString of position");
     }
 
-    function validateRevolution(_this, revolution) {
+    function validateRevolution(_this) {
+        var revolution = _this.harmonicFunction.revolution;
+        if(revolution === undefined) handleValidationFailure(_this, "Revolution cannot be undefined");
         if(!isValidChordComponent(revolution)) handleValidationFailure(_this, "Invalid chordComponentString of revolution");
     }
 
-    function validateDelay(_this, delay){
+    function validateDelay(_this){
+        var delay = _this.harmonicFunction.delay;
+        if(delay === undefined) handleValidationFailure(_this, "Delay cannot be undefined");
         if(delay.length > 4) handleValidationFailure(_this, "To large delay list - there are only four voices");
         for(var i=0; i<delay.length; i++){
             
@@ -56,8 +81,8 @@ function HarmonicFunctionValidator(){
             var first = delay[i][0];
             var second = delay[i][1];
 
-            if(!isValidChordComponent(first)) handleValidationFailure(_this, "Delay first component is not valid chordComponentString");
-            if(!isValidChordComponent(second)) handleValidationFailure(_this, "Delay second component is not valid chordComponentString");
+            if(!isValidChordComponent(first)) handleValidationFailure(_this, "Delay first component has not contain valid chordComponentString");
+            if(!isValidChordComponent(second)) handleValidationFailure(_this, "Delay second component has not contain valid chordComponentString");
 
             //too large difference in delay
             var chordComponentManager = new ChordComponentManager.ChordComponentManager();
@@ -65,33 +90,84 @@ function HarmonicFunctionValidator(){
             var secondChordComponent = chordComponentManager.chordComponentFromString(second);
 
             if(Utils.abs(parseInt(firstChordComponent.baseComponent) - parseInt(secondChordComponent.baseComponent)) !== 1 ) handleValidationFailure(_this, "To large difference in delay");
-            // todo to many chord compontnes!
+            // todo to many chord components!
             //todo cannot omit component used in delay, position, resolution, extra
 
         }
     }
 
-    function validateExtra(){
-        for()
+    function validateExtra(_this){
+        var extra = _this.harmonicFunction.extra;
+        if(extra === undefined) handleValidationFailure(_this, "Extra cannot be undefined");
+
+        for(var i=0; i<extra.length; i++){
+            if(!isValidChordComponent(extra[i])) handleValidationFailure(_this, "Invalid chordComponentString of extra[" + i  + "]");
+            if(Utils.contains(_this.harmonicFunction.getBasicChordComponents(), extra[i])) handleValidationFailure(_this, "Extra contains basic chord component which is not allowed here");
+
+            var other_extra = extra.slice();
+            other_extra.splice(i, 1);
+            if(Utils.contains(other_extra, extra[i])) handleValidationFailure(_this, "Extra contains duplicates");
+        }
+
+        if(extra.length > 4) handleValidationFailure(_this, "Extra is too large");
     }
 
-    function validateOmit(){
+    function validateOmit(_this){
+        var omit = _this.harmonicFunction.omit;
+        if(omit === undefined) handleValidationFailure(_this, "Omit cannot be undefined");
 
+        for(var i=0; i<omit.length; i++){
+            if(!isValidChordComponent(omit[i])) handleValidationFailure(_this, "Invalid chordComponentString of omit [" + i + "]");
+            if(!Utils.contains(_this.harmonicFunction.getBasicChordComponents(), omit[i])) handleValidationFailure(_this, "Omit contains not basic chord component which is not allowed here");
+
+            if(omit.length === 2 && omit[0] === omit[1]) handleValidationFailure(_this, "Omit contains duplicates");
+        }
+        if(omit.length > 2) handleValidationFailure(_this, "Omit is too large");
     }
 
-    function validateDown(){
-
+    function validateDown(_this){
+        var down = _this.harmonicFunction.down;
+        if(down !== true && down !== false) handleValidationFailure(_this, "Invalid value of down: " + down);
     }
 
-    function validateSystem(){
-
+    function validateSystem(_this){
+        var system = _this.harmonicFunction.system;
+        if(system !== 'open' && system !== 'close' && system !== undefined) handleValidationFailure(_this, "Illegal value of system: " + system)
     }
 
-    function validateMode() {
+    function validateMode(_this) {
+        var mode = _this.harmonicFunction.mode;
+        if(mode !== 'major' && mode !== 'minor') handleValidationFailure(_this, "Invalid value of mode: " + mode);
+    }
 
+    function checkAllChordComponentNumber(_this){
+        var chordComponentsCount = 3;
+        chordComponentsCount += _this.harmonicFunction.extra.length;
+        chordComponentsCount -= _this.harmonicFunction.omit.length;
+        for(var i=0; i<_this.harmonicFunction.delay.length; i++) {
+            if (!Utils.contains(_this.harmonicFunction.extra, _this.harmonicFunction.delay[i][0])
+                && Utils.contains(_this.harmonicFunction.omit, _this.harmonicFunction.delay[i][1])) chordComponentsCount += 1;
+            if (Utils.contains(_this.harmonicFunction.extra, _this.harmonicFunction.delay[i][0])
+                && !Utils.contains(_this.harmonicFunction.omit, _this.harmonicFunction.delay[i][1])) chordComponentsCount -= 1;
+        }
+        if(chordComponentsCount > 4) handleValidationFailure(_this, "Count of chord components is to large - there are only 4 voices");
+    }
+
+    function checkIfExtraContainsPosition(_this) {
+        var position = _this.harmonicFunction.position;
+        var extra = _this.harmonicFunction.extra;
+        if(position !== undefined && !Utils.contains(_this.harmonicFunction.getBasicChordComponents(), position) && !Utils.contains(extra, position))
+            handleValidationFailure(_this, "Extra not contains position which is not standard chord component");
+    }
+
+    function checkIfExtraContainsRevolution(_this) {
+        var revolution = _this.harmonicFunction.revolution;
+        var extra = _this.harmonicFunction.extra;
+        if(!Utils.contains(_this.harmonicFunction.getBasicChordComponents(), revolution) && !Utils.contains(extra, revolution))
+            handleValidationFailure(_this, "Extra not contains position which is not standard chord component");
     }
 
     function isValidChordComponent(chordComponent) {
-        return (/(>|<|>>|<<)?\d+/).test(chordComponent)
+        return (/(>|<|>>|<<)?\d+/).test(chordComponent.chordComponentString);
     }
 }

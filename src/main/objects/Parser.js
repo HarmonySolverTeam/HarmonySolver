@@ -11,45 +11,6 @@ function check_figured_bass_symbols(symbols){
     return figured_bass_symbols.test(symbols);
 }
 
-function validate_chord_component(chordComponent){
-    var chordComponentTest = /(>|<|>>|<<)?\d+/;
-    return chordComponentTest.test(chordComponent)
-}
-
-//TODO informacja o błędzie
-function validateDelays(harmonicFunction){
-    var mainComponents = ["1","3","5"];
-    var pitchCounter = mainComponents.length;
-    var pitches = [];
-    if(harmonicFunction.delay.length > 3) return false; //triple delay is maximal
-    for(var i=0; i<harmonicFunction.delay.length; i++){
-        if(harmonicFunction.delay[i].length !== 2) return false; //wrong size of delay
-        pitches.push(harmonicFunction.delay[i][1]);
-        var first = harmonicFunction.delay[i][0];
-        var second = harmonicFunction.delay[i][1];
-        if(Utils.contains(mainComponents, second)) pitchCounter--;
-        if(!validate_chord_component(first) || !validate_chord_component(second)) return false; //wrong format of component
-        while(first.startsWith(">") || first.startsWith("<")) first = first.slice(1);
-        first = parseInt(first);
-        while(second.startsWith(">") || second.startsWith("<")) second = second.slice(1);
-        second = parseInt(second);
-        if(Utils.abs(first-second)!==1) return false; //too large difference in delay
-    }
-    if(harmonicFunction.position !== undefined && !Utils.contains(pitches, harmonicFunction.position) &&
-        !Utils.contains(mainComponents, harmonicFunction.position)) pitches.push(harmonicFunction.position)
-    if(!Utils.contains(pitches, harmonicFunction.revolution) &&
-        !Utils.contains(mainComponents, harmonicFunction.revolution)) pitches.push(harmonicFunction.revolution)
-    for(var j=0; j<harmonicFunction.extra.length; j++){
-        var x = harmonicFunction.extra[j];
-        if(!Utils.contains(pitches, x)) pitches.push(x);
-    }
-    for(var k=0; k<harmonicFunction.omit.length; k++){
-        if(Utils.contains(pitches, harmonicFunction.omit[k])) return false; //cannot omit component used in delay, position, resolution, extra
-        pitchCounter--;
-    }
-    return pitchCounter+pitches.length <= 4; //we have only 4 voices
-}
-
 function parseChord(string) {
     var i = 0
     while (i < string.length && string[i] !== '{') {

@@ -37,34 +37,21 @@ function ChordGenerator(key, mode) {
         var soprano = undefined;
 
         var needToAdd = harmonicFunction.getBasicChordComponents();
-        needToAdd = needToAdd.map(function (chordComponent) {
-            return chordComponent.chordComponentString;
-        })
-
 
         for (var i = 0; i < harmonicFunction.extra.length; i++) {
-            //Chopin chord todo przenieść w kostruktor HarmonicFunction (?)
-            if (harmonicFunction.extra[i].length > 2) {
-                if (harmonicFunction.extra[i][0] === "1" && harmonicFunction.extra[i][1] === "3")
-                    soprano = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
-                continue;
-            }
+            //todo chopin chord need to be implemented again in new architecture
+
+            // if (harmonicFunction.extra[i].length > 2) {
+            //     if (harmonicFunction.extra[i][0] === "1" && harmonicFunction.extra[i][1] === "3")
+            //         soprano = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
+            //     continue;
+            // }
             needToAdd.push(harmonicFunction.extra[i]);
         }
 
-        for (var i = 0; i < harmonicFunction.omit.length; i++) {
-            //I'm not shure if omit conntains int or char - assume that string
-            switch (harmonicFunction.omit[i]) {
-                case "1":
-                    needToAdd.splice(needToAdd.indexOf('1'), 1)
-                    break;
-                case "3":
-                    needToAdd.splice(needToAdd.indexOf('3'), 1)
-                    break;
-                case "5":
-                    needToAdd.splice(needToAdd.indexOf('5'), 1)
-                    break;
-            }
+        for(i = 0; i < harmonicFunction.omit.length; i++) {
+            if(Utils.contains(needToAdd, harmonicFunction.omit[i]))
+                needToAdd.splice(needToAdd.indexOf(harmonicFunction.omit[i]), 1);
         }
 
         //Position is given
@@ -74,14 +61,14 @@ function ChordGenerator(key, mode) {
                 needToAdd.splice(needToAdd.indexOf(harmonicFunction.position), 1);
         }
 
-        //I'm not sure if revolution is int or string - assume that string
+        //Revolution handling
         bass = harmonicFunction.revolution;
         if(Utils.contains(needToAdd, harmonicFunction.revolution))
-            needToAdd.splice(needToAdd.indexOf("" + harmonicFunction.revolution), 1);
+            needToAdd.splice(needToAdd.indexOf(harmonicFunction.revolution), 1);
 
         return [[soprano, alto, tenor, bass], needToAdd]
 
-    }
+    };
 
     this.permutations = function (array, indices) {
 
@@ -248,8 +235,7 @@ function ChordGenerator(key, mode) {
         var schemas_cp = schemas.slice();
         for (var i = 0; i < schemas.length; i++) {
             schemas_cp[i] = schemas[i].map(function (scheme_elem) {
-
-                var intervalPitch = (new ChordComponentManager.ChordComponentManager()).chordComponentFromString(scheme_elem).seminotesNumber;
+                var intervalPitch = scheme_elem.seminotesNumber;
                 return chordFirstPitch + intervalPitch;
             })
         }
@@ -279,8 +265,8 @@ function ChordGenerator(key, mode) {
             var alto = getPossiblePitchValuesFromInterval(schema_mapped[1], vb.altoMin, vb.altoMax);
             var soprano = getPossiblePitchValuesFromInterval(schema_mapped[0], vb.sopranoMin, vb.sopranoMax);
 
-            var toBaseNote = function (scaleBaseNote, harmonicFunction, intervalName) {
-                var int = (new ChordComponentManager.ChordComponentManager()).chordComponentFromString(intervalName).baseComponent;
+            var toBaseNote = function (scaleBaseNote, harmonicFunction, chordComponent) {
+                var int = chordComponent.baseComponent;
 
                 var intervalToBaseNote = {
                     '1': 0,

@@ -43,4 +43,8 @@ function ChordComponent(chordComponentString, id){
         return this.id === other.id;
     }
 
+    this.toString = function () {
+        //todo without this test are not passing - dont know why
+        return this.chordComponentString;
+    }
 }

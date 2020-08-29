@@ -1,6 +1,7 @@
 .import "./Scale.js" as Scale
 .import "./ChordComponentManager.js" as ChordComponentManager
 .import "./Utils.js" as Utils
+.import "./HarmonicFunctionValidator.js" as HarmonicFunctionValidator
 
 function HarmonicFunction2(params){
     // Properties:
@@ -15,6 +16,8 @@ function HarmonicFunction2(params){
     // system               "open" | "close" | undefined
     // mode                 "major" | "minor"
 
+    var cm = new ChordComponentManager.ChordComponentManager();
+
     this.functionName = params["functionName"];
     this.degree = params["degree"] === undefined ? getDegreeFromFuntionName(this.functionName) : params["degree"];
     this.position = params["position"];
@@ -26,53 +29,51 @@ function HarmonicFunction2(params){
     this.system = params["system"];
     this.mode = params["mode"] === undefined ? 'major' : params["mode"];
 
-    this.getBasicChordComponents = function () {
-        var scale = this.mode === 'major' ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
-
-        var thirdPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 1, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12 );
-        var fifthPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 3 ,7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12 );
-
-        var chordComponentManager = new ChordComponentManager.ChordComponentManager();
-
-        var basicChordComponents = [chordComponentManager.chordComponentFromString("1"),
-            chordComponentManager.basicChordComponentFromPitch(thirdPitch),
-            chordComponentManager.basicChordComponentFromPitch(fifthPitch)];
-
-        if(this.down) {
-            basicChordComponents[0] = chordComponentManager.chordComponentFromString(basicChordComponents[0].chordComponentString + ">");
-            // basicChordComponents[2] = chordComponentManager.chordComponentFromString(basicChordComponents[2].chordComponentString + ">");
-        }
-
-        return basicChordComponents;
-    };
-
-    this.getBasicChordComponentsStrings = function () {
-        var res = this.getBasicChordComponents();
-        res = res.map(function (chordComponent) {
-            return chordComponent.chordComponentString;
-        })
-        return res
+    // mapping to ChordComponent
+    if(this.position !== undefined) this.position = cm.chordComponentFromString(this.position);
+    this.revolution = cm.chordComponentFromString(this.revolution);
+    for(var i=0; i<this.delay.length; i++){
+        this.delay[i][0] = cm.chordComponentFromString(this.delay[i][0]);
+        this.delay[i][1] = cm.chordComponentFromString(this.delay[i][1]);
     }
+    for(i=0; i<this.extra.length; i++) this.extra[i] = cm.chordComponentFromString(this.extra[i]);
+    for(i=0; i<this.omit.length; i++) this.omit[i] = cm.chordComponentFromString(this.omit[i]);
 
-    //additional rules
-    if(Utils.contains(this.extra, "9") && !Utils.contains(this.extra, "7")) this.extra.push("7");
-    if(this.position !== undefined && !Utils.contains(this.getBasicChordComponentsStrings(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
-    if(!Utils.contains(this.getBasicChordComponentsStrings(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
 
     function getDegreeFromFuntionName(functionName){
         return {"T":1, "S":4, "D":5}[functionName];
     }
 
-    // this.getBasicChordComponents = function(){
-    //
-    // };
-    //todo tmp function impl
+    this.getBasicChordComponents = function () {
+        var chordComponentManager = new ChordComponentManager.ChordComponentManager();
+        var scale = this.mode === 'major' ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
+        var basicChordComponents;
+
+        if(!this.down) {
+            var thirdPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 1, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
+            var fifthPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 3, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
+
+
+            basicChordComponents = [chordComponentManager.chordComponentFromString("1"),
+                                    chordComponentManager.basicChordComponentFromPitch(thirdPitch),
+                                    chordComponentManager.basicChordComponentFromPitch(fifthPitch)];
+        }
+        else {
+            basicChordComponents = [chordComponentManager.chordComponentFromString("1>"),
+                chordComponentManager.chordComponentFromString("3>"),
+                chordComponentManager.chordComponentFromString("5")];
+        }
+
+        return basicChordComponents;
+    };
+
+    //additional rules
+    if(Utils.contains(this.extra, cm.chordComponentFromString("9")) && !Utils.contains(this.extra, cm.chordComponentFromString("7"))) this.extra.push("7");
+    if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
+    if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
 
     this.getPossibleToDouble = function () {
         var res = this.getBasicChordComponents();
-        res = res.map(function (chordComponent) {
-            return chordComponent.chordComponentString;
-        })
         for (var i = 0; i < this.omit.length; i++)
             res.splice(res.indexOf(this.omit[i]), 1);
         return res;
@@ -95,6 +96,8 @@ function HarmonicFunction2(params){
             "Mode: " + this.mode
     };
 
+    var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
+    validator.validate(this);
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode) {

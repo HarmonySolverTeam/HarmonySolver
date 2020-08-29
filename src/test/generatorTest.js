@@ -4,8 +4,11 @@ var Chord = require("./objects/Chord")
 var HarmonicFunction = require("./objects/HarmonicFunction")
 var Note = require("./objects/Note")
 var TestUtils = require("./TestUtils")
+var ChordComponentManager = require("./objects/ChordComponentManager")
 
 var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
+
+var cm = new ChordComponentManager.ChordComponentManager();
 
 var neapolitanTest = () => {
 
@@ -23,17 +26,19 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(neapolitanTest, "Neapolitan ch
 
 var positionAndRevolution1 = () => {
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 4, "1", "1", undefined, [], [], true, undefined, undefined);
+    var hf = new HarmonicFunction.HarmonicFunction("S", 4, "1", "1", undefined, [], [], false, undefined, undefined);
     var res = gen.generate(hf);
 
     var testResult = true;
 
+    if(res.length === 0) testResult = false;
+
     for(var i=0; i<res.length; i++){
-        testResult = testResult && TestUtils.assertEqualsPrimitives("1", res[i].sopranoNote.chordComponent);
-        testResult = testResult && TestUtils.assertEqualsPrimitives("1", res[i].bassNote.chordComponent);
+        testResult = testResult && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("1"), res[i].sopranoNote.chordComponent);
+        testResult = testResult && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("1"), res[i].bassNote.chordComponent);
         testResult = testResult &&
-            ((TestUtils.assertEqualsPrimitives("3", res[i].tenorNote.chordComponent) && TestUtils.assertEqualsPrimitives("5", res[i].altoNote.chordComponent))
-            || (TestUtils.assertEqualsPrimitives("5", res[i].tenorNote.chordComponent) && TestUtils.assertEqualsPrimitives("3", res[i].altoNote.chordComponent)));
+            ((TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("3"), res[i].tenorNote.chordComponent) && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("5"), res[i].altoNote.chordComponent))
+            || (TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("5"), res[i].tenorNote.chordComponent) && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("3"), res[i].altoNote.chordComponent)));
     }
 
     return testResult;
@@ -50,10 +55,12 @@ var doubleOnly135 = () => {
 
     var testResult = true;
 
+    if(res.length === 0) testResult = false;
+
     for(var i=0; i<res.length; i++){
         var counter = 0;
         for(var j=0; j<4; j++){
-            if(TestUtils.assertEqualsPrimitives("7", res[i].notes[j].chordComponent)) counter++;
+            if(TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("7"), res[i].notes[j].chordComponent)) counter++;
         }
         testResult = testResult && TestUtils.assertEqualsPrimitives(1, counter);
     }
