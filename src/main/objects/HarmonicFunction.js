@@ -3,6 +3,8 @@
 .import "./Utils.js" as Utils
 .import "./HarmonicFunctionValidator.js" as HarmonicFunctionValidator
 
+var DEBUG = false;
+
 function HarmonicFunction2(params){
     // Properties:
     // functionName          "T", "S", "D"
@@ -96,8 +98,10 @@ function HarmonicFunction2(params){
             "Mode: " + this.mode
     };
 
-    var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
-    validator.validate(this);
+    if(DEBUG) {
+        var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
+        validator.validate(this);
+    }
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode) {

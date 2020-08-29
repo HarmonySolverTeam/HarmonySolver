@@ -1,7 +1,14 @@
+.import "./ChordComponentManager.js" as ChordComponentManager
+var cm = new ChordComponentManager.ChordComponentManager();
+
 function Note(pitch, baseNote, chordComponent) {
     this.pitch = pitch
     this.baseNote = baseNote
+
     this.chordComponent = chordComponent
+    if(typeof chordComponent === 'string'){
+        this.chordComponent = cm.chordComponentFromString(chordComponent);
+    }
 
     this.toString = function () {
         if (this.pitch === undefined) return undefined;

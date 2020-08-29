@@ -14,7 +14,23 @@ var keyStrPitch = {
     'A': 69,
     'Bb': 70,
     'B': 71,
-    'Cb': 71
+    'Cb': 71,
+
+    'c': 60,
+    'c#': 61,
+    'db': 61,
+    'd': 62,
+    'eb': 63,
+    'e': 64,
+    'f': 65,
+    'f#': 66,
+    'gb': 66,
+    'g': 67,
+    'ab': 68,
+    'a': 69,
+    'bb': 70,
+    'b': 71,
+    'cb': 71
 }
 
 function minorKeyBySignature(signature) {
@@ -113,7 +129,23 @@ var keyStrBase = {
     'A': BASE_NOTES.A,
     'Bb': BASE_NOTES.B,
     'B': BASE_NOTES.B,
-    'Cb': BASE_NOTES.C
+    'Cb': BASE_NOTES.C,
+
+    'c': BASE_NOTES.C,
+    'c#': BASE_NOTES.C,
+    'db': BASE_NOTES.D,
+    'd': BASE_NOTES.D,
+    'eb': BASE_NOTES.E,
+    'e': BASE_NOTES.E,
+    'f': BASE_NOTES.F,
+    'f#': BASE_NOTES.F,
+    'gb': BASE_NOTES.G,
+    'g': BASE_NOTES.G,
+    'ab': BASE_NOTES.A,
+    'a': BASE_NOTES.A,
+    'bb': BASE_NOTES.B,
+    'b': BASE_NOTES.B,
+    'cb': BASE_NOTES.C
 }
 
 function VoicesBoundary() {

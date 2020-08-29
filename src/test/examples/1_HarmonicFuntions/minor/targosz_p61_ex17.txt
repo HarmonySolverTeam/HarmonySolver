@@ -1,10 +1,10 @@
-e
+E
 3/4
 T{"position":"3>", "system":"close", "mode": "minor"};T{"position":"5", "mode": "minor"};T{"position":"3>", "mode": "minor"}
 D{};T{"mode": "minor"};S{"mode": "minor"}
 D{};D{"position":"1"};D{"position":"5"}
 T{"mode": "minor"};T{"position":"1", "mode": "minor"}
-S{"mode": "minor"};S{"position":"3", "mode": "minor"};S{"position":"1", "mode": "minor"}
+S{"mode": "minor"};S{"position":"3>", "mode": "minor"};S{"position":"1", "mode": "minor"}
 D{};T{"mode": "minor"}
 S{"mode": "minor"};T{"mode": "minor"};D{}
 T{"mode": "minor"};T{"position":"1", "mode": "minor"}

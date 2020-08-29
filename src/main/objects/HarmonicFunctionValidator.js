@@ -10,6 +10,7 @@ function HarmonicFunctionValidator(){
 
     this.validate = function(harmonicFunction){
         this.harmonicFunction = harmonicFunction;
+        this.result = true;
         // functionName          "T", "S", "D"
         validateFunctionName(this);
         // degree               int

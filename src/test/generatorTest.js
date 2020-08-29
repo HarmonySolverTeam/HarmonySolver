@@ -70,6 +70,14 @@ var doubleOnly135 = () => {
 
 generatorTestSuite.addTest(new TestUtils.UnitTest(doubleOnly135, "Double only 1, 3 or 5"));
 
+var majorChordInMinorKeyTest = () => {
+    var gen = new Generator.ChordGenerator("e");
+    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, undefined, undefined, [], [], false, undefined, "major");
+    var res = gen.generate(hf);
 
+    return TestUtils.assertNotEqualsPrimitives(0, res.length);
+};
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(majorChordInMinorKeyTest, "Major chord in minor key generating test"));
 
 generatorTestSuite.run();
