@@ -265,7 +265,7 @@ function ChordGenerator(key, mode) {
             if(harmonicFunction.mode === 'minor') chordType = Consts.basicMinorChord;
         }
 
-
+        //TODO: add all possible values or make it generic some how
         var components = {
             '1': chordType[0],
             '3': chordType[1],
@@ -273,6 +273,7 @@ function ChordGenerator(key, mode) {
             '5': chordType[2],
             '6': 9,
             '7': 10,
+            '8': 12,
             '9': 14,
         }
 

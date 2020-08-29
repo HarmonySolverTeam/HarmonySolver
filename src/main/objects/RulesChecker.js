@@ -151,7 +151,7 @@ function checkIllegalDoubled3(chord){
 function checkConnection(prevChord, currentChord){
     var couldHaveDouble3 = false;
     if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T"){
-        if(Utils.contains([4,-3], currentChord.harmonicFunction.degree - currentChord.harmonicFunction.degree)) {
+        if(Utils.contains([-4,3], currentChord.harmonicFunction.degree - prevChord.harmonicFunction.degree)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
                 if (prevChord.notes[i].chordComponent === "3") {

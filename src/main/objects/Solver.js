@@ -30,6 +30,7 @@ function Solver(exercise, bassLine, sopranoLine){
                 functions[i].mode
             );
             for(var j=0; j<delays.length; j++){
+                if(parseInt(delays[j][0].charAt(0))>=8) newFunction.extra.push(delays[j][1]);
                 functions[i].extra.push(delays[j][0]);
                 functions[i].omit.push(delays[j][1]);
                 if(delays[j][1] === functions[i].position) functions[i].position = delays[j][0];
