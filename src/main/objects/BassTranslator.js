@@ -307,8 +307,7 @@ function BassTranslator() {
             }
         }
 
-    this.getValidPosition = function (chordElement) {
-
+    this.getSortedSymbolsFromChordElement = function (chordElement) {
         var symbols = []
 
         for (var i = 0; i < chordElement.bassElement.symbols.length; i++) {
@@ -318,6 +317,14 @@ function BassTranslator() {
         symbols.sort(function (a, b) {
             (a > b) ? 1 : -1
         })
+
+        return symbols
+    }
+
+
+    this.getValidPosition = function (chordElement) {
+
+        var symbols = this.getSortedSymbolsFromChordElement(chordElement)
 
         if (symbols.equals([5, 6, 7]) ||
             symbols.equals([2, 4, 10])) {
@@ -344,6 +351,36 @@ function BassTranslator() {
         var position = this.getValidPosition(chordElement)
 
         return [position, revolution]
+    }
+
+    this.addExtraAndOmit = function (harmonicFunction, chordElement) {
+        var symbols = this.getSortedSymbolsFromChordElement(chordElement)
+
+        if (symbols.equals([3, 5, 7]) || symbols.equals([2, 4, 6]) ||
+            symbols.equals([3, 4, 6]) || symbols.equals([3, 5, 6]) ||
+            symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
+
+            if (!Utils.contains(harmonicFunction.extra, "7") &&
+                !Utils.contains(harmonicFunction.extra, ">7") &&
+                !Utils.contains(harmonicFunction.extra, "<7")) {
+                    harmonicFunction.extra.push("7")
+                }
+        }
+
+        if (symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
+            if (!Utils.contains(harmonicFunction.extra, "9") &&
+                !Utils.contains(harmonicFunction.extra, ">9") &&
+                !Utils.contains(harmonicFunction.extra, "<9")) {
+                harmonicFunction.extra.push("9")
+            }
+
+            if (!Utils.contains(harmonicFunction.omit, "5") &&
+                !Utils.contains(harmonicFunction.omit, ">5") &&
+                !Utils.contains(harmonicFunction.omit, "<5")) {
+                harmonicFunction.omit.push("5")
+            }
+        }
+
     }
 
 
@@ -373,6 +410,8 @@ function BassTranslator() {
             toAdd.system = undefined
             toAdd.delay = delays
             toAdd.extra = []
+
+            this.addExtraAndOmit(toAdd, chordElement)
 
             if (functions[i] === "D") {
                 toAdd.mode = "major"
