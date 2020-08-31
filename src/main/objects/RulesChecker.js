@@ -1,5 +1,6 @@
 .import "./Utils.js" as Utils
 .import "./Errors.js" as Errors
+.import "./Consts.js" as Consts
 
 var DEBUG = false;
 
@@ -142,7 +143,7 @@ function checkIllegalDoubled3(chord){
     }
     //neapolitan chord handler
     if(chord.harmonicFunction.degree === 2 && chord.harmonicFunction.down
-        && chord.harmonicFunction.functionName === 'S' && chord.harmonicFunction.mode === 'minor'){
+        && chord.harmonicFunction.functionName === 'S' && chord.harmonicFunction.mode === Consts.MODE.MINOR){
          return chord.bassNote.chordComponent.baseComponent !== '3' || terCounter !== 2
     }
     return terCounter > 1

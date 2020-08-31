@@ -6,7 +6,7 @@ function ChordComponent(chordComponentString, id){
     // just for tests
     this.id = id;
 
-    var baseComponentsSeminotesNumber = {
+    var baseComponentsSemitonesNumber = {
         '1' : 0,
         '2' : 2,
         '3' : 4,
@@ -37,7 +37,7 @@ function ChordComponent(chordComponentString, id){
 
     this.chordComponentString = chordComponentString;
     this.baseComponent = baseComponent;
-    this.seminotesNumber = baseComponentsSeminotesNumber[baseComponent] + deltaMinus + deltaPlus;
+    this.semitonesNumber = baseComponentsSemitonesNumber[baseComponent] + deltaMinus + deltaPlus;
 
     this.equals = function(other){
         return this.id === other.id;

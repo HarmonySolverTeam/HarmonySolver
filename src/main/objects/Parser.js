@@ -41,9 +41,9 @@ function parse(input) {
     var mode = null
 
     if (Utils.contains(Consts.possible_keys_major, key)){
-        mode = "major"
+        mode = Consts.MODE.MAJOR
     } else if (Utils.contains(Consts.possible_keys_minor, key)){
-        mode = "minor"
+        mode = Consts.MODE.MINOR
     } else {
         throw new Errors.HarmonicFunctionsParserError("Unrecognized key", key)
     }

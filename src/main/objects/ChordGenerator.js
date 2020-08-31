@@ -227,14 +227,14 @@ function ChordGenerator(key, mode) {
 
     this.mapSchemas = function (harmonicFunction, schemas) {
 
-        var scale = harmonicFunction.mode === 'major' ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
+        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
 
         var chordFirstPitch = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
         var schemas_cp = schemas.slice();
         for (var i = 0; i < schemas.length; i++) {
             schemas_cp[i] = schemas[i].map(function (scheme_elem) {
-                var intervalPitch = scheme_elem.seminotesNumber;
+                var intervalPitch = scheme_elem.semitonesNumber;
                 return chordFirstPitch + intervalPitch;
             })
         }
@@ -254,7 +254,7 @@ function ChordGenerator(key, mode) {
         var schemas = this.getSchemas(harmonicFunction, temp);
         var schemas_mapped = this.mapSchemas(harmonicFunction, schemas);
 
-        var scale = harmonicFunction.mode === 'major' ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
+        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
 
         for (var i = 0; i < schemas_mapped.length; i++) {
             var schema_mapped = schemas_mapped[i];

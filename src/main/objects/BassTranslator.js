@@ -396,7 +396,7 @@ function BassTranslator() {
             toAdd.functionName = functions[i]
 
             toAdd.degree = chordElement.primeNote + 1
-            if (mode === "minor") {
+            if (mode === Consts.MODE.MINOR) {
                 toAdd.degree += 2;
                 toAdd.degree = Utils.mod(toAdd.degree, 7);
             }
@@ -414,7 +414,7 @@ function BassTranslator() {
             this.addExtraAndOmit(toAdd, chordElement)
 
             if (functions[i] === "D") {
-                toAdd.mode = "major"
+                toAdd.mode = Consts.MODE.MAJOR
             } else {
                 toAdd.mode = mode
             }
@@ -605,11 +605,11 @@ function BassTranslator() {
             //Utils.log("toExtra", JSON.stringify(toExtra))
 
             if (toOmit.length === 1 && Utils.contains(toOmit, 3)) {
-                if (mode === "minor" && toExtra[0] === ">3") {
-                    harmonicFunctions[0][i].mode = "major";
+                if (mode === Consts.MODE.MINOR && toExtra[0] === ">3") {
+                    harmonicFunctions[0][i].mode = Consts.MODE.MAJOR;
                 }
-                if (mode === "major" && toExtra[0] === "<3") {
-                    harmonicFunctions[0][i].mode = "minor";
+                if (mode === Consts.MODE.MAJOR && toExtra[0] === "<3") {
+                    harmonicFunctions[0][i].mode = Consts.MODE.MINOR;
                 }
             } else {
                 for (var a = 0; a < toOmit.length; a++) {
@@ -669,7 +669,7 @@ function BassTranslator() {
 
         Utils.log("Harmonic functions after split",harmonicFunctions)
 
-        var key = figuredBassExercise.mode === "major" ? figuredBassExercise.key : figuredBassExercise.key.toLowerCase()
+        var key = figuredBassExercise.mode === Consts.MODE.MAJOR ? figuredBassExercise.key : figuredBassExercise.key.toLowerCase()
 
         this.handleD7_TConnection(harmonicFunctions)
 

@@ -190,9 +190,15 @@ var basicMajorChord = [0, 4, 7];
 //G
 var basicMinorChord = [0, 3, 7];
 
+//G
 var ALTERATIONS = {
     SHARP: "#",
     FLAT: "b",
     NATURAL: "h"
-}
+};
 
+//G
+var MODE = {
+    MAJOR : "major",
+    MINOR : "minor"
+}

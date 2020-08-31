@@ -1,6 +1,7 @@
 .import "./Utils.js" as Utils
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./ChordComponentManager.js" as ChordComponentManager
+.import "./Consts.js" as Consts
 
 function HarmonicFunctionValidator(){
 
@@ -138,7 +139,7 @@ function HarmonicFunctionValidator(){
 
     function validateMode(_this) {
         var mode = _this.harmonicFunction.mode;
-        if(mode !== 'major' && mode !== 'minor') handleValidationFailure(_this, "Invalid value of mode: " + mode);
+        if(!Utils.contains(Object.values(Consts.MODE), mode)) handleValidationFailure(_this, "Invalid value of mode: " + mode);
     }
 
     function checkAllChordComponentNumber(_this){

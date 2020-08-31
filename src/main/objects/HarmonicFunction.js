@@ -2,6 +2,7 @@
 .import "./ChordComponentManager.js" as ChordComponentManager
 .import "./Utils.js" as Utils
 .import "./HarmonicFunctionValidator.js" as HarmonicFunctionValidator
+.import "./Consts.js" as Consts
 
 var DEBUG = false;
 
@@ -29,7 +30,7 @@ function HarmonicFunction2(params){
     this.omit = params["omit"] === undefined ? [] : params["omit"];
     this.down = params["down"] === undefined ? false : params["down"];
     this.system = params["system"];
-    this.mode = params["mode"] === undefined ? 'major' : params["mode"];
+    this.mode = params["mode"] === undefined ? Consts.MODE.MAJOR : params["mode"];
 
     // mapping to ChordComponent
     if(this.position !== undefined) this.position = cm.chordComponentFromString(this.position);
@@ -48,7 +49,7 @@ function HarmonicFunction2(params){
 
     this.getBasicChordComponents = function () {
         var chordComponentManager = new ChordComponentManager.ChordComponentManager();
-        var scale = this.mode === 'major' ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
+        var scale = this.mode === Consts.MODE.MAJOR ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
         var basicChordComponents;
 
         if(!this.down) {

@@ -8,9 +8,9 @@ var testBaseComponent = (chordComponentString, expectedBaseComponent) => {
     return TestUtils.assertEqualsPrimitives(expectedBaseComponent, chordComponent.baseComponent)
 };
 
-var testComponentSeminoteNumber = (chordComponentString, expectedSeminoteNumber) => {
+var testComponentSemitoneNumber = (chordComponentString, expectedSemitoneNumber) => {
     var chordComponent = new ChordComponent.ChordComponent(chordComponentString);
-    return TestUtils.assertEqualsPrimitives(expectedSeminoteNumber, chordComponent.seminotesNumber);
+    return TestUtils.assertEqualsPrimitives(expectedSemitoneNumber, chordComponent.semitonesNumber);
 };
 
 testSuite.addTest(new TestUtils.UnitTest( () => testBaseComponent("3", "3"), "Test base component \"3\""));
@@ -26,13 +26,13 @@ testSuite.addTest(new TestUtils.UnitTest( () => testBaseComponent("<7", "7"), "T
 testSuite.addTest(new TestUtils.UnitTest( () => testBaseComponent("<<7", "7"), "Test base component \"<<7\""));
 
 
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("1", 0), "Test component seminotes number \"1\""));
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("1<", 1), "Test component seminotes number \"1<\""));
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("2", 2), "Test component seminotes number \"2\""));
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("2>", 1), "Test component seminotes number \"2>\""));
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("2<", 3), "Test component seminotes number \"2<\""));
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("2>>", 0), "Test component seminotes number \"2>>\""));
-testSuite.addTest(new TestUtils.UnitTest( () => testComponentSeminoteNumber("2<<", 4), "Test component seminotes number \"2<<\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("1", 0), "Test component semitones number \"1\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("1<", 1), "Test component semitones number \"1<\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("2", 2), "Test component semitones number \"2\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("2>", 1), "Test component semitones number \"2>\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("2<", 3), "Test component semitones number \"2<\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("2>>", 0), "Test component semitones number \"2>>\""));
+testSuite.addTest(new TestUtils.UnitTest( () => testComponentSemitoneNumber("2<<", 4), "Test component semitones number \"2<<\""));
 //todo: write all other test cases...
 
 
