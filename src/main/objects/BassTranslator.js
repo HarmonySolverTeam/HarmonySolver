@@ -459,7 +459,7 @@ function BassTranslator() {
 
             Utils.log("Harmonic function:",harmFunction)
 
-            harmonicFunctions.push(harmFunction) //todo moze sie tez pozniej przyda figuredbassexercise?
+            harmonicFunctions.push(harmFunction)
             chordElements.push(chordElement)
         }
 
@@ -635,6 +635,31 @@ function BassTranslator() {
         }
     }
 
+    this.isD7 = function(harmonicFunction) {
+        return harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT &&
+            (Utils.contains(harmonicFunction.extra, "7") || Utils.contains(harmonicFunction.extra, ">7") ||
+             Utils.contains(harmonicFunction.extra, "<7"));
+    }
+
+    this.isT = function(harmonicFunction) {
+        return harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC;
+    }
+
+    this.hasOmit5 = function(harmonicFunction) {
+        return (Utils.contains(harmonicFunction.omit, "5") || Utils.contains(harmonicFunction.omit, ">5") ||
+            Utils.contains(harmonicFunction.omit, "<5"))
+    }
+
+    this.handleD7_TConnection = function(harmonicFunctions){
+        for (var i = 0; i < harmonicFunctions[0].length - 1; i++) {
+            if (this.isD7(harmonicFunctions[0][i]) && this.isT(harmonicFunctions[0][i + 1])) {
+                if (!this.hasOmit5(harmonicFunctions[0][i + 1])) {
+                    harmonicFunctions[0][i + 1].omit.push("5")
+                }
+            }
+        }
+    }
+
 
     this.createExerciseFromFiguredBass = function (figuredBassExercise) {
         var chordElementsAndHarmonicFunctions = this.convertBassToHarmonicFunctions(figuredBassExercise)
@@ -645,6 +670,8 @@ function BassTranslator() {
         Utils.log("Harmonic functions after split",harmonicFunctions)
 
         var key = figuredBassExercise.mode === "major" ? figuredBassExercise.key : figuredBassExercise.key.toLowerCase()
+
+        this.handleD7_TConnection(harmonicFunctions)
 
         this.handleAlterations(harmonicFunctions, chordElements, figuredBassExercise.mode, figuredBassExercise.meter, figuredBassExercise.durations)
 
