@@ -121,10 +121,10 @@ function SopranoSolver(sopranoHarmonizationExercise){
 
         //TODO minor scale
         var scale;
-        if (this.exercise.mode === 'major'){
+        if (this.exercise.mode === Consts.MODE.MAJOR){
             scale = new Scale.MajorScale(this.exercise.key);
         }
-        else if(this.exercise.mode === 'minor'){
+        else if(this.exercise.mode === Consts.MODE.MINOR){
             scale = new Scale.MinorScale(this.exercise.key.toUpperCase());
         }
         var basicNote = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
@@ -264,7 +264,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
         for(var i=0; i<goodChords.length; i++){
             prev_chords.push(goodChords[i][0]);
 
-            Utils.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
+            if(DEBUG) Utils.log(curr_index+ "  " + goodChords[i][0].toString() + "    " + goodChords[i][1]);
 
             var sol = this.findSolution(curr_index+1, prev_chords, penalty + goodChords[i][1]);
             // if(DEBUG) console.log("SOL: " + sol);

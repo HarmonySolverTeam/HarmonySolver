@@ -131,8 +131,8 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenSumJumpTest, "Forbi
 const checkIllegalDouble3Test = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
     var ch1 = new Chord.Chord(new Note.Note(76,0,"3"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var neapolitan = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, 'minor');
-    var ch2 = new Chord.Chord(new Note.Note(69,5,"5"), new Note.Note(65, 3, "3"), new Note.Note(61, 1, "1"), new Note.Note(41, 3, "3"),neapolitan);
+    var neapolitan = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3>", undefined, [], [], true, undefined, 'minor');
+    var ch2 = new Chord.Chord(new Note.Note(69,5,"5"), new Note.Note(65, 3, "3>"), new Note.Note(61, 1, "1>"), new Note.Note(41, 3, "3>"),neapolitan);
 
     return UnitTest.assertTrue(RulesChecker.checkIllegalDoubled3(ch1)) &&
         UnitTest.assertFalse(RulesChecker.checkIllegalDoubled3(ch2))
@@ -203,6 +203,7 @@ const checkDelayCorrectnessTest = () => {
 
     var ch3 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
     var ch4 = new Chord.Chord(new Note.Note(69, 4,"3"), new Note.Note(62,1,"5"), new Note.Note(55, 6,"1"), new Note.Note(43,4,"1"), hf2);
+
 
     return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkDelayCorrectness(ch1, ch2)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkDelayCorrectness(ch1, ch3)) &&

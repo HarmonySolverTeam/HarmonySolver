@@ -2,11 +2,14 @@ var Generator = require("./objects/ChordGenerator");
 var Consts = require("./objects/Consts");
 var Chord = require("./objects/Chord");
 var HarmonicFunction = require("./objects/HarmonicFunction");
+var Utils = require("./objects/Utils")
 var Parser = require("./objects/Parser");
 var Solver = require("./objects/Solver");
 var UnitTest = require("./TestUtils");
 var fs = require('fs');
+var ChordComponentManager = require("./objects/ChordComponentManager")
 
+var cm = new ChordComponentManager.ChordComponentManager();
 
 var get_ex_from_file = (path) => {
     var buffer = fs.readFileSync(process.cwd() + path);
@@ -138,7 +141,8 @@ var delay_9_8 = () => {
     var ex = Parser.parse(input);
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch)
+        && UnitTest.assertFalse(Utils.contains(solution.chords[0].harmonicFunction.extra, cm.chordComponentFromString("7")));
 }
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delay_9_8, "HarmonicFunctions Major test 12 - from example_delay_9-8"));
 
