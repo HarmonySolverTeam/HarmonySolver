@@ -11,7 +11,8 @@ const validateDelayValuesTest = () => {
     var hf3 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[[">5","3"]],[],[],false,undefined,undefined);
     return TestUtils.assertTrue(validator.validate(hf1)) &&
         TestUtils.assertTrue(validator.validate(hf2)) &&
-        TestUtils.assertFalse(validator.validate(hf3))
+        TestUtils.assertThrows("Error during parsing harmonic functions input", "HarmonicFunction validation error: To large difference in delay",
+            validator.validate, [hf3])
 };
 
 testSuite.addTest(new TestUtils.UnitTest(validateDelayValuesTest, "Validate delay values"));

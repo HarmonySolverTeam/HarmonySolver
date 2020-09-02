@@ -1,6 +1,7 @@
 .import "./Utils.js" as Utils
 .import "./ChordComponentManager.js" as ChordComponentManager
 .import "./Consts.js" as Consts
+.import "./Errors.js" as Errors
 
 function HarmonicFunctionValidator(){
 
@@ -42,7 +43,7 @@ function HarmonicFunctionValidator(){
     
     function handleValidationFailure(_this, msg){
         _this.result = false;
-        Utils.error("HarmonicFunction validation error: " + msg + "\n");
+        throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " + msg)
     }
 
     function validateFunctionName(_this){
