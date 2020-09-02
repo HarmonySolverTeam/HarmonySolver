@@ -32,7 +32,7 @@ MuseScore {
     width: 800
     height: 600
     onRun: {
-        readPluginConfiguration()
+        //readPluginConfiguration()
     }
 
 
@@ -85,7 +85,7 @@ MuseScore {
     }
 
     function isAlterationSymbol(character) {
-        return (character === '#' || character === 'b' || character ==='b')
+        return (character === '#' || character === 'b' || character ==='h')
     }
 
 
@@ -401,7 +401,7 @@ MuseScore {
 
             writeScore(curScore,
                        filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                       "mscz") 
+                       "mscz")
         } catch (error) {
             showError(error)
         }
@@ -421,7 +421,6 @@ MuseScore {
     }
 
     function getPossibleChordsList() {
-// function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system) {
 
         var T = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", [], [],
                                                       [], false, undefined)
