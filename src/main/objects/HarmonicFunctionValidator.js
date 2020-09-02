@@ -1,5 +1,4 @@
 .import "./Utils.js" as Utils
-.import "./HarmonicFunction.js" as HarmonicFunction
 .import "./ChordComponentManager.js" as ChordComponentManager
 .import "./Consts.js" as Consts
 
