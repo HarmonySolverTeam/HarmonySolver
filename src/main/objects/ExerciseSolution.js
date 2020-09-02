@@ -1,5 +1,7 @@
 .import "./Utils.js" as Utils
 
+var DEBUG = false
+
 function ExerciseSolution(exercise, rating, chords) {
     this.exercise = exercise;
     this.rating = rating;
@@ -55,7 +57,7 @@ function ExerciseSolution(exercise, rating, chords) {
                     last = 0
                 } else {
                     front++
-                    front_sum += list[front]
+                    front_sum += list[0][front]
                     last = 1
                 }
             }
@@ -90,6 +92,10 @@ function ExerciseSolution(exercise, rating, chords) {
                     return
                 }
                 var index = find_division_point(list)
+
+                //little hack, should be handled in find_division_point
+                if(index > 1 && Utils.mod(value, 2) === 0) index--
+
                 var list1 = list.slice(0, index)
                 var list2 = list.slice(index, list.length)
                 if (value > 1) {
@@ -113,7 +119,7 @@ function ExerciseSolution(exercise, rating, chords) {
                         } else {
                             this.chords[counter_measure + offset].duration = [1, this.exercise.meter[1] * (1 / len_list[j])]
                         }
-                        Utils.log("Duration added:", this.chords[counter_measure + offset].toString())
+                        if(DEBUG) Utils.log("Duration added:", this.chords[counter_measure + offset].toString())
                         counter_measure++
                     }
                 }

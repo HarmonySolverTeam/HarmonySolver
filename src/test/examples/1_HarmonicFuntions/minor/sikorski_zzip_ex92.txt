@@ -1,0 +1,10 @@
+b
+4/4
+T{"position":"1","system":"close"};S{};D{"extra":["7"],"revolution":"5","mode":"major"}
+T{};T{"position":"3"};T{"position":"1","revolution":"3"}
+S{"position":"3"};S{"revolution":"5"}
+D{"extra":["7"],"revolution":"5","mode":"major"};T{};S{"mode":"major","position":"3"};D{"extra":["7"],"mode":"major","position":"3","revolution":"7"}
+T{"revolution":"3"};T{"position":"3"}
+S{};D{"mode":"major","extra":"7"};D{"mode":"major","extra":"7","revolution":"7"}
+T{"revolution":"3"};S{};D{"mode":"major","delay":[["6>","5"],["4","3"]]}
+T{"omit":["5"]}
