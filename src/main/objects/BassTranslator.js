@@ -335,7 +335,7 @@ function BassTranslator() {
 
     }
 
-    this.getValidPositionAndRevolution = function (harmonicFunction, chordElement) {
+    this.getValidPositionAndRevolution = function (chordElement) {
 
         var revolution = 1
 
@@ -353,31 +353,31 @@ function BassTranslator() {
         return [position, revolution]
     }
 
-    this.addExtraAndOmit = function (harmonicFunction, chordElement) {
+    this.addExtraAndOmit = function (extra, omit, chordElement) {
         var symbols = this.getSortedSymbolsFromChordElement(chordElement)
 
         if (symbols.equals([3, 5, 7]) || symbols.equals([2, 4, 6]) ||
             symbols.equals([3, 4, 6]) || symbols.equals([3, 5, 6]) ||
             symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
 
-            if (!Utils.contains(harmonicFunction.extra, "7") &&
-                !Utils.contains(harmonicFunction.extra, ">7") &&
-                !Utils.contains(harmonicFunction.extra, "<7")) {
-                    harmonicFunction.extra.push("7")
+            if (!Utils.contains(extra, "7") &&
+                !Utils.contains(extra, ">7") &&
+                !Utils.contains(extra, "<7")) {
+                    extra.push("7")
                 }
         }
 
         if (symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
-            if (!Utils.contains(harmonicFunction.extra, "9") &&
-                !Utils.contains(harmonicFunction.extra, ">9") &&
-                !Utils.contains(harmonicFunction.extra, "<9")) {
-                harmonicFunction.extra.push("9")
+            if (!Utils.contains(extra, "9") &&
+                !Utils.contains(extra, ">9") &&
+                !Utils.contains(extra, "<9")) {
+                extra.push("9")
             }
 
-            if (!Utils.contains(harmonicFunction.omit, "5") &&
-                !Utils.contains(harmonicFunction.omit, ">5") &&
-                !Utils.contains(harmonicFunction.omit, "<5")) {
-                harmonicFunction.omit.push("5")
+            if (!Utils.contains(omit, "5") &&
+                !Utils.contains(omit, ">5") &&
+                !Utils.contains(omit, "<5")) {
+                omit.push("5")
             }
         }
 
@@ -391,33 +391,33 @@ function BassTranslator() {
 
         for (var i = 0; i < functions.length; i++) {
 
-            var toAdd = new HarmonicFunction.HarmonicFunction()
+            var functionName = functions[i]
 
-            toAdd.functionName = functions[i]
-
-            toAdd.degree = chordElement.primeNote + 1
+            var degree = chordElement.primeNote + 1
             if (mode === Consts.MODE.MINOR) {
-                toAdd.degree += 2;
-                toAdd.degree = Utils.mod(toAdd.degree, 7);
+                degree += 2;
+                degree = Utils.mod(degree, 7);
             }
 
-            var posAndRev = this.getValidPositionAndRevolution(toAdd, chordElement)
+            var posAndRev = this.getValidPositionAndRevolution(chordElement)
 
-            toAdd.position = posAndRev[0]
-            toAdd.revolution = posAndRev[1].toString()
-            toAdd.omit = chordElement.omit
-            toAdd.down = false
-            toAdd.system = undefined
-            toAdd.delay = delays
-            toAdd.extra = []
+            var position = posAndRev[0]
+            var revolution = posAndRev[1].toString()
+            var omit = chordElement.omit
+            var down = false
+            var system = undefined
+            var extra = []
 
-            this.addExtraAndOmit(toAdd, chordElement)
+            this.addExtraAndOmit(extra, omit, chordElement)
+
+            var mode1 = undefined
 
             if (functions[i] === "D") {
-                toAdd.mode = Consts.MODE.MAJOR
+                mode1 = Consts.MODE.MAJOR
             } else {
-                toAdd.mode = mode
+                mode1 = mode
             }
+            var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays, extra, omit, down, system, mode1)
 
             ret.push(toAdd)
         }
@@ -425,12 +425,12 @@ function BassTranslator() {
         return ret
     }
 
-
+//TODO zmienić żeby 3 to było 3 z tonacji czy to z molowej czy to z durowej
+    //TODO krzyżyki i bvemole tylko dla jednej nuty
     this.convertToFunctions = function (figuredBassExercise) {
 
         var harmonicFunctions = []
         var chordElements = []
-
 
         var bassElements = figuredBassExercise.elements
 
@@ -476,43 +476,6 @@ function BassTranslator() {
         return [elements, this.makeChoiceAndSplit(functions)]
     }
 
-//todo maybe better?
-    this.addNotesLength = function (a,b) {
-        if (a[1] === b[1]) {
-            return [a[0] + b[0], a[1]]
-        }
-
-        if (a[1] === 0) {
-            return b
-        }
-
-        if (b[1] === 0) {
-            return a
-        }
-
-        var x = a[1]
-        var y = b[1]
-
-        return [a[0] * y + b[0] * x, x * y]
-    }
-
-
-    this.notesLengthEqual = function(a,b) {
-        var x = a.slice(0)
-        var y = b.slice(0)
-
-        var den1 = x[1]
-        var den2 = y[1]
-
-
-        x[0] = x[0] * den2
-        x[1] = x[1] * den2
-
-        y[0] = y[0] * den1
-        y[1] = y[1] * den1
-
-        return x[0] === y[0] && x[1] === y[1]
-    }
 
     this.handleAlterations = function (harmonicFunctions, chordElements, mode, meter, durations) {
 
@@ -523,32 +486,10 @@ function BassTranslator() {
           Utils.log("meter:", JSON.stringify(meter))
           Utils.log("durations:", JSON.stringify(durations))
 
-        var alterationsInCurrentMeasure = []
-
-        var summedNotesLength = [0, 0]
-
         for (var i = 0; i < harmonicFunctions[0].length; i++) {
 
             var toOmit = []
             var toExtra = []
-
-            var chordNotesToConsider = [0, 2, 4]
-
-            if (harmonicFunctions[0][i].extra !== undefined) {
-                for (var a = 0; a < harmonicFunctions[0][i].extra.length; a++) {
-                    chordNotesToConsider.push(parseInt(harmonicFunctions[0][i].extra[a]))
-                }
-            }
-
-            //Utils.log("chordNotesToConsider", JSON.stringify(chordNotesToConsider))
-            for (var a = 0; a < alterationsInCurrentMeasure.length; a++) {
-                for (var b = 0; b < chordNotesToConsider.length; b++) {
-                    if (Utils.mod(chordNotesToConsider[b] + chordElements[i].primeNote, 7) === alterationsInCurrentMeasure[a][0]) {
-                        toOmit.push(Utils.mod(chordNotesToConsider[b] + 1,7))
-                        toExtra.push(alterationsInCurrentMeasure[a][1] + Utils.mod(chordNotesToConsider[b] + 1,7))
-                    }
-                }
-            }
 
             for (var j = 0; j < chordElements[i].bassElement.symbols.length; j++) {
 
@@ -566,25 +507,6 @@ function BassTranslator() {
                         alteration = "<"
                     }
 
-                    var index = undefined
-
-                    for (var a = 0; a < alterationsInCurrentMeasure.length; a++) {
-                        if (alterationsInCurrentMeasure[a][0] === baseNoteToAlter) {
-                            index = a
-                            break
-                        }
-                    }
-                    //todo przy krzyzyku i bemolu dopisac ogarnianie w przypadku, gdy takie cus juz jest
-
-                    if (alteration !== undefined) {
-                        alterationsInCurrentMeasure.push([Utils.mod(baseNoteToAlter - 1, 7), alteration])
-                    } else {
-                        if (index !== undefined) {
-                            alterationsInCurrentMeasure.splice(index, 1)
-                        }
-                    }
-
-
                     if (alteration !== undefined) {
                         toOmit.push(baseNoteToAlter)
                         toExtra.push(alteration + baseNoteToAlter)
@@ -600,7 +522,6 @@ function BassTranslator() {
                 }
             }
 
-            //Utils.log("alterationsInCurrentMeasure", JSON.stringify(alterationsInCurrentMeasure))
             //Utils.log("toOmit", JSON.stringify(toOmit))
             //Utils.log("toExtra", JSON.stringify(toExtra))
 
@@ -626,12 +547,6 @@ function BassTranslator() {
                 }
             }
 
-            summedNotesLength = this.addNotesLength(summedNotesLength, durations[i])
-
-            if (this.notesLengthEqual(summedNotesLength, meter)) {
-                alterationsInCurrentMeasure = []
-                summedNotesLength = [0, 0]
-            }
         }
     }
 
