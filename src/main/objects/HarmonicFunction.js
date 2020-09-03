@@ -82,6 +82,19 @@ function HarmonicFunction2(params){
         return res;
     };
 
+    this.copy = function copy(){
+        var args = {
+            "functionName" : this.functionName,
+            "degree" : this.degree,
+            "position" : (this.position === undefined ? undefined : this.position.chordComponentString),
+            "revolution" : this.revolution.chordComponentString,
+            "down" : this.down,
+            "system" : this.system,
+            "mode" : this.mode
+        };
+        return new HarmonicFunction2(args);
+    }
+
     this.equals = function (other) {
         return this.functionName === other.functionName && this.degree === other.degree && this.down === other.down
     };
