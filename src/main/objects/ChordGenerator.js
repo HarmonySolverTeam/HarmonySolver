@@ -103,8 +103,8 @@ function ChordGenerator(key, mode) {
         //delete repeating
         var comparator = function (a, b) {
             for (var i = 0; i < 4; i++) {
-                if (a[i] === b[i]) continue;
-                if (a[i] < b[i]) return -1;
+                if (a[i].semitonesNumber === b[i].semitonesNumber) continue;
+                if (a[i].semitonesNumber < b[i].semitonesNumber) return -1;
                 else return 1
             }
             return 0;

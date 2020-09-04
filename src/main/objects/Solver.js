@@ -17,18 +17,7 @@ function Solver(exercise, bassLine, sopranoLine){
         for(var i=0; i<functions.length; i++){
             var delays = functions[i].delay;
             if(delays.length === 0) continue;
-            var newFunction = new HarmonicFunction.HarmonicFunction(
-                functions[i].functionName,
-                functions[i].degree,
-                functions[i].position,
-                functions[i].revolution,
-                [],
-                functions[i].extra.slice(),
-                functions[i].omit.slice(),
-                functions[i].down,
-                functions[i].system,
-                functions[i].mode
-            );
+            var newFunction = functions[i].copy();
             for(var j=0; j<delays.length; j++){
                 if(parseInt(delays[j][0].baseComponent)>=8) newFunction.extra.push(delays[j][1]);
                 functions[i].extra.push(delays[j][0]);
@@ -38,6 +27,10 @@ function Solver(exercise, bassLine, sopranoLine){
             }
             newFunctions.splice(i+addedChords+1, 0, newFunction);
             addedChords++;
+
+            console.log("DIVIDING: ");
+            console.log(functions[i].toString())
+            console.log(newFunction.toString())
         }
         return newFunctions;
     }
