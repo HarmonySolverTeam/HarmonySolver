@@ -90,7 +90,9 @@ function HarmonicFunction2(params){
             "revolution" : this.revolution.chordComponentString,
             "down" : this.down,
             "system" : this.system,
-            "mode" : this.mode
+            "mode" : this.mode,
+            "omit" : this.omit.slice(),
+            "extra" : this.extra.slice()
         };
         return new HarmonicFunction2(args);
     }

@@ -1,10 +1,10 @@
 c
 4/4
-T{"position":"5"};S{"position":"3","mode":"major"};D{"position":"3","extra":["9>"], "omit":["5"],"mode":"major"}
-T{};T{"position":"5"}
-S{};D{"extra":["9>","7"], "omit":["5"], "mode":"major"};T{"revolution":"3"};T{"position":"3"}
-D{"mode":"major"}
-T{};T{"position":"1"};D{"position":"3"};D{"extra":["9>","7"],"mode":"major","omit":["5"],"revolution":"7"}
-T{"revolution":"3"};T{"position":"3"};D{"mode":"major"};D{"extra":["7"],"revolution":"7","mode":"major"}
-T{"revolution":"3"};S{}
-T{}
+To{"position":"5"};S{"position":"3"};D{"position":"3","extra":["9>"], "omit":["5"]}
+To{};To{"position":"5"}
+So{};D{"extra":["9>","7"], "omit":["5"]};To{"revolution":"3>"};To{"position":"3>"}
+D{}
+To{};To{"position":"1"};Do{"position":"3>"};D{"extra":["9>","7"],"omit":["5"],"revolution":"7"}
+To{"revolution":"3>"};To{"position":"3>"};D{};D{"extra":["7"],"revolution":"7"}
+To{"revolution":"3>"};So{}
+To{}
