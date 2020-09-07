@@ -28,9 +28,6 @@ function Solver(exercise, bassLine, sopranoLine){
             newFunctions.splice(i+addedChords+1, 0, newFunction);
             addedChords++;
 
-            console.log("DIVIDING: ");
-            console.log(functions[i].toString())
-            console.log(newFunction.toString())
         }
         return newFunctions;
     }
