@@ -2,7 +2,7 @@
 .import "./Errors.js" as Errors
 .import "./Consts.js" as Consts
 
-var DEBUG = false;
+var DEBUG = true;
 
 function correctDistanceBassTenor(chord){
     if(chord.bassNote.chordComponent.chordComponentString === '1' &&

@@ -287,9 +287,9 @@ function ChordGenerator(key, mode) {
                 for (var j = 0; j < tenor.length; j++) {
                     if (tenor[j] >= bass[n]) {
                         for (var k = 0; k < alto.length; k++) {
-                            if (alto[k] >= tenor[j] && alto[k] - tenor[j] < 12) {
+                            if (alto[k] >= tenor[j] && alto[k] - tenor[j] <= 12) {
                                 for (var m = 0; m < soprano.length; m++) {
-                                    if (soprano[m] >= alto[k] && soprano[m] - alto[k] < 12) {
+                                    if (soprano[m] >= alto[k] && soprano[m] - alto[k] <= 12) {
 
                                         var bassNote = new Note.Note(bass[n], toBaseNote(scale.baseNote, harmonicFunction, schemas[i][3]), schemas[i][3]);
                                         var tenorNote = new Note.Note(tenor[j], toBaseNote(scale.baseNote, harmonicFunction, schemas[i][2]), schemas[i][2]);
