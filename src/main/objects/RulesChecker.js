@@ -2,14 +2,14 @@
 .import "./Errors.js" as Errors
 .import "./Consts.js" as Consts
 
-var DEBUG = true;
+var DEBUG = false;
 
 function correctDistanceBassTenor(chord){
     if(chord.bassNote.chordComponent.chordComponentString === '1' &&
         chord.tenorNote.chordComponent.semitonesNumber >= 12 &&
             chord.tenorNote.pitch - chord.bassNote.pitch < 12) {
         if(DEBUG){
-            console.log("not correct distance between bass and tenor")
+            Utils.log("not correct distance between bass and tenor",  "tenor: " + chord.tenorNote + "\t" + "bass: " + chord.bassNote)
         }
         return false;
     }
@@ -131,7 +131,10 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
         //TODO upewnić się jak ze skokami jest naprawdę, basu chyba ta zasada się nie tyczy
         // oraz dla harmonizacji sopranu / ustalonego basu to pominąć trzeba
         if(Utils.abs(currentChord.notes[i].pitch-prevChord.notes[i].pitch)>9) return -1;
-        if(isAltered(prevChord.notes[i],currentChord.notes[i])) return -1;
+        if(isAltered(prevChord.notes[i],currentChord.notes[i])) {
+            if(DEBUG) Utils.log("Altered Interval in voice "+i, prevChord + "->" + currentChord);
+            return -1;
+        }
     }
     return 0;
 }
@@ -345,8 +348,7 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
             if (currentResult === -1) return -1;
             result += currentResult;
         }
-    }
-    if(checkIllegalDoubled3(currentChord)) return -1;
+    } else if(checkIllegalDoubled3(currentChord)) return -1;
     if(!correctDistanceBassTenor(currentChord)) return -1;
     return result
 }
