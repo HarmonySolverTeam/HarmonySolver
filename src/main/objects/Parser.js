@@ -22,7 +22,7 @@ function parseChord(string) {
     if (arguments === null || arguments.length < 2 || chord_type.length > 2) {
         return undefined
     }
-    var mode = Consts.MODE.MAJOR;
+    var mode;
     if(chord_type.length === 2 && chord_type[1] === "o") mode = Consts.MODE.MINOR;
     var arguments_json = JSON.parse(arguments);
     arguments_json["functionName"] = chord_type[0];

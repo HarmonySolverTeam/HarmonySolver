@@ -5,7 +5,7 @@
 var DEBUG = false;
 
 function correctDistanceBassTenor(chord){
-    if(chord.bassNote.chordComponent.chordComponentString === '1' &&
+    if(chord.bassNote.chordComponent.baseComponent === '1' &&
         chord.tenorNote.chordComponent.semitonesNumber >= 12 &&
             chord.tenorNote.pitch - chord.bassNote.pitch < 12) {
         if(DEBUG){
