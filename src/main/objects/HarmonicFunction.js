@@ -92,8 +92,8 @@ function HarmonicFunction2(params){
             "down" : this.down,
             "system" : this.system,
             "mode" : this.mode,
-            "omit" : this.omit.slice(),
-            "extra" : this.extra.slice()
+            "omit" : this.omit.map(function (cc) { return cc.chordComponentString; }),
+            "extra" : this.extra.map(function (cc) { return cc.chordComponentString; })
         };
         return new HarmonicFunction2(args);
     }
