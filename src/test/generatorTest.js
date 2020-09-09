@@ -5,6 +5,7 @@ var HarmonicFunction = require("./objects/HarmonicFunction")
 var Note = require("./objects/Note")
 var TestUtils = require("./TestUtils")
 var ChordComponentManager = require("./objects/ChordComponentManager")
+var Consts = require("./objects/Consts")
 
 var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 
@@ -13,12 +14,12 @@ var cm = new ChordComponentManager.ChordComponentManager();
 var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3>", undefined, [], [], true, undefined, 'minor');
+    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3>", undefined, [], [], true, undefined, Consts.MODE.MINOR);
     var res = gen.generate(hf);
     // res.forEach((x) => {console.log(x.toString())})
 
     //todo przepisać ten warunek
-    return TestUtils.assertEqualsPrimitives(res.length, 38);
+    return TestUtils.assertEqualsPrimitives(res.length, 48);
 };
 
 generatorTestSuite.addTest(new TestUtils.UnitTest(neapolitanTest, "Neapolitan chord test"));

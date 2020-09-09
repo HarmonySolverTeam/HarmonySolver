@@ -18,216 +18,84 @@ var get_ex_from_file = (path) => {
     return input;
 }
 
+var check_solution_found_major = (exName) => {
+    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
+    var ex = Parser.parse(input);
+    var solver = new Solver.Solver(ex);
+    var solution = solver.solve();
+
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+}
+
+var check_solution_found_minor = (exName) => {
+    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
+    var ex = Parser.parse(input);
+    var solver = new Solver.Solver(ex);
+    var solution = solver.solve();
+
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+}
+
 var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests");
+var targosz_p61_ex13 = () => {return check_solution_found_major("targosz_p61_ex13.txt")};
+var targosz_p61_ex14 = () => {return check_solution_found_major("targosz_p61_ex14.txt")};
+var targosz_p61_ex15 = () => {return check_solution_found_major("targosz_p61_ex15.txt")};
+var targosz_p61_ex16 = () => {return check_solution_found_major("targosz_p61_ex16.txt")};
+var sikorski_zzip_ex1 = () => {return check_solution_found_major("sikorski_zzip_ex1.txt")};
+var sikorski_zzip_ex3 = () => {return check_solution_found_major("sikorski_zzip_ex3.txt")};
+var sikorski_zzip_ex53 = () => {return check_solution_found_major("sikorski_zzip_ex53.txt")};
+var sikorski_zzip_ex54 = () => {return check_solution_found_major("sikorski_zzip_ex54.txt")};
+var sikorski_zzip_ex77 = () => {return check_solution_found_major("sikorski_zzip_ex77.txt")};
+var sikorski_zzip_ex65 = () => {return check_solution_found_major("sikorski_zzip_ex65.txt")};
+var sikorski_zzip_ex66 = () => {return check_solution_found_major("sikorski_zzip_ex66.txt")};
+var delay_9_8 = () => {return check_solution_found_major("example_delay_9-8.txt")};
+var delays_test = () => {return check_solution_found_major("delay_test.txt")};
+var sikorski_zzip_ex102 = () => {return check_solution_found_major("sikorski_zzip_ex102.txt")};
+var sikorski_zzip_ex114 = () => {return check_solution_found_major("sikorski_zzip_ex114.txt")};
+var sikorski_zzip_ex126 = () => {return check_solution_found_major("sikorski_zzip_ex126.txt")};
+var d_altered_major= () => {return check_solution_found_major("d_altered_test.txt")};
 
-var targosz_p61_ex13 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\targosz_p61_ex13.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex13, "HarmonicFunctions Major test 1 - from targosz_p61_ex13"));
-
-
-var targosz_p61_ex14 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\targosz_p61_ex14.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex14, "HarmonicFunctions Major test 2 - from targosz_p61_ex14"));
-
-
-var targosz_p61_ex15 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\targosz_p61_ex15.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex15, "HarmonicFunctions Major test 3 - from targosz_p61_ex15"));
-
-
-var targosz_p61_ex16 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\targosz_p61_ex16.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex16, "HarmonicFunctions Major test 4 - from targosz_p61_ex16"));
-
-
-var sikorski_zzip_ex1 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex1.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex1, "HarmonicFunctions Major test 5 - from sikorski_zzip_ex1"));
-
-
-var sikorski_zzip_ex3 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex3.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex3, "HarmonicFunctions Major test 6 - from sikorski_zzip_ex3"));
-
-
-var sikorski_zzip_ex53 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex53.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex53, "HarmonicFunctions Major test 7 - from sikorski_zzip_ex53"));
-
-
-var sikorski_zzip_ex54 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex54.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex54, "HarmonicFunctions Major test 8 - from sikorski_zzip_ex54"));
-
-
-var sikorski_zzip_ex77 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex77.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex77, "HarmonicFunctions Major test 9 - from sikorski_zzip_ex77"));
-
-var sikorski_zzip_ex65 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex65.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex65, "HarmonicFunctions Major test 10 - from sikorski_zzip_ex65"));
-
-var sikorski_zzip_ex66 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex66.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex66, "HarmonicFunctions Major test 11 - from sikorski_zzip_ex66"));
-
-var delay_9_8 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\example_delay_9-8.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch)
-        && UnitTest.assertFalse(Utils.contains(solution.chords[0].harmonicFunction.extra, cm.chordComponentFromString("7")));
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delay_9_8, "HarmonicFunctions Major test 12 - from example_delay_9-8"));
-
-
-var delays_test = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\delay_test.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
-harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delays_test, "HarmonicFunctions Major test 10 - from delay_test.txt"));
-
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delays_test, "HarmonicFunctions Major test 13 - from delay_test"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex102, "HarmonicFunctions Major test 14 - from sikorski_zzip_ex102"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex114, "HarmonicFunctions Major test 15 - from sikorski_zzip_ex114"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex126, "HarmonicFunctions Major test 16 - from sikorski_zzip_ex126"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(d_altered_major, "HarmonicFunctions Major test 17 - from d_altered_test"));
 
 // MINOR
-var targosz_p61_ex17 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\targosz_p61_ex17.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
+var targosz_p61_ex17 = () => {return check_solution_found_minor("targosz_p61_ex17.txt")};
+var targosz_p61_ex18 = () => {return check_solution_found_minor("targosz_p61_ex18.txt")};
+var targosz_p61_ex19 = () => {return check_solution_found_minor("targosz_p61_ex19.txt")};
+var targosz_p61_ex20 = () => {return check_solution_found_minor("targosz_p61_ex20.txt")};
+var sikorski_zzip_ex67 = () => {return check_solution_found_minor("sikorski_zzip_ex67.txt")};
+var sikorski_zzip_ex68 = () => {return check_solution_found_minor("sikorski_zzip_ex68.txt")};
+var delay_D65 = () => {return check_solution_found_minor("example_delay_D65.txt")};
+var sikorski_zzip_ex92 = () => {return check_solution_found_minor("sikorski_zzip_ex92.txt")};
+var sikorski_zzip_ex105 = () => {return check_solution_found_minor("sikorski_zzip_ex105.txt")};
+var sikorski_zzip_ex116 = () => {return check_solution_found_minor("sikorski_zzip_ex116.txt")};
+var sikorski_zzip_ex127 = () => {return check_solution_found_minor("sikorski_zzip_ex127.txt")};
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex17, "HarmonicFunctions Minor test 1 - from targosz_p61_ex17"));
-
-
-var targosz_p61_ex18 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\targosz_p61_ex18.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex18, "HarmonicFunctions Minor test 2 - from targosz_p61_ex18"));
-
-
-var targosz_p61_ex19 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\targosz_p61_ex19.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex19, "HarmonicFunctions Minor test 3 - from targosz_p61_ex19"));
-
-
-var targosz_p61_ex20 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\targosz_p61_ex20.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex20, "HarmonicFunctions Minor test 4 - from targosz_p61_ex20"));
-
-var sikorski_zzip_ex67 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex66.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex67, "HarmonicFunctions Minor test 5 - from sikorski_zzip_ex67"));
-
-var sikorski_zzip_ex68 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\sikorski_zzip_ex66.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex68, "HarmonicFunctions Minor test 6 - from sikorski_zzip_ex68"));
-
-var delay_D65 = () => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\example_delay_D65.txt");
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
-}
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(delay_D65, "HarmonicFunctions Minor test 7 - from example_delay_D65"));
-
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex92, "HarmonicFunctions Minor test 8 - from sikorski_zzip_ex92"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex105, "HarmonicFunctions Minor test 9 - from sikorski_zzip_ex105"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex116, "HarmonicFunctions Minor test 10 - from sikorski_zzip_ex116"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex127, "HarmonicFunctions Minor test 11 - from sikorski_zzip_ex127"));
 
 harmonicFunctionsTestSuite.run();

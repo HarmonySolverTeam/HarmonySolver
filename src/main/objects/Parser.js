@@ -19,12 +19,14 @@ function parseChord(string) {
     var chord_type = string.substring(0, i)
     var arguments = string.substring(i, string.length)
 
-    if (arguments === null || arguments.length < 2) {
+    if (arguments === null || arguments.length < 2 || chord_type.length > 2) {
         return undefined
     }
-
-    var arguments_json = JSON.parse(arguments)
-    arguments_json["functionName"] = chord_type;
+    var mode;
+    if(chord_type.length === 2 && chord_type[1] === "o") mode = Consts.MODE.MINOR;
+    var arguments_json = JSON.parse(arguments);
+    arguments_json["functionName"] = chord_type[0];
+    arguments_json["mode"] = mode;
     var ret = new HarmonicFunction.HarmonicFunction2(arguments_json);
 
     return ret

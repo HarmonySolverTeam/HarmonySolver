@@ -72,7 +72,6 @@ const forbiddenJumpTest = () => {
     var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
     var ch2 = new Chord.Chord(new Note.Note(85,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     //altered up
-    var ch0up = new Chord.Chord(new Note.Note(73,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch1up = new Chord.Chord(new Note.Note(75,1,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch2up = new Chord.Chord(new Note.Note(77,2,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
@@ -80,7 +79,6 @@ const forbiddenJumpTest = () => {
     var ch5up = new Chord.Chord(new Note.Note(82,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch6up = new Chord.Chord(new Note.Note(84,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     //altered down
-    var ch0down = new Chord.Chord(new Note.Note(71,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch1down = new Chord.Chord(new Note.Note(69,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch2down = new Chord.Chord(new Note.Note(67,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch3down = new Chord.Chord(new Note.Note(66,4,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
@@ -91,14 +89,12 @@ const forbiddenJumpTest = () => {
     var chdownSameFun = new Chord.Chord(new Note.Note(60,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
 
     return UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch2)) &&
-        UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch0up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch1up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch2up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch3up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch4up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch5up)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch6up)) &&
-        UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch0down)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch1down)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch2down)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.forbiddenJump(ch1, ch3down)) &&
@@ -227,10 +223,9 @@ const falseRelationTest = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("S",2,undefined,"3",[],[],[],true,undefined,'minor');
     var hf2 = new HarmonicFunction.HarmonicFunction("D",1,undefined,"1",[],[],[],false,undefined,undefined);
     var ch1 = new Chord.Chord(new Note.Note(68, 5,">5"), new Note.Note(65,3,"3"), new Note.Note(61, 1,">1"), new Note.Note(41,3,"3"), hf1);
-    var ch2 = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
+    var ch2 = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);
 
     return UnitTest.assertEqualsPrimitives(-1, RulesChecker.falseRelation(ch1, ch2))
-
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(falseRelationTest, "False relation test"));

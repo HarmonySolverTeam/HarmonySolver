@@ -35,13 +35,13 @@ function find_division_point(list){
     var front_sum = list[0][front], back_sum = list[0][back]
     var last = -1
     while(front !== back){
-        if(front_sum >= back_sum){
+        if(front_sum > back_sum){
             back--
             back_sum += list[0][back]
             last = 0
         }else{
             front++
-            front_sum += list[front]
+            front_sum += list[0][front]
             last = 1
         }
     }
@@ -66,8 +66,10 @@ function divide_fun_changed(measure){
 }
 
 //todo na prawdziwych obiektach, a nie jsonach
-//var ex = {"mode":[3,4],"key":"E","meter":"major","system":null,"measures":[[{"functionName":"T","position":3},{"functionName":"T","position":1},{"functionName":"T","position":5},{"functionName":"S","position":3},{"functionName":"D","position":-1},{"functionName":"D","position":3}],[{"functionName":"T","degree":"","extra":""},{"functionName":"T","degree":"","extra":""}],[{"functionName":"S","degree":"","extra":""}]]}
-var ex = {"mode":"major","key":"C","meter":[5,4],"measures":[[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"D","degree":5,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"D","degree":5,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}],[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}],[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}]]}
+// var ex = {"mode":"major","key":"E","meter":[3,4],"system":null,"measures":[[{"functionName":"T","position":3},{"functionName":"T","position":1},{"functionName":"T","position":5},{"functionName":"S","position":3},{"functionName":"D","position":-1},{"functionName":"D","position":3}],[{"functionName":"T","degree":"","extra":""},{"functionName":"T","degree":"","extra":""}],[{"functionName":"S","degree":"","extra":""}]]}
+// var ex = {"mode":"major","key":"C","meter":[4,4],"measures":[[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"D","degree":5,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"D","degree":5,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}],[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]},{"functionName":"S","degree":4,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}],[{"functionName":"T","degree":1,"position":-1,"revolution":1,"extra":[],"omit":[],"down":[]}]]}
+// var ex = {"mode":"major","key":"C","meter":[4,4],"measures":[[{"functionName":"D","degree":5,"revolution":"5","delay":[],"extra":["7"],"omit":[],"down":false,"mode":"major"},{"functionName":"T","degree":1,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"S","degree":4,"position":"3","revolution":"1","delay":[],"extra":[],"omit":[],"down":false,"mode":"major"},{"functionName":"D","degree":5,"position":"3","revolution":"7","delay":[],"extra":["7"],"omit":[],"down":false,"mode":"major"}]]}
+var ex = {"mode":"minor","key":"a","meter":[3,4],"measures":[[{"functionName":"T","degree":1,"position":5,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"S","degree":4,"position":"3","revolution":"1","delay":[],"extra":[],"omit":[],"down":false,"mode":"major"},{"functionName":"D","degree":5,"position":"3","revolution":"5","delay":[],"extra":["7"],"omit":["1"],"down":false}],[{"functionName":"T","degree":1,"revolution":"3","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"T","degree":1,"position":"3","revolution":"1","delay":[],"extra":[],"omit":[],"down":false}],[{"functionName":"S","degree":4,"position":"3","revolution":"1","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"D","degree":5,"revolution":"5","delay":[],"extra":["7"],"omit":[],"down":false,"mode":"major"},{"functionName":"T","degree":1,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false}],[{"functionName":"D","degree":5,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false,"mode":"major"}],[{"functionName":"T","degree":1,"revolution":"3","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"D","degree":5,"position":"5","revolution":"5","delay":[],"extra":["7"],"omit":["1"],"down":false,"mode":"major"},{"functionName":"T","degree":1,"position":"3","revolution":"1","delay":[],"extra":[],"omit":[],"down":false}],[{"functionName":"S","degree":4,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"S","degree":4,"position":"3","revolution":"1","delay":[],"extra":[],"omit":[],"down":false}],[{"functionName":"D","degree":5,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false,"mode":"major"},{"functionName":"D","degree":5,"revolution":"7","delay":[],"extra":["7"],"omit":["5"],"down":false,"mode":"major"}],[{"functionName":"T","degree":1,"revolution":"3","delay":[],"extra":[],"omit":[],"down":false},{"functionName":"S","degree":4,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false}],[{"functionName":"T","degree":1,"revolution":"1","delay":[],"extra":[],"omit":[],"down":false}]]}
 var upperTime = ex.meter[0]
 var lowerTime = ex.meter[1]
 var measures = ex.measures
@@ -84,6 +86,7 @@ for(var measure_id = 0; measure_id < measures.length; measure_id++){
         }
         var index = find_division_point(list)
         console.log(index)
+        // if(index > 1) index --
         var list1 = list.slice(0, index)
         var list2 = list.slice(index, list.length)
         if(value > 1){
@@ -95,6 +98,8 @@ for(var measure_id = 0; measure_id < measures.length; measure_id++){
         }
     }
     add_time_to_fun(funList, upperTime)
+    console.log(funList)
+
     counter_measure = 0
     counter_fun = 0
     while(counter_measure < current_measure.length){

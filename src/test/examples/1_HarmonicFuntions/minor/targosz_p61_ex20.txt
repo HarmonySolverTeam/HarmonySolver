@@ -1,12 +1,12 @@
 c
 2/4
-T{"position":"1", "system":"open"};T{"position":"3"}
+To{"position":"1", "system":"open"};To{"position":"3>"}
 D{};D{"position":"1"};D{"position":"3"}
-T{}
-T{"position":"3"};T{"position":"5"}
-S{};S{"position":"1"};D{}
-T{};T{"position":"1"}
+To{}
+To{"position":"3>"};To{"position":"5"}
+So{};So{"position":"1"};D{}
+To{};To{"position":"1"}
 D{};D{"position":"1"};D{"position":"3"}
-T{};T{"position":"3"}
+To{};To{"position":"3>"}
 D{};D{"position":"1"};D{"position":"3"}
-T{}
+To{}

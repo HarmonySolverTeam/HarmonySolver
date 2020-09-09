@@ -19,15 +19,15 @@ function Solver(exercise, bassLine, sopranoLine){
             if(delays.length === 0) continue;
             var newFunction = functions[i].copy();
             for(var j=0; j<delays.length; j++){
-                if(parseInt(delays[j][0].baseComponent)>=8) newFunction.extra.push(delays[j][1]);
+                if(parseInt(delays[j][0].baseComponent)>=8 && !Utils.containsChordComponent(newFunction.extra, delays[j][1].chordComponentString)) newFunction.extra.push(delays[j][1]);
                 functions[i].extra.push(delays[j][0]);
                 functions[i].omit.push(delays[j][1]);
+                functions[i].extra = functions[i].extra.filter(function(elem){return elem.chordComponentString !== delays[j][1].chordComponentString});
                 if(delays[j][1] === functions[i].position) functions[i].position = delays[j][0];
                 if(delays[j][1] === functions[i].revolution) functions[i].revolution = delays[j][0];
             }
             newFunctions.splice(i+addedChords+1, 0, newFunction);
             addedChords++;
-
         }
         return newFunctions;
     }

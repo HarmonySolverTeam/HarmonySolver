@@ -4,6 +4,18 @@
 
 var DEBUG = false;
 
+function correctDistanceBassTenor(chord){
+    if(chord.bassNote.chordComponent.baseComponent === '1' &&
+        chord.tenorNote.chordComponent.semitonesNumber >= 12 &&
+            chord.tenorNote.pitch - chord.bassNote.pitch < 12) {
+        if(DEBUG){
+            Utils.log("not correct distance between bass and tenor",  "tenor: " + chord.tenorNote + "\t" + "bass: " + chord.bassNote)
+        }
+        return false;
+    }
+    return true;
+}
+
 function concurrentOctaves(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 3; i++){
@@ -24,10 +36,14 @@ function concurrentOctaves(prevChord, currentChord){
 //TODO zmienic na gamowlasciwie
 function concurrentFifths(prevChord, currentChord){
     if(prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
+    // powinno się używać takiego porównania, ale co ze swobodnym rozwiązaniem septymy?
+    function isFive(upperBaseNote, bottomBaseNote){
+        return  Utils.contains([4, -3],  upperBaseNote - bottomBaseNote)
+    }
     for(var i = 0; i < 3; i++){
         for(var j = i + 1; j < 4; j++){
-            if(Utils.mod((prevChord.notes[j].pitch-prevChord.notes[i].pitch), 12) === 7){
-                if(Utils.mod(currentChord.notes[j].pitch-currentChord.notes[i].pitch, 12) === 7){
+            if(isFive(prevChord.notes[j].baseNote, prevChord.notes[i].baseNote)){
+                if(isFive(currentChord.notes[j].baseNote, currentChord.notes[i].baseNote)){
                     if(DEBUG) {
                         Utils.log("concurrentFifths "+i+" "+j, prevChord + " -> " + currentChord);
                     }
@@ -39,6 +55,7 @@ function concurrentFifths(prevChord, currentChord){
     }
     return 0;
 }
+
 
 function crossingVoices(prevChord, currentChord){
     for(var i = 0; i < 3; i++){
@@ -63,9 +80,9 @@ function crossingVoices(prevChord, currentChord){
 //TODO sprawdzić, czy w obrębie tej samej funkcji może być spełnione
 function oneDirection(prevChord, currentChord){
     if((currentChord.bassNote.pitch>prevChord.bassNote.pitch && currentChord.tenorNote.pitch>prevChord.tenorNote.pitch
-        && currentChord.altoNote.pitch>prevChord.altoNote.pitch && currentChord.bassNote.pitch>prevChord.bassNote.pitch)
+        && currentChord.altoNote.pitch>prevChord.altoNote.pitch && currentChord.sopranoNote.pitch>prevChord.sopranoNote.pitch)
         ||(currentChord.bassNote.pitch<prevChord.bassNote.pitch && currentChord.tenorNote.pitch<prevChord.tenorNote.pitch
-            && currentChord.altoNote.pitch<prevChord.altoNote.pitch && currentChord.bassNote.pitch<prevChord.bassNote.pitch)){
+            && currentChord.altoNote.pitch<prevChord.altoNote.pitch && currentChord.sopranoNote.pitch<prevChord.sopranoNote.pitch)){
         if(DEBUG){
             Utils.log("oneDirection", prevChord + " -> " + currentChord);
         }
@@ -92,7 +109,7 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
             if(Utils.mod(halfToneDist, 12) === 0) halfToneDist = 12
             else halfToneDist = Utils.mod(halfToneDist, 12)
         }
-        var alteredIntervals = {1:0, 3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
+        var alteredIntervals = {3:1, 5:2, 6:3, 8:4, 10:5, 12:6}
         return alteredIntervals[halfToneDist] === baseDist
     }
 
@@ -112,8 +129,12 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
     }
     for(var i = 0; i < 4; i++){
         //TODO upewnić się jak ze skokami jest naprawdę, basu chyba ta zasada się nie tyczy
-        if(Utils.abs(currentChord.notes[i].pitch-prevChord.notes[i].pitch)>12) return -1;
-        if(isAltered(prevChord.notes[i],currentChord.notes[i])) return -1;
+        // oraz dla harmonizacji sopranu / ustalonego basu to pominąć trzeba
+        if(Utils.abs(currentChord.notes[i].pitch-prevChord.notes[i].pitch)>9) return -1;
+        if(isAltered(prevChord.notes[i],currentChord.notes[i])) {
+            if(DEBUG) Utils.log("Altered Interval in voice "+i, prevChord + "->" + currentChord);
+            return -1;
+        }
     }
     return 0;
 }
@@ -152,7 +173,7 @@ function checkIllegalDoubled3(chord){
 function checkConnection(prevChord, currentChord){
     var couldHaveDouble3 = false;
     if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T"){
-        if(Utils.contains([-4,3], currentChord.harmonicFunction.degree - prevChord.harmonicFunction.degree)) {
+        if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChord.harmonicFunction.degree)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
                 if (prevChord.notes[i].chordComponent.baseComponent === "3") {
@@ -160,21 +181,65 @@ function checkConnection(prevChord, currentChord){
                     break;
                 }
             }
-            if (dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent.baseComponent !== "1") return -1;
+            if (dominantVoiceWith3 > -1 && currentChord.notes[dominantVoiceWith3].chordComponent.chordComponentString !== "1") return -1;
 
-            if (Utils.contains(prevChord.harmonicFunction.extra, "7")) {
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7" ||
+                Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7<"))) {
                 var dominantVoiceWith7 = -1;
                 for (var i = 0; i < 4; i++) {
-                    if (prevChord.notes[i].chordComponent === "7") {
+                    if (prevChord.notes[i].chordComponent.baseComponent === "7") {
                         dominantVoiceWith7 = i;
                         break;
                     }
                 }
-                if (dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent.baseComponent !== "3") return -1;
+                if (dominantVoiceWith7 > -1 && currentChord.notes[dominantVoiceWith7].chordComponent.baseComponent !== "3"){
+                    //rozwiazanie swobodne mozliwe (todo 7 pod 3)
+                    if((currentChord.harmonicFunction.revolution.chordComponentString ==="3" ||
+                        currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
+                        (currentChord.harmonicFunction.position !== undefined && (currentChord.harmonicFunction.position.chordComponentString ==="3" ||
+                        currentChord.harmonicFunction.position.chordComponentString === "3>"))) &&
+                        dominantVoiceWith7 < dominantVoiceWith3) {
+                        if(currentChord.notes[dominantVoiceWith7].chordComponent.baseComponent !== "5") return -1;
+                    }
+                    else return -1;
+                }
+                if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "9") ||
+                    Utils.containsChordComponent(prevChord.harmonicFunction.extra, "9>")) {
+                    var dominantVoiceWith9 = -1;
+                    for (var i = 0; i < 4; i++) {
+                        if (prevChord.notes[i].chordComponent.baseComponent === "9") {
+                            dominantVoiceWith9 = i;
+                            break;
+                        }
+                    }
+                    if(dominantVoiceWith9 > -1 && currentChord.notes[dominantVoiceWith9].chordComponent.baseComponent !== "5") return -1;
+                }
+            }
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5<")) {
+                var dominantVoiceWithAlt5 = -1;
+                for (var i = 0; i < 4; i++) {
+                    if (prevChord.notes[i].chordComponent.chordComponentString === "5<") {
+                        dominantVoiceWithAlt5 = i;
+                        break;
+                    }
+                }
+                if (dominantVoiceWithAlt5 > -1 && currentChord.notes[dominantVoiceWithAlt5].chordComponent.baseComponent !== "3") return -1;
+                couldHaveDouble3 = true;
+            }
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>")) {
+                var dominantVoiceWithAlt5 = -1;
+                for (var i = 0; i < 4; i++) {
+                    if (prevChord.notes[i].chordComponent.containsChordComponent === "5>") {
+                        dominantVoiceWithAlt5 = i;
+                        break;
+                    }
+                }
+                if (dominantVoiceWithAlt5 > -1 && currentChord.notes[dominantVoiceWithAlt5].chordComponent !== "1") return -1;
             }
         }
 
-        if(currentChord.harmonicFunction.degree === 6 && prevChord.harmonicFunction.degree === 5) {
+        // todo 7 na 1, chyba inaczej
+        if(currentChord.harmonicFunction.degree - prevChord.harmonicFunction.degree === 1) {
             couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
@@ -194,7 +259,7 @@ function checkConnection(prevChord, currentChord){
             }
             if (dominantVoiceWith5 > -1 && currentChord.notes[dominantVoiceWith5].chordComponent.baseComponent !== "3") return -1;
 
-            if (Utils.contains(prevChord.harmonicFunction.extra, "7")) {
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
                 for (var i = 0; i < 4; i++) {
                     if (prevChord.notes[i].chordComponent.baseComponent === "7") {
@@ -206,7 +271,7 @@ function checkConnection(prevChord, currentChord){
             }
         }
     }
-    if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "S")
+    if(prevChord.harmonicFunction.functionName === "D" && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChord.harmonicFunction.functionName === "S")
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
 
     if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;
@@ -262,8 +327,8 @@ function hiddenOctaves(prevChord, currentChord){
 
 function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
-        for(var j=i; j<4; j++){
-            if(Utils.abs(prevChord.notes[i].pitch-currentChord.notes[j].pitch) === 1 &&
+        for(var j=i+1; j<4; j++){
+            if(Utils.mod(Utils.abs(prevChord.notes[i].pitch-currentChord.notes[j].pitch), 12) === 1 &&
                 prevChord.notes[i].baseNote === currentChord.notes[j].baseNote) return -1;
         }
     }
@@ -283,15 +348,13 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
             if (currentResult === -1) return -1;
             result += currentResult;
         }
-    }
-    else{
-        if(checkIllegalDoubled3(currentChord)) return -1;
-    }
+    } else if(checkIllegalDoubled3(currentChord)) return -1;
+    if(!correctDistanceBassTenor(currentChord)) return -1;
     return result
 }
 
 function checkAllRules(prevPrevChord, prevChord, currentChord){
-    var chosenRules = [falseRelation, hiddenOctaves, checkDelayCorrectness, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, checkConnection];
+    var chosenRules = [falseRelation, checkDelayCorrectness, checkConnection, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump];
     var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
     return result
 }
