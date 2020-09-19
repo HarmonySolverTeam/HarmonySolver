@@ -12,7 +12,8 @@ suites = [
     "rulesCheckerTest",
     "harmonicFunctionValidatorTest",
     "chordComponentManagerTest",
-    "chordComponentTest"
+    "chordComponentTest",
+    "intervalUtilsTest"
 ]
 
 for s in suites:
