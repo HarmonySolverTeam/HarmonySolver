@@ -214,7 +214,7 @@ function BassTranslator() {
         return false
     }
 
-    this.addNextNote = function addNextNote(chordElement) {
+    this.addNextNote = function (chordElement) {
         for (var i = 0; i < chordElement.notesNumbers.length - 1; i++) {
             if (chordElement.notesNumbers[i + 1] - chordElement.notesNumbers[i] >= 4) {
                 var temp = []

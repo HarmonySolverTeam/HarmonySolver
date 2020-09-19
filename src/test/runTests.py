@@ -7,7 +7,7 @@ suites = [
     "generatorTest",
     "delayTest",
     "1_HarmonicFunctionsTests",
-    "basstest",
+    "bassTranslatorTest",
     "sopranoTests",
     "rulesCheckerTest",
     "harmonicFunctionValidatorTest",
