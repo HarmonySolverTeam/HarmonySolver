@@ -28,7 +28,6 @@ const handleAlterationsTest1 = () => {
 testSuite.addTest(new TestUtils.UnitTest(handleAlterationsTest1, "handleAlterationsTest1"))
 
 
-
 var completeFiguredBassNumbersTest = (symbols, expectedCompletedSymbols) => {
     var actualCompletedSymbols = bassTranslator.completeFiguredBassNumbers(symbols).sort();
     expectedCompletedSymbols = expectedCompletedSymbols.sort();
@@ -36,33 +35,33 @@ var completeFiguredBassNumbersTest = (symbols, expectedCompletedSymbols) => {
     return TestUtils.assertEqualsObjects(expectedCompletedSymbols, actualCompletedSymbols);
 };
 
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([],              [3, 5]),           "Complete figured bass numbers with no symbol \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([5],           [5, 3]),           "Complete figured bass numbers with 5  \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([6],           [6, 3]),           "Complete figured bass numbers with 6  \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([10, 2],     [10, 4, 2]),     "Complete figured bass numbers with 10 2 \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([2],           [6, 4, 2]),      "Complete figured bass numbers with 2  \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([4,3],       [6, 4, 3]),      "Complete figured bass numbers with 4 3 \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([7],           [7, 5, 3]),      "Complete figured bass numbers with 7  \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([6, 5],      [3, 5, 6]),      "Complete figured bass numbers with 6 5 \tat input"));
-testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([7, 5, 6], [7, 5, 6]),      "Complete figured bass numbers with 7 5 6 \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([], [3, 5]), "Complete figured bass numbers with no symbol \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([5], [5, 3]), "Complete figured bass numbers with 5  \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([6], [6, 3]), "Complete figured bass numbers with 6  \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([10, 2], [10, 4, 2]), "Complete figured bass numbers with 10 2 \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([2], [6, 4, 2]), "Complete figured bass numbers with 2  \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([4, 3], [6, 4, 3]), "Complete figured bass numbers with 4 3 \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([7], [7, 5, 3]), "Complete figured bass numbers with 7  \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([6, 5], [3, 5, 6]), "Complete figured bass numbers with 6 5 \tat input"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassNumbersTest([7, 5, 6], [7, 5, 6]), "Complete figured bass numbers with 7 5 6 \tat input"));
 
 var makeChoiceAndSplitTest = () => {
 
-    var ton = {functionName : "T"};
-    var sub = {functionName : "S"};
-    var dom = {functionName : "D"};
+    var ton = {functionName: "T"};
+    var sub = {functionName: "S"};
+    var dom = {functionName: "D"};
 
-    var functions = [[ton,sub],[sub],[ton, sub],[dom],[ton,sub],[sub],[ton, dom],[sub],[ton, dom],[sub],[ton,dom]];
+    var functions = [[ton, sub], [sub], [ton, sub], [dom], [ton, sub], [sub], [ton, dom], [sub], [ton, dom], [sub], [ton, dom]];
     var actual = bassTranslator.makeChoiceAndSplit(functions);
 
-    if (! TestUtils.assertEqualsPrimitives(actual.length, 1)) return false;
-    if (! TestUtils.assertEqualsPrimitives(actual[0].length, functions.length))  return false;
+    if (!TestUtils.assertEqualsPrimitives(actual.length, 1)) return false;
+    if (!TestUtils.assertEqualsPrimitives(actual[0].length, functions.length)) return false;
 
     console.log(JSON.stringify(2))
 
     var res0 = actual[0];
-    for(var i=0; i<res0.length - 1; i++){
-        if ( TestUtils.assertEqualsObjects([res0[i].functionName, res0[i+1].functionName], ["D", "S"], true) ) return false;
+    for (var i = 0; i < res0.length - 1; i++) {
+        if (TestUtils.assertEqualsObjects([res0[i].functionName, res0[i + 1].functionName], ["D", "S"], true)) return false;
     }
     return true;
 };
@@ -71,18 +70,18 @@ testSuite.addTest(new TestUtils.UnitTest(() => makeChoiceAndSplitTest(), "MakeCh
 var completeFiguredBassSymbolTest = () => {
 
     var symbols = []
-    symbols.push(new FiguredBass.BassSymbol(3,undefined))
+    symbols.push(new FiguredBass.BassSymbol(3, undefined))
 
-    var three = new FiguredBass.BassSymbol(3,undefined)
-    var five = new FiguredBass.BassSymbol(5,undefined)
+    var three = new FiguredBass.BassSymbol(3, undefined)
+    var five = new FiguredBass.BassSymbol(5, undefined)
 
-    var bassElement = new FiguredBass.FiguredBassElement(new Note.Note(0,0,0), symbols)
+    var bassElement = new FiguredBass.FiguredBassElement(new Note.Note(0, 0, 0), symbols)
 
     bassTranslator.completeFiguredBassSymbol(bassElement)
 
     return TestUtils.assertEqualsPrimitives(bassElement.symbols.length, 2)
-    && TestUtils.assertEqualsObjects(three, bassElement.symbols[0])
-    && TestUtils.assertEqualsObjects(five, bassElement.symbols[1])
+        && TestUtils.assertEqualsObjects(three, bassElement.symbols[0])
+        && TestUtils.assertEqualsObjects(five, bassElement.symbols[1])
 }
 
 testSuite.addTest(new TestUtils.UnitTest(() => completeFiguredBassSymbolTest(), "completeFiguredBassSymbol function test"));
@@ -100,7 +99,32 @@ testSuite.addTest(new TestUtils.UnitTest(() => hasTwoNextThirdsTest([0, 2, 3], f
 testSuite.addTest(new TestUtils.UnitTest(() => hasTwoNextThirdsTest([0, 2, 4], true), "HasTwoNextThirds with normal next thirds"));
 testSuite.addTest(new TestUtils.UnitTest(() => hasTwoNextThirdsTest([1, 3, 6], true), "HasTwoNextThirds with thirds with modulo"));
 
+var addNextNoteTest = (notesNumbers, expectedNotesNumbers, expectedOmit) => {
+    var chordElement = new BassTranslator.ChordElement(notesNumbers, [])
+    bassTranslator.addNextNote(chordElement)
 
+    return TestUtils.assertEqualsObjects(expectedNotesNumbers, chordElement.notesNumbers)
+        && TestUtils.assertEqualsObjects(expectedOmit, chordElement.omit)
+}
+
+testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 2], [0, 2, 4], []), "addNextNoteTest add 4"));
+testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 4], [0, 2, 4], []), "addNextNoteTest add between 5"));
+testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 5], [0, 2, 5], []), "addNextNoteTest add between >5"));
+testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 3], [0, 3, 5], []), "addNextNoteTest add after"));
+testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 2, 4, 6], [0, 2, 4, 6, 8], [2]), "addNextNoteTest add with omit"));
+
+
+var completeUntillTwoNextThirdsTest = (notesNumbers, expectedNotesNumbers, expectedOmit) => {
+    var chordElement = new BassTranslator.ChordElement(notesNumbers, [])
+    bassTranslator.completeUntillTwoNextThirds(chordElement)
+    console.log(chordElement.notesNumbers)
+    return TestUtils.assertEqualsObjects(expectedNotesNumbers, chordElement.notesNumbers)
+        && TestUtils.assertEqualsObjects(expectedOmit, chordElement.omit)
+}
+
+testSuite.addTest(new TestUtils.UnitTest(() => completeUntillTwoNextThirdsTest([0, 2, 4], [0, 2, 4], []), "completeUntillTwoNextThirdsTest nothing to add"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeUntillTwoNextThirdsTest([0], [0, 2, 4], []), "completeUntillTwoNextThirdsTest nothing to add"));
+testSuite.addTest(new TestUtils.UnitTest(() => completeUntillTwoNextThirdsTest([0, 2, 10], [0, 2, 4, 10], []), "completeUntillTwoNextThirdsTest nothing to add"));
 
 
 testSuite.run()

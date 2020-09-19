@@ -200,6 +200,10 @@ function BassTranslator() {
     }
 
     this.hasTwoNextThirds = function (chordElement) {
+        if (chordElement.notesNumbers.length < 3) {
+            return false
+        }
+
         for (var i = 0; i < chordElement.notesNumbers.length; i++) {
 
             var n1 = Utils.mod(chordElement.notesNumbers[i], 7)
