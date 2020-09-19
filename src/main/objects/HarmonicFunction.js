@@ -84,6 +84,12 @@ function HarmonicFunction2(params){
         return res;
     };
 
+    this.isNeapolitan = function () {
+        return this.degree === 2 && this.down
+            && this.functionName === 'S' && this.mode === Consts.MODE.MINOR
+            && this.revolution.baseComponent === "3"
+    };
+
     this.copy = function copy(){
         var args = {
             "functionName" : this.functionName,

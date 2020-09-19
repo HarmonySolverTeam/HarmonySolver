@@ -1,23 +1,28 @@
 function contains(list, obj) {
-
     for (var i = 0; i < list.length; i++) {
         if (list[i] === obj) {
             return true
         }
     }
     return false
-
 }
 
 function containsChordComponent(list, cc) {
-
     for (var i = 0; i < list.length; i++) {
         if (list[i].chordComponentString === cc) {
             return true
         }
     }
     return false
+}
 
+function containsBaseChordComponent(list, cc) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].baseComponent === cc) {
+            return true
+        }
+    }
+    return false
 }
 
 function abs(a) {
