@@ -61,7 +61,7 @@ function parse(input) {
     var measures = []
 
     for (var i = 2; i < lines.length; i++) {
-        if(!lines[i]) continue
+        if(!lines[i] || lines[i].startsWith("//")) continue
         var chords = lines[i].split(";")
         var chords_parsed = []
         for (var j = 0; j < chords.length; j++) {
