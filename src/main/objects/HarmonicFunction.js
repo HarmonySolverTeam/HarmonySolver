@@ -22,7 +22,7 @@ function HarmonicFunction2(params){
     var cm = new ChordComponentManager.ChordComponentManager();
 
     this.functionName = params["functionName"];
-    this.degree = params["degree"] === undefined ? getDegreeFromFuntionName(this.functionName) : params["degree"];
+    this.degree = params["degree"] === undefined ? getDegreeFromFunctionName(this.functionName) : params["degree"];
     this.position = params["position"];
     this.revolution = params["revolution"] === undefined ? (params["down"] === true ? "1>" : "1") : params["revolution"];
     this.delay = params["delay"] === undefined ? [] : params["delay"];
@@ -43,7 +43,7 @@ function HarmonicFunction2(params){
     for(i=0; i<this.omit.length; i++) this.omit[i] = cm.chordComponentFromString(this.omit[i]);
 
 
-    function getDegreeFromFuntionName(functionName){
+    function getDegreeFromFunctionName(functionName){
         return {"T":1, "S":4, "D":5}[functionName];
     }
 
@@ -64,7 +64,7 @@ function HarmonicFunction2(params){
         else {
             basicChordComponents = [chordComponentManager.chordComponentFromString("1>"),
                 chordComponentManager.chordComponentFromString("3>"),
-                chordComponentManager.chordComponentFromString("5")];
+                chordComponentManager.chordComponentFromString("5>")];
         }
 
         return basicChordComponents;
@@ -75,6 +75,7 @@ function HarmonicFunction2(params){
         && !Utils.contains(this.extra, cm.chordComponentFromString("7"))) this.extra.push(cm.chordComponentFromString("7"));
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
+    if(Utils.contains(this.extra, cm.chordComponentFromString("5<")) || Utils.contains(this.extra, cm.chordComponentFromString("5>"))) this.omit.push(cm.chordComponentFromString("5"));
 
     this.getPossibleToDouble = function () {
         var res = this.getBasicChordComponents();
