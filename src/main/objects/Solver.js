@@ -90,6 +90,7 @@ function Solver(exercise, bassLine, sopranoLine){
             for(var x = 0; x<curr_index; x++) log += "   "
             if(curr_index < 6) Utils.log("Log", log + curr_index)
         }
+        if (DEBUG) Utils.log(JSON.stringify(chords))
 
         for (var j = 0; j < chords.length; j++){
             // console.log(chords[j].toString())

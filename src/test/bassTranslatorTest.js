@@ -9,7 +9,6 @@ var testSuite = new TestUtils.TestSuite("BassTranslator and FiguredBass tests");
 
 var bassTranslator = new BassTranslator.BassTranslator()
 
-//TODO CHANGE THIS!!!!
 const handleAlterationsTest1 = () => {
 
     var harmonicFunctions = JSON.parse('[[{"functionName":"T","degree":1,"revolution":"1","extra":[],"omit":[],"down":false},{"functionName":"D","degree":5,"revolution":"1","extra":[],"omit":[],"down":false},{"functionName":"T","degree":1,"revolution":"5","extra":[],"omit":[],"down":false},{"functionName":"S","degree":4,"revolution":"3","extra":[],"omit":[],"down":false},{"functionName":"T","degree":1,"revolution":"1","extra":[],"omit":[],"down":false}]]')
@@ -20,9 +19,9 @@ const handleAlterationsTest1 = () => {
 
     bassTranslator.handleAlterations(harmonicFunctions, chordElements, mode, meter, durations)
 
-    console.log(JSON.stringify(harmonicFunctions))
+    //console.log(JSON.stringify(harmonicFunctions))
 
-    return TestUtils.assertEqualsPrimitives(0, 0)
+    return TestUtils.assertEqualsPrimitives(harmonicFunctions[0][2].mode, "minor")
 }
 
 testSuite.addTest(new TestUtils.UnitTest(handleAlterationsTest1, "handleAlterationsTest1"))
@@ -126,5 +125,16 @@ testSuite.addTest(new TestUtils.UnitTest(() => completeUntillTwoNextThirdsTest([
 testSuite.addTest(new TestUtils.UnitTest(() => completeUntillTwoNextThirdsTest([0], [0, 2, 4], []), "completeUntillTwoNextThirdsTest nothing to add"));
 testSuite.addTest(new TestUtils.UnitTest(() => completeUntillTwoNextThirdsTest([0, 2, 10], [0, 2, 4, 10], []), "completeUntillTwoNextThirdsTest nothing to add"));
 
+var getValidFunctionsTest = (primeNote, key, expected) => {
+    var chordElement = new BassTranslator.ChordElement([], [])
+    chordElement.primeNote = primeNote
+    return TestUtils.assertEqualsObjects(bassTranslator.getValidFunctions(chordElement, key), expected)
+}
+
+testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(0,'C', ["T"]), "getValidFunctions C C major"));
+testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(5,'C', ["T", "S"]), "getValidFunctions A C major"));
+testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(5,'a', ["T"]), "getValidFunctions A a minor"));
+testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(6,'Ab', ["S"]), "getValidFunctions H Ab major"));
+testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(2,'f', ["D"]), "getValidFunctions E f minor"));
 
 testSuite.run()

@@ -5,6 +5,8 @@
 .import "./Consts.js" as Consts
 .import "./Errors.js" as Errors
 
+var DEBUG = true;
+
 function ChordElement(notesNumbers, omit, bassElement) {
     this.notesNumbers = notesNumbers
     this.omit = omit
@@ -157,8 +159,10 @@ function BassTranslator() {
 
     this.completeFiguredBassSymbol = function (element) {
 
-        Utils.log("element.symbols.length: " + element.symbols.length)
-        Utils.log("element.symbols before: " + element.symbols)
+        if (DEBUG) {
+            Utils.log("element.symbols.length: " + element.symbols.length)
+            Utils.log("element.symbols before: " + element.symbols)
+        }
 
         var bassNumbers = []
         for (var i = 0; i < element.symbols.length; i++){
@@ -166,11 +170,13 @@ function BassTranslator() {
                 bassNumbers.push(element.symbols[i].component)
             }
         }
-        Utils.log("BassNumbers:", bassNumbers)
+        if (DEBUG) {
+            Utils.log("BassNumbers:", bassNumbers)
+        }
 
         var completedBassNumbers = this.completeFiguredBassNumbers(bassNumbers)
 
-        Utils.log("completedBassNumbers:", completedBassNumbers)
+        if (DEBUG) Utils.log("completedBassNumbers:", completedBassNumbers)
 
         if (bassNumbers.length !== completedBassNumbers.length) {
             for (var i = 0; i < completedBassNumbers.length; i++) {
@@ -258,7 +264,7 @@ function BassTranslator() {
             scaleNotes.push(Utils.mod(chordElement.notesNumbers[i], 7))
         }
 
-        Utils.log( "Scale Notes: ", scaleNotes.toString())
+        if (DEBUG) Utils.log( "Scale Notes: ", scaleNotes.toString())
 
         for (var i = 0; i < scaleNotes.length; i++) {
             var note = scaleNotes[i]
@@ -280,17 +286,17 @@ function BassTranslator() {
         } else {
             chordElement.primeNote = scaleNotes[0]
         }
-        Utils.log("Prime note: " + chordElement.primeNote)
+        if (DEBUG) Utils.log("Prime note: " + chordElement.primeNote)
     }
 
     this.getValidFunctions = function (chordElement, key) {
             var primeNote = chordElement.primeNote
-        Utils.log("Chordelement:",chordElement)
-        Utils.log("key: " + key)
+        if (DEBUG) Utils.log("Chordelement:",chordElement)
+        if (DEBUG) Utils.log("key: " + key)
 
             primeNote -= Consts.keyStrBase[key]
-        Utils.log("primeNote: " + primeNote)
-        Utils.log("Consts.keyStrBase[key]: " + Consts.keyStrBase[key])
+        if (DEBUG) Utils.log("primeNote: " + primeNote)
+        if (DEBUG) Utils.log("Consts.keyStrBase[key]: " + Consts.keyStrBase[key])
 
         primeNote = Utils.mod(primeNote, 7)
             switch (primeNote) {
@@ -397,7 +403,7 @@ function BassTranslator() {
 
             var functionName = functions[i]
 
-            var degree = chordElement.primeNote + 1
+            var degree = chordElement.primeNote - Consts.keyStrBase[key] + 1
             if (mode === Consts.MODE.MINOR) {
                 degree += 2;
                 degree = Utils.mod(degree, 7);
@@ -440,19 +446,19 @@ function BassTranslator() {
 
         for (var i = 0; i < bassElements.length; i++) {
 
-            Utils.log("Bass elements before complete:", bassElements[i])
+            if (DEBUG) Utils.log("Bass elements before complete:", bassElements[i])
             this.completeFiguredBassSymbol(bassElements[i])
-            Utils.log("Bass elements after complete ", bassElements[i])
-            Utils.log("element.symbols after: " + bassElements[i].symbols)
+            if (DEBUG) Utils.log("Bass elements after complete ", bassElements[i])
+            if (DEBUG) Utils.log("element.symbols after: " + bassElements[i].symbols)
 
 
             var chordElement = this.buildChordElement(bassElements[i])
-            Utils.log("Chord element ", chordElement)
+            if (DEBUG) Utils.log("Chord element ", chordElement)
 
             this.completeUntillTwoNextThirds(chordElement)
 
             this.findPrime(chordElement)
-            Utils.log("Chord element:",chordElement)
+            if (DEBUG) Utils.log("Chord element:",chordElement)
 
             var harmFunction = this.createHarmonicFunctionOrFunctions(chordElement,
                 figuredBassExercise.mode,
@@ -461,7 +467,7 @@ function BassTranslator() {
 
             bassElements[i].bassNote.chordComponent = parseInt(harmFunction[0].revolution)
 
-            Utils.log("Harmonic function:",harmFunction)
+            if (DEBUG) Utils.log("Harmonic function:",harmFunction)
 
             harmonicFunctions.push(harmFunction)
             chordElements.push(chordElement)
@@ -476,19 +482,19 @@ function BassTranslator() {
         var functions = chordElementsAndHarmonicFunctions[1]
         var elements = chordElementsAndHarmonicFunctions[0]
 
-        Utils.log("Harmonic functions before split:",functions)
+        if (DEBUG) Utils.log("Harmonic functions before split:",functions)
         return [elements, this.makeChoiceAndSplit(functions)]
     }
 
 
     this.handleAlterations = function (harmonicFunctions, chordElements, mode, meter, durations) {
 
-          Utils.log("Handle Alterations")
-          Utils.log("harmonicFunctions:", JSON.stringify(harmonicFunctions))
-          Utils.log("chordElements:", JSON.stringify(chordElements))
-          Utils.log("mode:", JSON.stringify(mode))
-          Utils.log("meter:", JSON.stringify(meter))
-          Utils.log("durations:", JSON.stringify(durations))
+        if (DEBUG) Utils.log("Handle Alterations")
+        if (DEBUG) Utils.log("harmonicFunctions:", JSON.stringify(harmonicFunctions))
+        if (DEBUG) Utils.log("chordElements:", JSON.stringify(chordElements))
+        if (DEBUG) Utils.log("mode:", JSON.stringify(mode))
+        if (DEBUG) Utils.log("meter:", JSON.stringify(meter))
+        if (DEBUG) Utils.log("durations:", JSON.stringify(durations))
 
         for (var i = 0; i < harmonicFunctions[0].length; i++) {
 
@@ -586,7 +592,7 @@ function BassTranslator() {
         var harmonicFunctions = chordElementsAndHarmonicFunctions[1]
         var chordElements = chordElementsAndHarmonicFunctions[0]
 
-        Utils.log("Harmonic functions after split",harmonicFunctions)
+        if (DEBUG) Utils.log("Harmonic functions after split",harmonicFunctions)
 
         var key = figuredBassExercise.mode === Consts.MODE.MAJOR ? figuredBassExercise.key : figuredBassExercise.key.toLowerCase()
 
