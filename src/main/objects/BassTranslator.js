@@ -345,7 +345,7 @@ function BassTranslator() {
 
     }
 
-    this.getValidPositionAndRevolution = function (chordElement) {
+    this.getValidPositionAndRevolution = function (chordElement, mode, functionName) {
 
         var revolution = 1
 
@@ -356,6 +356,11 @@ function BassTranslator() {
         while (bass !== prime) {
             bass = Utils.mod((bass - 1), 7)
             revolution++
+        }
+
+        if (mode === Consts.MODE.MINOR && revolution === 3
+            && functionName !== Consts.FUNCTION_NAMES.DOMINANT) {
+            revolution = "3>"
         }
 
         var position = this.getValidPosition(chordElement)
@@ -404,12 +409,8 @@ function BassTranslator() {
             var functionName = functions[i]
 
             var degree = chordElement.primeNote - Consts.keyStrBase[key] + 1
-            if (mode === Consts.MODE.MINOR) {
-                degree += 2;
-                degree = Utils.mod(degree, 7);
-            }
 
-            var posAndRev = this.getValidPositionAndRevolution(chordElement)
+            var posAndRev = this.getValidPositionAndRevolution(chordElement, mode, functionName)
 
             var position = posAndRev[0]
             var revolution = posAndRev[1].toString()
@@ -422,7 +423,7 @@ function BassTranslator() {
 
             var mode1 = undefined
 
-            if (functions[i] === "D") {
+            if (functions[i] === Consts.FUNCTION_NAMES.DOMINANT) {
                 mode1 = Consts.MODE.MAJOR
             } else {
                 mode1 = mode
@@ -435,8 +436,6 @@ function BassTranslator() {
         return ret
     }
 
-//TODO zmienić żeby 3 to było 3 z tonacji czy to z molowej czy to z durowej
-    //TODO krzyżyki i bvemole tylko dla jednej nuty
     this.convertToFunctions = function (figuredBassExercise) {
 
         var harmonicFunctions = []
@@ -508,21 +507,27 @@ function BassTranslator() {
                     var number = chordElements[i].bassElement.symbols[j].component !== undefined ? chordElements[i].bassElement.symbols[j].component : 3;
                     var alteration = undefined
 
-                    var baseNoteToAlter = Utils.mod(number + chordElements[i].bassElement.bassNote.baseNote, 7)
+                    var baseNoteToAlter = Utils.mod(number + chordElements[i].bassElement.bassNote.baseNote - 1, 7)
+                    Utils.log("baseNoteToAlter: " + baseNoteToAlter)
+
                     if (chordElements[i].bassElement.symbols[j].alteration === Consts.ALTERATIONS.NATURAL) {
                         //nothing?
                     } else if (chordElements[i].bassElement.symbols[j].alteration === Consts.ALTERATIONS.SHARP) {
-                        alteration = ">"
-                    } else {
                         alteration = "<"
+                    } else {
+                        alteration = ">"
                     }
+                    Utils.log("Alteration: " + alteration)
+
+                    var componentToAlter = Utils.mod(baseNoteToAlter - chordElements[i].primeNote, 7) + 1
+                    Utils.log("componentToAlter: " + componentToAlter)
 
                     if (alteration !== undefined) {
-                        toOmit.push(baseNoteToAlter)
-                        toExtra.push(alteration + baseNoteToAlter)
+                        toOmit.push(componentToAlter)
+                        toExtra.push(componentToAlter + alteration)
                     } else {
                         for (var a = 0; a < toOmit.length; a++) {
-                            if (toOmit[a] === baseNoteToAlter) {
+                            if (toOmit[a] === componentToAlter) {
                                 toOmit.splice(a, 1)
                                 toExtra.splice(a, 1)
                                 break
@@ -536,10 +541,12 @@ function BassTranslator() {
             //Utils.log("toExtra", JSON.stringify(toExtra))
 
             if (toOmit.length === 1 && Utils.contains(toOmit, 3)) {
-                if (mode === Consts.MODE.MINOR && toExtra[0] === ">3") {
+                if (mode === Consts.MODE.MINOR && toExtra[0] === "3<") {
+                    Utils.log("Changing chord mode to major")
                     harmonicFunctions[0][i].mode = Consts.MODE.MAJOR;
                 }
-                if (mode === Consts.MODE.MAJOR && toExtra[0] === "<3") {
+                if (mode === Consts.MODE.MAJOR && toExtra[0] === "3>") {
+                    Utils.log("Changing chord mode to minor")
                     harmonicFunctions[0][i].mode = Consts.MODE.MINOR;
                 }
             } else {
