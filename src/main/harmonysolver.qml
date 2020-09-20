@@ -229,10 +229,11 @@ MuseScore {
                     Utils.log(durations[i][0]/durations[i][1])
                     sum += durations[i][0]/durations[i][1];
                 }
-                return Math.round(sum);
+                return Math.round(sum/(solution.exercise.meter[0]/solution.exercise.meter[1]));
             }
 
             var sum = countMeasures(durations);
+            Utils.log(JSON.stringify(sum))
             curScore.appendMeasures(sum - curScore.nmeasures)
         }
         else{
