@@ -15,6 +15,22 @@ function Note(pitch, baseNote, chordComponent) {
         return "Pitch: " + this.pitch + " BaseNote: " + this.baseNote + " ChordComponent: " + this.chordComponent.toString();
     };
 
+    this.isUpperThan = function(other){
+        return this.pitch > other.pitch;
+    }
+
+    this.isLowerThan = function(other){
+        return this.pitch < other.pitch;
+    }
+
+    this.chordComponentEquals = function(chordComponentString){
+        return this.chordComponent.chordComponentString === chordComponentString;
+    }
+
+    this.baseChordComponentEquals = function(baseComponentString){
+        return this.chordComponent.baseComponent === baseComponentString;
+    }
+
     this.equals = function(other){
         return this.pitch === other.pitch;
     }
