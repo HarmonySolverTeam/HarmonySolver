@@ -80,7 +80,7 @@ function oneDirection(prevChord, currentChord){
 
 //TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka | problem z tą samą funkcją - dziwne skoki w basic
 function forbiddenJump(prevChord, currentChord, notNeighbourChords){
-    if(!notNeighbourChords && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
+    // if(!notNeighbourChords && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     function getBaseDistance(first, second ){
         var i = 0
         while(first!==second) {
@@ -116,7 +116,10 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
     for(var i = 0; i < 4; i++){
         //TODO upewnić się jak ze skokami jest naprawdę, basu chyba ta zasada się nie tyczy
         // oraz dla harmonizacji sopranu / ustalonego basu to pominąć trzeba
-        if(Utils.abs(currentChord.notes[i].pitch-prevChord.notes[i].pitch)>9) return -1;
+        if(Utils.abs(currentChord.notes[i].pitch-prevChord.notes[i].pitch)>9 && !(notNeighbourChords && i === 0)) {
+            if(DEBUG) Utils.log("Forbidden jump in voice "+i, prevChord + "->" + currentChord);
+            return -1;
+        }
         if(isAltered(prevChord.notes[i],currentChord.notes[i])) {
             if(DEBUG) Utils.log("Altered Interval in voice "+i, prevChord + "->" + currentChord);
             return -1;
@@ -133,7 +136,7 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
             (prevPrevChord.notes[i].pitch<prevChord.notes[i].pitch && prevChord.notes[i].pitch<currentChord.notes[i].pitch))
             && forbiddenJump(prevPrevChord, currentChord, true) === -1){
             if(DEBUG) {
-                Utils.log("forbiddenSumJump", prevPrevChord + " -> " + prevChord + " -> " + currentChord);
+                Utils.log("forbiddenSumJump in voice "+i, prevPrevChord + " -> " + prevChord + " -> " + currentChord);
             }
             return -1;
         }
@@ -238,7 +241,7 @@ function checkConnection(prevChord, currentChord){
         }
 
         // todo 7 na 1, chyba inaczej
-        if(currentChord.harmonicFunction.degree - prevChord.harmonicFunction.degree === 1) {
+        if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T" && currentChord.harmonicFunction.degree - prevChord.harmonicFunction.degree === 1) {
             couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
@@ -282,6 +285,9 @@ function checkConnection(prevChord, currentChord){
             }
         }
     }
+    if(prevChord.harmonicFunction.functionName === "S" && currentChord.harmonicFunction.functionName === "D"){
+        //todo najbliższą drogą
+    }
     if(prevChord.harmonicFunction.functionName === "D" && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChord.harmonicFunction.functionName === "S")
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
 
@@ -297,8 +303,8 @@ function checkDelayCorrectness(prevChord, currentChord){
         var prevComponent = delay[i][0];
         var currentComponent = delay[i][1];
         for(var j=0; j<4; j++){
-            if(prevChord.notes[j].chordComponent === prevComponent) {
-                if(currentChord.notes[j].chordComponent !== currentComponent){
+            if(prevChord.notes[j].chordComponent.chordComponentString === prevComponent.chordComponentString) {
+                if(currentChord.notes[j].chordComponent.chordComponentString !== currentComponent.chordComponentString){
                     if(DEBUG) Utils.log("delay error"+i+" "+j, prevChord + " -> " + currentChord);
                     return -1;
                 }
