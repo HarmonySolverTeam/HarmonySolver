@@ -37,6 +37,9 @@ function mod(a, b){
     return a % b
 }
 
+function isDefined(x){
+    return x !== undefined
+}
 
 function log(message, longMessage){
     var lineAndSource = ((new Error).stack.split("\n")[1].split("/")).reverse()[0]

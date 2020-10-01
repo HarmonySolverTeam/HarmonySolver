@@ -113,8 +113,15 @@ function checkIllegalDoubled3(chord){
 }
 
 function checkConnection(prevChord, currentChord){
+    var currentChordTempFunctionName = currentChord.harmonicFunction.functionName;
+    if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
+        if(Utils.isDefined(prevChord.harmonicFunction.key))
+            currentChordTempFunctionName = "T";
+        else return 0;
+    }
+
     var couldHaveDouble3 = false;
-    if((prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T") ||
+    if((prevChord.harmonicFunction.functionName === "D" && currentChordTempFunctionName === "T") ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
         if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChord.harmonicFunction.degree)) {
             var dominantVoiceWith3 = -1;
