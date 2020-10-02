@@ -14,7 +14,12 @@
   <!ENTITY degree_begin "m:0:1 ">
   <!ENTITY degree_end "m:0:-1 ">
 
-  <!ENTITY react_1 "1 m:-1:0 ">
+  <!ENTITY delay_begin "m:0:-6">
+  <!ENTITY delay_end "m:0:6 " >
+
+  <!ENTITY dash "m:0:-2.5 floor m:-1:0 floor m:1:2.5 ">
+
+  <!ENTITY react_1 "1 m:-1.5:0 ">
   <!ENTITY react_2 "2 m:-2:0 ">
   <!ENTITY react_3 "3 m:-2:0 ">
   <!ENTITY react_4 "4 m:-2:0 ">
@@ -38,68 +43,70 @@
   <!ENTITY degVII "&degree_begin; V I I  &degree_end; ">
 
   <!ENTITY p1 "&pos_begin; &react_1; &pos_end; ">
-  <!ENTITY p1x "&pos_begin; &react_1; &lower; &pos_end; ">
-  <!ENTITY p1y "&pos_begin; &react_1; &greater; &pos_end; ">
+  <!ENTITY p1x "&pos_begin; &react_1; &react_lower; &pos_end; ">
+  <!ENTITY p1y "&pos_begin; &react_1; &react_greater; &pos_end; ">
   <!ENTITY p3 "&pos_begin; &react_3; &pos_end; ">
-  <!ENTITY p3x "&pos_begin; &react_3; &lower; &pos_end; ">
-  <!ENTITY p3y "&pos_begin; &react_3; &greater; &pos_end; ">
+  <!ENTITY p3x "&pos_begin; &react_3; &react_lower; &pos_end; ">
+  <!ENTITY p3y "&pos_begin; &react_3; &react_greater; &pos_end; ">
   <!ENTITY p5 "&pos_begin; &react_5; &pos_end; ">
-  <!ENTITY p5x "&pos_begin; &react_5; &lower; &pos_end; ">
-  <!ENTITY p5y "&pos_begin; &react_5; &greater; &pos_end; ">
+  <!ENTITY p5x "&pos_begin; &react_5; &react_lower; &pos_end; ">
+  <!ENTITY p5y "&pos_begin; &react_5; &react_greater; &pos_end; ">
   <!ENTITY p6 "&pos_begin; &react_6; &pos_end; ">
-  <!ENTITY p6x "&pos_begin; &react_6; &lower; &pos_end; ">
-  <!ENTITY p6y "&pos_begin; &react_6; &greater; &pos_end; ">
+  <!ENTITY p6x "&pos_begin; &react_6; &react_lower; &pos_end; ">
+  <!ENTITY p6y "&pos_begin; &react_6; &react_greater; &pos_end; ">
   <!ENTITY p7 "&pos_begin; &react_7; &pos_end; ">
-  <!ENTITY p7x "&pos_begin; &react_7; &lower; &pos_end; ">
-  <!ENTITY p7y "&pos_begin; &react_7; &greater; &pos_end; ">
+  <!ENTITY p7x "&pos_begin; &react_7; &react_lower; &pos_end; ">
+  <!ENTITY p7y "&pos_begin; &react_7; &react_greater; &pos_end; ">
   <!ENTITY p8 "&pos_begin; &react_8; &pos_end; ">
-  <!ENTITY p8x "&pos_begin; &react_8; &lower; &pos_end; ">
-  <!ENTITY p8y "&pos_begin; &react_8; &greater; &pos_end; ">
+  <!ENTITY p8x "&pos_begin; &react_8; &react_lower; &pos_end; ">
+  <!ENTITY p8y "&pos_begin; &react_8; &react_greater; &pos_end; ">
   <!ENTITY p9 "&pos_begin; &react_9; &pos_end; ">
-  <!ENTITY p9x "&pos_begin; &react_9; &lower; &pos_end; ">
-  <!ENTITY p9y "&pos_begin; &react_9; &greater;&pos_end; ">
+  <!ENTITY p9x "&pos_begin; &react_9; &react_lower; &pos_end; ">
+  <!ENTITY p9y "&pos_begin; &react_9; &react_greater;&pos_end; ">
 
   <!ENTITY r1 "&rev_begin; &react_1; &rev_end; ">
-  <!ENTITY r1x "&rev_begin; &react_1; &lower; &rev_end; ">
-  <!ENTITY r1y "&rev_begin; &react_1; &greater; &rev_end; ">
+  <!ENTITY r1x "&rev_begin; &react_1; &react_lower; &rev_end; ">
+  <!ENTITY r1y "&rev_begin; &react_1; &react_greater; &rev_end; ">
   <!ENTITY r3 "&rev_begin; &react_3; &rev_end; ">
-  <!ENTITY r3x "&rev_begin; &react_3; &lower; &rev_end; ">
-  <!ENTITY r3y "&rev_begin; &react_3; &greater; &rev_end; ">
+  <!ENTITY r3x "&rev_begin; &react_3; &react_lower; &rev_end; ">
+  <!ENTITY r3y "&rev_begin; &react_3; &react_greater; &rev_end; ">
   <!ENTITY r5 "&rev_begin; &react_5; &rev_end; ">
-  <!ENTITY r5x "&rev_begin; &react_5; &lower; &rev_end; ">
-  <!ENTITY r5y "&rev_begin; &react_5; &greater; &rev_end; ">
+  <!ENTITY r5x "&rev_begin; &react_5; &react_lower; &rev_end; ">
+  <!ENTITY r5y "&rev_begin; &react_5; &react_greater; &rev_end; ">
   <!ENTITY r6 "&rev_begin; &react_6; &rev_end;">
-  <!ENTITY r6x "&rev_begin; &react_6; &lower; &rev_end;">
-  <!ENTITY r6y "&rev_begin; &react_6; &greater; &rev_end;">
+  <!ENTITY r6x "&rev_begin; &react_6; &react_lower; &rev_end;">
+  <!ENTITY r6y "&rev_begin; &react_6; &react_greater; &rev_end;">
   <!ENTITY r7 "&rev_begin; &react_7; &rev_end; ">
-  <!ENTITY r7x "&rev_begin; &react_7; &lower; &rev_end; ">
-  <!ENTITY r7y "&rev_begin; &react_7; &greater; &rev_end; ">
+  <!ENTITY r7x "&rev_begin; &react_7; &react_lower; &rev_end; ">
+  <!ENTITY r7y "&rev_begin; &react_7; &react_greater; &rev_end; ">
   <!ENTITY r9 "&rev_begin; &react_9; &rev_end; ">
-  <!ENTITY r9x "&rev_begin; &react_9; &lower; &rev_end; ">
-  <!ENTITY r9y "&rev_begin; &react_9; &greater; &rev_end; ">
+  <!ENTITY r9x "&rev_begin; &react_9; &react_lower; &rev_end; ">
+  <!ENTITY r9y "&rev_begin; &react_9; &react_greater; &rev_end; ">
 
   <!ENTITY e6 "&extr_begin; &react_6; &extr_end; ">
-  <!ENTITY e6x "&extr_begin; &react_6; &lower; &extr_end; ">
-  <!ENTITY e6y "&extr_begin; &react_6; &greater; &extr_end; ">
+  <!ENTITY e6x "&extr_begin; &react_6; &react_lower; &extr_end; ">
+  <!ENTITY e6y "&extr_begin; &react_6; &react_greater; &extr_end; ">
   <!ENTITY e7 "&extr_begin; &react_7; &extr_end; ">
-  <!ENTITY e7x "&extr_begin; &react_7; &lower; &extr_end; ">
-  <!ENTITY e7y "&extr_begin; &react_7; &greater; &extr_end; ">
+  <!ENTITY e7x "&extr_begin; &react_7; &react_lower; &extr_end; ">
+  <!ENTITY e7y "&extr_begin; &react_7; &react_greater; &extr_end; ">
   <!ENTITY e8 "&extr_begin; &react_8; &extr_end; ">
-  <!ENTITY e8x "&extr_begin; &react_8; &lower; &extr_end; ">
-  <!ENTITY e8y "&extr_begin; &react_8; &greater; &extr_end; ">
+  <!ENTITY e8x "&extr_begin; &react_8; &react_lower; &extr_end; ">
+  <!ENTITY e8y "&extr_begin; &react_8; &react_greater; &extr_end; ">
   <!ENTITY e9 "&extr_begin; &react_9; &extr_end; ">
-  <!ENTITY e9x "&extr_begin; &react_9; &lower; &extr_end; ">
-  <!ENTITY e9y "&extr_begin; &react_9; &greater; &extr_end; ">
+  <!ENTITY e9x "&extr_begin; &react_9; &react_lower; &extr_end; ">
+  <!ENTITY e9y "&extr_begin; &react_9; &react_greater; &extr_end; ">
 
   <!ENTITY om1 "m:2:1 1 m:-2:-1 / m:2:1 ">
-  <!ENTITY om1x "m:2:1 1 m:-2:-1 / m:2:1 &lower; ">
-  <!ENTITY om1y "m:2:1 1 m:-2:-1 / m:2:1 &greater; ">
+  <!ENTITY om1x "m:2:1 1 m:-2:-1 / m:2:1 &react_lower; ">
+  <!ENTITY om1y "m:2:1 1 m:-2:-1 / m:2:1 &react_greater; ">
   <!ENTITY om3 "m:2:1 3 m:-2.5:-1 / m:2.5:1 ">
-  <!ENTITY om3x "m:2:1 3 m:-2.5:-1 / m:2.5:1 &lower; ">
-  <!ENTITY om3y "m:2:1 3 m:-2.5:-1 / m:2.5:1 &greater; ">
+  <!ENTITY om3x "m:2:1 3 m:-2.5:-1 / m:2.5:1 &react_lower; ">
+  <!ENTITY om3y "m:2:1 3 m:-2.5:-1 / m:2.5:1 &react_greater; ">
   <!ENTITY om5 "m:2:1 5 m:-2.5:-1 / m:2.5:1 ">
-  <!ENTITY om5x "m:2:1 5 m:-2.5:-1 / m:2.5:1 &lower; ">
-  <!ENTITY om5y "m:2:1 5 m:-2.5:-1 / m:2.5:1 &greater; ">
+  <!ENTITY om5x "m:2:1 5 m:-2.5:-1 / m:2.5:1 &react_lower; ">
+  <!ENTITY om5y "m:2:1 5 m:-2.5:-1 / m:2.5:1 &react_greater; ">
+
+  <!ENTITY del4-3 "&delay_begin; 4 m:1:0 &dash; 3 m:-1:0 &deley_end; ">
 
   <!ENTITY down "m:0:1 &down_string; m:0:-1 ">
 
@@ -110,6 +117,9 @@
 
   <!ENTITY lower "m:1.5:-1 lower m:-1.5:1 ">
   <!ENTITY greater "m:1.5:-1 greater m:-1.5:1 ">
+
+  <!ENTITY react_lower "m:1.5:-1 lower m:-4:1 ">
+  <!ENTITY react_greater "m:1.5:-1 greater m:-4:1 ">
 
   ]>
 <museScore version="1.11">
@@ -166,6 +176,8 @@
 
     <sym code="0xba" name="moll_char"/>
 
+    <sym code="0x5f" name="floor"/>
+
   </font>
 
   <font id="3" family="MuseJazz Text">
@@ -192,4 +204,7 @@
   <renderRoot> :n :a </renderRoot>
   <renderBase> / :n :a </renderBase>
 
-
+    <chord id="1">
+      <name>del4-3</name>
+      <render>&del4-3;</render>
+    </chord>
