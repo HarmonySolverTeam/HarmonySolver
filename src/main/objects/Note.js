@@ -31,8 +31,15 @@ function Note(pitch, baseNote, chordComponent) {
         return this.chordComponent.baseComponent === baseComponentString;
     }
 
-    this.equals = function(other){
+    // other is of type Note
+    this.equalPitches = function(other){
         return this.pitch === other.pitch;
+    }
+
+    this.equals = function(other){
+        return this.pitch === other.pitch
+            && this.baseNote === other.baseNote
+            && this.chordComponent.equals(other.chordComponent);
     }
 
 }
