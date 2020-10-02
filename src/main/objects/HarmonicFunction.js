@@ -18,6 +18,7 @@ function HarmonicFunction2(params){
     // down                 true or false
     // system               "open" | "close" | undefined
     // mode                 "major" | "minor"
+    // key                  string, f.e. "C#", "g#", "Ab"
 
     var cm = new ChordComponentManager.ChordComponentManager();
 
@@ -31,6 +32,7 @@ function HarmonicFunction2(params){
     this.down = params["down"] === undefined ? false : params["down"];
     this.system = params["system"];
     this.mode = params["mode"] === undefined ? Consts.MODE.MAJOR : params["mode"];
+    this.key = params["key"];
 
     // mapping to ChordComponent
     if(this.position !== undefined) this.position = cm.chordComponentFromString(this.position);
@@ -100,13 +102,17 @@ function HarmonicFunction2(params){
             "system" : this.system,
             "mode" : this.mode,
             "omit" : this.omit.map(function (cc) { return cc.chordComponentString; }),
-            "extra" : this.extra.map(function (cc) { return cc.chordComponentString; })
+            "extra" : this.extra.map(function (cc) { return cc.chordComponentString; }),
+            "key" : this.key
         };
         return new HarmonicFunction2(args);
     }
 
     this.equals = function (other) {
-        return this.functionName === other.functionName && this.degree === other.degree && this.down === other.down
+        return this.functionName === other.functionName
+            && this.degree === other.degree
+            && this.down === other.down
+            && this.key === other.key
     };
 
     this.toString = function () {
@@ -119,7 +125,8 @@ function HarmonicFunction2(params){
             "Omit: " + this.omit + " " +
             "Down: " + this.down + " " +
             "System: " + this.system + " " +
-            "Mode: " + this.mode
+            "Mode: " + this.mode +
+            "Key: " + this.key
     };
 
     if(DEBUG) {
@@ -128,7 +135,7 @@ function HarmonicFunction2(params){
     }
 }
 
-function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode) {
+function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key) {
     var args = {
         "functionName" : functionName,
         "degree" : degree,
@@ -139,7 +146,8 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
         "omit" : omit,
         "down" : down,
         "system" : system,
-        "mode" : mode
+        "mode" : mode,
+        "key" : key
     };
     HarmonicFunction2.call(this, args);
 }
