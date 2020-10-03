@@ -135,7 +135,7 @@ function checkConnection(prevChord, currentChord){
                 }
             }
             if (dominantVoiceWith3 > -1 &&
-                !prevChord.notes[dominantVoiceWith3].equals(currentChord.notes[dominantVoiceWith3]) &&
+                !prevChord.notes[dominantVoiceWith3].equalPitches(currentChord.notes[dominantVoiceWith3]) &&
                 !Utils.containsChordComponent(currentChord.harmonicFunction.omit, "1") &&
                 !currentChord.notes[dominantVoiceWith3].chordComponentEquals("1")) return -1;
 
@@ -148,7 +148,7 @@ function checkConnection(prevChord, currentChord){
                     }
                 }
                 if (dominantVoiceWith7 > -1 &&
-                    !prevChord.notes[dominantVoiceWith7].equals(currentChord.notes[dominantVoiceWith7]) &&
+                    !prevChord.notes[dominantVoiceWith7].equalPitches(currentChord.notes[dominantVoiceWith7]) &&
                     !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3")){
                     //rozwiazanie swobodne mozliwe (todo 7 pod 3)
                     if((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
@@ -169,7 +169,7 @@ function checkConnection(prevChord, currentChord){
                         }
                     }
                     if(dominantVoiceWith9 > -1 &&
-                        !prevChord.notes[dominantVoiceWith9].equals(currentChord.notes[dominantVoiceWith9]) &&
+                        !prevChord.notes[dominantVoiceWith9].equalPitches(currentChord.notes[dominantVoiceWith9]) &&
                         !currentChord.notes[dominantVoiceWith9].baseChordComponentEquals("5")) return -1;
                 }
             }
@@ -182,7 +182,7 @@ function checkConnection(prevChord, currentChord){
                     }
                 }
                 if (dominantVoiceWithAlt5 > -1 &&
-                    !prevChord.notes[dominantVoiceWithAlt5].equals(currentChord.notes[dominantVoiceWithAlt5]) &&
+                    !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
                     !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3")) return -1;
                 couldHaveDouble3 = true;
             }
@@ -195,7 +195,7 @@ function checkConnection(prevChord, currentChord){
                     }
                 }
                 if (dominantVoiceWithAlt5 > -1 &&
-                    !prevChord.notes[dominantVoiceWithAlt5].equals(currentChord.notes[dominantVoiceWithAlt5]) &&
+                    !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
                     !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("1")) return -1;
             }
         }
@@ -240,7 +240,7 @@ function checkConnection(prevChord, currentChord){
                     }
                 }
                 if (dominantVoiceWithAlt5 > -1 &&
-                    !prevChord.notes[dominantVoiceWithAlt5].equals(currentChord.notes[dominantVoiceWithAlt5]) &&
+                    !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
                     !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3")) return -1;
             }
         }
@@ -271,7 +271,7 @@ function checkDelayCorrectness(prevChord, currentChord){
     }
     for(var i=0; i<4; i++){
         if(Utils.contains(delayedVoices, i)) continue;
-        if(!prevChord.notes[i].equals(currentChord.notes[i]) && i !== 0) {
+        if(!prevChord.notes[i].equalPitches(currentChord.notes[i]) && i !== 0) {
             if(DEBUG) Utils.log("delay error"+i+" "+j, prevChord + " -> " + currentChord);
             return -1;
         }
