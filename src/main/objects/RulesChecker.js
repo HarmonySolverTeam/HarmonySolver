@@ -113,10 +113,20 @@ function checkIllegalDoubled3(chord){
 }
 
 function checkConnection(prevChord, currentChord){
+    var currentChordTempFunctionName = currentChord.harmonicFunction.functionName;
+    var currentChordTempFunctionDegree = currentChord.harmonicFunction.degree;
+    if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
+        if(Utils.isDefined(prevChord.harmonicFunction.key)) {
+            currentChordTempFunctionName = "T";
+            currentChordTempFunctionDegree = 1;
+        }
+        else return 0;
+    }
+
     var couldHaveDouble3 = false;
-    if((prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T") ||
+    if((prevChord.harmonicFunction.functionName === "D" && currentChordTempFunctionName === "T") ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
-        if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChord.harmonicFunction.degree)) {
+        if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChordTempFunctionDegree)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
                 if (prevChord.notes[i].baseChordComponentEquals("3")) {
@@ -191,7 +201,7 @@ function checkConnection(prevChord, currentChord){
         }
 
         // todo 7 na 1, chyba inaczej
-        if(currentChord.harmonicFunction.degree - prevChord.harmonicFunction.degree === 1) {
+        if(currentChordTempFunctionDegree - prevChord.harmonicFunction.degree === 1) {
             couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
@@ -235,7 +245,7 @@ function checkConnection(prevChord, currentChord){
             }
         }
     }
-    if(prevChord.harmonicFunction.functionName === "D" && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChord.harmonicFunction.functionName === "S")
+    if(prevChord.harmonicFunction.functionName === "D" && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChordTempFunctionName === "S")
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
 
     if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;
