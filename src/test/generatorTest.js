@@ -6,6 +6,7 @@ var Note = require("./objects/Note")
 var TestUtils = require("./TestUtils")
 var ChordComponentManager = require("./objects/ChordComponentManager")
 var Consts = require("./objects/Consts")
+var Utils = require("./objects/Utils")
 
 var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 
@@ -80,5 +81,50 @@ var majorChordInMinorKeyTest = () => {
 };
 
 generatorTestSuite.addTest(new TestUtils.UnitTest(majorChordInMinorKeyTest, "Major chord in minor key generating test"));
+
+var chordInKeyGivenByHarmonicFunctionInMajor = () => {
+    var gen_in_C = new Generator.ChordGenerator("C");
+    var gen_in_D = new Generator.ChordGenerator("D");
+
+    var hf_without_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major");
+    var hf_with_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major", "C");
+
+    var res1 = gen_in_C.generate(hf_without_key);
+    var res2 = gen_in_D.generate(hf_with_key);
+
+    if( !TestUtils.assertEqualsPrimitives(res1.length, res2.length) ) return false;
+
+    var testResult = true;
+    for(var i=0; i<res1.length; i++){
+        testResult = testResult && res1[i].equalsNotes(res2[i]);
+    }
+
+    return testResult;
+};
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(chordInKeyGivenByHarmonicFunctionInMajor, "Generating harmonic function with given major key test"));
+
+var chordInKeyGivenByHarmonicFunctionInMinor = () => {
+    var gen_in_f = new Generator.ChordGenerator("f");
+    var gen_in_B = new Generator.ChordGenerator("B");
+
+    var hf_without_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor");
+    var hf_with_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor", "f");
+
+    var res1 = gen_in_f.generate(hf_without_key);
+    var res2 = gen_in_B.generate(hf_with_key);
+
+    if( !TestUtils.assertEqualsPrimitives(res1.length, res2.length) ) return false;
+
+    var testResult = true;
+    for(var i=0; i<res1.length; i++){
+        testResult = testResult && res1[i].equalsNotes(res2[i]);
+    }
+
+    return testResult;
+};
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(chordInKeyGivenByHarmonicFunctionInMinor, "Generating harmonic function with given minor key test"));
+
 
 generatorTestSuite.run();
