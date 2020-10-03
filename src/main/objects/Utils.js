@@ -25,6 +25,10 @@ function containsBaseChordComponent(list, cc) {
     return false
 }
 
+function isDefined(x) {
+    return x !== undefined;
+}
+
 function abs(a) {
     return a >= 0 ? a : -a;
 }

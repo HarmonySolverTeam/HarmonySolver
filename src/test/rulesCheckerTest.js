@@ -234,15 +234,18 @@ const checkConnectionForModulations = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("S",undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined, undefined);
     var hf2 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7"],["5"],undefined,undefined,undefined, "F");
     var hf3 = new HarmonicFunction.HarmonicFunction("T",undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined, undefined);
+    var hf4 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined, "C");
 
     var ch1 = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(70,6,"7"), new Note.Note(64, 2,"3"), new Note.Note(48,0,"1"), hf2);
     var ch2 = new Chord.Chord(new Note.Note(72, 0,"5"), new Note.Note(69,5,"3"), new Note.Note(65, 3,"1"), new Note.Note(53,3,"1"), hf1);
     var ch3 = new Chord.Chord(new Note.Note(72, 0,"5"), new Note.Note(72,0,"1"), new Note.Note(69, 5,"3"), new Note.Note(53,3,"1"), hf1);
     var ch4 = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(67,4,"5"), new Note.Note(64, 2,"3"), new Note.Note(48,0,"1"), hf3);
+    var ch5 = new Chord.Chord(new Note.Note(74, 1,"5"), new Note.Note(71,6,"3"), new Note.Note(62, 1,"5"), new Note.Note(55,4,"1"), hf4);
 
     return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(ch1, ch2)) &&
         UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch1, ch3)) &&
-        UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(ch4, ch2))
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(ch4, ch2)) &&
+        UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch5, ch2))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionForModulations, "Check connection for modulations test"));
