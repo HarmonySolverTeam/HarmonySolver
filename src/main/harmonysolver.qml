@@ -627,6 +627,7 @@ MuseScore {
                         anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
+                        //TODO if exercise is undefined show proper error
                             try {
                                 var solver = new Solver.Solver(exercise)
                                 var solution = solver.solve()
