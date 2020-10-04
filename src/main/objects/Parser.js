@@ -30,32 +30,38 @@ function parseChord(string) {
     return new HarmonicFunction.HarmonicFunction2(arguments_json)
 }
 
+function getKeyFromPitchBasenoteAndModeOrThrowError(pitch, basenote, mode) {
+    var key = Consts.keyFromPitchBasenoteAndMode[[pitch, basenote, mode]]
+    if (key === undefined) {
+        throw new Errors.ProbablyUnexpectedError("Could not find key for given pitch, basenote and mode",
+            "Pitch: " + pitch + " Basenote: " + basenote + " Mode: " + mode)
+    } else {
+        return key
+    }
+}
+
 function calculateKey(key, nextChordAfterWtracenie) {
-    //TODO move to consts
-    var majorPitches = [0, 2, 4, 5, 7, 9, 11]
-    var minorPitches = [0, 2, 3, 5, 7, 8, 10]
 
     var keyToUse = key
     if (nextChordAfterWtracenie.key !== undefined) {
         keyToUse = nextChordAfterWtracenie.key
     }
 
-    var baseNoteForPrime = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterWtracenie.degree - 1, 7)
+    var pitchesToUse = Utils.contains(Consts.possible_keys_major, keyToUse) ?
+        [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10]
 
-    var primePitch = Utils.contains(Consts.possible_keys_major, key) ?
-        majorPitches[nextChordAfterWtracenie.degree - 1] :
-        minorPitches[nextChordAfterWtracenie.degree - 1]
+    var keyPitch = Costs.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterWtracenie.degree - 1]
+    keyPitch = keyPitch >= 72 ? keyPitch - 12 : keyPitch
 
-    var threePitch = Utils.contains(Consts.possible_keys_major, key) ?
-        majorPitches[Utils.mod(nextChordAfterWtracenie.degree + 1, 7)] :
-        minorPitches[Utils.mod(nextChordAfterWtracenie.degree + 1, 7)]
+    var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterWtracenie.degree - 1, 7)
 
+    var primePitch = pitchesToUse[nextChordAfterWtracenie.degree - 1]
+    var threePitch = pitchesToUse[Utils.mod(nextChordAfterWtracenie.degree + 1, 7)]
     var difference = threePitch - primePitch
 
     var modeToUse = (difference === 4 || difference === 8) ? Consts.MODE.MAJOR : Consts.MODE.MINOR
 
-
-    //TODO wyznacz tonacje
+    return getKeyFromPitchBasenoteAndModeOrThrowError(keyPitch, keyBaseNote, modeToUse)
 }
 
 function getSpecificChord(measures, i) {
