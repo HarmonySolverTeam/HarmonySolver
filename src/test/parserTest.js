@@ -34,5 +34,27 @@ const wtracenieInLastChordTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(wtracenieInLastChordTest, "Wtracenie in last chord test"));
 
+const wtracenieInsideWtracenieTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\wtracenie_inside_wtracenie.txt")
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Wtracenie cannot be inside another wtracenie.", Parser.parse, [ex])
+}
+
+const unclosedWtracenieTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\unclosed_wtracenie.txt")
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "There is unclosed wtracenie", Parser.parse, [ex])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(unclosedWtracenieTest, "parentheses mismatch - unclosed wtracenie"));
+
+const unexpectedEndOfWtracenieTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\unexpected_end_of_wtracenie.txt")
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Unexpected end of wtracenie:", Parser.parse, [ex])
+}
+
+
+testSuite.addTest(new TestUtils.UnitTest(unexpectedEndOfWtracenieTest, "parentheses mismatch - unexpected end of wtracenie"));
 
 testSuite.run();

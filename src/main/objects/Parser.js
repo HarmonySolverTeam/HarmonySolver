@@ -54,7 +54,7 @@ function calculateKey(key, nextChordAfterWtracenie) {
     var pitchesToUse = Utils.contains(Consts.possible_keys_major, keyToUse) ?
         [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10]
 
-    var keyPitch = Costs.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterWtracenie.degree - 1]
+    var keyPitch = Consts.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterWtracenie.degree - 1]
     keyPitch = keyPitch >= 72 ? keyPitch - 12 : keyPitch
 
     var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterWtracenie.degree - 1, 7)
@@ -180,6 +180,10 @@ function parse(input) {
             chordNumber++
         }
         measures.push(chords_parsed)
+    }
+
+    if (insideWtracenie) {
+        throw new Errors.HarmonicFunctionsParserError("There is unclosed wtracenie")
     }
 
     if(DEBUG) Utils.log("Parsed measures", JSON.stringify(measures))
