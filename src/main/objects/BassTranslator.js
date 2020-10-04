@@ -358,11 +358,6 @@ function BassTranslator() {
             revolution++
         }
 
-        if (mode === Consts.MODE.MINOR && revolution === 3
-            && functionName !== Consts.FUNCTION_NAMES.DOMINANT) {
-            revolution = "3>"
-        }
-
         var position = this.getValidPosition(chordElement)
 
         return [position, revolution]
