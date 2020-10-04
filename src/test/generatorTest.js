@@ -36,11 +36,11 @@ var positionAndRevolution1 = () => {
     if(res.length === 0) testResult = false;
 
     for(var i=0; i<res.length; i++){
-        testResult = testResult && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("1"), res[i].sopranoNote.chordComponent);
-        testResult = testResult && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("1"), res[i].bassNote.chordComponent);
+        testResult = testResult && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("1"), res[i].sopranoNote.chordComponent, true);
+        testResult = testResult && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("1"), res[i].bassNote.chordComponent, true);
         testResult = testResult &&
-            ((TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("3"), res[i].tenorNote.chordComponent) && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("5"), res[i].altoNote.chordComponent))
-            || (TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("5"), res[i].tenorNote.chordComponent) && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("3"), res[i].altoNote.chordComponent)));
+            ((TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("3"), res[i].tenorNote.chordComponent, true) && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("5"), res[i].altoNote.chordComponent))
+            || (TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("5"), res[i].tenorNote.chordComponent, true) && TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("3"), res[i].altoNote.chordComponent)));
     }
 
     return testResult;
@@ -62,9 +62,9 @@ var doubleOnly135 = () => {
     for(var i=0; i<res.length; i++){
         var counter = 0;
         for(var j=0; j<4; j++){
-            if(TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("7"), res[i].notes[j].chordComponent)) counter++;
+            if(TestUtils.assertEqualsPrimitives(cm.chordComponentFromString("7"), res[i].notes[j].chordComponent, true)) counter++;
         }
-        testResult = testResult && TestUtils.assertEqualsPrimitives(1, counter);
+        testResult = testResult && TestUtils.assertEqualsPrimitives(1, counter, true);
     }
 
     return testResult;

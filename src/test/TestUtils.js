@@ -15,19 +15,39 @@ const LOG_STYLES = {
     "FgCyan" : "\x1b[36m"
 };
 
-exports.assertEqualsObjects = function assertEqualsObjects(expected, actual){
+exports.assertEqualsObjects = function assertEqualsObjects(expected, actual, noLog){
+    if (!noLog) {
+        if (!expected.equals(actual)){
+            console.log(LOG_STYLES.FgRed ,"\texpected: " + JSON.stringify(expected) + "\n\tactual: " + JSON.stringify(actual))
+        }
+    }
     return expected.equals(actual)
 }
 
-exports.assertNotEqualsObjects = function assertNotEqualsObjects(expected, actual){
+exports.assertNotEqualsObjects = function assertNotEqualsObjects(expected, actual, noLog){
+    if (!noLog) {
+        if (expected.equals(actual)){
+            console.log(LOG_STYLES.FgRed ,"\texpected: " + JSON.stringify(expected) + "\n\tactual: " + JSON.stringify(actual))
+        }
+    }
     return !expected.equals(actual)
 }
 
-exports.assertEqualsPrimitives = function assertEqualsPrimitives(expected, actual){
+exports.assertEqualsPrimitives = function assertEqualsPrimitives(expected, actual, noLog){
+    if (!noLog) {
+        if (expected !== actual){
+            console.log(LOG_STYLES.FgRed ,"\texpected: " + JSON.stringify(expected) + "\n\tactual: " + JSON.stringify(actual))
+        }
+    }
     return expected === actual
 }
 
-exports.assertNotEqualsPrimitives = function assertNotEqualsPrimitives(expected, actual){
+exports.assertNotEqualsPrimitives = function assertNotEqualsPrimitives(expected, actual, noLog){
+    if (!noLog) {
+        if (expected === actual){
+            console.log(LOG_STYLES.FgRed ,"\texpected: " + JSON.stringify(expected) + "\n\tactual: " + JSON.stringify(actual))
+        }
+    }
     return !(expected === actual)
 }
 
@@ -41,11 +61,21 @@ exports.assertThrows = function assertThrows(source, message, fun, args){
     }
 }
 
-exports.assertFalse = function assertFalse(condition){
+exports.assertFalse = function assertFalse(condition, noLog){
+    if (!noLog) {
+        if (condition){
+            console.log(LOG_STYLES.FgRed ,"\texpected: false" + "\n\tactual: " + JSON.stringify(condition))
+        }
+    }
     return !condition
 }
 
-exports.assertTrue = function assertTrue(condition){
+exports.assertTrue = function assertTrue(condition, noLog){
+    if (!noLog) {
+        if (!condition){
+            console.log(LOG_STYLES.FgRed ,"\texpected: true" + "\n\tactual: " + JSON.stringify(condition))
+        }
+    }
     return condition
 }
 
@@ -53,11 +83,21 @@ exports.fail = function fail(message){
     throw new Error("Test failed: " + message)
 }
 
-exports.assertDefined = function assertDefined(object){
+exports.assertDefined = function assertDefined(object, noLog){
+    if (!noLog) {
+        if (object === undefined){
+            console.log(LOG_STYLES.FgRed ,"\texpected: defined" + "\n\tactual: undefined")
+        }
+    }
     return object !== undefined
 }
 
-exports.assertUndefined = function assertUndefined(object){
+exports.assertUndefined = function assertUndefined(object, noLog){
+    if (!noLog) {
+        if (object !== undefined){
+            console.log(LOG_STYLES.FgRed ,"\texpected: undefined" + "\n\tactual: defined " + JSON.stringify(object))
+        }
+    }
     return object === undefined
 }
 
