@@ -5,7 +5,7 @@
 .import "./Consts.js" as Consts
 .import "./Errors.js" as Errors
 
-var DEBUG = false;
+var DEBUG = true;
 
 function ChordElement(notesNumbers, omit, bassElement) {
     this.notesNumbers = notesNumbers
@@ -357,6 +357,11 @@ function BassTranslator() {
             bass = Utils.mod((bass - 1), 7)
             revolution++
         }
+//todo handle this somewere else
+        if (mode === Consts.MODE.MINOR && revolution === 3
+            && functionName !== Consts.FUNCTION_NAMES.DOMINANT) {
+            revolution = "3>"
+        }
 
         var position = this.getValidPosition(chordElement)
 
@@ -403,7 +408,7 @@ function BassTranslator() {
 
             var functionName = functions[i]
 
-            var degree = chordElement.primeNote - Consts.keyStrBase[key] + 1
+            var degree = Utils.mod(chordElement.primeNote - Consts.keyStrBase[key] + 1, 7)
 
             var posAndRev = this.getValidPositionAndRevolution(chordElement, mode, functionName)
 
