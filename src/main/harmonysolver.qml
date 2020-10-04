@@ -28,6 +28,7 @@ MuseScore {
     dockArea: "right"
 
     property var exercise: ({})
+    property var exerciseLoaded: false
     id: window
     width: 800
     height: 600
@@ -494,6 +495,7 @@ MuseScore {
                 tab1.item.setText(input_text)
                 try{
                     exercise = Parser.parse(input_text)
+                    exerciseLoaded = true
                 } catch (error) {
                     showError(error)
                 }
@@ -511,6 +513,7 @@ MuseScore {
                 var input_text = String(myFileAbc.read())
                 try{
                     exercise = Parser.parse(input_text)
+                    exerciseLoaded = true
                     tab1.item.setText(JSON.stringify(exercise))
                 } catch (error) {
                     showError(error)
@@ -627,22 +630,25 @@ MuseScore {
                         anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
-                        //TODO if exercise is undefined show proper error
-                            try {
-                                var solver = new Solver.Solver(exercise)
-                                var solution = solver.solve()
-                                var solution_date = get_solution_date()
+                            if (!exerciseLoaded) {
+                                showError(new Errors.BasicError("File with harmonic functions exercise was not loaded correctly"))
+                            } else {
+                                try {
+                                    var solver = new Solver.Solver(exercise)
+                                    var solution = solver.solve()
+                                    var solution_date = get_solution_date()
 
-                                prepare_score_for_solution(filePath, solution,
-                                                           solution_date, true, "_hfunc")
+                                    prepare_score_for_solution(filePath, solution,
+                                                               solution_date, true, "_hfunc")
 
-                                fill_score_with_solution(solution)
+                                    fill_score_with_solution(solution)
 
-                                writeScore(curScore,
-                                           filePath + "/solutions/harmonic functions exercise/solution"
-                                           + solution_date, "mscz")
-                            } catch (error) {
-                                showError(error)
+                                    writeScore(curScore,
+                                               filePath + "/solutions/harmonic functions exercise/solution"
+                                               + solution_date, "mscz")
+                                } catch (error) {
+                                    showError(error)
+                                }
                             }
                         }
                     }
