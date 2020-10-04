@@ -199,6 +199,41 @@ var ALTERATIONS = {
 
 //G
 var MODE = {
-    MAJOR : "major",
-    MINOR : "minor"
+    MAJOR: "major",
+    MINOR: "minor"
+}
+
+//G
+var keyFromPitchBasenoteAndMode = {
+    [[60, BASE_NOTES.C, MODE.MAJOR]]: 'C',
+    [[61, BASE_NOTES.C, MODE.MAJOR]]: 'C#',
+    [[61, BASE_NOTES.D, MODE.MAJOR]]: 'Db',
+    [[62, BASE_NOTES.D, MODE.MAJOR]]: 'D',
+    [[63, BASE_NOTES.E, MODE.MAJOR]]: 'Eb',
+    [[64, BASE_NOTES.E, MODE.MAJOR]]: 'E',
+    [[65, BASE_NOTES.F, MODE.MAJOR]]: 'F',
+    [[66, BASE_NOTES.F, MODE.MAJOR]]: 'F#',
+    [[66, BASE_NOTES.G, MODE.MAJOR]]: 'Gb',
+    [[67, BASE_NOTES.G, MODE.MAJOR]]: 'G',
+    [[68, BASE_NOTES.A, MODE.MAJOR]]: 'Ab',
+    [[69, BASE_NOTES.A, MODE.MAJOR]]: 'A',
+    [[70, BASE_NOTES.B, MODE.MAJOR]]: 'Bb',
+    [[71, BASE_NOTES.B, MODE.MAJOR]]: 'B',
+    [[71, BASE_NOTES.C, MODE.MAJOR]]: 'Cb',
+
+    [[60, BASE_NOTES.C, MODE.MINOR]]: 'c',
+    [[61, BASE_NOTES.C, MODE.MINOR]]: 'c#',
+    [[61, BASE_NOTES.D, MODE.MINOR]]: 'db',
+    [[62, BASE_NOTES.D, MODE.MINOR]]: 'd',
+    [[63, BASE_NOTES.E, MODE.MINOR]]: 'eb',
+    [[64, BASE_NOTES.E, MODE.MINOR]]: 'e',
+    [[65, BASE_NOTES.F, MODE.MINOR]]: 'f',
+    [[66, BASE_NOTES.F, MODE.MINOR]]: 'f#',
+    [[66, BASE_NOTES.G, MODE.MINOR]]: 'gb',
+    [[67, BASE_NOTES.G, MODE.MINOR]]: 'g',
+    [[68, BASE_NOTES.A, MODE.MINOR]]: 'ab',
+    [[69, BASE_NOTES.A, MODE.MINOR]]: 'a',
+    [[70, BASE_NOTES.B, MODE.MINOR]]: 'bb',
+    [[71, BASE_NOTES.B, MODE.MINOR]]: 'b',
+    [[71, BASE_NOTES.C, MODE.MINOR]]: 'cb'
 }
