@@ -82,6 +82,23 @@ function getSpecificChord(measures, i) {
     return undefined
 }
 
+function applyKeyAndModeToSpecificChord(measures, key, mode, i) {
+    var currentChordNumber = 0
+    for (var a = 0; a < measures.length; a++) {
+        for (var b = 0; b < measures[a].length; b++) {
+            if (currentChordNumber === i) {
+                measures[a][b].key = key
+                if (DEBUG) Utils.log("mode")
+                measures[a][b].mode = measures[a][b].functionName === Consts.FUNCTION_NAMES.DOMINANT ? Consts.MODE.MAJOR : mode
+                if (DEBUG) Utils.log("mode", measures[a][b].mode)
+                return
+            } else {
+                currentChordNumber++
+            }
+        }
+    }
+}
+
 function applyKeyToChords(measures, beginning, end, key) {
     var modeToApply;
     if (Utils.contains(Consts.possible_keys_major, key)) {
@@ -90,10 +107,9 @@ function applyKeyToChords(measures, beginning, end, key) {
         modeToApply = Consts.MODE.MINOR
     }
 
-    for (var i = beginning; i < end; i++){
-        var chord = getSpecificChord(measures, i)
-        chord.key = key
-        chord.mode = chord.functionName === Consts.FUNCTION_NAMES.DOMINANT ? Consts.MODE.MAJOR : modeToApply
+    for (var i = beginning; i <= end; i++){
+        if (DEBUG) Utils.log(i)
+        applyKeyAndModeToSpecificChord(measures, key, modeToApply, i)
     }
 
 }
@@ -102,15 +118,21 @@ function applyKeyToChords(measures, beginning, end, key) {
 
 function handleWtracenia(measures, key, wtracenia){
 
+    if (DEBUG) Utils.log("Handling wtracenia")
+    if (DEBUG) Utils.log(JSON.stringify(wtracenia))
+
     var nextChordAfterWtracenie = undefined
     var keyForWtracenie = undefined
 
     for (var i = wtracenia.length - 1; i >= 0; --i) {
+        if (DEBUG) Utils.log(JSON.stringify(wtracenia[i]))
         nextChordAfterWtracenie = getSpecificChord(measures, wtracenia[i][1] + 1)
+        if (DEBUG) Utils.log("nextChordAfterWtracenie", nextChordAfterWtracenie)
         if (nextChordAfterWtracenie === undefined) {
             throw new Errors.HarmonicFunctionsParserError("Wtracenie cannot be the last chord")
         }
         keyForWtracenie = calculateKey(key, nextChordAfterWtracenie)
+        if (DEBUG) Utils.log("keyForWtracenie", keyForWtracenie)
         applyKeyToChords(measures, wtracenia[i][0], wtracenia[i][1], keyForWtracenie)
     }
 }
@@ -157,11 +179,13 @@ function parse(input) {
         for (var j = 0; j < chords.length; j++) {
             dropFirstChar = false
             dropLastChar = false
+            if (DEBUG) Utils.log("Current chord: ", JSON.stringify(chords[j]))
 
             if (chords[j][0] === '(') {
                 if (insideWtracenie) {
                     throw new Errors.HarmonicFunctionsParserError("Wtracenie cannot be inside another wtracenie.", chords[j])
                 }
+                if (DEBUG) Utils.log("Inside wtracenie")
                 wtracenieBegining = chordNumber
                 insideWtracenie = true
                 dropFirstChar = true
@@ -171,6 +195,7 @@ function parse(input) {
                 if (!insideWtracenie) {
                     throw new Errors.HarmonicFunctionsParserError("Unexpected end of wtracenie:", chords[j])
                 }
+                if (DEBUG) Utils.log("Exiting wtracenie")
                 insideWtracenie = false
                 wtracenia.push([wtracenieBegining, chordNumber])
                 dropLastChar = true
@@ -186,11 +211,11 @@ function parse(input) {
         throw new Errors.HarmonicFunctionsParserError("There is unclosed wtracenie")
     }
 
-    if(DEBUG) Utils.log("Parsed measures", JSON.stringify(measures))
+    if (DEBUG) Utils.log("Parsed measures", JSON.stringify(measures))
 
     if (wtracenia.length !== 0){
         handleWtracenia(measures, key, wtracenia)
-        if(DEBUG) Utils.log("Parsed measures after handling wtracenia", JSON.stringify(measures))
+        if (DEBUG) Utils.log("Parsed measures after handling wtracenia", JSON.stringify(measures))
     }
 
     return new Exercise.Exercise(key, metre, mode, measures)
