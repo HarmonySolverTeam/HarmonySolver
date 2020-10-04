@@ -120,7 +120,8 @@ function convertToTpc(note){
             basePitch = 71;
             break;
     }
-    var actualBasePitch = note.pitch % 12 + 60;
+    var inOctavePitch = note.pitch % 12 === 0? 12: note.pitch % 12;
+    var actualBasePitch = inOctavePitch + 60;
     var offset = abs(actualBasePitch - basePitch);
     var revertOffset = false;
     if(offset > 2) {
