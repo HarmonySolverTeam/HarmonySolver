@@ -292,6 +292,12 @@ function hiddenOctaves(prevChord, currentChord){
 
 function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
+        if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[i])){
+            return 0;
+        }
+    }
+
+    for(var i=0; i<4; i++){
         for(var j=i+1; j<4; j++){
             if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[j])) {
                 if(DEBUG) Utils.log("false relation", prevChord + "->" + currentChord);

@@ -57,6 +57,7 @@ var d_altered_major= () => {return check_solution_found_major("d_altered_test.tx
 var sikorski_zzip_ex162 = () => {return check_solution_found_major("sikorski_zzip_ex162.txt")};
 var sikorski_zzip_ex168 = () => {return check_solution_found_major("sikorski_zzip_ex168.txt")};
 var d_vi_test = () => {return check_solution_found_major("d_tvi_test.txt")};
+var chained_deflection_basic = () => {return check_solution_found_major("chained_deflection_basic.txt")};
 
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex13, "HarmonicFunctions Major test 1 - from targosz_p61_ex13"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex14, "HarmonicFunctions Major test 2 - from targosz_p61_ex14"));
@@ -78,6 +79,7 @@ harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(d_altered_major, "Harmo
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex162, "HarmonicFunctions Major test 18 - from sikorski_zzip_ex162"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex168, "HarmonicFunctions Major test 19 - from sikorski_zzip_ex168"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(d_vi_test, "HarmonicFunctions Major test 20 - from d_vi_test"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(chained_deflection_basic, "HarmonicFunctions Major test 21 - from chained_deflection_basic"));
 
 // MINOR
 var targosz_p61_ex17 = () => {return check_solution_found_minor("targosz_p61_ex17.txt")};
