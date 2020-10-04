@@ -11,7 +11,10 @@ function check_figured_bass_symbols(symbols){
     return figured_bass_symbols.test(symbols);
 }
 
-function parseChord(string) {
+function parseChord(string, withoutFirstChar, withoutLastChar) {
+    if (withoutFirstChar) string = string.substring(1, string.length)
+    if (withoutLastChar) string = string.substring(0, string.length - 1)
+
     var i = 0
     while (i < string.length && string[i] !== '{') {
         i++
@@ -31,7 +34,8 @@ function parseChord(string) {
 }
 
 function getKeyFromPitchBasenoteAndModeOrThrowError(pitch, basenote, mode) {
-    var key = Consts.keyFromPitchBasenoteAndMode[[pitch, basenote, mode]]
+    var mapKey = pitch.toString() + "," + basenote.toString() + "," + mode
+    var key = Consts.keyFromPitchBasenoteAndMode[mapKey]
     if (key === undefined) {
         throw new Errors.ProbablyUnexpectedError("Could not find key for given pitch, basenote and mode",
             "Pitch: " + pitch + " Basenote: " + basenote + " Mode: " + mode)
@@ -96,7 +100,7 @@ function applyKeyToChords(measures, beginning, end, key) {
 
 
 
-function handleWtracenia(measures, key, mode, wtracenia){
+function handleWtracenia(measures, key, wtracenia){
 
     var nextChordAfterWtracenie = undefined
     var keyForWtracenie = undefined
@@ -143,11 +147,16 @@ function parse(input) {
     var wtracenieBegining = undefined
     var chordNumber = 0
 
+    var dropFirstChar = false
+    var dropLastChar = false
+
     for (var i = 2; i < lines.length; i++) {
         if(!lines[i] || lines[i].startsWith("//")) continue
         var chords = lines[i].split(";")
         var chords_parsed = []
         for (var j = 0; j < chords.length; j++) {
+            dropFirstChar = false
+            dropLastChar = false
 
             if (chords[j][0] === '(') {
                 if (insideWtracenie) {
@@ -155,6 +164,7 @@ function parse(input) {
                 }
                 wtracenieBegining = chordNumber
                 insideWtracenie = true
+                dropFirstChar = true
             }
 
             if (chords[j][chords[j].length - 1] === ')') {
@@ -163,9 +173,10 @@ function parse(input) {
                 }
                 insideWtracenie = false
                 wtracenia.push([wtracenieBegining, chordNumber])
+                dropLastChar = true
             }
 
-            chords_parsed.push(parseChord(chords[j]))
+            chords_parsed.push(parseChord(chords[j], dropFirstChar, dropLastChar))
             chordNumber++
         }
         measures.push(chords_parsed)
@@ -174,7 +185,7 @@ function parse(input) {
     if(DEBUG) Utils.log("Parsed measures", JSON.stringify(measures))
 
     if (wtracenia.length !== 0){
-        handleWtracenia(measures, key, mode)
+        handleWtracenia(measures, key, wtracenia)
         if(DEBUG) Utils.log("Parsed measures after handling wtracenia", JSON.stringify(measures))
     }
 
