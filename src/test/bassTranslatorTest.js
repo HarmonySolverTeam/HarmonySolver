@@ -19,8 +19,6 @@ const handleAlterationsTest1 = () => {
 
     bassTranslator.handleAlterations(harmonicFunctions, chordElements, mode, meter, durations)
 
-    //console.log(JSON.stringify(harmonicFunctions))
-
     return TestUtils.assertEqualsPrimitives(harmonicFunctions[0][2].mode, "minor")
 }
 
@@ -55,8 +53,6 @@ var makeChoiceAndSplitTest = () => {
 
     if (!TestUtils.assertEqualsPrimitives(actual.length, 1)) return false;
     if (!TestUtils.assertEqualsPrimitives(actual[0].length, functions.length)) return false;
-
-    console.log(JSON.stringify(2))
 
     var res0 = actual[0];
     for (var i = 0; i < res0.length - 1; i++) {
@@ -116,7 +112,7 @@ testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 2, 4, 6], [0,
 var completeUntillTwoNextThirdsTest = (notesNumbers, expectedNotesNumbers, expectedOmit) => {
     var chordElement = new BassTranslator.ChordElement(notesNumbers, [])
     bassTranslator.completeUntillTwoNextThirds(chordElement)
-    console.log(chordElement.notesNumbers)
+    //console.log(chordElement.notesNumbers)
     return TestUtils.assertEqualsObjects(expectedNotesNumbers, chordElement.notesNumbers)
         && TestUtils.assertEqualsObjects(expectedOmit, chordElement.omit)
 }

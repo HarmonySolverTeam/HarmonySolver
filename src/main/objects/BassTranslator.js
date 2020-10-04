@@ -376,22 +376,22 @@ function BassTranslator() {
             symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
 
             if (!Utils.contains(extra, "7") &&
-                !Utils.contains(extra, ">7") &&
-                !Utils.contains(extra, "<7")) {
+                !Utils.contains(extra, "7>") &&
+                !Utils.contains(extra, "7<")) {
                 extra.push("7")
             }
         }
 
         if (symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
             if (!Utils.contains(extra, "9") &&
-                !Utils.contains(extra, ">9") &&
-                !Utils.contains(extra, "<9")) {
+                !Utils.contains(extra, "9>") &&
+                !Utils.contains(extra, "9<")) {
                 extra.push("9")
             }
 
             if (!Utils.contains(omit, "5") &&
-                !Utils.contains(omit, ">5") &&
-                !Utils.contains(omit, "<5")) {
+                !Utils.contains(omit, "5>") &&
+                !Utils.contains(omit, "5<")) {
                 omit.push("5")
             }
         }
@@ -508,7 +508,7 @@ function BassTranslator() {
                     var alteration = undefined
 
                     var baseNoteToAlter = Utils.mod(number + chordElements[i].bassElement.bassNote.baseNote - 1, 7)
-                    Utils.log("baseNoteToAlter: " + baseNoteToAlter)
+                    if (DEBUG) Utils.log("baseNoteToAlter: " + baseNoteToAlter)
 
                     if (chordElements[i].bassElement.symbols[j].alteration === Consts.ALTERATIONS.NATURAL) {
                         //nothing?
@@ -517,10 +517,10 @@ function BassTranslator() {
                     } else {
                         alteration = ">"
                     }
-                    Utils.log("Alteration: " + alteration)
+                    if (DEBUG) Utils.log("Alteration: " + alteration)
 
                     var componentToAlter = Utils.mod(baseNoteToAlter - chordElements[i].primeNote, 7) + 1
-                    Utils.log("componentToAlter: " + componentToAlter)
+                    if (DEBUG) Utils.log("componentToAlter: " + componentToAlter)
 
                     if (alteration !== undefined) {
                         toOmit.push(componentToAlter)
@@ -542,11 +542,11 @@ function BassTranslator() {
 
             if (toOmit.length === 1 && Utils.contains(toOmit, 3)) {
                 if (mode === Consts.MODE.MINOR && toExtra[0] === "3<") {
-                    Utils.log("Changing chord mode to major")
+                    if (DEBUG) Utils.log("Changing chord mode to major")
                     harmonicFunctions[0][i].mode = Consts.MODE.MAJOR;
                 }
                 if (mode === Consts.MODE.MAJOR && toExtra[0] === "3>") {
-                    Utils.log("Changing chord mode to minor")
+                    if (DEBUG) Utils.log("Changing chord mode to minor")
                     harmonicFunctions[0][i].mode = Consts.MODE.MINOR;
                 }
             } else {
