@@ -3,6 +3,7 @@
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./Utils.js" as Utils
 .import "./Errors.js" as Errors
+.import "./Scale.js" as Scale
 
 var DEBUG = false;
 
@@ -52,7 +53,7 @@ function calculateKey(key, nextChordAfterDeflection) {
     }
 
     var pitchesToUse = Utils.contains(Consts.possible_keys_major, keyToUse) ?
-        [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10]
+        new Scale.MajorScale("C").pitches : new Scale.MinorScale("c").pitches
 
     var keyPitch = Consts.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterDeflection.degree - 1]
     keyPitch = keyPitch >= 72 ? keyPitch - 12 : keyPitch
