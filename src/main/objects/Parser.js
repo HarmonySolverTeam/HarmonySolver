@@ -44,23 +44,23 @@ function getKeyFromPitchBasenoteAndModeOrThrowError(pitch, basenote, mode) {
     }
 }
 
-function calculateKey(key, nextChordAfterWtracenie) {
+function calculateKey(key, nextChordAfterDeflection) {
 
     var keyToUse = key
-    if (nextChordAfterWtracenie.key !== undefined) {
-        keyToUse = nextChordAfterWtracenie.key
+    if (nextChordAfterDeflection.key !== undefined) {
+        keyToUse = nextChordAfterDeflection.key
     }
 
     var pitchesToUse = Utils.contains(Consts.possible_keys_major, keyToUse) ?
         [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10]
 
-    var keyPitch = Consts.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterWtracenie.degree - 1]
+    var keyPitch = Consts.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterDeflection.degree - 1]
     keyPitch = keyPitch >= 72 ? keyPitch - 12 : keyPitch
 
-    var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterWtracenie.degree - 1, 7)
+    var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterDeflection.degree - 1, 7)
 
-    var primePitch = pitchesToUse[nextChordAfterWtracenie.degree - 1]
-    var threePitch = pitchesToUse[Utils.mod(nextChordAfterWtracenie.degree + 1, 7)]
+    var primePitch = pitchesToUse[nextChordAfterDeflection.degree - 1]
+    var threePitch = pitchesToUse[Utils.mod(nextChordAfterDeflection.degree + 1, 7)]
     var difference = threePitch - primePitch
 
     var modeToUse = (difference === 4 || difference === 8) ? Consts.MODE.MAJOR : Consts.MODE.MINOR
@@ -116,24 +116,24 @@ function applyKeyToChords(measures, beginning, end, key) {
 
 
 
-function handleWtracenia(measures, key, wtracenia){
+function handleDeflections(measures, key, deflections){
 
-    if (DEBUG) Utils.log("Handling wtracenia")
-    if (DEBUG) Utils.log(JSON.stringify(wtracenia))
+    if (DEBUG) Utils.log("Handling deflections")
+    if (DEBUG) Utils.log(JSON.stringify(deflections))
 
-    var nextChordAfterWtracenie = undefined
-    var keyForWtracenie = undefined
+    var nextChordAfterDeflection = undefined
+    var keyForDeflection = undefined
 
-    for (var i = wtracenia.length - 1; i >= 0; --i) {
-        if (DEBUG) Utils.log(JSON.stringify(wtracenia[i]))
-        nextChordAfterWtracenie = getSpecificChord(measures, wtracenia[i][1] + 1)
-        if (DEBUG) Utils.log("nextChordAfterWtracenie", nextChordAfterWtracenie)
-        if (nextChordAfterWtracenie === undefined) {
-            throw new Errors.HarmonicFunctionsParserError("Wtracenie cannot be the last chord")
+    for (var i = deflections.length - 1; i >= 0; --i) {
+        if (DEBUG) Utils.log(JSON.stringify(deflections[i]))
+        nextChordAfterDeflection = getSpecificChord(measures, deflections[i][1] + 1)
+        if (DEBUG) Utils.log("nextChordAfterDeflection", nextChordAfterDeflection)
+        if (nextChordAfterDeflection === undefined) {
+            throw new Errors.HarmonicFunctionsParserError("Deflection cannot be the last chord")
         }
-        keyForWtracenie = calculateKey(key, nextChordAfterWtracenie)
-        if (DEBUG) Utils.log("keyForWtracenie", keyForWtracenie)
-        applyKeyToChords(measures, wtracenia[i][0], wtracenia[i][1], keyForWtracenie)
+        keyForDeflection = calculateKey(key, nextChordAfterDeflection)
+        if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
+        applyKeyToChords(measures, deflections[i][0], deflections[i][1], keyForDeflection)
     }
 }
 
@@ -164,9 +164,9 @@ function parse(input) {
 
     var measures = []
 
-    var insideWtracenie = false
-    var wtracenia = []
-    var wtracenieBegining = undefined
+    var insideDeflection = false
+    var deflections = []
+    var deflectionBeginning = undefined
     var chordNumber = 0
 
     var dropFirstChar = false
@@ -182,22 +182,22 @@ function parse(input) {
             if (DEBUG) Utils.log("Current chord: ", JSON.stringify(chords[j]))
 
             if (chords[j][0] === '(') {
-                if (insideWtracenie) {
-                    throw new Errors.HarmonicFunctionsParserError("Wtracenie cannot be inside another wtracenie.", chords[j])
+                if (insideDeflection) {
+                    throw new Errors.HarmonicFunctionsParserError("Deflection cannot be inside another deflection.", chords[j])
                 }
-                if (DEBUG) Utils.log("Inside wtracenie")
-                wtracenieBegining = chordNumber
-                insideWtracenie = true
+                if (DEBUG) Utils.log("Inside deflection")
+                deflectionBeginning = chordNumber
+                insideDeflection = true
                 dropFirstChar = true
             }
 
             if (chords[j][chords[j].length - 1] === ')') {
-                if (!insideWtracenie) {
-                    throw new Errors.HarmonicFunctionsParserError("Unexpected end of wtracenie:", chords[j])
+                if (!insideDeflection) {
+                    throw new Errors.HarmonicFunctionsParserError("Unexpected end of deflection:", chords[j])
                 }
-                if (DEBUG) Utils.log("Exiting wtracenie")
-                insideWtracenie = false
-                wtracenia.push([wtracenieBegining, chordNumber])
+                if (DEBUG) Utils.log("Exiting deflection")
+                insideDeflection = false
+                deflections.push([deflectionBeginning, chordNumber])
                 dropLastChar = true
             }
 
@@ -207,15 +207,15 @@ function parse(input) {
         measures.push(chords_parsed)
     }
 
-    if (insideWtracenie) {
-        throw new Errors.HarmonicFunctionsParserError("There is unclosed wtracenie")
+    if (insideDeflection) {
+        throw new Errors.HarmonicFunctionsParserError("There is unclosed deflection")
     }
 
     if (DEBUG) Utils.log("Parsed measures", JSON.stringify(measures))
 
-    if (wtracenia.length !== 0){
-        handleWtracenia(measures, key, wtracenia)
-        if (DEBUG) Utils.log("Parsed measures after handling wtracenia", JSON.stringify(measures))
+    if (deflections.length !== 0){
+        handleDeflections(measures, key, deflections)
+        if (DEBUG) Utils.log("Parsed measures after handling deflections", JSON.stringify(measures))
     }
 
     return new Exercise.Exercise(key, metre, mode, measures)

@@ -26,35 +26,38 @@ const getSpecificChordTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(getSpecificChordTest, "Getting specific chord test"));
 
-const wtracenieInLastChordTest = () => {
-    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\wtracenie_in_last_chord.txt")
+const deflectionInLastChordTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\deflection_in_last_chord.txt")
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "Wtracenie cannot be the last chord", Parser.parse, [ex])
+        "Deflection cannot be the last chord", Parser.parse, [ex])
 }
 
-testSuite.addTest(new TestUtils.UnitTest(wtracenieInLastChordTest, "Wtracenie in last chord test"));
+testSuite.addTest(new TestUtils.UnitTest(deflectionInLastChordTest, "deflection in last chord test"));
 
-const wtracenieInsideWtracenieTest = () => {
-    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\wtracenie_inside_wtracenie.txt")
+const deflectionInsideDeflectionTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\deflection_inside_deflection.txt")
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "Wtracenie cannot be inside another wtracenie.", Parser.parse, [ex])
+        "Deflection cannot be inside another deflection.", Parser.parse, [ex])
 }
 
-const unclosedWtracenieTest = () => {
-    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\unclosed_wtracenie.txt")
+testSuite.addTest(new TestUtils.UnitTest(deflectionInsideDeflectionTest, "deflection inside another deflection test"));
+
+
+const unclosedDeflectionTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\unclosed_deflection.txt")
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "There is unclosed wtracenie", Parser.parse, [ex])
+        "There is unclosed deflection", Parser.parse, [ex])
 }
 
-testSuite.addTest(new TestUtils.UnitTest(unclosedWtracenieTest, "parentheses mismatch - unclosed wtracenie"));
+testSuite.addTest(new TestUtils.UnitTest(unclosedDeflectionTest, "parentheses mismatch - unclosed deflection"));
 
-const unexpectedEndOfWtracenieTest = () => {
-    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\unexpected_end_of_wtracenie.txt")
+const unexpectedEndOfDeflectionTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\unexpected_end_of_deflection.txt")
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "Unexpected end of wtracenie:", Parser.parse, [ex])
+        "Unexpected end of deflection:", Parser.parse, [ex])
 }
 
 
-testSuite.addTest(new TestUtils.UnitTest(unexpectedEndOfWtracenieTest, "parentheses mismatch - unexpected end of wtracenie"));
+testSuite.addTest(new TestUtils.UnitTest(unexpectedEndOfDeflectionTest, "parentheses mismatch - unexpected end of deflection"));
 
 testSuite.run();
