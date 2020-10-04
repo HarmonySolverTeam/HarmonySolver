@@ -199,6 +199,40 @@ var ALTERATIONS = {
 
 //G
 var MODE = {
-    MAJOR : "major",
-    MINOR : "minor"
+    MAJOR: "major",
+    MINOR: "minor"
+}
+
+//G
+var keyFromPitchBasenoteAndMode = {
+    "60,0,major": 'C',
+    "61,0,major": 'C#',
+    "61,1,major": 'Db',
+    "62,1,major": 'D',
+    "63,2,major": 'Eb',
+    "64,2,major": 'E',
+    "65,3,major": 'F',
+    "66,3,major": 'F#',
+    "66,4,major": 'Gb',
+    "67,4,major": 'G',
+    "68,5,major": 'Ab',
+    "69,5,major": 'A',
+    "70,6,major": 'Bb',
+    "71,6,major": 'B',
+    "71,0,major": 'Cb',
+    "60,0,minor": 'c',
+    "61,0,minor": 'c#',
+    "61,1,minor": 'db',
+    "62,1,minor": 'd',
+    "63,2,minor": 'eb',
+    "64,2,minor": 'e',
+    "65,3,minor": 'f',
+    "66,3,minor": 'f#',
+    "66,4,minor": 'gb',
+    "67,4,minor": 'g',
+    "68,5,minor": 'ab',
+    "69,5,minor": 'a',
+    "70,6,minor": 'bb',
+    "71,6,minor": 'b',
+    "71,0,minor": 'cb'
 }
