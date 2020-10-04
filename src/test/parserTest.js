@@ -60,4 +60,23 @@ const unexpectedEndOfDeflectionTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(unexpectedEndOfDeflectionTest, "parentheses mismatch - unexpected end of deflection"));
 
+const chainedDeflectionTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\chained_deflection_basic.txt")
+    var harmFunctions = Parser.parse(ex)
+    return TestUtils.assertEqualsPrimitives(harmFunctions.measures[0][1].key, "D")
+        && TestUtils.assertEqualsPrimitives(harmFunctions.measures[0][2].key, "G")
+}
+
+testSuite.addTest(new TestUtils.UnitTest(chainedDeflectionTest, "chainedDeflectionTest"));
+
+const deflectionBetweenMeasuresTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\basic_deflection_between_measures.txt")
+    var harmFunctions = Parser.parse(ex)
+    return TestUtils.assertEqualsPrimitives(harmFunctions.measures[0][1].key, "a")
+        && TestUtils.assertEqualsPrimitives(harmFunctions.measures[1][0].key, "a")
+}
+
+testSuite.addTest(new TestUtils.UnitTest(deflectionBetweenMeasuresTest, "deflectionBetweenMeasuresTest"));
+
+
 testSuite.run();
