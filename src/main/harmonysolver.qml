@@ -494,6 +494,7 @@ MuseScore {
                 var input_text = String(myFileAbc.read())
                 tab1.item.setText(input_text)
                 try{
+                    exerciseLoaded = false
                     exercise = Parser.parse(input_text)
                     exerciseLoaded = true
                 } catch (error) {
@@ -512,6 +513,7 @@ MuseScore {
                 myFileAbc.source = filename
                 var input_text = String(myFileAbc.read())
                 try{
+                    exerciseLoaded = false
                     exercise = Parser.parse(input_text)
                     exerciseLoaded = true
                     tab1.item.setText(JSON.stringify(exercise))
