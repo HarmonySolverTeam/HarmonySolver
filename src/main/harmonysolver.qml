@@ -278,7 +278,7 @@ MuseScore {
             } else {
                 cursor.setDuration(curChord.duration[0], curChord.duration[1])
             }
-            addComponentToScore(cursor, curChord.sopranoNote.chordComponent.chordComponentString)
+            addComponentToScore(cursor, curChord.sopranoNote.chordComponent.toXmlString())
             selectAlto(cursor)
             cursor.addNote(curChord.altoNote.pitch, false)
             if (!lastSegment)
@@ -289,7 +289,7 @@ MuseScore {
             } else {
                 cursor.setDuration(curChord.duration[0], curChord.duration[1])
             }
-            addComponentToScore(cursor, curChord.altoNote.chordComponent.chordComponentString)
+            addComponentToScore(cursor, curChord.altoNote.chordComponent.toXmlString())
             selectTenor(cursor)
             cursor.addNote(curChord.tenorNote.pitch, false)
             if (!lastSegment)
@@ -300,7 +300,7 @@ MuseScore {
             } else {
                 cursor.setDuration(curChord.duration[0], curChord.duration[1])
             }
-            addComponentToScore(cursor, curChord.tenorNote.chordComponent.chordComponentString)
+            addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
             cursor.addNote(curChord.bassNote.pitch, false)
         }
@@ -309,7 +309,7 @@ MuseScore {
         cursor.rewind(0)
         for (var i = 0; i < solution.chords.length; i++) {
             addComponentToScore(cursor,
-                                solution.chords[i].bassNote.chordComponent.chordComponentString)
+                                solution.chords[i].bassNote.chordComponent.toXmlString())
             selectSoprano(cursor)
             console.log(cursor.element)
             cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].sopranoNote)

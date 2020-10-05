@@ -47,4 +47,8 @@ function ChordComponent(chordComponentString, id){
         //todo without this test are not passing - dont know why
         return this.chordComponentString;
     }
+
+    this.toXmlString = function() {
+        return (this.chordComponentString.replace("<", "&lt;")).replace(">", "&gt;");
+    }
 }
