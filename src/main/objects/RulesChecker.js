@@ -137,7 +137,8 @@ function checkConnection(prevChord, currentChord){
             if (dominantVoiceWith3 > -1 &&
                 !prevChord.notes[dominantVoiceWith3].equalPitches(currentChord.notes[dominantVoiceWith3]) &&
                 !Utils.containsChordComponent(currentChord.harmonicFunction.omit, "1") &&
-                !currentChord.notes[dominantVoiceWith3].chordComponentEquals("1")) return -1;
+                !currentChord.notes[dominantVoiceWith3].chordComponentEquals("1") &&
+                !currentChord.notes[dominantVoiceWith3].chordComponentEquals("7")) return -1;
 
             if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
