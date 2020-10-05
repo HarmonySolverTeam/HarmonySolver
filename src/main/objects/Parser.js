@@ -140,6 +140,7 @@ function handleDeflections(measures, key, deflections){
 
 
 function parse(input) {
+    input = input.replace(/\r/g,"")
 
     var lines = input.split("\n")
 
