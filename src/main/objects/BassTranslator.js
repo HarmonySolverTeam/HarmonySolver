@@ -5,7 +5,7 @@
 .import "./Consts.js" as Consts
 .import "./Errors.js" as Errors
 
-var DEBUG = true;
+var DEBUG = false;
 
 function ChordElement(notesNumbers, omit, bassElement) {
     this.notesNumbers = notesNumbers
@@ -408,7 +408,7 @@ function BassTranslator() {
 
             var functionName = functions[i]
 
-            var degree = Utils.mod(chordElement.primeNote - Consts.keyStrBase[key] + 1, 7)
+            var degree = Utils.mod(chordElement.primeNote - Consts.keyStrBase[key], 7) + 1
 
             var posAndRev = this.getValidPositionAndRevolution(chordElement, mode, functionName)
 
@@ -428,6 +428,18 @@ function BassTranslator() {
             } else {
                 mode1 = mode
             }
+
+            if (functionName === Consts.FUNCTION_NAMES.DOMINANT
+                    && revolution === "1"
+                    && Utils.mod(chordElement.primeNote - Consts.keyStrBase[key], 7) === 6
+                    && this.getSortedSymbolsFromChordElement(chordElement).equals([3, 5])) {
+                if (DEBUG) Utils.log("Handling special situation: equivalent to hdf in C major -> D omit 1 extra 7 rev 3")
+                revolution = "3"
+                omit.push("1")
+                extra.push("7")
+                degree = 5
+            }
+
             var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays, extra, omit, down, system, mode1)
 
             ret.push(toAdd)

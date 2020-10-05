@@ -386,7 +386,7 @@ MuseScore {
             var translator = new Translator.BassTranslator()
             //console.log(ex.elements)
             var exercise = translator.createExerciseFromFiguredBass(ex)
-            console.log(JSON.stringify(exercise))
+            Utils.log("Translated exercise",JSON.stringify(exercise))
             var bassLine = []
             for (var i = 0; i < ex.elements.length; i++) {
                 bassLine.push(ex.elements[i].bassNote)
@@ -406,9 +406,6 @@ MuseScore {
         } catch (error) {
             showError(error)
         }
-        // translate (remember about durations attribute!)
-        // solve first exercise
-        // print solution (remember about durations)
     }
 
     function isFiguredBassScore() {
