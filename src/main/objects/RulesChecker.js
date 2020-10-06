@@ -120,28 +120,29 @@ function checkConnection(prevChord, currentChord){
     var currentChordTempFunctionDegree = currentChord.harmonicFunction.degree;
     if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
         if(Utils.isDefined(prevChord.harmonicFunction.key)) {
-            currentChordTempFunctionName = "T";
+            currentChordTempFunctionName = Consts.FUNCTION_NAMES.TONIC;
             currentChordTempFunctionDegree = 1;
         }
         else return 0;
     }
 
     var couldHaveDouble3 = false;
-    if((prevChord.harmonicFunction.functionName === "D" && currentChordTempFunctionName === "T") ||
+    if((prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
+        && currentChordTempFunctionName === Consts.FUNCTION_NAMES.TONIC) ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
         if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChordTempFunctionDegree)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
-                if (prevChord.notes[i].chordComponent.baseComponent === "3") {
+                if (prevChord.notes[i].baseChordComponentEquals("3")) {
                     dominantVoiceWith3 = i;
                     break;
                 }
             }
             if (dominantVoiceWith3 > -1 &&
                 !prevChord.notes[dominantVoiceWith3].equalPitches(currentChord.notes[dominantVoiceWith3]) &&
-                !Utils.containsChordComponent(currentChord.harmonicFunction.omit, "1") &&
-                !currentChord.notes[dominantVoiceWith3].chordComponentEquals("1") &&
-                !currentChord.notes[dominantVoiceWith3].chordComponentEquals("7")) return -1;
+                !Utils.containsBaseChordComponent(currentChord.harmonicFunction.omit, "1") &&
+                !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("1") &&
+                !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("7")) return -1;
 
             if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
@@ -154,7 +155,7 @@ function checkConnection(prevChord, currentChord){
                 if (dominantVoiceWith7 > -1 &&
                     !prevChord.notes[dominantVoiceWith7].equalPitches(currentChord.notes[dominantVoiceWith7]) &&
                     !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3")){
-                    //rozwiazanie swobodne mozliwe (todo 7 pod 3)
+                    //rozwiazanie swobodne mozliwe
                     if((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
                         currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
                         (currentChord.harmonicFunction.position !== undefined && (currentChord.harmonicFunction.position.chordComponentString === "3" ||
@@ -204,8 +205,8 @@ function checkConnection(prevChord, currentChord){
             }
         }
 
-        // todo 7 na 1, chyba inaczej
-        if(prevChord.harmonicFunction.functionName === "D" && currentChord.harmonicFunction.functionName === "T" && currentChordTempFunctionDegree - prevChord.harmonicFunction.degree === 1) {
+        // todo 7 na 1, chyba inaczej, czy tylko dla D -> T?
+        if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC && currentChordTempFunctionDegree - prevChord.harmonicFunction.degree === 1) {
             couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
@@ -249,10 +250,10 @@ function checkConnection(prevChord, currentChord){
             }
         }
     }
-    if(prevChord.harmonicFunction.functionName === "S" && currentChord.harmonicFunction.functionName === "D"){
+    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT){
         //todo najbliższą drogą
     }
-    if(prevChord.harmonicFunction.functionName === "D" && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChordTempFunctionName === "S")
+    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChordTempFunctionName === Consts.FUNCTION_NAMES.SUBDOMINANT)
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
 
     if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;
@@ -307,7 +308,7 @@ function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
         for(var j=i+1; j<4; j++){
             if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[j])) {
-                if(DEBUG) Utils.log("false relation", prevChord + "->" + currentChord);
+                if(DEBUG) Utils.log("false relation between voices "+i+" "+j, prevChord + "->" + currentChord);
                 return -1;
             }
         }
