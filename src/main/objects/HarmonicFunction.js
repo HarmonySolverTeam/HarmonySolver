@@ -90,8 +90,14 @@ function HarmonicFunction2(params){
 
     this.isNeapolitan = function () {
         return this.degree === 2 && this.down
-            && this.functionName === 'S' && this.mode === Consts.MODE.MINOR
+            && this.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && this.mode === Consts.MODE.MINOR
             && this.revolution.baseComponent === "3"
+    };
+
+    this.isChopin = function () {
+        return this.functionName === Consts.FUNCTION_NAMES.DOMINANT
+            && Utils.contains(this.extra, cm.chordComponentFromString("7"))
+            && Utils.containsBaseChordComponent(this.extra, "6")
     };
 
     this.copy = function copy(){

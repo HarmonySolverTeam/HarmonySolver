@@ -316,6 +316,28 @@ function falseRelation(prevChord, currentChord){
     return 0;
 }
 
+function correctChopinChord(chord){
+    if(chord.harmonicFunction.isChopin()){
+        var voiceWith6 = -1;
+        var voiceWith7 = -1;
+        for(var voice=0; voice<4; voice++){
+            if(chord.notes[voice].baseChordComponentEquals("6"))
+                voiceWith6 = voice;
+            if(chord.notes[voice].chordComponentEquals("7"))
+                voiceWith7 = voice;
+        }
+        if(voiceWith6 !== -1 && voiceWith7 !== -1 && voiceWith6 < voiceWith7)
+            return false;
+    }
+    return true;
+}
+
+function checkChordCorrectness(chord){
+    if(!correctDistanceBassTenor(chord)) return -1;
+    if(!correctChopinChord(chord)) return -1;
+    return 0;
+}
+
 function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpRule){
     var result = 0;
     if(prevChord !== undefined){
@@ -330,7 +352,9 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
             result += currentResult;
         }
     } else if(checkIllegalDoubled3(currentChord)) return -1;
-    if(!correctDistanceBassTenor(currentChord)) return -1;
+    var currentResult = checkChordCorrectness(currentChord);
+    if (currentResult === -1) return -1;
+    result += currentResult;
     return result
 }
 

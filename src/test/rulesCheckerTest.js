@@ -148,7 +148,7 @@ const checkConnectionDSTest = () => {
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDSTest, "D->S connection test"));
 
 const checkConnectionDTTest = () => {
-    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,undefined,"1",[],[7],[],false,undefined,undefined);
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,undefined,"1",[],["7"],[],false,undefined,undefined);
     var d7 = new Chord.Chord(new Note.Note(65, 3,"7"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf1);
     var hf2 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[5],false,undefined,undefined);
     var t1 = new Chord.Chord(new Note.Note(64,2,"3"), new Note.Note(60,0,"1"), new Note.Note(60,0,"1"),new Note.Note(48,1,"1"), hf2);
@@ -249,5 +249,20 @@ const checkConnectionForModulations = () => {
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionForModulations, "Check connection for modulations test"));
+
+const isCorrectChopinChord = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],undefined,undefined,undefined,undefined, "C");
+    var hf2 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],undefined,undefined,undefined,undefined, "c");
+
+    var ch1 = new Chord.Chord(new Note.Note(76, 2,"6"), new Note.Note(71,6,"3"), new Note.Note(65, 3,"7"), new Note.Note(55,4,"1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(77, 3,"7"), new Note.Note(71,6,"3"), new Note.Note(64, 2,"6"), new Note.Note(55,4,"1"), hf1);
+    var ch3 = new Chord.Chord(new Note.Note(75, 3,"6>"), new Note.Note(71,6,"3"), new Note.Note(65, 2,"7"), new Note.Note(55,4,"1"), hf2);
+
+    return UnitTest.assertTrue(RulesChecker.correctChopinChord(ch1)) &&
+        UnitTest.assertFalse(RulesChecker.correctChopinChord(ch2)) &&
+        UnitTest.assertTrue(RulesChecker.correctChopinChord(ch3))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(isCorrectChopinChord, "Check correctness for Chopin chord test"));
 
 rulesCheckerTestSuite.run();
