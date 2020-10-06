@@ -78,26 +78,27 @@ class HarmonicFunction():
 
     def get_tokens(self):
         res = []
+        res += [self.mode] if self.mode != "" else []
+
+        # if len(self.delay[0]) == 0 and len(self.delay[1]) == 0:
+        #     return res
+        # delay like [[], ["x", "y"]] is illegal
+        if len(self.delay[0]) != 0:
+            # delay like [["x","y"], []]
+            if len(self.delay[1]) == 0:
+                res += [DELAY + "{0}-{1}".format(self.delay[0][0], self.delay[0][1])]
+            # delay like [["x1","y1"], ["x2","y2"]]
+            if len(self.delay[1]) != 0:
+                res += [DELAY + "{0}{1}-{2}{3}".format(self.delay[0][0], self.delay[1][0], self.delay[0][1], self.delay[1][1])]
         res += [POSITION + self.position] if self.position != "" else []
         res += [REVOLUTION + self.revolution] if self.revolution != "" else []
         res += [EXTRA + self.extra] if self.extra != "" else []
-        res += [self.mode] if self.mode != "" else []
         res += [DEGREE + self.degree] if self.degree != "" else []
         res += [self.down] if self.down != "" else []
         res += [OMIT + self.omit] if self.omit != "" else []
         res += [self.system] if self.system != "" else []
 
         # delays token looks like del(x1,x2=y1,y2) or del(x1=y1)
-        if len(self.delay[0]) == 0 and len(self.delay[1]) == 0:
-            return res
-        # delay like [[], ["x", "y"]] is illegal
-        if len(self.delay[0]) != 0:
-            # delay like [["x","y"], []]
-            if len(self.delay[1]) == 0:
-                res += [DELAY + "({0}={1})".format(self.delay[0][0], self.delay[0][1])]
-            # delay like [["x1","y1"], ["x2","y2"]]
-            if len(self.delay[1]) != 0:
-                res += [DELAY + "({0},{1}={2},{3})".format(self.delay[0][0], self.delay[1][0], self.delay[0][1], self.delay[1][1])]
 
         return res
 

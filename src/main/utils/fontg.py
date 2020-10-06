@@ -1,13 +1,9 @@
 from HarmonicFunction import HarmonicFunction, get_base_component
 
 degree_values = ["II", "III", "VI", "VII", ""] #5
-extra_values = [ "6", "7", "9",
-                 "6>", "7<", "9>", ""] #10  -> 7
-omit_values = ["1", "5",
-               "1>", "5>", ""] #7  -> 5
-position_values = [ "1", "3", "5", "6", "7", "9",
-                    "1>", "3>", "5>", "6>", "7<", "9>",
-                    "5<",""] #19 -> 14
+extra_values = [""] #10  -> 7
+omit_values = [""] #7  -> 5
+position_values = [""] #19 -> 14
 revolution_values = position_values # 19 -> 14
 system_values = [""] #3
 mode_values = ["moll", ""] #2
@@ -33,8 +29,6 @@ single_delay_values = [
     ["7<", "6>"],
     # ["8", "7"],
     # ["8", "7<"],
-    # ["8", "9"],
-    # ["8", "9>"],
     ["9", "8"],
     ["9>", "8"],
     []
@@ -49,13 +43,45 @@ for del1 in single_delay_values:
         if del2 == []:
             delay_values += [[del1, del2]]
             delay_values += [[[del1[1], del1[0]], del2]]
-        # if del2 != []:
-        #     if int(get_base_component(del1[0])) > int(get_base_component(del2[0])) and int(get_base_component(del1[0])) > int(get_base_component(del2[1])):
-        #         delay_values += [[del1, del2]]
+        if del2 != []:
+            if int(get_base_component(del1[0])) > int(get_base_component(del2[0])) and int(get_base_component(del1[0])) > int(get_base_component(del2[1])):
+                delay_values += [[del1, del2]]
 
-print(len(delay_values))
-for delay in delay_values:
-    print(delay)
+def generateEntityForDelays(delays):
+    template_single_delay = "<!ENTITY delay{}-{} \"&delay_begin; {} &dash; {} &backspace_dash; {} &delay_end;\">\n"
+    res = ""
+    template_double_delay = "<!ENTITY delay{0}{2}-{1}{3} \"&delay_up; &delay{0}-{1}; &delay_down; &delay_down; &delay{2}-{3}; &delay_up;\">\n"
+    for delay in delays:
+        back_spaces =""
+        if delay[0] and not delay[1]:
+            back_spaces += "&backspace_{}; ".format(delay[0][0][0])
+            back_spaces += "&backspace_{}; ".format(delay[0][1][0])
+            if delay[0][0].count(">") == 1:
+                back_spaces += "&backspace_greater; "
+            if delay[0][1].count(">") == 1:
+                back_spaces += "&backspace_greater; "
+            if delay[0][0].count("<") == 1:
+                    back_spaces += "&backspace_lower; "
+            if delay[0][1].count("<") == 1:
+                back_spaces += "&backspace_lower; "
+
+            res += template_single_delay.format(
+                delay[0][0].replace("<", "x").replace(">","y"),
+                delay[0][1].replace("<", "x").replace(">","y"),
+                delay[0][0].replace("<", " &lower;").replace(">"," &greater;"),
+                delay[0][1].replace("<", " &lower;").replace(">"," &greater;"),
+                back_spaces
+            )
+        if delay[0] and delay[1]:
+            res += template_double_delay.format(
+                delay[0][0].replace("<", "x").replace(">","y"),
+                delay[0][1].replace("<", "x").replace(">","y"),
+                delay[1][0].replace("<", "x").replace(">","y"),
+                delay[1][1].replace("<", "x").replace(">","y")
+            )
+    return res
+
+print(generateEntityForDelays(delay_values))
 
 # temporary reset
 # delay_values = [[[],[]]]
