@@ -15,4 +15,27 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
         chordStr += "Bass note: " + this.bassNote.toString() + "\n";
         return chordStr;
     }
+
+    this.countBaseComponents = function(baseComponentString){
+        var counter = 0;
+        for(var i = 0; i < this.notes.length; i++){
+            if(this.notes[i].baseChordComponentEquals(baseComponentString)){
+                counter ++;
+            }
+        }
+        return counter
+    }
+
+    this.equals = function(other){
+        return this.equalsNotes(other)
+            && this.harmonicFunction.equals(other.harmonicFunction);
+    }
+
+    this.equalsNotes = function (other){
+        return this.sopranoNote.equals(other.sopranoNote)
+            && this.altoNote.equals(other.altoNote)
+            && this.tenorNote.equals(other.tenorNote)
+            && this.bassNote.equals(other.bassNote)
+    }
+
 }

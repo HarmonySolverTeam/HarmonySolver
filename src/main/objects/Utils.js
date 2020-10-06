@@ -1,23 +1,32 @@
 function contains(list, obj) {
-
     for (var i = 0; i < list.length; i++) {
         if (list[i] === obj) {
             return true
         }
     }
     return false
-
 }
 
 function containsChordComponent(list, cc) {
-
     for (var i = 0; i < list.length; i++) {
         if (list[i].chordComponentString === cc) {
             return true
         }
     }
     return false
+}
 
+function containsBaseChordComponent(list, cc) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].baseComponent === cc) {
+            return true
+        }
+    }
+    return false
+}
+
+function isDefined(x) {
+    return x !== undefined;
 }
 
 function abs(a) {
@@ -111,7 +120,8 @@ function convertToTpc(note){
             basePitch = 71;
             break;
     }
-    var actualBasePitch = note.pitch % 12 + 60;
+    var inOctavePitch = note.pitch % 12 === 0? 12: note.pitch % 12;
+    var actualBasePitch = inOctavePitch + 60;
     var offset = abs(actualBasePitch - basePitch);
     var revertOffset = false;
     if(offset > 2) {

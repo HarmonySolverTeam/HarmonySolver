@@ -28,6 +28,7 @@ MuseScore {
     dockArea: "right"
 
     property var exercise: ({})
+    property var exerciseLoaded: false
     id: window
     width: 800
     height: 600
@@ -229,7 +230,7 @@ MuseScore {
                     Utils.log(durations[i][0]/durations[i][1])
                     sum += durations[i][0]/durations[i][1];
                 }
-                return Math.round(sum);
+                return Math.round(sum/(solution.exercise.meter[0]/solution.exercise.meter[1]));
             }
 
             var sum = countMeasures(durations);
@@ -277,7 +278,7 @@ MuseScore {
             } else {
                 cursor.setDuration(curChord.duration[0], curChord.duration[1])
             }
-            addComponentToScore(cursor, curChord.sopranoNote.chordComponent.chordComponentString)
+            addComponentToScore(cursor, curChord.sopranoNote.chordComponent.toXmlString())
             selectAlto(cursor)
             cursor.addNote(curChord.altoNote.pitch, false)
             if (!lastSegment)
@@ -288,7 +289,7 @@ MuseScore {
             } else {
                 cursor.setDuration(curChord.duration[0], curChord.duration[1])
             }
-            addComponentToScore(cursor, curChord.altoNote.chordComponent.chordComponentString)
+            addComponentToScore(cursor, curChord.altoNote.chordComponent.toXmlString())
             selectTenor(cursor)
             cursor.addNote(curChord.tenorNote.pitch, false)
             if (!lastSegment)
@@ -299,7 +300,7 @@ MuseScore {
             } else {
                 cursor.setDuration(curChord.duration[0], curChord.duration[1])
             }
-            addComponentToScore(cursor, curChord.tenorNote.chordComponent.chordComponentString)
+            addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
             cursor.addNote(curChord.bassNote.pitch, false)
         }
@@ -308,7 +309,7 @@ MuseScore {
         cursor.rewind(0)
         for (var i = 0; i < solution.chords.length; i++) {
             addComponentToScore(cursor,
-                                solution.chords[i].bassNote.chordComponent.chordComponentString)
+                                solution.chords[i].bassNote.chordComponent.toXmlString())
             selectSoprano(cursor)
             console.log(cursor.element)
             cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].sopranoNote)
@@ -385,7 +386,7 @@ MuseScore {
             var translator = new Translator.BassTranslator()
             //console.log(ex.elements)
             var exercise = translator.createExerciseFromFiguredBass(ex)
-            console.log(JSON.stringify(exercise))
+            Utils.log("Translated exercise",JSON.stringify(exercise))
             var bassLine = []
             for (var i = 0; i < ex.elements.length; i++) {
                 bassLine.push(ex.elements[i].bassNote)
@@ -405,9 +406,6 @@ MuseScore {
         } catch (error) {
             showError(error)
         }
-        // translate (remember about durations attribute!)
-        // solve first exercise
-        // print solution (remember about durations)
     }
 
     function isFiguredBassScore() {
@@ -493,7 +491,9 @@ MuseScore {
                 var input_text = String(myFileAbc.read())
                 tab1.item.setText(input_text)
                 try{
+                    exerciseLoaded = false
                     exercise = Parser.parse(input_text)
+                    exerciseLoaded = true
                 } catch (error) {
                     showError(error)
                 }
@@ -510,7 +510,9 @@ MuseScore {
                 myFileAbc.source = filename
                 var input_text = String(myFileAbc.read())
                 try{
+                    exerciseLoaded = false
                     exercise = Parser.parse(input_text)
+                    exerciseLoaded = true
                     tab1.item.setText(JSON.stringify(exercise))
                 } catch (error) {
                     showError(error)
@@ -627,21 +629,25 @@ MuseScore {
                         anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
-                            try {
-                                var solver = new Solver.Solver(exercise)
-                                var solution = solver.solve()
-                                var solution_date = get_solution_date()
+                            if (!exerciseLoaded) {
+                                showError(new Errors.BasicError("File with harmonic functions exercise was not loaded correctly"))
+                            } else {
+                                try {
+                                    var solver = new Solver.Solver(exercise)
+                                    var solution = solver.solve()
+                                    var solution_date = get_solution_date()
 
-                                prepare_score_for_solution(filePath, solution,
-                                                           solution_date, true, "_hfunc")
+                                    prepare_score_for_solution(filePath, solution,
+                                                               solution_date, true, "_hfunc")
 
-                                fill_score_with_solution(solution)
+                                    fill_score_with_solution(solution)
 
-                                writeScore(curScore,
-                                           filePath + "/solutions/harmonic functions exercise/solution"
-                                           + solution_date, "mscz")
-                            } catch (error) {
-                                showError(error)
+                                    writeScore(curScore,
+                                               filePath + "/solutions/harmonic functions exercise/solution"
+                                               + solution_date, "mscz")
+                                } catch (error) {
+                                    showError(error)
+                                }
                             }
                         }
                     }

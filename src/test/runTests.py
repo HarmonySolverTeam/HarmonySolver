@@ -7,12 +7,14 @@ suites = [
     "generatorTest",
     "delayTest",
     "1_HarmonicFunctionsTests",
-    "basstest",
+    "bassTranslatorTest",
     "sopranoTests",
     "rulesCheckerTest",
     "harmonicFunctionValidatorTest",
     "chordComponentManagerTest",
-    "chordComponentTest"
+    "chordComponentTest",
+    "intervalUtilsTest",
+    "parserTest"
 ]
 
 for s in suites:

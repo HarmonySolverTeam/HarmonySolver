@@ -11,6 +11,10 @@ function BassSymbol(component, alteration){
     this.toString = function() {
         return "Component: " + this.component + " Alteration: " + this.alteration
     }
+
+    this.equals = function (other) {
+        return this.component === other.component && this.alteration === other.alteration
+    }
 }
 
 function FiguredBassElement(bassNote, symbols, delays) {

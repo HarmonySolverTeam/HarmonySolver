@@ -227,7 +227,9 @@ function ChordGenerator(key, mode) {
 
     this.mapSchemas = function (harmonicFunction, schemas) {
 
-        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
+        var infered_key = harmonicFunction.key !== undefined ? harmonicFunction.key : this.key;
+
+        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(infered_key) : new Scale.MinorScale(infered_key);
 
         var chordFirstPitch = scale.tonicPitch + scale.pitches[harmonicFunction.degree - 1];
 
@@ -254,7 +256,8 @@ function ChordGenerator(key, mode) {
         var schemas = this.getSchemas(harmonicFunction, temp);
         var schemas_mapped = this.mapSchemas(harmonicFunction, schemas);
 
-        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(this.key) : new Scale.MinorScale(this.key);
+        var infered_key = harmonicFunction.key !== undefined ? harmonicFunction.key : this.key;
+        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(infered_key) : new Scale.MinorScale(infered_key);
 
         for (var i = 0; i < schemas_mapped.length; i++) {
             var schema_mapped = schemas_mapped[i];
@@ -357,7 +360,9 @@ function ChordGenerator(key, mode) {
         if (givenNotes !== undefined) {
             chords = chords.filter(function (chord) {
                 function eq(x, y) {
-                    return y === undefined || x.equals(y)
+                    return y === undefined
+                        || y.pitch === undefined
+                        || x.pitch === y.pitch
                 }
 
                 return eq(chord.bassNote, givenNotes[0]) &&
