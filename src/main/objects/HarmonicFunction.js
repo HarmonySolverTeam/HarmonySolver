@@ -74,7 +74,9 @@ function HarmonicFunction2(params){
 
     //additional rules
     if((Utils.contains(this.extra, cm.chordComponentFromString("9")) || Utils.contains(this.extra, cm.chordComponentFromString("9>")) || Utils.contains(this.extra, cm.chordComponentFromString("9<")))
-        && !Utils.contains(this.extra, cm.chordComponentFromString("7"))) this.extra.push(cm.chordComponentFromString("7"));
+        && !Utils.contains(this.extra, cm.chordComponentFromString("7")) && !Utils.contains(this.extra, cm.chordComponentFromString("7<"))) {
+        this.extra.push(cm.chordComponentFromString("7"));
+    }
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
     if(Utils.contains(this.extra, cm.chordComponentFromString("5<")) || Utils.contains(this.extra, cm.chordComponentFromString("5>"))) this.omit.push(cm.chordComponentFromString("5"));
