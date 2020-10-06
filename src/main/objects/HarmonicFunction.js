@@ -74,7 +74,7 @@ function HarmonicFunction2(params){
 
     //additional rules
     if((Utils.contains(this.extra, cm.chordComponentFromString("9")) || Utils.contains(this.extra, cm.chordComponentFromString("9>")) || Utils.contains(this.extra, cm.chordComponentFromString("9<")))
-        && !Utils.containsChordComponent(this.extra, "7") && !Utils.containsChordComponent(this.extra, "7<")) {
+        && !Utils.contains(this.extra, cm.chordComponentFromString("7")) && !Utils.contains(this.extra, cm.chordComponentFromString("7<"))) {
         this.extra.push(cm.chordComponentFromString("7"));
     }
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
@@ -86,10 +86,6 @@ function HarmonicFunction2(params){
         for (var i = 0; i < this.omit.length; i++)
             res.splice(res.indexOf(this.omit[i]), 1);
         return res;
-    };
-
-    this.countAllComponents = function () {
-        return 3 - this.omit.length + this.extra.length;
     };
 
     this.isNeapolitan = function () {
