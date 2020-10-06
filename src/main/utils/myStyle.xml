@@ -15,8 +15,8 @@
 
   <!ENTITY delay_begin "m:2:-7">
   <!ENTITY delay_end "m:-2:7 " >
-        <!ENTITY delay_up "m:0:-2.5 ">
-        <!ENTITY delay_down "m:0:2.5 " >
+  <!ENTITY delay_up "m:0:-2.5 ">
+  <!ENTITY delay_down "m:0:2.5 " >
 
   <!ENTITY backspace_dash "m:-5.2:0">
   <!ENTITY dash "m:0:-2.5 floor m:-1:0 floor m:1:2.5 ">
