@@ -1,4 +1,6 @@
 .import "./Utils.js" as Utils
+.import "./Consts.js" as Consts
+.import "./Scale.js" as Scale
 
 function isOctaveOrPrime(note1, note2){
     return note1.baseNote === note2.baseNote;
@@ -47,4 +49,14 @@ function isAlteredInterval(note1, note2){
     }
     var alteredIntervals = {3:1, 5:2, 6:3, 8:4, 10:5, 12:6};
     return alteredIntervals[halfToneDist] === baseDistance
+}
+
+function getThirdMode(key, baseNote) {
+
+    var pitchesToUse = Utils.contains(Consts.possible_keys_major, key) ?
+        new Scale.MajorScale("C").pitches : new Scale.MinorScale("c").pitches
+
+    var difference = pitchesToUse[Utils.mod(baseNote + 2, 7)] - pitchesToUse[baseNote]
+
+    return (difference === 4 || difference === 8) ? Consts.MODE.MAJOR : Consts.MODE.MINOR
 }

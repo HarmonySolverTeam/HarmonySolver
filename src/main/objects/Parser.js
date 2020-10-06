@@ -4,6 +4,7 @@
 .import "./Utils.js" as Utils
 .import "./Errors.js" as Errors
 .import "./Scale.js" as Scale
+.import "./IntervalUtils.js" as IntervalUtils
 
 var DEBUG = false;
 
@@ -60,11 +61,7 @@ function calculateKey(key, nextChordAfterDeflection) {
 
     var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterDeflection.degree - 1, 7)
 
-    var primePitch = pitchesToUse[nextChordAfterDeflection.degree - 1]
-    var threePitch = pitchesToUse[Utils.mod(nextChordAfterDeflection.degree + 1, 7)]
-    var difference = threePitch - primePitch
-
-    var modeToUse = (difference === 4 || difference === 8) ? Consts.MODE.MAJOR : Consts.MODE.MINOR
+    var modeToUse = IntervalUtils.getThirdMode(key, nextChordAfterDeflection.degree - 1)
 
     return getKeyFromPitchBasenoteAndModeOrThrowError(keyPitch, keyBaseNote, modeToUse)
 }
