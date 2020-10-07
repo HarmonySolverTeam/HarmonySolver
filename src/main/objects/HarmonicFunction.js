@@ -160,6 +160,10 @@ function HarmonicFunction2(params){
         console.log(res);
         return res;
     }
+
+    this.isDelayRoot = function() {
+        return this.delay.length > 0;
+    }
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key) {

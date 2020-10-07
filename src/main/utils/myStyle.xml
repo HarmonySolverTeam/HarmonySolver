@@ -294,6 +294,14 @@
   <!ENTITY react_lower "m:1.5:-1 lower m:-4:1 ">
   <!ENTITY react_greater "m:1.5:-1 greater m:-4:1 ">
 
+  <!ENTITY backspace_lb "m:-3:0">
+  <!ENTITY backspace_rb "m:-3:0">
+  <!ENTITY lb "m:-12:0 ( &backspace_lb; m:12:0 ">
+  <!ENTITY spacing "m:13:0 ">
+  <!ENTITY rb "m:2:0 ) &backspace_rb; m:-2:0 ">
+
+  <!ENTITY spacing_rb "&spacing; &rb; ">
+
   ]>
 <museScore version="1.11">
 
@@ -315,6 +323,9 @@
     <sym code="0x53" name="B"/>
     <sym code="0x44" name="D"/>
     <sym code="0x3d" name="C"/>
+
+    <sym code="0x28" name="("/>
+    <sym code="0x29" name=")"/>
     
     </font>
 
@@ -341,8 +352,7 @@
     <sym code="0x6e" name="n"/>
     <sym code="0x2e" name="."/>
 
-    <sym code="0x28" name="("/>
-    <sym code="0x29" name=")"/>
+
     <sym code="0x73" name="s"/>
     <sym code="0x6b" name="k"/>
     <sym code="0x72" name="r"/>

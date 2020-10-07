@@ -21,7 +21,7 @@ def some_trasform(cc : str):
 
 class HarmonicFunction():
 
-    def __init__(self, degree, position, revolution, extra, omit, delay, down, mode, system):
+    def __init__(self, degree, position, revolution, extra, omit, delay, down, mode, system, left_bracket, right_bracket):
         self.degree = degree
         self.position = position
         self.revolution = revolution
@@ -31,6 +31,8 @@ class HarmonicFunction():
         self.down = down
         self.mode = mode
         self.system = system
+        self.left_bracket = left_bracket
+        self.right_bracket = right_bracket
         self.str = self.__str__()
 
     def validate(self):
@@ -78,6 +80,7 @@ class HarmonicFunction():
 
     def get_tokens(self):
         res = []
+        res += [self.left_bracket] if self.left_bracket != "" else []
         res += [self.mode] if self.mode != "" else []
 
         # if len(self.delay[0]) == 0 and len(self.delay[1]) == 0:
@@ -97,6 +100,7 @@ class HarmonicFunction():
         res += [self.down] if self.down != "" else []
         res += [OMIT + self.omit] if self.omit != "" else []
         res += [self.system] if self.system != "" else []
+        res += [self.right_bracket] if self.right_bracket != "" else []
 
         # delays token looks like del(x1,x2=y1,y2) or del(x1=y1)
 
@@ -112,6 +116,8 @@ class HarmonicFunction():
         res += self.down
         res += OMIT + self.omit if self.omit != "" else ""
         res += self.system
+        res += self.left_bracket
+        res += self.right_bracket
 
         if len(self.delay[0]) == 0 and len(self.delay[1]) == 0:
             return chr(len(res)) + res

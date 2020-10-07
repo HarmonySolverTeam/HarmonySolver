@@ -244,6 +244,8 @@ MuseScore {
         var lastSegment = false
         for (var i = 0; i < solution.chords.length; i++) {
             var curChord = solution.chords[i]
+            var prevChord = i === 0 ? undefined : solution.chords[i-1];
+            var nextChord = i === solution.chords.length - 1 ? undefined : solution.chords[i+1];
             Utils.log("curChord:",curChord)
             if (durations !== undefined) {
                 var dur = durations[i]
@@ -302,13 +304,26 @@ MuseScore {
             }
             addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
-            
+
             var text = newElement(Element.HARMONY)
             text.text = curChord.harmonicFunction.getSimpleChordName();
+
+            if(prevChord !== undefined && nextChord !== undefined){
+                if(curChord.harmonicFunction.key !== undefined){
+                    if(prevChord.harmonicFunction.key !== curChord.harmonicFunction.key){
+                        text.text = text.text[0] + "lb" + text.text.slice(1);
+                    }
+                    if(nextChord.harmonicFunction.key !== curChord.harmonicFunction.key){
+                        text.text = text.text + "rb";
+                    }
+                }
+            }
+
+            if(prevChord !== undefined)
+                if(prevChord.harmonicFunction.isDelayRoot()) text.text = "";
             text.offsetY = 7;
             text.placement = Placement.BELOW;
             cursor.add(text);
-
             cursor.addNote(curChord.bassNote.pitch, false)
         }
 

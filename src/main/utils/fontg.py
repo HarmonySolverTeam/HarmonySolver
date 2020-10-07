@@ -8,6 +8,8 @@ revolution_values = position_values # 19 -> 14
 system_values = [""] #3
 mode_values = ["moll", ""] #2
 down_values = ["down", ""] #2
+left_bracket = ["lb", ""]
+right_bracket = ["rb", ""]
 # delay_values generating
 
 single_delay_values = [
@@ -117,11 +119,16 @@ def get_names_of(tokens: []):
 def get_render_of(tokens:[]):
     render_template = "<render>{}</render>\n"
     tokens = list(map(lambda t: "&{};".format(t), tokens) )
-    return render_template.format(merge_tokens(tokens).replace("<","x").replace(">","y"))
+    merged_tokens = merge_tokens(tokens).replace("<","x").replace(">","y")
+
+    if merged_tokens.find("delay") != -1 and merged_tokens.find("deg") == -1 and merged_tokens.find("down") == -1:
+        merged_tokens = merged_tokens.replace("&rb;", "&spacing_rb;")
+
+    return render_template.format(merged_tokens)
 
 
 def create_chord_block_of(tokens:[]):
-    block_template = "<chord id=\"{0}\">\n{1}</chord>\n\n"
+    block_template = "<chord id=\"{0}\">\n{1}<voicing></voicing>\n</chord>\n\n"
 
     content = get_names_of(tokens) + get_render_of(tokens)
     return block_template.format("{}", content)
@@ -158,7 +165,7 @@ def add_degree(current_node):
                           extra=current_node["extra"],
                           omit=current_node["omit"],
                           delay=current_node["delay"],
-                          degree="",down="",mode="",system="")
+                          degree="",down="",mode="",system="",left_bracket="",right_bracket="")
     if not hf.validate():
         return
 
@@ -168,7 +175,13 @@ def add_mode(current_node):
     move_deeper(current_node, "mode", mode_values, add_down)
 
 def add_down(current_node):
-    move_deeper(current_node, "down", down_values, final_function)
+    move_deeper(current_node, "down", down_values, add_left_bracket)
+
+def add_left_bracket(current_node):
+    move_deeper(current_node, "left_bracket", left_bracket, add_right_bracket)
+
+def add_right_bracket(current_node):
+    move_deeper(current_node, "right_bracket", right_bracket, final_function)
 
 SEQ = 0
 def final_function(current_node):
@@ -182,7 +195,9 @@ def final_function(current_node):
                           degree=current_node["degree"],
                           down=current_node["down"],
                           mode=current_node["mode"],
-                          system="")
+                          system="",
+                          left_bracket=current_node["left_bracket"],
+                          right_bracket=current_node["right_bracket"])
     file.write(create_chord_block_of(hf.get_tokens()).format(SEQ))
 
 add_position({})
