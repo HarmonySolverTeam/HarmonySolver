@@ -1,0 +1,4 @@
+D
+4/4
+S{"degree":2,"revolution":"7"};D{}
+D{"revolution":"7"};T{}

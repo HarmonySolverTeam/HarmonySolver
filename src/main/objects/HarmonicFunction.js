@@ -100,6 +100,10 @@ function HarmonicFunction2(params){
             && Utils.containsBaseChordComponent(this.extra, "6")
     };
 
+    this.isInDominantRelationToDegree = function (nextFunctionDegree) {
+        return Utils.contains([4,-3], this.degree - nextFunctionDegree)
+    };
+
     this.copy = function copy(){
         var args = {
             "functionName" : this.functionName,

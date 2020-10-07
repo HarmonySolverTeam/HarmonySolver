@@ -130,7 +130,7 @@ function checkConnection(prevChord, currentChord){
     if((prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
         && currentChordTempFunctionName === Consts.FUNCTION_NAMES.TONIC) ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
-        if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChordTempFunctionDegree)) {
+        if(prevChord.harmonicFunction.isInDominantRelationToDegree(currentChordTempFunctionDegree)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
                 if (prevChord.notes[i].baseChordComponentEquals("3")) {
