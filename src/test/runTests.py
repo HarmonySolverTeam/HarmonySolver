@@ -14,7 +14,8 @@ suites = [
     "chordComponentManagerTest",
     "chordComponentTest",
     "intervalUtilsTest",
-    "parserTest"
+    "parserTest",
+    "exerciseCorrectorTest"
 ]
 
 for s in suites:
