@@ -8,11 +8,6 @@ var DEBUG = false;
 function ExerciseCorrector(exercise, harmonicFunctions){
     this.exercise = exercise;
     this.harmonicFunctions = harmonicFunctions;
-    this.cm = new ChordComponentManager.ChordComponentManager();
-
-    this._handlePentachords = function() {
-
-    };
 
     this._handleDominantConnections = function() {
 
@@ -23,23 +18,25 @@ function ExerciseCorrector(exercise, harmonicFunctions){
     };
 
     this._handleDominantConnectionsWith7InBass = function(dominantHarmonicFunction, tonicHarmonicFunction) {
-        if(!dominantHarmonicFunction.isInDominantRelationToDegree(tonicHarmonicFunction.degree) ||
-            dominantHarmonicFunction.revolution !== this.cm.chordComponentFromString("7"))
-            return;
-        var key = tonicHarmonicFunction.key !== undefined ?
-            tonicHarmonicFunction.key : this.exercise.key;
-        if(tonicHarmonicFunction.revolution === this.cm.chordComponentFromString("1")) {
+        if(dominantHarmonicFunction.isInDominantRelationToDegree(tonicHarmonicFunction.degree) &&
+            dominantHarmonicFunction.revolution.chordComponentString === "7" &&
+            tonicHarmonicFunction.revolution.chordComponentString === "1") {
+            var key = tonicHarmonicFunction.key !== undefined ?
+                tonicHarmonicFunction.key : this.exercise.key;
+            var cm = tonicHarmonicFunction.cm;
             tonicHarmonicFunction.revolution =
                 IntervalUtils.getThirdMode(key, tonicHarmonicFunction.degree-1) === Consts.MODE.MAJOR ?
-                    this.cm.chordComponentFromString("3") : this.cm.chordComponentFromString("3>");
+                    cm.chordComponentFromString("3") : cm.chordComponentFromString("3>");
         }
+        return tonicHarmonicFunction;
     };
 
     this.correctHarmonicFunctions = function() {
-        var resultHarmonicFunctions = this.harmonicFunctions
-        for(var i=0; i<resultHarmonicFunctions.length;i++){
-            if(i < resultHarmonicFunctions.length-1)
-                this._handleDominantConnectionsWith7InBass(resultHarmonicFunctions[i], resultHarmonicFunctions[i+1]);
+        var givenHarmonicFunctions = this.harmonicFunctions;
+        var resultHarmonicFunctions = this.harmonicFunctions.length > 0 ? [this.harmonicFunctions[0]] : [];
+        for(var i=0; i<givenHarmonicFunctions.length;i++){
+            if(i < givenHarmonicFunctions.length-1)
+                resultHarmonicFunctions.push(this._handleDominantConnectionsWith7InBass(givenHarmonicFunctions[i], givenHarmonicFunctions[i+1]));
         }
         return resultHarmonicFunctions;
     };

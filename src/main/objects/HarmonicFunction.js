@@ -3,6 +3,7 @@
 .import "./Utils.js" as Utils
 .import "./HarmonicFunctionValidator.js" as HarmonicFunctionValidator
 .import "./Consts.js" as Consts
+.import "./Errors.js" as Errors
 
 var DEBUG = false;
 
@@ -19,8 +20,8 @@ function HarmonicFunction2(params){
     // system               "open" | "close" | undefined
     // mode                 "major" | "minor"
     // key                  string, f.e. "C#", "g#", "Ab"
-
-    var cm = new ChordComponentManager.ChordComponentManager();
+    this.cm = new ChordComponentManager.ChordComponentManager();
+    var cm = this.cm;
 
     this.functionName = params["functionName"];
     this.degree = params["degree"] === undefined ? getDegreeFromFunctionName(this.functionName) : params["degree"];
@@ -72,6 +73,19 @@ function HarmonicFunction2(params){
         return basicChordComponents;
     };
 
+    this.countChordComponents = function () {
+        var chordComponentsCount = 3;
+        chordComponentsCount += this.extra.length;
+        chordComponentsCount -= this.omit.length;
+        for(var i=0; i<this.delay.length; i++) {
+            if (!Utils.contains(this.extra, this.delay[i][0])
+                && Utils.contains(this.omit, this.delay[i][1])) chordComponentsCount += 1;
+            if (Utils.contains(this.extra, this.delay[i][0])
+                && !Utils.contains(this.omit, this.delay[i][1])) chordComponentsCount -= 1;
+        }
+        return chordComponentsCount;
+    };
+
     //additional rules
     if((Utils.contains(this.extra, cm.chordComponentFromString("9")) || Utils.contains(this.extra, cm.chordComponentFromString("9>")) || Utils.contains(this.extra, cm.chordComponentFromString("9<")))
         && !Utils.contains(this.extra, cm.chordComponentFromString("7")) && !Utils.contains(this.extra, cm.chordComponentFromString("7<"))) {
@@ -80,6 +94,29 @@ function HarmonicFunction2(params){
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
     if(Utils.contains(this.extra, cm.chordComponentFromString("5<")) || Utils.contains(this.extra, cm.chordComponentFromString("5>"))) this.omit.push(cm.chordComponentFromString("5"));
+
+    //handle ninth chords
+    if(Utils.containsBaseChordComponent(this.extra, "9")){
+        if(this.countChordComponents() > 4){
+            var prime = cm.chordComponentFromString("1");
+            var fifth = cm.chordComponentFromString("5");
+            if(this.position === this.revolution){
+                throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
+                    "ninth chord could not have same position as revolution")
+            }
+            if (Utils.contains([prime, fifth], this.position) && Utils.contains([prime, fifth], this.revolution)) {
+                throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
+                    "ninth chord could not have both prime or fifth in position and revolution")
+            }
+            if(!Utils.contains(this.omit, fifth) && this.position !== fifth && this.revolution !== fifth)
+                this.omit.push(fifth);
+            else if(!Utils.contains(this.omit, prime)) {
+                this.omit.push(prime);
+                if(this.revolution === prime)
+                    this.revolution = this.getBasicChordComponents()[1];
+            }
+        }
+    }
 
     this.getPossibleToDouble = function () {
         var res = this.getBasicChordComponents();
