@@ -25,7 +25,12 @@ function SopranoHarmonizationInputError(message, details) {
     this.source = "Error in soprano harmonization input"
 }
 
-function ProbablyUnexpectedError(message, deatils) {
+function ProbablyUnexpectedError(message, details) {
     BasicError.call(this, message, details)
     this.source = "Possible error in code"
+}
+
+function PreCheckerError(message, details) {
+    BasicError.call(this, message, details)
+    this.source = "Error during checking exercise correctness"
 }
