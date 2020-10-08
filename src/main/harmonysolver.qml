@@ -552,7 +552,11 @@ MuseScore {
       errorDialog.text += error.details !== undefined ? error.details : ""
 
       if (error.stack !== undefined) {
-        errorDialog.text += "\n Stack: \n" + error.stack
+        if (error.stack.length >= 1500) {
+            errorDialog.text += "\n Stack: \n" + error.stack.substring(0,1500) + "..."
+        } else {
+            errorDialog.text += "\n Stack: \n" + error.stack
+        }
       }
 
       errorDialog.open()
