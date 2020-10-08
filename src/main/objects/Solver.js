@@ -6,6 +6,7 @@
 .import "./ChordGenerator.js" as ChordGenerator
 .import "./RulesChecker.js" as Checker
 .import "./Utils.js" as Utils
+.import "./ExerciseCorrector.js" as Corrector
 
 var DEBUG = false;
 
@@ -64,6 +65,10 @@ function Solver(exercise, bassLine, sopranoLine){
 
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
+
+    var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
+    this.harmonicFunctions = corrector.correctHarmonicFunctions();
+
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 
     this.solve = function(){

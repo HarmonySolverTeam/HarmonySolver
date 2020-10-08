@@ -2,6 +2,7 @@
 .import "./Errors.js" as Errors
 .import "./Consts.js" as Consts
 .import "./IntervalUtils.js" as IntervalUtils
+.import "./HarmonicFunction.js" as HarmonicFunction
 
 var DEBUG = false;
 
@@ -125,12 +126,13 @@ function checkConnection(prevChord, currentChord){
         }
         else return 0;
     }
-
+    var currentChordFunctionTemp = new HarmonicFunction.HarmonicFunction(currentChordTempFunctionName, currentChordTempFunctionDegree);
+    currentChordFunctionTemp.key = currentChord.harmonicFunction.key;
     var couldHaveDouble3 = false;
     if((prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
         && currentChordTempFunctionName === Consts.FUNCTION_NAMES.TONIC) ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
-        if(Utils.contains([4,-3], prevChord.harmonicFunction.degree - currentChordTempFunctionDegree)) {
+        if(prevChord.harmonicFunction.isInDominantRelation(currentChordFunctionTemp)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
                 if (prevChord.notes[i].baseChordComponentEquals("3")) {
@@ -298,6 +300,7 @@ function hiddenOctaves(prevChord, currentChord){
     return 0;
 }
 
+//todo nie działa dla (D7) -> (D7)
 function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
         if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[i])){
@@ -332,9 +335,20 @@ function correctChopinChord(chord){
     return true;
 }
 
+function correctNoneChord(chord){
+    if(!Utils.containsBaseChordComponent(chord.harmonicFunction.extra,9))
+        return true;
+    if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.revolution)) {
+        if(!chord.sopranoNote.baseChordComponentEquals("9") || !chord.tenorNote.baseChordComponentEquals("1"))
+            return false;
+    }
+    return true;
+};
+
 function checkChordCorrectness(chord){
     if(!correctDistanceBassTenor(chord)) return -1;
     if(!correctChopinChord(chord)) return -1;
+    if(!correctNoneChord(chord)) return -1;
     return 0;
 }
 

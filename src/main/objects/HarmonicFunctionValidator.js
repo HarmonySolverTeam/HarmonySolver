@@ -143,16 +143,7 @@ function HarmonicFunctionValidator(){
     }
 
     function checkAllChordComponentNumber(_this){
-        var chordComponentsCount = 3;
-        chordComponentsCount += _this.harmonicFunction.extra.length;
-        chordComponentsCount -= _this.harmonicFunction.omit.length;
-        for(var i=0; i<_this.harmonicFunction.delay.length; i++) {
-            if (!Utils.contains(_this.harmonicFunction.extra, _this.harmonicFunction.delay[i][0])
-                && Utils.contains(_this.harmonicFunction.omit, _this.harmonicFunction.delay[i][1])) chordComponentsCount += 1;
-            if (Utils.contains(_this.harmonicFunction.extra, _this.harmonicFunction.delay[i][0])
-                && !Utils.contains(_this.harmonicFunction.omit, _this.harmonicFunction.delay[i][1])) chordComponentsCount -= 1;
-        }
-        if(chordComponentsCount > 4) handleValidationFailure(_this, "Count of chord components is to large - there are only 4 voices");
+        if(_this.harmonicFunction.countChordComponents() > 4) handleValidationFailure(_this, "Count of chord components is to large - there are only 4 voices");
     }
 
     function checkIfExtraContainsPosition(_this) {

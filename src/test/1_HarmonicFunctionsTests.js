@@ -6,20 +6,12 @@ var Utils = require("./objects/Utils")
 var Parser = require("./objects/Parser");
 var Solver = require("./objects/Solver");
 var UnitTest = require("./TestUtils");
-var fs = require('fs');
 var ChordComponentManager = require("./objects/ChordComponentManager")
 
 var cm = new ChordComponentManager.ChordComponentManager();
 
-var get_ex_from_file = (path) => {
-    var buffer = fs.readFileSync(process.cwd() + path);
-    var input = buffer.toString();
-    input = input.replace("\r\n", "\n")
-    return input;
-}
-
 var check_solution_found_major = (exName) => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
+    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
     var ex = Parser.parse(input);
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
@@ -28,7 +20,7 @@ var check_solution_found_major = (exName) => {
 }
 
 var check_solution_found_minor = (exName) => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
+    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
     var ex = Parser.parse(input);
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
@@ -61,6 +53,8 @@ var sikorski_zzip_ex180 = () => {return check_solution_found_major("sikorski_zzi
 var sikorski_zzip_ex186 = () => {return check_solution_found_major("sikorski_zzip_ex186.txt")};
 var sikorski_zzip_ex198 = () => {return check_solution_found_major("sikorski_zzip_ex198.txt")};
 var chained_deflection_basic = () => {return check_solution_found_major("chained_deflection_basic.txt")};
+var d_with_7_revolution = () => {return check_solution_found_major("d_with_7_revolution.txt")};
+var d9_without_omits = () => {return check_solution_found_major("d9_without_omits.txt")};
 
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex13, "HarmonicFunctions Major test 1 - from targosz_p61_ex13"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex14, "HarmonicFunctions Major test 2 - from targosz_p61_ex14"));
@@ -86,6 +80,8 @@ harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex180, "H
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex186, "HarmonicFunctions Major test 22 - from sikorski_zzip_ex186"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex198, "HarmonicFunctions Major test 23 - from sikorski_zzip_ex198"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(chained_deflection_basic, "HarmonicFunctions Major test 24 - from chained_deflection_basic"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(d_with_7_revolution, "HarmonicFunctions Major test 25 - from d_with_7_revolution"));
+harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(d9_without_omits, "HarmonicFunctions Major test 26 - from d9_without_omits"));
 
 // MINOR
 var targosz_p61_ex17 = () => {return check_solution_found_minor("targosz_p61_ex17.txt")};
