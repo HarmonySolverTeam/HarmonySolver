@@ -151,11 +151,16 @@ function HarmonicFunction2(params){
             res += "delay" + this.delay[0][0].chordComponentString + this.delay[1][0].chordComponentString + "-" + this.delay[0][1].chordComponentString + this.delay[1][1].chordComponentString;
         }
 
-        var degreeAdapter = {2:"II", 3:"III", 6:"VI", 7:"VII"};
+        var degreeAdapter = {1: "I", 2:"II", 3:"III", 4:"IV", 5:"V", 6:"VI", 7:"VII"};
+
+        if(this.down) {
+            res += "down";
+            if(this.degree === 1 || this.degree === 4 || this.degree === 5)
+            res += "deg" + degreeAdapter[this.degree]
+        }
+
         if(this.degree !== undefined && this.degree !== 1 && this.degree !== 4 && this.degree !== 5)
             res += "deg" + degreeAdapter[this.degree];
-
-        if(this.down) res += "down";
 
         console.log(res);
         return res;

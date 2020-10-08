@@ -54,6 +54,13 @@ class HarmonicFunction():
 
         if self.get_base_chord_components_count() != self.get_chord_components_count():
             return False
+
+        if self.mode == "down" and self.degree == "":
+            return False
+
+        if (self.degree == "I" or self.degree == "IV" or self.degree == "V") and self.down == "":
+            return False
+
         # validacja delayów
         return True
 
@@ -96,8 +103,8 @@ class HarmonicFunction():
         res += [POSITION + self.position] if self.position != "" else []
         res += [REVOLUTION + self.revolution] if self.revolution != "" else []
         res += [EXTRA + self.extra] if self.extra != "" else []
-        res += [DEGREE + self.degree] if self.degree != "" else []
         res += [self.down] if self.down != "" else []
+        res += [DEGREE + self.degree] if self.degree != "" else []
         res += [OMIT + self.omit] if self.omit != "" else []
         res += [self.system] if self.system != "" else []
         res += [self.right_bracket] if self.right_bracket != "" else []
@@ -112,8 +119,8 @@ class HarmonicFunction():
         res += REVOLUTION + self.revolution if self.revolution != "" else ""
         res += EXTRA + self.extra if self.extra != "" else ""
         res += self.mode
-        res += DEGREE + self.degree if self.degree != "" else ""
         res += self.down
+        res += DEGREE + self.degree if self.degree != "" else ""
         res += OMIT + self.omit if self.omit != "" else ""
         res += self.system
         res += self.left_bracket

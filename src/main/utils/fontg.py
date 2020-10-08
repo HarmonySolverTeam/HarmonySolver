@@ -1,6 +1,6 @@
 from HarmonicFunction import HarmonicFunction, get_base_component
 
-degree_values = ["II", "III", "VI", "VII", ""] #5
+degree_values = ["I", "II", "III", "IV", "V", "VI", "VII", ""] #5
 extra_values = [""] #10  -> 7
 omit_values = [""] #7  -> 5
 position_values = [""] #19 -> 14
@@ -121,8 +121,12 @@ def get_render_of(tokens:[]):
     tokens = list(map(lambda t: "&{};".format(t), tokens) )
     merged_tokens = merge_tokens(tokens).replace("<","x").replace(">","y")
 
-    if merged_tokens.find("delay") != -1 and merged_tokens.find("deg") == -1 and merged_tokens.find("down") == -1:
+    if merged_tokens.find("delay") != -1:
         merged_tokens = merged_tokens.replace("&rb;", "&spacing_rb;")
+        if merged_tokens.find("deg") != -1:
+            merged_tokens = merged_tokens.replace("&deg", "&react_deg")
+        if merged_tokens.find("down") != -1:
+            merged_tokens = merged_tokens.replace("&spacing_rb;","&backspace_down; &spacing_rb;")
 
     return render_template.format(merged_tokens)
 
@@ -159,16 +163,6 @@ def add_delay(current_node):
     move_deeper(current_node, "delay", delay_values, add_degree)
 
 def add_degree(current_node):
-    # in here I do some validation to improve performance
-    hf = HarmonicFunction(position=current_node["position"],
-                          revolution=current_node["revolution"],
-                          extra=current_node["extra"],
-                          omit=current_node["omit"],
-                          delay=current_node["delay"],
-                          degree="",down="",mode="",system="",left_bracket="",right_bracket="")
-    if not hf.validate():
-        return
-
     move_deeper(current_node, "degree", degree_values, add_mode)
 
 def add_mode(current_node):
@@ -185,8 +179,6 @@ def add_right_bracket(current_node):
 
 SEQ = 0
 def final_function(current_node):
-    global SEQ
-    SEQ += 1
     hf = HarmonicFunction(position=current_node["position"],
                           revolution=current_node["revolution"],
                           extra=current_node["extra"],
@@ -198,6 +190,12 @@ def final_function(current_node):
                           system="",
                           left_bracket=current_node["left_bracket"],
                           right_bracket=current_node["right_bracket"])
+    if not hf.validate():
+        return
+
+    global SEQ
+    SEQ += 1
+
     file.write(create_chord_block_of(hf.get_tokens()).format(SEQ))
 
 add_position({})
