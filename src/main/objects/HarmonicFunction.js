@@ -148,7 +148,8 @@ function HarmonicFunction2(params){
         }
 
         if(this.delay.length === 2){
-            res += "delay" + this.delay[0][0].chordComponentString + this.delay[1][0].chordComponentString + "-" + this.delay[0][1].chordComponentString + this.delay[1][1].chordComponentString;
+            res += "delay" + this.delay[0][0].chordComponentString + this.delay[1][0].chordComponentString
+                     + "-" + this.delay[0][1].chordComponentString + this.delay[1][1].chordComponentString;
         }
 
         var degreeAdapter = {1: "I", 2:"II", 3:"III", 4:"IV", 5:"V", 6:"VI", 7:"VII"};
