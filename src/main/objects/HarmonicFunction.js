@@ -190,6 +190,41 @@ function HarmonicFunction2(params){
         var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
         validator.validate(this);
     }
+
+    this.getSimpleChordName = function() {
+    //    functionName [moll] [delay] [deg] [down]
+        var functionNameAdapter = { "T" : "A", "S" : "B", "D":"D", "same_as_prev" : "C"};
+        var res = functionNameAdapter[this.functionName];
+
+        if(this.mode === "minor") res += "moll";
+
+        if(this.delay.length === 1){
+            res += "delay" + this.delay[0][0].chordComponentString + "-" + this.delay[0][1].chordComponentString;
+        }
+
+        if(this.delay.length === 2){
+            res += "delay" + this.delay[0][0].chordComponentString + this.delay[1][0].chordComponentString
+                     + "-" + this.delay[0][1].chordComponentString + this.delay[1][1].chordComponentString;
+        }
+
+        var degreeAdapter = {1: "I", 2:"II", 3:"III", 4:"IV", 5:"V", 6:"VI", 7:"VII"};
+
+        if(this.down) {
+            res += "down";
+            if(this.degree === 1 || this.degree === 4 || this.degree === 5)
+            res += "deg" + degreeAdapter[this.degree]
+        }
+
+        if(this.degree !== undefined && this.degree !== 1 && this.degree !== 4 && this.degree !== 5)
+            res += "deg" + degreeAdapter[this.degree];
+
+        console.log(res);
+        return res;
+    }
+
+    this.isDelayRoot = function() {
+        return this.delay.length > 0;
+    }
 }
 
 function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key) {
