@@ -14,7 +14,7 @@ function checkDSConnection(harmonicFunctions) {
     }
 }
 
-function checkForImpossibleConnections(harmonicFunctions, chordGenerator){
+function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine) {
     var currentChords
     var prevChords = undefined
     var goodCurrentChords = []
@@ -27,7 +27,11 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator){
         }
         goodCurrentChords = []
         usedCurrentChords = []
-        currentChords = chordGenerator.generate(harmonicFunctions[i])
+        if (bassLine !== undefined) {
+            currentChords = chordGenerator.generate(harmonicFunctions[i], [bassLine[i], undefined, undefined, undefined])
+        } else {
+            currentChords = chordGenerator.generate(harmonicFunctions[i])
+        }
 
         if (currentChords.length === 0) {
             throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1))
@@ -40,7 +44,6 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator){
         if (i !== 0) {
             for (var a = 0; a < prevChords.length; a++) {
                 for (var b = 0; b < currentChords.length; b++) {
-                    console.log(a, b)
                     if (!usedCurrentChords[b]) {
                         score = Checker.checkAllRules(undefined, prevChords[a], currentChords[b])
                         if (score !== -1) {
@@ -52,7 +55,6 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator){
             }
         } else {
             for (var b = 0; b < currentChords.length; b++) {
-                console.log(b)
                 score = Checker.checkAllRules(undefined, undefined, currentChords[b])
                 if (score !== -1) {
                     goodCurrentChords.push(currentChords[b])
@@ -72,10 +74,14 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator){
     }
 }
 
-
-function preCheck(harmonicFunctions, chordGenerator) {
+function preCheck(harmonicFunctions, chordGenerator, bassLine, sopranoLine) {
+    if (sopranoLine !== undefined) {
+        //we do not precheck soprano exercises, since there are more than one possible exercises considered and
+        //we create those harmonic function exercises by ourselves
+        return
+    }
     checkDSConnection(harmonicFunctions)
-    checkForImpossibleConnections(harmonicFunctions, chordGenerator)
+    checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine)
 }
 
 
