@@ -6,7 +6,7 @@ function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
         if (harmonicFunctions[i].functionName === Consts.FUNCTION_NAMES.DOMINANT
             && harmonicFunctions[i + 1].functionName === Consts.FUNCTION_NAMES.SUBDOMINANT
-            && harmonicFunctions[i].mode !== Consts.MODE.MINOR) {
+            && harmonicFunctions[i].mode === Consts.MODE.MAJOR) {
             throw new Errors.PreCheckerError("Forbidden connection: D->S", "Chords: " + (i + 1) + " " + (i + 2)
                 , "Chord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i-1])
                 + "\nChord " + (i + 2) + "\n" + JSON.stringify(harmonicFunctions[i]))
