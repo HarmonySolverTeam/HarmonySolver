@@ -6,6 +6,7 @@
 .import "./ChordGenerator.js" as ChordGenerator
 .import "./RulesChecker.js" as Checker
 .import "./Utils.js" as Utils
+.import "./PreChecker.js" as PreChecker
 
 var DEBUG = false;
 
@@ -67,6 +68,7 @@ function Solver(exercise, bassLine, sopranoLine){
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 
     this.solve = function(){
+        PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator)
         var sol_chords =  this.findSolution(0, undefined, undefined);
         //dopełenienie pustymi chordami
         var N = sol_chords.length;
