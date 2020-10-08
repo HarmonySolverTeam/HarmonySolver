@@ -6,20 +6,12 @@ var Utils = require("./objects/Utils")
 var Parser = require("./objects/Parser");
 var Solver = require("./objects/Solver");
 var UnitTest = require("./TestUtils");
-var fs = require('fs');
 var ChordComponentManager = require("./objects/ChordComponentManager")
 
 var cm = new ChordComponentManager.ChordComponentManager();
 
-var get_ex_from_file = (path) => {
-    var buffer = fs.readFileSync(process.cwd() + path);
-    var input = buffer.toString();
-    input = input.replace("\r\n", "\n")
-    return input;
-}
-
 var check_solution_found_major = (exName) => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
+    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
     var ex = Parser.parse(input);
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();
@@ -28,7 +20,7 @@ var check_solution_found_major = (exName) => {
 }
 
 var check_solution_found_minor = (exName) => {
-    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
+    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
     var ex = Parser.parse(input);
     var solver = new Solver.Solver(ex);
     var solution = solver.solve();

@@ -96,6 +96,7 @@ function HarmonicFunction2(params){
     if(Utils.contains(this.extra, cm.chordComponentFromString("5<")) || Utils.contains(this.extra, cm.chordComponentFromString("5>"))) this.omit.push(cm.chordComponentFromString("5"));
 
     //handle ninth chords
+    //todo obnizenia -> czy nie powinno sie sprawdzac po baseComponentach 1 i 5?
     if(Utils.containsBaseChordComponent(this.extra, "9")){
         if(this.countChordComponents() > 4){
             var prime = cm.chordComponentFromString("1");
@@ -137,8 +138,13 @@ function HarmonicFunction2(params){
             && Utils.containsBaseChordComponent(this.extra, "6")
     };
 
-    this.isInDominantRelationToDegree = function (nextFunctionDegree) {
-        return Utils.contains([4,-3], this.degree - nextFunctionDegree)
+    this.isInDominantRelation = function (nextFunction) {
+        if(this.key !== nextFunction.key && Utils.isDefined(this.key)){
+            return Utils.contains([4,-3], this.degree - 1);
+        }
+        if(this.key === nextFunction.key)
+            return Utils.contains([4,-3], this.degree - nextFunction.degree);
+        return false;
     };
 
     this.copy = function copy(){

@@ -7,6 +7,9 @@ Example usage:
     suite.addTest(x2);
     suite.run()
  */
+
+var fs = require('fs');
+
 const LOG_STYLES = {
     "Reset" : "\x1b[0m",
     "Bright" : "\x1b[1m",
@@ -14,6 +17,14 @@ const LOG_STYLES = {
     "FgYellow" : "\x1b[33m",
     "FgCyan" : "\x1b[36m"
 };
+
+exports.get_ex_from_file = function get_ex_from_file(path){
+    var buffer = fs.readFileSync(process.cwd() + path);
+    var input = buffer.toString();
+    input = input.replace("\r\n", "\n")
+    return input;
+}
+
 
 exports.assertEqualsObjects = function assertEqualsObjects(expected, actual, noLog){
     if (!noLog) {
@@ -68,6 +79,10 @@ exports.assertFalse = function assertFalse(condition, noLog){
         }
     }
     return !condition
+}
+
+exports.assertContains = function assertContains(list, obj){
+    return list.includes(obj);
 }
 
 exports.assertTrue = function assertTrue(condition, noLog){

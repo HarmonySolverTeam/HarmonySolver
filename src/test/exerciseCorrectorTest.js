@@ -4,17 +4,38 @@ const HarmonicFunction = require("./objects/HarmonicFunction");
 const ExerciseCorrector = require("./objects/ExerciseCorrector");
 const Solver = require("./objects/Solver");
 var ChordComponentManager = require("./objects/ChordComponentManager");
+var Parser = require("./objects/Parser");
 
 const exerciseCorrectorTestSuite = new UnitTest.TestSuite("Exercise corrector suite");
 
-const handlePentachordsTest = () => {
-    return true;
-};
-
-exerciseCorrectorTestSuite.addTest(new UnitTest.UnitTest(handlePentachordsTest, "Handle pentachords"));
-
 const makeChordsIncompleteToAvoidConcurrent5Test = () => {
-    return true;
+    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\chain_dominants.txt");
+    var ex = Parser.parse(input);
+    var solver = new Solver.Solver(ex);
+    var solution = solver.solve();
+
+    var cm = new ChordComponentManager.ChordComponentManager();
+    var fifth = cm.chordComponentFromString("5");
+
+    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch) &&
+        UnitTest.assertContains(solution.chords[0].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[1].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[2].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[3].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[4].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[5].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[6].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[7].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[8].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[9].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[11].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[12].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[13].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[14].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[15].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[17].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[18].harmonicFunction.omit,fifth)
+    //10 & 16 have given 5 in omit
 };
 
 exerciseCorrectorTestSuite.addTest(new UnitTest.UnitTest(makeChordsIncompleteToAvoidConcurrent5Test, "Make chords incomplete to avoid concurrent 5s"));

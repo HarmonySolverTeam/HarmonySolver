@@ -2,6 +2,7 @@
 .import "./Errors.js" as Errors
 .import "./Consts.js" as Consts
 .import "./IntervalUtils.js" as IntervalUtils
+.import "./HarmonicFunction.js" as HarmonicFunction
 
 var DEBUG = false;
 
@@ -125,12 +126,13 @@ function checkConnection(prevChord, currentChord){
         }
         else return 0;
     }
-
+    var currentChordFunctionTemp = new HarmonicFunction.HarmonicFunction(currentChordTempFunctionName, currentChordTempFunctionDegree);
+    currentChordFunctionTemp.key = currentChord.harmonicFunction.key;
     var couldHaveDouble3 = false;
     if((prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
         && currentChordTempFunctionName === Consts.FUNCTION_NAMES.TONIC) ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
-        if(prevChord.harmonicFunction.isInDominantRelationToDegree(currentChordTempFunctionDegree)) {
+        if(prevChord.harmonicFunction.isInDominantRelation(currentChordFunctionTemp)) {
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
                 if (prevChord.notes[i].baseChordComponentEquals("3")) {
@@ -298,6 +300,7 @@ function hiddenOctaves(prevChord, currentChord){
     return 0;
 }
 
+//todo nie działa dla (D7) -> (D7)
 function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
         if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[i])){
