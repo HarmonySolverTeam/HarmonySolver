@@ -20,6 +20,8 @@ function HarmonicFunction2(params){
     // system               "open" | "close" | undefined
     // mode                 "major" | "minor"
     // key                  string, f.e. "C#", "g#", "Ab"
+
+    //preprocessing zadania wymagał użycia tego samego chord component managera dla danej HF, co w momencie jej inicjalizacji
     this.cm = new ChordComponentManager.ChordComponentManager();
     var cm = this.cm;
 
