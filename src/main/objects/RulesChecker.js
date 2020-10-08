@@ -205,6 +205,17 @@ function checkConnection(prevChord, currentChord){
                     !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
                     !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("1")) return -1;
             }
+            if (prevChord.harmonicFunction.isChopin()){{
+                var dominantVoiceWith6 = -1;
+                for (var i = 0; i < 4; i++) {
+                    if (prevChord.notes[i].baseChordComponentEquals("6")) {
+                        dominantVoiceWith6 = i;
+                        break;
+                    }
+                }
+                if (dominantVoiceWith6 > -1 &&
+                    !currentChord.notes[dominantVoiceWith6].chordComponentEquals("1")) return -1;
+            }}
         }
 
         // todo 7 na 1, chyba inaczej, czy tylko dla D -> T?

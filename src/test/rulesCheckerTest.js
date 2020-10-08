@@ -251,8 +251,8 @@ const checkConnectionForModulations = () => {
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionForModulations, "Check connection for modulations test"));
 
 const isCorrectChopinChord = () => {
-    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],undefined,undefined,undefined,undefined, "C");
-    var hf2 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],undefined,undefined,undefined,undefined, "c");
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],["5"],undefined,undefined,undefined, "C");
+    var hf2 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],["5"],undefined,undefined,undefined, "c");
 
     var ch1 = new Chord.Chord(new Note.Note(76, 2,"6"), new Note.Note(71,6,"3"), new Note.Note(65, 3,"7"), new Note.Note(55,4,"1"), hf1);
     var ch2 = new Chord.Chord(new Note.Note(77, 3,"7"), new Note.Note(71,6,"3"), new Note.Note(64, 2,"6"), new Note.Note(55,4,"1"), hf1);
@@ -264,5 +264,25 @@ const isCorrectChopinChord = () => {
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(isCorrectChopinChord, "Check correctness for Chopin chord test"));
+
+const chopinTonicConnection = () => {
+    var d1 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],["5"],undefined,undefined,undefined, "C");
+    var d2 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],["5"],undefined,undefined,undefined, "c");
+    var t1 = new HarmonicFunction.HarmonicFunction("T",undefined,undefined,undefined,undefined,undefined,["5"],undefined,undefined,undefined, "C");
+    var t2 = new HarmonicFunction.HarmonicFunction("T",undefined,undefined,undefined,undefined,undefined,["5"],undefined,undefined,undefined, "c");
+
+    var ch1 = new Chord.Chord(new Note.Note(76, 2,"6"), new Note.Note(71,6,"3"), new Note.Note(65, 3,"7"), new Note.Note(55,4,"1"), d1);
+    var ch2 = new Chord.Chord(new Note.Note(75, 3,"6>"), new Note.Note(71,6,"3"), new Note.Note(65, 2,"7"), new Note.Note(55,4,"1"), d2);
+
+    var ch3 = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(72,0,"1"), new Note.Note(64, 2,"3"), new Note.Note(60,0,"1"), t1);
+    var ch4 = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(72,0,"1"), new Note.Note(63, 2,"3>"), new Note.Note(60,0,"1"), t1);
+    var ch5 = new Chord.Chord(new Note.Note(79, 4,"5"), new Note.Note(72,0,"1"), new Note.Note(64, 2,"3"), new Note.Note(60,0,"1"), t1);
+
+    return UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(ch1,ch3)) &&
+        UnitTest.assertEqualsPrimitives(0, RulesChecker.checkConnection(ch2,ch4)) &&
+        UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch1,ch5))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(chopinTonicConnection, "Check correctness of Chopin -> T test"));
 
 rulesCheckerTestSuite.run();

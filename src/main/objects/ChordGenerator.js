@@ -38,13 +38,6 @@ function ChordGenerator(key, mode) {
         var needToAdd = harmonicFunction.getBasicChordComponents();
 
         for (var i = 0; i < harmonicFunction.extra.length; i++) {
-            //todo chopin chord need to be implemented again in new architecture
-
-            // if (harmonicFunction.extra[i].length > 2) {
-            //     if (harmonicFunction.extra[i][0] === "1" && harmonicFunction.extra[i][1] === "3")
-            //         soprano = "6" + harmonicFunction.extra[i].splice(2, harmonicFunction.extra[i].length);
-            //     continue;
-            // }
             needToAdd.push(harmonicFunction.extra[i]);
         }
 
