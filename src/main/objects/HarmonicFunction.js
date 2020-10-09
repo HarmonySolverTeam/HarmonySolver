@@ -136,6 +136,7 @@ function HarmonicFunction2(params){
 
     this.isChopin = function () {
         return this.functionName === Consts.FUNCTION_NAMES.DOMINANT
+            && Utils.containsChordComponent(this.omit, "5")
             && Utils.contains(this.extra, cm.chordComponentFromString("7"))
             && Utils.containsBaseChordComponent(this.extra, "6")
     };

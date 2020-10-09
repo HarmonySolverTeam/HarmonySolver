@@ -20,6 +20,14 @@ function ExerciseCorrector(exercise, harmonicFunctions){
         }
     };
 
+    this._handleChopinTonicConnection = function (chopinHarmonicFunction, tonicHarmonicFunction) {
+        if(chopinHarmonicFunction.isChopin() && chopinHarmonicFunction.isInDominantRelation(tonicHarmonicFunction)){
+            if(!Utils.containsChordComponent(tonicHarmonicFunction.omit,"5")){
+                tonicHarmonicFunction.omit.push(tonicHarmonicFunction.cm.chordComponentFromString("5"));
+            }
+        }
+    };
+
     this._handleDominantConnectionsWith7InBass = function(dominantHarmonicFunction, tonicHarmonicFunction) {
         if(dominantHarmonicFunction.isInDominantRelation(tonicHarmonicFunction) &&
             dominantHarmonicFunction.revolution.baseComponent === "7" &&
@@ -39,6 +47,7 @@ function ExerciseCorrector(exercise, harmonicFunctions){
         for(var i=0; i<resultHarmonicFunctions.length;i++){
             if(i < resultHarmonicFunctions.length-1){
                 this._handleDominantConnectionsWith7InBass(resultHarmonicFunctions[i], resultHarmonicFunctions[i+1]);
+                this._handleChopinTonicConnection(resultHarmonicFunctions[i], resultHarmonicFunctions[i+1]);
                 if(resultHarmonicFunctions[i].isInDominantRelation(resultHarmonicFunctions[i+1]) &&
                     resultHarmonicFunctions[i].revolution.baseComponent === "1" &&
                     resultHarmonicFunctions[i+1].revolution.baseComponent === "1" &&
