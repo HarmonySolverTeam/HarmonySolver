@@ -15,7 +15,7 @@ function isFive(note1, note2){
 }
 
 function isChromaticAlteration(note1, note2){
-    return note1.baseNote === note2.baseNote && Utils.mod(Utils.abs(note1.pitch-note2.pitch),12) === 1;
+    return note1.baseNote === note2.baseNote && Utils.contains([1,11], Utils.mod(note1.pitch - note2.pitch,12));
 }
 
 function pitchOffsetBetween(note1, note2){

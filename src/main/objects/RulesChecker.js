@@ -311,7 +311,6 @@ function hiddenOctaves(prevChord, currentChord){
     return 0;
 }
 
-//todo nie działa dla (D7) -> (D7)
 function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
         if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[i])){
