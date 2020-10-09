@@ -290,8 +290,13 @@ function checkConnection(prevChord, currentChord){
         }
     }
 
-    if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT){
-        //todo najbliższą drogą
+    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
+        && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
+        var result = 0;
+        for(var i=0; i<4; i++){
+            result += IntervalUtils.pitchOffsetBetween(prevChord.notes[i], currentChord.notes[i]);
+        }
+        return result;
     }
 
     if(prevChordFunctionTemp.equals(currentChordFunctionTemp)){
