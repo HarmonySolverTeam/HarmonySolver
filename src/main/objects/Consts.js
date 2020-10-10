@@ -204,6 +204,12 @@ var MODE = {
 }
 
 //G
+var DEFLECTION_TYPE = {
+    CLASSIC: 0,
+    BACKWARDS: 1
+}
+
+//G
 var keyFromPitchBasenoteAndMode = {
     "60,0,major": 'C',
     "61,0,major": 'C#',

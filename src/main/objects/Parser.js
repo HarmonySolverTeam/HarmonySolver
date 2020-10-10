@@ -46,22 +46,22 @@ function getKeyFromPitchBasenoteAndModeOrThrowError(pitch, basenote, mode) {
     }
 }
 
-function calculateKey(key, nextChordAfterDeflection) {
+function calculateKey(key, deflectionTargetChord) {
 
     var keyToUse = key
-    if (nextChordAfterDeflection.key !== undefined) {
-        keyToUse = nextChordAfterDeflection.key
+    if (deflectionTargetChord.key !== undefined) {
+        keyToUse = deflectionTargetChord.key
     }
 
     var pitchesToUse = Utils.contains(Consts.possible_keys_major, keyToUse) ?
         new Scale.MajorScale("C").pitches : new Scale.MinorScale("c").pitches
 
-    var keyPitch = Consts.keyStrPitch[keyToUse] + pitchesToUse[nextChordAfterDeflection.degree - 1]
+    var keyPitch = Consts.keyStrPitch[keyToUse] + pitchesToUse[deflectionTargetChord.degree - 1]
     keyPitch = keyPitch >= 72 ? keyPitch - 12 : keyPitch
 
-    var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + nextChordAfterDeflection.degree - 1, 7)
+    var keyBaseNote = Utils.mod(Consts.keyStrBase[keyToUse] + deflectionTargetChord.degree - 1, 7)
 
-    var modeToUse = IntervalUtils.getThirdMode(key, nextChordAfterDeflection.degree - 1)
+    var modeToUse = IntervalUtils.getThirdMode(key, deflectionTargetChord.degree - 1)
 
     return getKeyFromPitchBasenoteAndModeOrThrowError(keyPitch, keyBaseNote, modeToUse)
 }
@@ -80,7 +80,7 @@ function getSpecificChord(measures, i) {
     return undefined
 }
 
-function applyKeyAndModeToSpecificChord(measures, key, mode, i) {
+function applyKeyAndModeToSpecificChord(measures, key, mode, i, isRelatedBackwards) {
     var currentChordNumber = 0
     for (var a = 0; a < measures.length; a++) {
         for (var b = 0; b < measures[a].length; b++) {
@@ -89,6 +89,8 @@ function applyKeyAndModeToSpecificChord(measures, key, mode, i) {
                 if (DEBUG) Utils.log("mode")
                 measures[a][b].mode = measures[a][b].functionName === Consts.FUNCTION_NAMES.DOMINANT ? Consts.MODE.MAJOR : mode
                 if (DEBUG) Utils.log("mode", measures[a][b].mode)
+                measures[a][b].isRelatedBackwards = isRelatedBackwards
+                if (DEBUG) Utils.log("isRelatedBackwards", measures[a][b].isRelatedBackwards)
                 return
             } else {
                 currentChordNumber++
@@ -97,7 +99,7 @@ function applyKeyAndModeToSpecificChord(measures, key, mode, i) {
     }
 }
 
-function applyKeyToChords(measures, beginning, end, key) {
+function applyKeyToChords(measures, beginning, end, key, deflectionType) {
     var modeToApply;
     if (Utils.contains(Consts.possible_keys_major, key)) {
         modeToApply = Consts.MODE.MAJOR
@@ -105,11 +107,10 @@ function applyKeyToChords(measures, beginning, end, key) {
         modeToApply = Consts.MODE.MINOR
     }
 
-    for (var i = beginning; i <= end; i++){
+    for (var i = beginning; i <= end; i++) {
         if (DEBUG) Utils.log(i)
-        applyKeyAndModeToSpecificChord(measures, key, modeToApply, i)
+        applyKeyAndModeToSpecificChord(measures, key, modeToApply, i, deflectionType === Consts.DEFLECTION_TYPE.BACKWARDS)
     }
-
 }
 
 
@@ -120,19 +121,43 @@ function handleDeflections(measures, key, deflections){
     if (DEBUG) Utils.log(JSON.stringify(deflections))
 
     var nextChordAfterDeflection = undefined
+    var prevChordBeforeDeflection = undefined
     var keyForDeflection = undefined
 
     for (var i = deflections.length - 1; i >= 0; --i) {
         if (DEBUG) Utils.log(JSON.stringify(deflections[i]))
-        nextChordAfterDeflection = getSpecificChord(measures, deflections[i][1] + 1)
-        if (DEBUG) Utils.log("nextChordAfterDeflection", nextChordAfterDeflection)
-        if (nextChordAfterDeflection === undefined) {
-            throw new Errors.HarmonicFunctionsParserError("Deflection cannot be the last chord")
+        if(deflections[i][2] === Consts.DEFLECTION_TYPE.CLASSIC){
+            nextChordAfterDeflection = getSpecificChord(measures, deflections[i][1] + 1)
+            if (DEBUG) Utils.log("nextChordAfterDeflection", nextChordAfterDeflection)
+            if (nextChordAfterDeflection === undefined) {
+                throw new Errors.HarmonicFunctionsParserError("Deflection cannot be the last chord")
+            }
+            if(nextChordAfterDeflection.isRelatedBackwards){
+                throw new Errors.HarmonicFunctionsParserError("Backward deflection could not be after forward deflection.", nextChordAfterDeflection)
+            }
+            keyForDeflection = calculateKey(key, nextChordAfterDeflection)
+            if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
+            applyKeyToChords(measures, deflections[i][0], deflections[i][1], keyForDeflection, Consts.DEFLECTION_TYPE.CLASSIC)
         }
-        keyForDeflection = calculateKey(key, nextChordAfterDeflection)
-        if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
-        applyKeyToChords(measures, deflections[i][0], deflections[i][1], keyForDeflection)
     }
+    for (var i = 0; i < deflections.length; ++i) {
+        if (DEBUG) Utils.log(JSON.stringify(deflections[i]))
+        if(deflections[i][2] === Consts.DEFLECTION_TYPE.BACKWARDS){
+            prevChordBeforeDeflection = getSpecificChord(measures, deflections[i][0] - 1)
+            if (DEBUG) Utils.log("prevChordBeforeDeflection", prevChordBeforeDeflection)
+            if (prevChordBeforeDeflection === undefined) {
+                throw new Errors.HarmonicFunctionsParserError("Backward deflection cannot be the first chord")
+            }
+            keyForDeflection = calculateKey(key, prevChordBeforeDeflection)
+            if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
+            applyKeyToChords(measures, deflections[i][0], deflections[i][1], keyForDeflection, Consts.DEFLECTION_TYPE.BACKWARDS)
+        }
+    }
+}
+
+//todo error when () <- ()
+function verifyDeflections(deflections){
+
 }
 
 
@@ -166,6 +191,7 @@ function parse(input) {
     var insideDeflection = false
     var deflections = []
     var deflectionBeginning = undefined
+    var deflectionType = undefined
     var chordNumber = 0
 
     var dropFirstChar = false
@@ -196,11 +222,22 @@ function parse(input) {
                 }
                 if (DEBUG) Utils.log("Exiting deflection")
                 insideDeflection = false
-                deflections.push([deflectionBeginning, chordNumber])
                 dropLastChar = true
             }
 
-            chords_parsed.push(parseChord(chords[j], dropFirstChar, dropLastChar))
+            var parsedChord = parseChord(chords[j], dropFirstChar, dropLastChar)
+            chords_parsed.push(parsedChord)
+            if(chords[j][0] === '('){
+                if(parsedChord === undefined) {
+                    throw new Errors.HarmonicFunctionsParserError("Deflection cannot be empty.", chords[j])
+                }
+                deflectionType = parsedChord.isRelatedBackwards ? Consts.DEFLECTION_TYPE.BACKWARDS :  Consts.DEFLECTION_TYPE.CLASSIC
+            }
+            if(chords[j][chords[j].length - 1] === ')'){
+                deflections.push([deflectionBeginning, chordNumber, deflectionType])
+                verifyDeflections(deflections)
+                deflectionType = undefined
+            }
             chordNumber++
         }
         measures.push(chords_parsed)
