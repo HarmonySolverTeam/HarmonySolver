@@ -120,4 +120,42 @@ const firstChordBackwardDeflectionTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(firstChordBackwardDeflectionTest, "Backward deflection in first chord"));
 
+const basicElipseTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\elipse_correct.txt")
+    var harmFunctions = Parser.parse(ex)
+
+    return TestUtils.assertEqualsPrimitives(harmFunctions.measures[0][1].key, "a") &&
+        TestUtils.assertEqualsPrimitives(harmFunctions.measures[0][2].key, "a") &&
+        TestUtils.assertEqualsPrimitives(harmFunctions.measures[2][1].key, "G") &&
+        TestUtils.assertEqualsPrimitives(harmFunctions.measures[2][2].key, "G") &&
+        TestUtils.assertEqualsPrimitives("T", harmFunctions.measures[0][2].functionName) &&
+        TestUtils.assertEqualsPrimitives(6, harmFunctions.measures[0][2].degree)
+}
+
+testSuite.addTest(new TestUtils.UnitTest(basicElipseTest, "Basic elipse test"));
+
+const elipseInsideDeflectionTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Elipse cannot be inside deflection.", Parser.parse, ["C\n/3/4\n(T{};[S{}]);T{}"]) &&
+        TestUtils.assertThrows("Error during parsing harmonic functions input",
+            "Elipse cannot be inside deflection.", Parser.parse, ["C\n/3/4\n([S{}]);T{}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(elipseInsideDeflectionTest, "Elipse inside deflection"));
+
+const oneChordInElipseTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "There could be only one chord in elipse.", Parser.parse, ["C\n/3/4\n(D{});[S{};D{}];T{}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(oneChordInElipseTest, "One chord in elipse"));
+
+const emptyElipseTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Elipse cannot be empty.", Parser.parse, ["C\n/3/4\n(D{});[];T{}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(emptyElipseTest, "Empty elipse"));
+
+
 testSuite.run();

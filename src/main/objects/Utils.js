@@ -1,3 +1,5 @@
+.import "./Consts.js" as Consts
+
 function contains(list, obj) {
     for (var i = 0; i < list.length; i++) {
         if (list[i] === obj) {
@@ -132,6 +134,17 @@ function convertToTpc(note){
     else baseTpc -= offset * 7;
     return baseTpc;
 }
+
+function getModeFromKey(key){
+    var mode;
+    if (contains(Consts.possible_keys_major, key)) {
+        mode = Consts.MODE.MAJOR
+    } else {
+        mode = Consts.MODE.MINOR
+    }
+    return mode;
+}
+
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
