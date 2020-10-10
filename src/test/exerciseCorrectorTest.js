@@ -28,8 +28,8 @@ const makeChordsIncompleteToAvoidConcurrent5Test = () => {
         !UnitTest.assertContains(solution.chords[7].harmonicFunction.omit,fifth) &&
         UnitTest.assertContains(solution.chords[8].harmonicFunction.omit,fifth) &&
         !UnitTest.assertContains(solution.chords[9].harmonicFunction.omit,fifth) &&
-        UnitTest.assertContains(solution.chords[11].harmonicFunction.omit,fifth) &&
-        !UnitTest.assertContains(solution.chords[12].harmonicFunction.omit,fifth) &&
+        !UnitTest.assertContains(solution.chords[11].harmonicFunction.omit,fifth) &&
+        UnitTest.assertContains(solution.chords[12].harmonicFunction.omit,fifth) &&
         !UnitTest.assertContains(solution.chords[13].harmonicFunction.omit,fifth) &&
         UnitTest.assertContains(solution.chords[14].harmonicFunction.omit,fifth) &&
         !UnitTest.assertContains(solution.chords[15].harmonicFunction.omit,fifth) &&

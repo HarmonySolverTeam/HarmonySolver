@@ -195,6 +195,7 @@ function checkConnection(prevChord, currentChord){
                 if (dominantVoiceWithAlt5 > -1 &&
                     !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
                     !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3")) return -1;
+                //todo co jesli damy double 3 do dominanty wtrąconej? jedna tercja sie tylko prawidlowo rozwiazuje
                 couldHaveDouble3 = true;
             }
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>")) {
@@ -325,6 +326,10 @@ function falseRelation(prevChord, currentChord){
     for(var i=0; i<4; i++){
         for(var j=i+1; j<4; j++){
             if(IntervalUtils.isChromaticAlteration(prevChord.notes[i],currentChord.notes[j])) {
+                if(DEBUG) Utils.log("false relation between voices "+i+" "+j, prevChord + "->" + currentChord);
+                return -1;
+            }
+            if(IntervalUtils.isChromaticAlteration(prevChord.notes[j],currentChord.notes[i])) {
                 if(DEBUG) Utils.log("false relation between voices "+i+" "+j, prevChord + "->" + currentChord);
                 return -1;
             }

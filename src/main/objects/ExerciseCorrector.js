@@ -12,6 +12,10 @@ function ExerciseCorrector(exercise, harmonicFunctions){
 
     this._makeChordsIncompleteToAvoidConcurrent5 = function(startIndex, endIndex) {
         var changeCurrentChord = (endIndex - startIndex) % 2 === 0;
+        if(changeCurrentChord && startIndex > 0 &&
+            Utils.containsChordComponent(this.harmonicFunctions[startIndex - 1].omit, "5") && !Utils.containsBaseChordComponent(this.harmonicFunctions[startIndex - 1].extra, "5")){
+            changeCurrentChord = !changeCurrentChord;
+        }
         for(var i=startIndex; i<endIndex; i++){
             if(changeCurrentChord){
                 this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].cm.chordComponentFromString("5"));
