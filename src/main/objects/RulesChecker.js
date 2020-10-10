@@ -117,20 +117,24 @@ function checkIllegalDoubled3(chord){
 }
 
 function checkConnection(prevChord, currentChord){
-    var currentChordTempFunctionName = currentChord.harmonicFunction.functionName;
-    var currentChordTempFunctionDegree = currentChord.harmonicFunction.degree;
-    if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
-        if(Utils.isDefined(prevChord.harmonicFunction.key)) {
-            currentChordTempFunctionName = Consts.FUNCTION_NAMES.TONIC;
-            currentChordTempFunctionDegree = 1;
-        }
-        else return 0;
-    }
-    var currentChordFunctionTemp = new HarmonicFunction.HarmonicFunction(currentChordTempFunctionName, currentChordTempFunctionDegree);
+    var currentChordFunctionTemp = new HarmonicFunction.HarmonicFunction(currentChord.harmonicFunction.functionName, currentChord.harmonicFunction.degree);
     currentChordFunctionTemp.key = currentChord.harmonicFunction.key;
+    var prevChordFunctionTemp = new HarmonicFunction.HarmonicFunction(prevChord.harmonicFunction.functionName, prevChord.harmonicFunction.degree);
+    prevChordFunctionTemp.key = prevChord.harmonicFunction.key;
+    if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
+        if(Utils.isDefined(prevChord.harmonicFunction.key) && !prevChord.harmonicFunction.isRelatedBackwards) {
+            currentChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
+            currentChordFunctionTemp.degree = 1;
+        }
+        else if(currentChord.harmonicFunction.isRelatedBackwards){
+            prevChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
+            prevChordFunctionTemp.degree = 1;
+        } else return 0;
+    }
+
     var couldHaveDouble3 = false;
     if((prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
-        && currentChordTempFunctionName === Consts.FUNCTION_NAMES.TONIC) ||
+        && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.TONIC) ||
         Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")){
         if(prevChord.harmonicFunction.isInDominantRelation(currentChordFunctionTemp)) {
             var dominantVoiceWith3 = -1;
@@ -219,7 +223,7 @@ function checkConnection(prevChord, currentChord){
         }
 
         // todo 7 na 1, chyba inaczej, czy tylko dla D -> T?
-        if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC && currentChordTempFunctionDegree - prevChord.harmonicFunction.degree === 1) {
+        if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC && currentChordFunctionTemp.degree - prevChord.harmonicFunction.degree === 1) {
             couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {
@@ -266,7 +270,7 @@ function checkConnection(prevChord, currentChord){
     if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT){
         //todo najbliższą drogą
     }
-    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChordTempFunctionName === Consts.FUNCTION_NAMES.SUBDOMINANT)
+    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT)
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
 
     if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;

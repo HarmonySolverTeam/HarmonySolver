@@ -36,6 +36,7 @@ function HarmonicFunction2(params){
     this.system = params["system"];
     this.mode = params["mode"] === undefined ? Consts.MODE.MAJOR : params["mode"];
     this.key = params["key"];
+    this.isRelatedBackwards = params["isRelatedBackwards"];
 
     // mapping to ChordComponent
     if(this.position !== undefined) this.position = cm.chordComponentFromString(this.position);
@@ -228,7 +229,7 @@ function HarmonicFunction2(params){
     }
 }
 
-function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key) {
+function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key, isRelatedBackwards) {
     var args = {
         "functionName" : functionName,
         "degree" : degree,
@@ -240,7 +241,8 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
         "down" : down,
         "system" : system,
         "mode" : mode,
-        "key" : key
+        "key" : key,
+        "isRelatedBackwards" : isRelatedBackwards
     };
     HarmonicFunction2.call(this, args);
 }
