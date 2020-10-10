@@ -133,7 +133,7 @@ function handleDeflections(measures, key, deflections){
                 throw new Errors.HarmonicFunctionsParserError("Deflection cannot be the last chord")
             }
             if(nextChordAfterDeflection.isRelatedBackwards){
-                throw new Errors.HarmonicFunctionsParserError("Backward deflection could not be after forward deflection.", nextChordAfterDeflection)
+                throw new Errors.HarmonicFunctionsParserError("Backward deflection could not be after forward deflection.", JSON.stringify(nextChordAfterDeflection))
             }
             keyForDeflection = calculateKey(key, nextChordAfterDeflection)
             if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
@@ -154,12 +154,6 @@ function handleDeflections(measures, key, deflections){
         }
     }
 }
-
-//todo error when () <- ()
-function verifyDeflections(deflections){
-
-}
-
 
 function parse(input) {
     input = input.replace(/\r/g,"")
@@ -235,8 +229,6 @@ function parse(input) {
             }
             if(chords[j][chords[j].length - 1] === ')'){
                 deflections.push([deflectionBeginning, chordNumber, deflectionType])
-                verifyDeflections(deflections)
-                deflectionType = undefined
             }
             chordNumber++
         }
