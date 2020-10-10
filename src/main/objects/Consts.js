@@ -206,7 +206,8 @@ var MODE = {
 //G
 var DEFLECTION_TYPE = {
     CLASSIC: 0,
-    BACKWARDS: 1
+    BACKWARDS: 1,
+    ELIPSE: 2
 }
 
 //G

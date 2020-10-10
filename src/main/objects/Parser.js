@@ -100,12 +100,7 @@ function applyKeyAndModeToSpecificChord(measures, key, mode, i, isRelatedBackwar
 }
 
 function applyKeyToChords(measures, beginning, end, key, deflectionType) {
-    var modeToApply;
-    if (Utils.contains(Consts.possible_keys_major, key)) {
-        modeToApply = Consts.MODE.MAJOR
-    } else {
-        modeToApply = Consts.MODE.MINOR
-    }
+    var modeToApply = Utils.getModeFromKey(key)
 
     for (var i = beginning; i <= end; i++) {
         if (DEBUG) Utils.log(i)
@@ -122,6 +117,7 @@ function handleDeflections(measures, key, deflections){
 
     var nextChordAfterDeflection = undefined
     var prevChordBeforeDeflection = undefined
+    var elipseChord = undefined
     var keyForDeflection = undefined
 
     for (var i = deflections.length - 1; i >= 0; --i) {
@@ -151,6 +147,19 @@ function handleDeflections(measures, key, deflections){
             keyForDeflection = calculateKey(key, prevChordBeforeDeflection)
             if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
             applyKeyToChords(measures, deflections[i][0], deflections[i][1], keyForDeflection, Consts.DEFLECTION_TYPE.BACKWARDS)
+        }
+        if(deflections[i][2] === Consts.DEFLECTION_TYPE.ELIPSE){
+            if (DEBUG) Utils.log(JSON.stringify(deflections[i]))
+            elipseChord = getSpecificChord(measures, deflections[i][1])
+            if (elipseChord === undefined) {
+                throw new Errors.HarmonicFunctionsParserError("Elipse cannot be empty.")
+            }
+            if (DEBUG) Utils.log("elipseChord", elipseChord)
+            keyForDeflection = calculateKey(key, elipseChord)
+            elipseChord.functionName = Consts.FUNCTION_NAMES.TONIC
+            elipseChord.degree = 6
+            if (DEBUG) Utils.log("keyForDeflection", keyForDeflection)
+            applyKeyToChords(measures, deflections[i][0], deflections[i][1], keyForDeflection, Consts.DEFLECTION_TYPE.ELIPSE)
         }
     }
 }
@@ -200,7 +209,18 @@ function parse(input) {
             dropLastChar = false
             if (DEBUG) Utils.log("Current chord: ", JSON.stringify(chords[j]))
 
+            if(chords[j][0] === '['){
+                if(insideDeflection){
+                    throw new Errors.HarmonicFunctionsParserError("Elipse cannot be inside deflection.", chords[j])
+                } else {
+                    throw new Errors.HarmonicFunctionsParserError("Elipse must be preceded by deflection", chords[j])
+                }
+            }
+
             if (chords[j][0] === '(') {
+                if(chords[j][1] === '['){
+                    throw new Errors.HarmonicFunctionsParserError("Elipse cannot be inside deflection.", chords[j])
+                }
                 if (insideDeflection) {
                     throw new Errors.HarmonicFunctionsParserError("Deflection cannot be inside another deflection.", chords[j])
                 }
@@ -228,6 +248,16 @@ function parse(input) {
                 deflectionType = parsedChord.isRelatedBackwards ? Consts.DEFLECTION_TYPE.BACKWARDS :  Consts.DEFLECTION_TYPE.CLASSIC
             }
             if(chords[j][chords[j].length - 1] === ')'){
+                if(j < chords.length-1 && chords[j+1].startsWith("[")){
+                    j++;
+                    if(!chords[j].endsWith(']')){
+                        throw new Errors.HarmonicFunctionsParserError("There could be only one chord in elipse.", chords[j]);
+                    }
+                    var parsedElipse = parseChord(chords[j], true, true);
+                    chords_parsed.push(parsedElipse);
+                    deflectionType = Consts.DEFLECTION_TYPE.ELIPSE;
+                    chordNumber++;
+                }
                 deflections.push([deflectionBeginning, chordNumber, deflectionType])
             }
             chordNumber++
