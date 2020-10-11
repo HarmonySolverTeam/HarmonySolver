@@ -98,12 +98,32 @@ function HarmonicFunction2(params){
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
     if(Utils.contains(this.extra, cm.chordComponentFromString("5<")) || Utils.contains(this.extra, cm.chordComponentFromString("5>"))) this.omit.push(cm.chordComponentFromString("5"));
 
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1")) && this.revolution === this.cm.chordComponentFromString("1")){
+        this.revolution = this.getBasicChordComponents()[1];
+    }
+
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("5"))){
+        var five = this.cm.chordComponentFromString("5");
+        if(five !== this.getBasicChordComponents()[2]){
+            this.omit = this.omit.filter(function(x){return x !== five});
+            this.omit.push(this.getBasicChordComponents()[2]);
+        }
+    }
+
+    if(this.revolution === this.cm.chordComponentFromString("5")){
+        this.revolution = this.getBasicChordComponents()[2];
+    }
+
+    if(this.position === this.cm.chordComponentFromString("5")){
+        this.position = this.getBasicChordComponents()[2];
+    }
+
     //handle ninth chords
-    //todo obnizenia -> czy nie powinno sie sprawdzac po baseComponentach 1 i 5?
+    // todo obnizenia -> czy nie powinno sie sprawdzac po baseComponentach 1 i 5?
     if(Utils.containsBaseChordComponent(this.extra, "9")){
         if(this.countChordComponents() > 4){
             var prime = cm.chordComponentFromString("1");
-            var fifth = cm.chordComponentFromString("5");
+            var fifth = this.getBasicChordComponents()[2];
             if(this.position === this.revolution){
                 throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
                     "ninth chord could not have same position as revolution")
@@ -112,8 +132,9 @@ function HarmonicFunction2(params){
                 throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
                     "ninth chord could not have both prime or fifth in position and revolution")
             }
-            if(!Utils.contains(this.omit, fifth) && this.position !== fifth && this.revolution !== fifth)
+            if(!Utils.contains(this.omit, fifth) && this.position !== fifth && this.revolution !== fifth) {
                 this.omit.push(fifth);
+            }
             else if(!Utils.contains(this.omit, prime)) {
                 this.omit.push(prime);
                 if(this.revolution === prime)
@@ -142,7 +163,25 @@ function HarmonicFunction2(params){
             && Utils.containsBaseChordComponent(this.extra, "6")
     };
 
+    this.containsDelayedChordComponent = function (cc) {
+        for(var i = 0; i < this.delay.length; i++){
+            if(this.delay[i][1] === cc)
+                return true;
+        }
+        return false;
+    };
+
+    this.containsDelayedBaseChordComponent = function (cc) {
+        for(var i = 0; i < this.delay.length; i++){
+            if(this.delay[i][1].baseComponent === cc)
+                return true;
+        }
+        return false;
+    };
+
     this.isInDominantRelation = function (nextFunction) {
+        if(this.down !== nextFunction.down && this.key === nextFunction.key)
+            return false;
         if(this.key !== nextFunction.key && Utils.isDefined(this.key)){
             return Utils.contains([4,-3], this.degree - 1);
         }

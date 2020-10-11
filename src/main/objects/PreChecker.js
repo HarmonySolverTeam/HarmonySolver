@@ -6,7 +6,8 @@ function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
         if (harmonicFunctions[i].functionName === Consts.FUNCTION_NAMES.DOMINANT
             && harmonicFunctions[i + 1].functionName === Consts.FUNCTION_NAMES.SUBDOMINANT
-            && harmonicFunctions[i].mode === Consts.MODE.MAJOR) {
+            && harmonicFunctions[i].mode === Consts.MODE.MAJOR
+            && harmonicFunctions[i].key === harmonicFunctions[i+1].key) {
             throw new Errors.PreCheckerError("Forbidden connection: D->S", "Chords: " + (i + 1) + " " + (i + 2)
                 , "Chord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i-1])
                 + "\nChord " + (i + 2) + "\n" + JSON.stringify(harmonicFunctions[i]))
@@ -20,8 +21,12 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
     var goodCurrentChords = []
     var usedCurrentChords = []
     var score
+    var chordsWithDelays = 0
 
     for (var i = 0; i < harmonicFunctions.length; i++) {
+        if(harmonicFunctions[i].delay.length > 0){
+            chordsWithDelays += (harmonicFunctions[i].delay[0].length - 1)
+        }
         if (i !== 0) {
             prevChords = goodCurrentChords
         }
@@ -34,7 +39,8 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
         }
 
         if (currentChords.length === 0) {
-            throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1))
+            console.log(harmonicFunctions[i])
+            throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1  - chordsWithDelays))
         }
 
         for (var a = 0; a < currentChords.length; a++) {
@@ -64,7 +70,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
 
         if (goodCurrentChords.length === 0) {
             if (i !== 0) {
-                throw new Errors.PreCheckerError("Could not find valid connection between chords " + (i) + " and " + (i + 1),
+                throw new Errors.PreCheckerError("Could not find valid connection between chords " + (i - chordsWithDelays) + " and " + (i + 1 - chordsWithDelays),
                     "Chord " + i + "\n" + JSON.stringify(harmonicFunctions[i-1])
                     + "\nChord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i]))
             } else {

@@ -84,20 +84,43 @@ const alteredIntervalTest = () => {
     const n5down = new Note.Note(62,2);
     const n6down = new Note.Note(60,1);
 
-    return UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n1up)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n2up)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n3up)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n4up)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n5up)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n6up)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n1down)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n2down)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n3down)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n4down)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n5down)) &&
-        UnitTest.assertTrue(IntervalUtils.isAlteredInterval(n1, n6down))
+    return TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n1up)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n2up)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n3up)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n4up)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n5up)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n6up)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n1down)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n2down)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n3down)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n4down)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n5down)) &&
+        TestUtils.assertTrue(IntervalUtils.isAlteredInterval(n1, n6down))
 };
 
-intervalUtilsTestSuite.addTest(new TestUtils.UnitTest(getBaseDistanceTest, "Altered interval test"));
+intervalUtilsTestSuite.addTest(new TestUtils.UnitTest(alteredIntervalTest, "Altered interval test"));
+
+const getThirdModeTest = () => {
+    var key_major = "C";
+    var key_minor = "c";
+    var maj = "major";
+    var min = "minor";
+    return TestUtils.assertEqualsPrimitives(maj,IntervalUtils.getThirdMode(key_major,0)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_major,1)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_major,2)) &&
+        TestUtils.assertEqualsPrimitives(maj,IntervalUtils.getThirdMode(key_major,3)) &&
+        TestUtils.assertEqualsPrimitives(maj,IntervalUtils.getThirdMode(key_major,4)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_major,5)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_major,6)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_minor,0)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_minor,1)) &&
+        TestUtils.assertEqualsPrimitives(maj,IntervalUtils.getThirdMode(key_minor,2)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_minor,3)) &&
+        TestUtils.assertEqualsPrimitives(min,IntervalUtils.getThirdMode(key_minor,4)) &&
+        TestUtils.assertEqualsPrimitives(maj,IntervalUtils.getThirdMode(key_minor,5)) &&
+        TestUtils.assertEqualsPrimitives(maj,IntervalUtils.getThirdMode(key_minor,6))
+};
+
+intervalUtilsTestSuite.addTest(new TestUtils.UnitTest(getThirdModeTest, "Get third mode test"));
 
 intervalUtilsTestSuite.run();

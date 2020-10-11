@@ -56,7 +56,7 @@ function getThirdMode(key, baseNote) {
     var pitchesToUse = Utils.contains(Consts.possible_keys_major, key) ?
         new Scale.MajorScale("C").pitches : new Scale.MinorScale("c").pitches
 
-    var difference = pitchesToUse[Utils.mod(baseNote + 2, 7)] - pitchesToUse[baseNote]
+    var difference = Utils.abs(pitchesToUse[Utils.mod(baseNote + 2, 7)] - pitchesToUse[baseNote])
 
     return (difference === 4 || difference === 8) ? Consts.MODE.MAJOR : Consts.MODE.MINOR
 }
