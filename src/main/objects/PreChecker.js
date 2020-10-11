@@ -18,10 +18,16 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
     var currentChords
     var prevChords = undefined
     var goodCurrentChords = []
+    var goodPrevChords = []
+    var foundConnection = false
     var usedCurrentChords = []
     var score
+    var allConnections = 0
+
+    var brokenRulesCounter = Checker.getInitializedBrokenRulesCounter()
 
     for (var i = 0; i < harmonicFunctions.length; i++) {
+        allConnections = 0
         if (i !== 0) {
             prevChords = goodCurrentChords
         }
@@ -40,35 +46,48 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
         for (var a = 0; a < currentChords.length; a++) {
             usedCurrentChords.push(false)
         }
+        brokenRulesCounter = Checker.getInitializedBrokenRulesCounter()
 
         if (i !== 0) {
             for (var a = 0; a < prevChords.length; a++) {
+                foundConnection = false
                 for (var b = 0; b < currentChords.length; b++) {
-                    if (!usedCurrentChords[b]) {
-                        score = Checker.checkAllRules(undefined, prevChords[a], currentChords[b])
-                        if (score !== -1) {
+                    //console.log(i, a,b)
+                    allConnections++
+                    score = Checker.checkAllRules(undefined, prevChords[a], currentChords[b], brokenRulesCounter)
+                    if (score !== -1) {
+                        foundConnection = true
+                        if (!usedCurrentChords[b]) {
                             goodCurrentChords.push(currentChords[b])
                             usedCurrentChords[b] = true
                         }
                     }
                 }
+
+
             }
         } else {
             for (var b = 0; b < currentChords.length; b++) {
-                score = Checker.checkAllRules(undefined, undefined, currentChords[b])
+                score = Checker.checkAllRules(undefined, undefined, currentChords[b], brokenRulesCounter)
                 if (score !== -1) {
                     goodCurrentChords.push(currentChords[b])
                 }
             }
         }
 
+        brokenRulesCounter.allConnections = allConnections
+
         if (goodCurrentChords.length === 0) {
             if (i !== 0) {
                 throw new Errors.PreCheckerError("Could not find valid connection between chords " + (i) + " and " + (i + 1),
                     "Chord " + i + "\n" + JSON.stringify(harmonicFunctions[i-1])
-                    + "\nChord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i]))
+                    + "\nChord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i])
+                    + "\n" + brokenRulesCounter.getBrokenRulesStringInfo()
+                )
             } else {
-                throw new Errors.PreCheckerError("Could not generate any correct chord for first chord", JSON.stringify(harmonicFunctions[0]))
+                console.log("going to throw error...")
+                throw new Errors.PreCheckerError("Could not generate any correct chord for first chord",
+                    JSON.stringify(harmonicFunctions[0]) + "\n" + brokenRulesCounter.getBrokenRulesStringInfo())
             }
         }
     }
@@ -82,6 +101,7 @@ function preCheck(harmonicFunctions, chordGenerator, bassLine, sopranoLine) {
     }
     checkDSConnection(harmonicFunctions)
     checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine)
+    //console.log("precheck done")
 }
 
 
