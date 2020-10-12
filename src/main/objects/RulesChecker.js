@@ -117,9 +117,9 @@ function checkIllegalDoubled3(chord){
 }
 
 function checkConnection(prevChord, currentChord){
-    var currentChordFunctionTemp = new HarmonicFunction.HarmonicFunction(currentChord.harmonicFunction.functionName, currentChord.harmonicFunction.degree);
+    var currentChordFunctionTemp = currentChord.harmonicFunction.copy();
     currentChordFunctionTemp.key = currentChord.harmonicFunction.key;
-    var prevChordFunctionTemp = new HarmonicFunction.HarmonicFunction(prevChord.harmonicFunction.functionName, prevChord.harmonicFunction.degree);
+    var prevChordFunctionTemp = prevChord.harmonicFunction.copy();
     prevChordFunctionTemp.key = prevChord.harmonicFunction.key;
     if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
         if(Utils.isDefined(prevChord.harmonicFunction.key) && !prevChord.harmonicFunction.isRelatedBackwards) {
@@ -148,7 +148,8 @@ function checkConnection(prevChord, currentChord){
                 !prevChord.notes[dominantVoiceWith3].equalPitches(currentChord.notes[dominantVoiceWith3]) &&
                 !Utils.containsBaseChordComponent(currentChord.harmonicFunction.omit, "1") &&
                 !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("1") &&
-                !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("7")) return -1;
+                !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("7") &&
+                !currentChord.harmonicFunction.containsDelayedChordComponent("1")) return -1;
 
             if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
@@ -160,7 +161,8 @@ function checkConnection(prevChord, currentChord){
                 }
                 if (dominantVoiceWith7 > -1 &&
                     !prevChord.notes[dominantVoiceWith7].equalPitches(currentChord.notes[dominantVoiceWith7]) &&
-                    !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3")){
+                    !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3") &&
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")){
                     //rozwiazanie swobodne mozliwe
                     if((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
                         currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
@@ -181,7 +183,8 @@ function checkConnection(prevChord, currentChord){
                     }
                     if(dominantVoiceWith9 > -1 &&
                         !prevChord.notes[dominantVoiceWith9].equalPitches(currentChord.notes[dominantVoiceWith9]) &&
-                        !currentChord.notes[dominantVoiceWith9].baseChordComponentEquals("5")) return -1;
+                        !currentChord.notes[dominantVoiceWith9].baseChordComponentEquals("5") &&
+                        !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5")) return -1;
                 }
             }
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5<")) {
@@ -194,7 +197,8 @@ function checkConnection(prevChord, currentChord){
                 }
                 if (dominantVoiceWithAlt5 > -1 &&
                     !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
-                    !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3")) return -1;
+                    !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
                 //todo co jesli damy double 3 do dominanty wtrąconej? jedna tercja sie tylko prawidlowo rozwiazuje
                 couldHaveDouble3 = true;
             }
@@ -208,7 +212,8 @@ function checkConnection(prevChord, currentChord){
                 }
                 if (dominantVoiceWithAlt5 > -1 &&
                     !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
-                    !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("1")) return -1;
+                    !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("1") &&
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("1")) return -1;
             }
             if (prevChord.harmonicFunction.isChopin()){{
                 var dominantVoiceWith6 = -1;
@@ -219,7 +224,8 @@ function checkConnection(prevChord, currentChord){
                     }
                 }
                 if (dominantVoiceWith6 > -1 &&
-                    !currentChord.notes[dominantVoiceWith6].chordComponentEquals("1")) return -1;
+                    !currentChord.notes[dominantVoiceWith6].chordComponentEquals("1") &&
+                    !currentChord.harmonicFunction.containsDelayedChordComponent("1")) return -1;
             }}
         }
 
@@ -233,7 +239,8 @@ function checkConnection(prevChord, currentChord){
                     break;
                 }
             }
-            if (dominantVoiceWith3 > -1 && !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("3")) return -1;
+            if (dominantVoiceWith3 > -1 && !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("3") &&
+                !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
 
             var dominantVoiceWith5 = -1;
             for (var i = 0; i < 4; i++) {
@@ -242,7 +249,8 @@ function checkConnection(prevChord, currentChord){
                     break;
                 }
             }
-            if (dominantVoiceWith5 > -1 && !currentChord.notes[dominantVoiceWith5].baseChordComponentEquals("3")) return -1;
+            if (dominantVoiceWith5 > -1 && !currentChord.notes[dominantVoiceWith5].baseChordComponentEquals("3") &&
+                !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
 
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
@@ -252,7 +260,8 @@ function checkConnection(prevChord, currentChord){
                         break;
                     }
                 }
-                if (dominantVoiceWith7 > -1 && !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5")) return -1;
+                if (dominantVoiceWith7 > -1 && !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5") &&
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5")) return -1;
             }
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>")) {
                 var dominantVoiceWithAlt5 = -1;
@@ -264,15 +273,17 @@ function checkConnection(prevChord, currentChord){
                 }
                 if (dominantVoiceWithAlt5 > -1 &&
                     !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
-                    !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3")) return -1;
+                    !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
             }
         }
     }
-    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT){
+    if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT){
         //todo najbliższą drogą
     }
-    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && prevChord.harmonicFunction.mode === Consts.MODE.MAJOR && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT)
+    if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT && prevChordFunctionTemp.mode === Consts.MODE.MAJOR && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT) {
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
+    }
 
     if(!couldHaveDouble3 && checkIllegalDoubled3(currentChord)) return -1;
     return 0;
