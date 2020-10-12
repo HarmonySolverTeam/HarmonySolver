@@ -88,10 +88,8 @@ function HarmonicFunctionValidator(){
 
             //too large difference in delay
             var chordComponentManager = new ChordComponentManager.ChordComponentManager();
-            var firstChordComponent = chordComponentManager.chordComponentFromString(first);
-            var secondChordComponent = chordComponentManager.chordComponentFromString(second);
 
-            if(Utils.abs(parseInt(firstChordComponent.baseComponent) - parseInt(secondChordComponent.baseComponent)) !== 1 ) handleValidationFailure(_this, "To large difference in delay");
+            if(Utils.abs(parseInt(first.baseComponent) - parseInt(second.baseComponent)) !== 1 ) handleValidationFailure(_this, "To large difference in delay");
             // todo to many chord components!
             //todo cannot omit component used in delay, position, resolution, extra
 
