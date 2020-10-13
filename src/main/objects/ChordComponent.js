@@ -1,10 +1,11 @@
 .import "./Utils.js" as Utils
 
 // threat this constructor as private - use ChordComponentManager
-function ChordComponent(chordComponentString, id){
+function ChordComponent(chordComponentString, id, isDown){
 
     // just for tests
     this.id = id;
+    this.isDown = isDown;
 
     var baseComponentsSemitonesNumber = {
         '1' : 0,
@@ -37,18 +38,23 @@ function ChordComponent(chordComponentString, id){
 
     this.chordComponentString = chordComponentString;
     this.baseComponent = baseComponent;
-    this.semitonesNumber = baseComponentsSemitonesNumber[baseComponent] + deltaMinus + deltaPlus;
+    this.semitonesNumber = this.isDown ? baseComponentsSemitonesNumber[baseComponent] + deltaMinus + deltaPlus - 1 : baseComponentsSemitonesNumber[baseComponent] + deltaMinus + deltaPlus;
 
     this.equals = function(other){
         return this.id === other.id;
     }
 
-    this.toString = function () {
-        //todo without this test are not passing - dont know why
-        return this.chordComponentString;
-    }
+    // this.toString = function () {
+    //     todo without this test are not passing - dont know why
+    //     return this.chordComponentString;
+    // }
 
     this.toXmlString = function() {
         return (this.chordComponentString.replace("<", "&lt;")).replace(">", "&gt;");
+    }
+
+    this.toString = function() {
+        return "CC string: " + this.chordComponentString +
+            " CC semitones_number: " + this.semitonesNumber;
     }
 }

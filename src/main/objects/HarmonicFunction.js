@@ -28,7 +28,7 @@ function HarmonicFunction2(params){
     this.functionName = params["functionName"];
     this.degree = params["degree"] === undefined ? getDegreeFromFunctionName(this.functionName) : params["degree"];
     this.position = params["position"];
-    this.revolution = params["revolution"] === undefined ? (params["down"] === true ? "1>" : "1") : params["revolution"];
+    this.revolution = params["revolution"] === undefined ? "1" : params["revolution"];
     this.delay = params["delay"] === undefined ? [] : params["delay"];
     this.extra = params["extra"] === undefined ? [] : params["extra"];
     this.omit = params["omit"] === undefined ? [] : params["omit"];
@@ -38,43 +38,59 @@ function HarmonicFunction2(params){
     this.key = params["key"];
     this.isRelatedBackwards = params["isRelatedBackwards"];
 
-    // mapping to ChordComponent
-    if(this.position !== undefined) this.position = cm.chordComponentFromString(this.position);
-    this.revolution = cm.chordComponentFromString(this.revolution);
-    for(var i=0; i<this.delay.length; i++){
-        this.delay[i][0] = cm.chordComponentFromString(this.delay[i][0]);
-        this.delay[i][1] = cm.chordComponentFromString(this.delay[i][1]);
-    }
-    for(i=0; i<this.extra.length; i++) this.extra[i] = cm.chordComponentFromString(this.extra[i]);
-    for(i=0; i<this.omit.length; i++) this.omit[i] = cm.chordComponentFromString(this.omit[i]);
-
 
     function getDegreeFromFunctionName(functionName){
         return {"T":1, "S":4, "D":5}[functionName];
     }
 
-    this.getBasicChordComponents = function () {
-        var chordComponentManager = new ChordComponentManager.ChordComponentManager();
+    this.getPrime = function(){
+        return cm.chordComponentFromString("1", this.down);
+    }
+
+    this.getThird = function(){
         var scale = this.mode === Consts.MODE.MAJOR ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
-        var basicChordComponents;
+        var thirdPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 1, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
+        return cm.basicChordComponentFromPitch(thirdPitch, false);
+    }
 
-        if(!this.down) {
-            var thirdPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 1, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
-            var fifthPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 3, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
-
-
-            basicChordComponents = [chordComponentManager.chordComponentFromString("1"),
-                                    chordComponentManager.basicChordComponentFromPitch(thirdPitch),
-                                    chordComponentManager.basicChordComponentFromPitch(fifthPitch)];
+    this.getFifth = function (){
+        var scale = this.mode === Consts.MODE.MAJOR ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
+        var fifthPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 3, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
+        if(this.down && fifthPitch === 7) {
+            return cm.basicChordComponentFromPitch(fifthPitch, true);
         }
-        else {
-            basicChordComponents = [chordComponentManager.chordComponentFromString("1>"),
-                chordComponentManager.chordComponentFromString("3>"),
-                chordComponentManager.chordComponentFromString("5>")];
-        }
+        return cm.basicChordComponentFromPitch(fifthPitch, false);
+    }
 
-        return basicChordComponents;
+    this.getBasicChordComponents = function () {
+        return [this.getPrime(), this.getThird(), this.getFifth()];
     };
+
+    this.getBasicChordComponentStrings = function () {
+        return [this.getPrime().chordComponentString, this.getThird().chordComponentString, this.getFifth().chordComponentString];
+    }
+
+    this.getChordComponentFromStringInThisHfContext = function(chordComponentString) {
+        // console.log(chordComponentString);
+        // console.log(this.getBasicChordComponents());
+        if(Utils.contains(this.getBasicChordComponentStrings(), chordComponentString)){
+            if(chordComponentString[0] === '1') return this.getPrime();
+            if(chordComponentString[0] === '3') return this.getThird();
+            if(chordComponentString[0] === '5') return this.getFifth();
+        }
+        return cm.chordComponentFromString(chordComponentString, this.down);
+    }
+
+
+    // mapping to ChordComponent
+    if(this.position !== undefined) this.position = this.getChordComponentFromStringInThisHfContext(this.position);
+    this.revolution = this.getChordComponentFromStringInThisHfContext(this.revolution);
+    for(var i=0; i<this.delay.length; i++){
+        this.delay[i][0] = this.getChordComponentFromStringInThisHfContext(this.delay[i][0]);
+        this.delay[i][1] = this.getChordComponentFromStringInThisHfContext(this.delay[i][1]);
+    }
+    for(i=0; i<this.extra.length; i++) this.extra[i] = this.getChordComponentFromStringInThisHfContext(this.extra[i]);
+    for(i=0; i<this.omit.length; i++) this.omit[i] = this.getChordComponentFromStringInThisHfContext(this.omit[i]);
 
     this.countChordComponents = function () {
         var chordComponentsCount = 3;
@@ -90,31 +106,31 @@ function HarmonicFunction2(params){
     };
 
     //additional rules
-    if((Utils.contains(this.extra, cm.chordComponentFromString("9")) || Utils.contains(this.extra, cm.chordComponentFromString("9>")) || Utils.contains(this.extra, cm.chordComponentFromString("9<")))
-        && !Utils.contains(this.extra, cm.chordComponentFromString("7")) && !Utils.contains(this.extra, cm.chordComponentFromString("7<"))) {
-        this.extra.push(cm.chordComponentFromString("7"));
+    if((Utils.contains(this.extra, cm.chordComponentFromString("9", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("9>", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("9<", this.down)))
+        && !Utils.contains(this.extra, cm.chordComponentFromString("7", this.down)) && !Utils.contains(this.extra, cm.chordComponentFromString("7<", this.down))) {
+        this.extra.push(cm.chordComponentFromString("7", this.down));
     }
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
-    if(Utils.contains(this.extra, cm.chordComponentFromString("5<")) || Utils.contains(this.extra, cm.chordComponentFromString("5>"))) this.omit.push(cm.chordComponentFromString("5"));
+    if(Utils.contains(this.extra, cm.chordComponentFromString("5<", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("5>", this.down))) this.omit.push(cm.chordComponentFromString("5", this.down));
 
-    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1")) && this.revolution === this.cm.chordComponentFromString("1")){
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1", this.down)) && this.revolution === this.cm.chordComponentFromString("1", this.down)){
         this.revolution = this.getBasicChordComponents()[1];
     }
 
-    if(Utils.contains(this.omit, this.cm.chordComponentFromString("5"))){
-        var five = this.cm.chordComponentFromString("5");
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("5", this.down))){
+        var five = this.cm.chordComponentFromString("5", this.down);
         if(five !== this.getBasicChordComponents()[2]){
             this.omit = this.omit.filter(function(x){return x !== five});
             this.omit.push(this.getBasicChordComponents()[2]);
         }
     }
 
-    if(this.revolution === this.cm.chordComponentFromString("5")){
+    if(this.revolution === this.cm.chordComponentFromString("5", this.down)){
         this.revolution = this.getBasicChordComponents()[2];
     }
 
-    if(this.position === this.cm.chordComponentFromString("5")){
+    if(this.position === this.cm.chordComponentFromString("5", this.down)){
         this.position = this.getBasicChordComponents()[2];
     }
 
@@ -122,8 +138,8 @@ function HarmonicFunction2(params){
     // todo obnizenia -> czy nie powinno sie sprawdzac po baseComponentach 1 i 5?
     if(Utils.containsBaseChordComponent(this.extra, "9")){
         if(this.countChordComponents() > 4){
-            var prime = cm.chordComponentFromString("1");
-            var fifth = this.getBasicChordComponents()[2];
+            var prime = this.getPrime()
+            var fifth = this.getFifth()
             if(this.position === this.revolution){
                 throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
                     "ninth chord could not have same position as revolution")
@@ -159,7 +175,7 @@ function HarmonicFunction2(params){
     this.isChopin = function () {
         return this.functionName === Consts.FUNCTION_NAMES.DOMINANT
             && Utils.containsChordComponent(this.omit, "5")
-            && Utils.contains(this.extra, cm.chordComponentFromString("7"))
+            && Utils.contains(this.extra, cm.chordComponentFromString("7", this.down))
             && Utils.containsBaseChordComponent(this.extra, "6")
     };
 
