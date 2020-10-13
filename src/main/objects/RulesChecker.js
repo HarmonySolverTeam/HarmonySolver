@@ -133,7 +133,8 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords, brokenRulesC
 }
 
 //TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka, zmiana trybu
-function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
+function forbiddenSumJump(prevPrevChord, prevChord, currentChord, brokenRulesCounter){
+    var ruleName = "forbiddenSumJump"
     if(prevPrevChord.harmonicFunction.equals(prevChord.harmonicFunction) && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 4; i++){
         if(((prevPrevChord.notes[i].isUpperThan(prevChord.notes[i]) && prevChord.notes[i].isUpperThan(currentChord.notes[i])) ||
@@ -141,6 +142,9 @@ function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
             && forbiddenJump(prevPrevChord, currentChord, true) === -1){
             if(DEBUG) {
                 Utils.log("forbiddenSumJump in voice "+i, prevPrevChord + " -> " + prevChord + " -> " + currentChord);
+            }
+            if (brokenRulesCounter !== undefined) {
+                brokenRulesCounter.increaseCounter(ruleName)
             }
             return -1;
         }
@@ -535,7 +539,7 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
             }
         }
         if (prevPrevChord !== undefined && checkSumJumpRule) {
-            currentResult = forbiddenSumJump(prevPrevChord, prevChord, currentChord);
+            currentResult = forbiddenSumJump(prevPrevChord, prevChord, currentChord, brokenRulesCounter);
             if (currentResult === -1) {
                 if (brokenRulesCounter === undefined) {
                     return -1;
@@ -589,6 +593,7 @@ function getInitializedBrokenRulesCounter() {
         "crossingVoices",
         "oneDirection",
         "forbiddenJump",
+        "forbiddenSumJump",
         "checkIllegalDoubled3",
         "checkConnection",
         "checkDelayCorrectness",
@@ -603,6 +608,7 @@ function getInitializedBrokenRulesCounter() {
         "Crossing voices",
         "All voices goes in one direction",
         "Forbidden jump in one voice",
+        "Forbidden sum of jumps in one voice",
         "Doubled third in chord",
         "Invalid connection between chords",
         "Invalid delay",
