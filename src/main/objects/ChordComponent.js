@@ -52,4 +52,9 @@ function ChordComponent(chordComponentString, id, isDown){
     this.toXmlString = function() {
         return (this.chordComponentString.replace("<", "&lt;")).replace(">", "&gt;");
     }
+
+    this.toString = function() {
+        return "CC string: " + this.chordComponentString +
+            " CC semitones_number: " + this.semitonesNumber;
+    }
 }

@@ -15,8 +15,8 @@ function ChordComponentManager() {
         if (!isDown && availableChordComponents.hasOwnProperty(chordComponentString))
             return availableChordComponents[chordComponentString];
 
-        if (isDown && availableChordComponents.hasOwnProperty(chordComponentString))
-            return availableChordComponents[chordComponentString];
+        if (isDown && availableDownChordComponents.hasOwnProperty(chordComponentString))
+            return availableDownChordComponents[chordComponentString];
 
         var chordComponent = new ChordComponent.ChordComponent(chordComponentString, sequence, isDown);
         sequence++;

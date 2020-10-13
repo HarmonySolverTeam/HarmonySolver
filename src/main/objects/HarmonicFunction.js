@@ -114,23 +114,23 @@ function HarmonicFunction2(params){
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
     if(Utils.contains(this.extra, cm.chordComponentFromString("5<", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("5>", this.down))) this.omit.push(cm.chordComponentFromString("5", this.down));
 
-    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1")) && this.revolution === this.cm.chordComponentFromString("1")){
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1", this.down)) && this.revolution === this.cm.chordComponentFromString("1", this.down)){
         this.revolution = this.getBasicChordComponents()[1];
     }
 
-    if(Utils.contains(this.omit, this.cm.chordComponentFromString("5"))){
-        var five = this.cm.chordComponentFromString("5");
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("5", this.down))){
+        var five = this.cm.chordComponentFromString("5", this.down);
         if(five !== this.getBasicChordComponents()[2]){
             this.omit = this.omit.filter(function(x){return x !== five});
             this.omit.push(this.getBasicChordComponents()[2]);
         }
     }
 
-    if(this.revolution === this.cm.chordComponentFromString("5")){
+    if(this.revolution === this.cm.chordComponentFromString("5", this.down)){
         this.revolution = this.getBasicChordComponents()[2];
     }
 
-    if(this.position === this.cm.chordComponentFromString("5")){
+    if(this.position === this.cm.chordComponentFromString("5", this.down)){
         this.position = this.getBasicChordComponents()[2];
     }
 
