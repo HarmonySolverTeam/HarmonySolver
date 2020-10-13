@@ -18,53 +18,53 @@ var keyStrPitch = {
 
     'c': 60,
     'c#': 61,
-    'db': 61,
     'd': 62,
+    'd#': 63,
     'eb': 63,
     'e': 64,
     'f': 65,
     'f#': 66,
-    'gb': 66,
     'g': 67,
+    'g#': 68,
     'ab': 68,
     'a': 69,
+    'a#': 70,
     'bb': 70,
-    'b': 71,
-    'cb': 71
+    'b': 71
 }
 
 function minorKeyBySignature(signature) {
     switch (signature) {
         case 0:
-            return "A";
+            return "a";
         case 1:
-            return "E";
+            return "e";
         case 2:
-            return "B";
+            return "b";
         case 3:
-            return "F#";
+            return "f#";
         case 4:
-            return "C#";
+            return "c#";
         case 5:
-            return "G#";
+            return "g#";
         case 6:
-            return "D#";
+            return "d#";
         case 7:
-            return "A#";
+            return "a#";
         case -1:
-            return "D";
+            return "d";
         case -2:
-            return "G";
+            return "g";
         case -3:
-            return "C";
+            return "c";
         case -4:
-            return "F";
+            return "f";
         case -5:
-            return "Bb";
+            return "bb";
         case -6:
-            return "Eb";
+            return "eb";
         case -7:
-            return "Ab";
+            return "ab";
     }
 }
 
@@ -133,19 +133,19 @@ var keyStrBase = {
 
     'c': BASE_NOTES.C,
     'c#': BASE_NOTES.C,
-    'db': BASE_NOTES.D,
     'd': BASE_NOTES.D,
+    'd#': BASE_NOTES.D,
     'eb': BASE_NOTES.E,
     'e': BASE_NOTES.E,
     'f': BASE_NOTES.F,
     'f#': BASE_NOTES.F,
-    'gb': BASE_NOTES.G,
     'g': BASE_NOTES.G,
+    'g#': BASE_NOTES.G,
     'ab': BASE_NOTES.A,
     'a': BASE_NOTES.A,
+    'a#': BASE_NOTES.A,
     'bb': BASE_NOTES.B,
-    'b': BASE_NOTES.B,
-    'cb': BASE_NOTES.C
+    'b': BASE_NOTES.B
 }
 
 function VoicesBoundary() {
@@ -179,9 +179,9 @@ var possible_keys_major = ['C', 'C#', 'Db',
     'Bb', 'B', 'Cb']
 
 //G
-var possible_keys_minor = ['c', 'c#', 'db',
-    'd', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'ab', 'a',
-    'bb', 'b', 'cb']
+var possible_keys_minor = ['c', 'c#',
+    'd', 'd#', 'eb', 'e', 'f', 'f#', 'g', 'g#', 'ab', 'a',
+    'a#', 'bb', 'b']
 
 //G
 var possible_systems = ['close', 'open']
@@ -229,17 +229,17 @@ var keyFromPitchBasenoteAndMode = {
     "71,0,major": 'Cb',
     "60,0,minor": 'c',
     "61,0,minor": 'c#',
-    "61,1,minor": 'db',
     "62,1,minor": 'd',
+    "63,1,minor": 'd#',
     "63,2,minor": 'eb',
     "64,2,minor": 'e',
     "65,3,minor": 'f',
     "66,3,minor": 'f#',
-    "66,4,minor": 'gb',
     "67,4,minor": 'g',
+    "68,4,minor": 'g#',
     "68,5,minor": 'ab',
     "69,5,minor": 'a',
+    "70,5,minor": 'a#',
     "70,6,minor": 'bb',
     "71,6,minor": 'b',
-    "71,0,minor": 'cb'
 }
