@@ -46,9 +46,9 @@ function ExerciseCorrector(exercise, harmonicFunctions){
         if(dominantHarmonicFunction.isInDominantRelation(tonicHarmonicFunction) &&
             tonicHarmonicFunction.revolution.baseComponent === "7" &&
             dominantHarmonicFunction.revolution.baseComponent === "1") {
-            var key = tonicHarmonicFunction.key !== undefined ?
-                tonicHarmonicFunction.key : this.exercise.key;
-            var cm = tonicHarmonicFunction.cm;
+            var key = dominantHarmonicFunction.key !== undefined ?
+                dominantHarmonicFunction.key : this.exercise.key;
+            var cm = dominantHarmonicFunction.cm;
             dominantHarmonicFunction.revolution =
                 IntervalUtils.getThirdMode(key, dominantHarmonicFunction.degree-1) === Consts.MODE.MAJOR ?
                     cm.chordComponentFromString("3") : cm.chordComponentFromString("3>");

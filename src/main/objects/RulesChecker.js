@@ -129,7 +129,7 @@ function checkConnection(prevChord, currentChord){
         else if(currentChord.harmonicFunction.isRelatedBackwards){
             prevChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
             prevChordFunctionTemp.degree = 1;
-        } else return 0;
+        } else return checkIllegalDoubled3(currentChord)? -1 : 0;
     }
 
     var couldHaveDouble3 = false;
@@ -230,7 +230,7 @@ function checkConnection(prevChord, currentChord){
         }
 
         // todo 7 na 1, chyba inaczej, czy tylko dla D -> T?
-        if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC && currentChordFunctionTemp.degree - prevChord.harmonicFunction.degree === 1) {
+        if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.TONIC && currentChordFunctionTemp.degree - prevChordFunctionTemp.degree === 1) {
             couldHaveDouble3 = true;
             var dominantVoiceWith3 = -1;
             for (var i = 0; i < 4; i++) {

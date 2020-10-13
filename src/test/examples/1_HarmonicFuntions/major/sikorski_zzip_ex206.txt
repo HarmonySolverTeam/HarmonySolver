@@ -2,8 +2,8 @@ C
 3/4
 T{"position":"3"};D{"revolution":"5","extra":["7"]}
 T{"revolution":"3"};T{"position":"1"};(D{"omit":["1"],"extra":["9>"]})
-//todo generują się 2 tercje dla (D{})
-S{"degree":2};(D{});D{"revolution":"7"}
+//could not avoid false relation -> remove revolution from D
+S{"degree":2};(D{});D{}
 T{};T{"degree":6};(D{"revolution":"7","isRelatedBackwards":true})
 (D{"omit":["1"],"extra":["9>"]});S{"degree":2};D{"omit":["1"],"extra":["9>"]}
 T{};(So{"extra":["6"]})
