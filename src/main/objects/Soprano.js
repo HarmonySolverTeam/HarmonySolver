@@ -230,7 +230,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
 
         // if(curr_index == notes.length) return [prev_chords, penalty];
 
-
+        //conversion to int
         var basePitch = (notes[curr_index].pitch - 0) % 12;
         if(DEBUG) console.log("BasePitch: "+basePitch);
         var possibleChords  = this.chordsMap[basePitch];
@@ -239,7 +239,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
         var goodChords = []
 
         for(var i=0; i<possibleChords.length; i++){
-            var score = this.rulesChecker.checkAllRules(prev_chords, possibleChords[i], notes.length);
+            var score = this.rulesChecker.checkAllRules(prev_chords, possibleChords[i], notes.length, false, true);
             if(score !== -1){
                 goodChords.push([possibleChords[i], score])
             }

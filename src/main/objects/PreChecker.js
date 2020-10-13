@@ -23,6 +23,8 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
     var score
     var chordsWithDelays = 0
 
+    var isBassDefined = bassLine !== undefined
+
     for (var i = 0; i < harmonicFunctions.length; i++) {
         if(harmonicFunctions[i].delay.length > 0){
             chordsWithDelays += (harmonicFunctions[i].delay[0].length - 1)
@@ -32,7 +34,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
         }
         goodCurrentChords = []
         usedCurrentChords = []
-        if (bassLine !== undefined) {
+        if (isBassDefined) {
             currentChords = chordGenerator.generate(harmonicFunctions[i], [bassLine[i], undefined, undefined, undefined])
         } else {
             currentChords = chordGenerator.generate(harmonicFunctions[i])
@@ -51,7 +53,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             for (var a = 0; a < prevChords.length; a++) {
                 for (var b = 0; b < currentChords.length; b++) {
                     if (!usedCurrentChords[b]) {
-                        score = Checker.checkAllRules(undefined, prevChords[a], currentChords[b])
+                        score = Checker.checkAllRules(undefined, prevChords[a], currentChords[b], isBassDefined)
                         if (score !== -1) {
                             goodCurrentChords.push(currentChords[b])
                             usedCurrentChords[b] = true
@@ -61,7 +63,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             }
         } else {
             for (var b = 0; b < currentChords.length; b++) {
-                score = Checker.checkAllRules(undefined, undefined, currentChords[b])
+                score = Checker.checkAllRules(undefined, undefined, currentChords[b], isBassDefined)
                 if (score !== -1) {
                     goodCurrentChords.push(currentChords[b])
                 }

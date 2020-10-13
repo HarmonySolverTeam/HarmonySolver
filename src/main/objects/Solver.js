@@ -100,7 +100,8 @@ function Solver(exercise, bassLine, sopranoLine){
 
         for (var j = 0; j < chords.length; j++){
             // console.log(chords[j].toString())
-            var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j])
+            var score = Checker.checkAllRules(prev_prev_chord, prev_chord, chords[j],
+                this.bassLine !== undefined, this.sopranoLine !== undefined)
 
             if (score !== -1 ) {
 

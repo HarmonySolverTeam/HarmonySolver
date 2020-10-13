@@ -6,6 +6,16 @@
 
 var DEBUG = false;
 
+// I know that's bad as hell, but it was the easiest way :P
+var fixedBass = false;
+var fixedSoprano = false;
+
+function skipCheckingVoiceIncorrectJump(voiceNumber) {
+    return (voiceNumber === 0 && fixedBass)
+        || (voiceNumber === 3 && fixedSoprano)
+}
+
+
 function correctDistanceBassTenor(chord){
     if(chord.bassNote.baseChordComponentEquals('1') &&
         chord.tenorNote.chordComponent.semitonesNumber >= 12 &&
@@ -80,8 +90,8 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
 
     for(var i = 0; i < 4; i++){
         //TODO upewnić się jak ze skokami jest naprawdę, basu chyba ta zasada się nie tyczy
-        // oraz dla harmonizacji sopranu / ustalonego basu to pominąć trzeba
-        if(IntervalUtils.pitchOffsetBetween(currentChord.notes[i],prevChord.notes[i])>9 && !(notNeighbourChords && i === 0)) {
+        if(IntervalUtils.pitchOffsetBetween(currentChord.notes[i],prevChord.notes[i])>9 && !(notNeighbourChords && i === 0)
+            && !skipCheckingVoiceIncorrectJump(i)) {
             if(DEBUG) Utils.log("Forbidden jump in voice "+i, prevChord + "->" + currentChord);
             return -1;
         }
@@ -402,7 +412,18 @@ function checkRules(prevPrevChord, prevChord, currentChord, rules, checkSumJumpR
     return result
 }
 
-function checkAllRules(prevPrevChord, prevChord, currentChord){
+function checkAllRules(prevPrevChord, prevChord, currentChord, isFixedBass, isFixedSoprano){
+    if (isFixedBass) {
+        fixedBass = true
+    } else {
+        fixedBass = false
+    }
+    if (isFixedSoprano) {
+        fixedSoprano = true
+    } else {
+        fixedSoprano = false
+    }
+
     var chosenRules = [falseRelation, checkDelayCorrectness, checkConnection, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, forbiddenJump, hiddenOctaves];
     var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
     return result
