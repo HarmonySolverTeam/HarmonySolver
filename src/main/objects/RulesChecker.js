@@ -292,11 +292,33 @@ function checkConnection(prevChord, currentChord){
 
     if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
         && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
-        var result = 0;
-        for(var i=0; i<4; i++){
-            result += IntervalUtils.pitchOffsetBetween(prevChord.notes[i], currentChord.notes[i]);
+        //todo maybe for all connections?
+        var vb = new Consts.VoicesBoundary();
+        for(var i=1; i<4; i++){
+            var higherPitch, lowerPitch;
+            if(prevChord.notes[i].pitch > currentChord.notes[i].pitch){
+                higherPitch = prevChord.notes[i].pitch;
+                lowerPitch = currentChord.notes[i].pitch;
+            } else {
+                higherPitch = currentChord.notes[i].pitch;
+                lowerPitch = prevChord.notes[i].pitch;
+            }
+
+            for(var j=1; j<4; j++){
+                if(j !== i){
+                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.sopranoMax; currentPitch += 12){
+                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
+                            return -1;
+                        }
+                    }
+                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.tenorMin; currentPitch -= 12){
+                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
+                            return -1;
+                        }
+                    }
+                }
+            }
         }
-        return result;
     }
 
     if(prevChordFunctionTemp.equals(currentChordFunctionTemp)){
