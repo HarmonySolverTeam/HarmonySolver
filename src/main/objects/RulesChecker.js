@@ -159,7 +159,8 @@ function checkConnection(prevChord, currentChord){
                 !Utils.containsBaseChordComponent(currentChord.harmonicFunction.omit, "1") &&
                 !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("1") &&
                 !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("7") &&
-                !currentChord.harmonicFunction.containsDelayedChordComponent("1")) return -1;
+                !currentChord.harmonicFunction.containsDelayedChordComponent("1") &&
+                !(prevChord.bassNote.baseChordComponentEquals("3") && currentChord.bassNote.baseChordComponentEquals("3"))) return -1;
 
             if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
@@ -212,7 +213,7 @@ function checkConnection(prevChord, currentChord){
                 //todo co jesli damy double 3 do dominanty wtrąconej? jedna tercja sie tylko prawidlowo rozwiazuje
                 couldHaveDouble3 = true;
             }
-            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>")) {
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>") || prevChord.harmonicFunction.getFifth().chordComponentString === "5>") {
                 var dominantVoiceWithAlt5 = -1;
                 for (var i = 0; i < 4; i++) {
                     if (prevChord.notes[i].chordComponentEquals("5>")) {

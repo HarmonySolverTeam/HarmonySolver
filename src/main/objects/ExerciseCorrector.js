@@ -5,7 +5,6 @@
 
 var DEBUG = false;
 
-//todo co z akordami down?
 function ExerciseCorrector(exercise, harmonicFunctions){
     this.exercise = exercise;
     this.harmonicFunctions = harmonicFunctions;
@@ -18,7 +17,7 @@ function ExerciseCorrector(exercise, harmonicFunctions){
         }
         for(var i=startIndex; i<endIndex; i++){
             if(changeCurrentChord){
-                this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].cm.chordComponentFromString("5"));
+                this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].getFifth());
             }
             changeCurrentChord = !changeCurrentChord;
         }
