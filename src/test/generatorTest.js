@@ -85,8 +85,6 @@ var allResultChordsUseNoneOfComponents = (res, chordComponents) => {
 
 var allResultChordsUseChordComponentInSoprano = (res, chordComponent) => {
     for (const chord of res) {
-        // console.log(chord.toString())
-        // console.log("=========================================")
         if (!chordUseChordComponentInSoprano(chord, chordComponent)) return false;
     }
     return true;
