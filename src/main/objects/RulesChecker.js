@@ -290,8 +290,43 @@ function checkConnection(prevChord, currentChord){
         }
     }
 
-    if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT){
-        //todo najbliższą drogą
+    if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT
+        && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
+        //todo maybe for all connections?
+        var vb = new Consts.VoicesBoundary();
+        for(var i=1; i<4; i++){
+            var higherPitch, lowerPitch;
+            if(prevChord.notes[i].pitch > currentChord.notes[i].pitch){
+                higherPitch = prevChord.notes[i].pitch;
+                lowerPitch = currentChord.notes[i].pitch;
+            } else {
+                higherPitch = currentChord.notes[i].pitch;
+                lowerPitch = prevChord.notes[i].pitch;
+            }
+
+            for(var j=1; j<4; j++){
+                if(j !== i){
+                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.sopranoMax; currentPitch += 12){
+                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
+                            return -1;
+                        }
+                    }
+                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.tenorMin; currentPitch -= 12){
+                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
+                            return -1;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(currentChord.bassNote.chordComponentEquals("1") && prevChord.bassNote.chordComponentEquals("1")) {
+            for(var i = 1; i < 4; i++) {
+                if (prevChord.notes[i].pitch - currentChord.notes[i].pitch < 0) {
+                    return -1;
+                }
+            }
+        }
     }
 
     if(prevChordFunctionTemp.equals(currentChordFunctionTemp)){

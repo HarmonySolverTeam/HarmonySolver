@@ -294,12 +294,24 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(chopinTonicConnection, "Chec
 
 const sameFunctionConnectionTest = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("T");
-    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"),new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch2 = new Chord.Chord(new Note.Note(72,0,"1"),new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(60, 0, "1"),hf1);
+    var ch1 = new Chord.Chord(new Note.Note(72, 0, "1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(72, 0, "1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(60, 0, "1"), hf1);
 
-    return UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch1,ch2))
+    return UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch1,ch2));
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(sameFunctionConnectionTest, "Same function connection test"));
+
+const checkConnectionSDTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("S");
+    var hf2 = new HarmonicFunction.HarmonicFunction("D");
+
+    var ch1 = new Chord.Chord(new Note.Note(77, 3,"1"), new Note.Note(69,5,"3"), new Note.Note(60, 0,"5"), new Note.Note(53,3,"1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(71, 6,"3"), new Note.Note(62,1,"5"), new Note.Note(55, 4,"1"), new Note.Note(55,4,"1"), hf2);
+
+    return UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch1,ch2));
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionSDTest, "S->D connection test"));
 
 rulesCheckerTestSuite.run();

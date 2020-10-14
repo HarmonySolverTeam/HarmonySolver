@@ -94,7 +94,7 @@ function applyKeyAndModeToSpecificChord(measures, key, mode, i, isRelatedBackwar
             if (currentChordNumber === i) {
                 measures[a][b].key = key
                 if (DEBUG) Utils.log("mode")
-                measures[a][b].mode = measures[a][b].functionName === Consts.FUNCTION_NAMES.DOMINANT ? Consts.MODE.MAJOR : mode
+                measures[a][b].mode = measures[a][b].functionName === Consts.FUNCTION_NAMES.DOMINANT ? Consts.MODE.MAJOR : measures[a][b].mode
                 if (DEBUG) Utils.log("mode", measures[a][b].mode)
                 measures[a][b].isRelatedBackwards = isRelatedBackwards
                 if (DEBUG) Utils.log("isRelatedBackwards", measures[a][b].isRelatedBackwards)
