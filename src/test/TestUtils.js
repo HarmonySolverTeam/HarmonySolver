@@ -155,7 +155,7 @@ exports.TestSuite = function TestSuite(name, timeLimit){
             if(this.timeMeasurementEnabled){
                 var timeInfo = "\tTime: " + time + " ms";
                 if(time >= this.timeLimit){
-                    timeInfo += " - exceeded time limit!"
+                    timeInfo += " - exceeded time limit (" + this.timeLimit +" ms)"
                 }
                 console.log(timeInfo)
             }
