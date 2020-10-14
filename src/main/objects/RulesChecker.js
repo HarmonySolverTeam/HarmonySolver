@@ -289,9 +289,20 @@ function checkConnection(prevChord, currentChord){
             }
         }
     }
+
     if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT){
         //todo najbliższą drogą
     }
+
+    if(prevChordFunctionTemp.equals(currentChordFunctionTemp)){
+        if(prevChord.sopranoNote.equals(currentChord.sopranoNote) &&
+            prevChord.altoNote.equals(currentChord.altoNote) &&
+            prevChord.tenorNote.equals(currentChord.tenorNote) &&
+            prevChord.bassNote.equalsInOneOctave(currentChord.bassNote)){
+            return -1;
+        }
+    }
+
     if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT && prevChordFunctionTemp.mode === Consts.MODE.MAJOR && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT) {
         throw new Errors.RulesCheckerError("Forbidden connection: D->S");
     }

@@ -1,4 +1,6 @@
 .import "./ChordComponentManager.js" as ChordComponentManager
+.import "./Utils.js" as Utils
+
 var cm = new ChordComponentManager.ChordComponentManager();
 
 function Note(pitch, baseNote, chordComponent) {
@@ -38,6 +40,12 @@ function Note(pitch, baseNote, chordComponent) {
 
     this.equals = function(other){
         return this.pitch === other.pitch
+            && this.baseNote === other.baseNote
+            && this.chordComponent.equals(other.chordComponent);
+    }
+
+    this.equalsInOneOctave = function(other){
+        return Utils.mod(this.pitch, 12) === Utils.mod(other.pitch, 12)
             && this.baseNote === other.baseNote
             && this.chordComponent.equals(other.chordComponent);
     }

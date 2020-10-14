@@ -292,4 +292,14 @@ const chopinTonicConnection = () => {
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(chopinTonicConnection, "Check correctness of Chopin -> T test"));
 
+const sameFunctionConnectionTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("T");
+    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"),new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch2 = new Chord.Chord(new Note.Note(72,0,"1"),new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(60, 0, "1"),hf1);
+
+    return UnitTest.assertEqualsPrimitives(-1, RulesChecker.checkConnection(ch1,ch2))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(sameFunctionConnectionTest, "Same function connection test"));
+
 rulesCheckerTestSuite.run();
