@@ -28,7 +28,7 @@ var check_solution_found_minor = (exName) => {
     return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 
-var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests");
+var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests",  1000);
 var targosz_p61_ex13 = () => {return check_solution_found_major("targosz_p61_ex13.txt")};
 var targosz_p61_ex14 = () => {return check_solution_found_major("targosz_p61_ex14.txt")};
 var targosz_p61_ex15 = () => {return check_solution_found_major("targosz_p61_ex15.txt")};
