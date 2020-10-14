@@ -290,7 +290,7 @@ function checkConnection(prevChord, currentChord){
         }
     }
 
-    if(prevChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChord.harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT
+    if(prevChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && currentChordFunctionTemp.functionName === Consts.FUNCTION_NAMES.DOMINANT
         && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
         //todo maybe for all connections?
         var vb = new Consts.VoicesBoundary();
@@ -316,6 +316,14 @@ function checkConnection(prevChord, currentChord){
                             return -1;
                         }
                     }
+                }
+            }
+        }
+
+        if(currentChord.bassNote.chordComponentEquals("1") && prevChord.bassNote.chordComponentEquals("1")) {
+            for(var i = 1; i < 4; i++) {
+                if (prevChord.notes[i].pitch - currentChord.notes[i].pitch < 0) {
+                    return -1;
                 }
             }
         }
