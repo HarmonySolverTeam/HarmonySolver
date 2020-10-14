@@ -120,7 +120,8 @@ MuseScore {
                     Utils.log("component: " + component)
 
 
-                    if (component.length === 1 && isAlterationSymbol(component[0])) {
+                    if ((component.length === 1 && isAlterationSymbol(component[0])) ||
+                        (component.length === 2 && isAlterationSymbol(component[0]) && component[0] === component[1])) {
                         if (has3component) {
                             throw new Errors.FiguredBassInputError("Cannot twice define 3", symbols)
                         } else {
@@ -145,7 +146,13 @@ MuseScore {
 
                         } else {
                             if (isAlterationSymbol(component[0])) {
-                                symbols.push(new FiguredBass.BassSymbol(parseInt(component[1]), component[0]))
+                                if (component[0] === component[1]){
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(component[2]), component[0]))
+                                } else {
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(component[1]), component[0]))
+                                }
+                            } else if (isAlterationSymbol(component[component.length - 1])) {
+                                symbols.push(new FiguredBass.BassSymbol(parseInt(component[0]), component[component.length - 1]))
                             } else {
                                 symbols.push(new FiguredBass.BassSymbol(parseInt(component), undefined))
                             }
