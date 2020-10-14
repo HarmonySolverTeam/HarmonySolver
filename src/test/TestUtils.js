@@ -126,9 +126,11 @@ exports.UnitTest = function UnitTest(fun, name){
     }
 }
 
-exports.TestSuite = function TestSuite(name){
+exports.TestSuite = function TestSuite(name, timeLimit){
     this.tests = []; // [Test]
     this.name = name;
+    this.timeMeasurementEnabled = timeLimit !== undefined;
+    this.timeLimit = timeLimit === undefined ? 100000 : timeLimit;
 
     this.addTest = function(test){
         this.tests.push(test)
@@ -136,14 +138,26 @@ exports.TestSuite = function TestSuite(name){
 
     this.run = function () {
         var passed = 0, failed = 0;
+        var timeStart, time = 0;
         for (var i = 0; i < this.tests.length; i++) {
+            if(this.timeMeasurementEnabled)
+                timeStart = new Date();
             var currentTest = this.tests[i].run();
-            if (currentTest) {
+            if(this.timeMeasurementEnabled)
+                time = new Date() - timeStart;
+            if (currentTest && time < this.timeLimit) {
                 passed += 1;
                 console.log(LOG_STYLES.FgCyan ,"\"" + this.tests[i].name + "\"" + " passed.")
             } else {
                 failed += 1;
                 console.log(LOG_STYLES.FgRed ,"\"" + this.tests[i].name + "\"" + " failed.")
+            }
+            if(this.timeMeasurementEnabled){
+                var timeInfo = "\tTime: " + time + " ms";
+                if(time >= this.timeLimit){
+                    timeInfo += " - exceeded time limit (" + this.timeLimit +" ms)"
+                }
+                console.log(timeInfo)
             }
         }
         console.log();
