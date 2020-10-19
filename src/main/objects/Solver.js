@@ -92,11 +92,13 @@ function Solver(exercise, bassLine, sopranoLine){
         else chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
         var good_chords = []
         
-        if(DEBUG){
+        /* if(DEBUG){
             var log = "";
             for(var x = 0; x<curr_index; x++) log += "   "
             if(curr_index < 6) Utils.log("Log", log + curr_index)
-        }
+        } */
+
+        if (DEBUG) Utils.log("Finding solution for chord " + curr_index)
 
         for (var j = 0; j < chords.length; j++){
             // console.log(chords[j].toString())
@@ -105,10 +107,10 @@ function Solver(exercise, bassLine, sopranoLine){
 
             if (score !== -1 ) {
 
-                if(DEBUG) {
+              /*  if(DEBUG) {
                     console.log("OK!");
                     console.log(curr_index + " -> " + chords[j]);
-                }
+                } */
 
                 good_chords.push([score,chords[j]]);
             }
@@ -118,7 +120,7 @@ function Solver(exercise, bassLine, sopranoLine){
             return [];
         }
 
-        good_chords.sort(function(a,b){(a[0] > b[0]) ? 1 : -1})
+        good_chords.sort(function(a,b){ return (a[0] > b[0]) ? 1 : -1})
 
         if (curr_index+1 === this.harmonicFunctions.length){
             //console.log(good_chords[0][1])

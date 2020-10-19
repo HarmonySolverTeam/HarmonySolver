@@ -156,7 +156,7 @@ function VoicesBoundary() {
     this.tenorMax = 69;
     this.tenorMin = 48;
     this.bassMax = 62;
-    this.bassMin = 41;
+    this.bassMin = 39;
 }
 
 //G

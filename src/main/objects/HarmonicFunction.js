@@ -206,8 +206,13 @@ function HarmonicFunction2(params){
         return false;
     };
 
-    this.copy = function copy(){
-        var args = {
+    this.copy = function (){
+        var args = this.getArgsMap();
+        return new HarmonicFunction2(args);
+    }
+
+    this.getArgsMap = function() {
+        return {
             "functionName" : this.functionName,
             "degree" : this.degree,
             "position" : (this.position === undefined ? undefined : this.position.chordComponentString),
@@ -218,8 +223,7 @@ function HarmonicFunction2(params){
             "omit" : this.omit.map(function (cc) { return cc.chordComponentString; }),
             "extra" : this.extra.map(function (cc) { return cc.chordComponentString; }),
             "key" : this.key
-        };
-        return new HarmonicFunction2(args);
+        }
     }
 
     this.equals = function (other) {

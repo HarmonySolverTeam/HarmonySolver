@@ -95,7 +95,7 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
             if(DEBUG) Utils.log("Forbidden jump in voice "+i, prevChord + "->" + currentChord);
             return -1;
         }
-        if(IntervalUtils.isAlteredInterval(prevChord.notes[i],currentChord.notes[i])) {
+        if(IntervalUtils.isAlteredInterval(prevChord.notes[i],currentChord.notes[i]) && !skipCheckingVoiceIncorrectJump(i)) {
             if(DEBUG) Utils.log("Altered Interval in voice "+i, prevChord + "->" + currentChord);
             return -1;
         }
