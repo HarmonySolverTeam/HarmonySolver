@@ -2,7 +2,7 @@
 .import "./RulesChecker.js" as Checker
 .import "./Consts.js" as Consts
 
-var DEBUG = false;
+var DEBUG = true;
 
 function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
@@ -47,7 +47,8 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
 
         if (currentChords.length === 0) {
             if (DEBUG) console.log(harmonicFunctions[i])
-            throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1  - chordsWithDelays))
+            throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1  - chordsWithDelays),
+                JSON.stringify(harmonicFunctions[i]))
         }
 
         for (var a = 0; a < currentChords.length; a++) {

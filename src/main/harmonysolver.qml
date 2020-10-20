@@ -118,7 +118,7 @@ MuseScore {
                         i++
                     }
                     Utils.log("component: " + component)
-
+//todo jak chcesz dodać 8 do syboli, to nie dodawaj, bo to pryma
 
                     if ((component.length === 1 && isAlterationSymbol(component[0])) ||
                         (component.length === 2 && isAlterationSymbol(component[0]) && component[0] === component[1])) {
@@ -136,25 +136,38 @@ MuseScore {
                             var secondSymbol = splittedSymbols[1]
 
                             if (isAlterationSymbol(secondSymbol[0])) {
-                                symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[1]),
-                                                                        secondSymbol[0]))
+                                if (parseInt(secondSymbol[1]) !== 8) {
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[1]),
+                                                                                      secondSymbol[0]))
+                                }
                             } else {
-                                symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol),
-                                                                        undefined))
+                                if (parseInt(secondSymbol) !== 8) {
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol),
+                                                                            undefined))
+                                }
                             }
                             delays.push([firstSymbol, secondSymbol])
 
                         } else {
                             if (isAlterationSymbol(component[0])) {
                                 if (component[0] === component[1]){
-                                    symbols.push(new FiguredBass.BassSymbol(parseInt(component[2]), component[0]))
+                                    if (parseInt(component[2]) !== 8) {
+                                        symbols.push(new FiguredBass.BassSymbol(parseInt(component[2]), component[0]))
+                                    }
                                 } else {
-                                    symbols.push(new FiguredBass.BassSymbol(parseInt(component[1]), component[0]))
+                                    if (parseInt(component[1]) !== 8) {
+                                        symbols.push(new FiguredBass.BassSymbol(parseInt(component[1]), component[0]))
+                                    }
                                 }
                             } else if (isAlterationSymbol(component[component.length - 1])) {
-                                symbols.push(new FiguredBass.BassSymbol(parseInt(component[0]), component[component.length - 1]))
+                                if (parseInt(component[0]) !== 8) {
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(component[0]),
+                                                                            component[component.length - 1]))
+                                }
                             } else {
-                                symbols.push(new FiguredBass.BassSymbol(parseInt(component), undefined))
+                                if (parseInt(component) !== 8) {
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(component), undefined))
+                                }
                             }
                         }
                     }
@@ -413,7 +426,7 @@ MuseScore {
         try {
             var ex = read_figured_bass()
             var translator = new Translator.BassTranslator()
-            //console.log(ex.elements)
+            Utils.log("ex", JSON.stringify(ex))
             var exercise = translator.createExerciseFromFiguredBass(ex)
             Utils.log("Translated exercise",JSON.stringify(exercise))
             var bassLine = []

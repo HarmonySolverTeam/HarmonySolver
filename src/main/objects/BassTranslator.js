@@ -139,7 +139,7 @@ function BassTranslator() {
             }
             //9,7 -> 3,5,7,9
             if (Utils.contains(bassNumbers, 9)) {
-                return [2, 4, 10]
+                return [3, 5, 7, 9]
             }
 
         }
@@ -258,7 +258,8 @@ function BassTranslator() {
         }
         chordElement.notesNumbers.push(chordElement.notesNumbers[chordElement.notesNumbers.length - 1] + 2)
         if (chordElement.notesNumbers.length >= 5) {
-            chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
+            //nothing?
+      //      chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
         }
     }
 
@@ -391,7 +392,7 @@ function BassTranslator() {
 
         if (symbols.equals([3, 5, 7]) || symbols.equals([2, 4, 6]) ||
             symbols.equals([3, 4, 6]) || symbols.equals([3, 5, 6]) ||
-            symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
+            symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7]) || symbols.equals([3, 5, 7, 9])) {
 
             if (!Utils.contains(extra, "7") &&
                 !Utils.contains(extra, "7>") &&
@@ -400,7 +401,7 @@ function BassTranslator() {
             }
         }
 
-        if (symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7])) {
+        if (symbols.equals([2, 4, 10]) || symbols.equals([5, 6, 7]) || symbols.equals([3, 5, 7, 9])) {
             if (!Utils.contains(extra, "9") &&
                 !Utils.contains(extra, "9>") &&
                 !Utils.contains(extra, "9<")) {
@@ -459,7 +460,24 @@ function BassTranslator() {
                 degree = 5
             }
 
-            var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays, extra, omit, down, system, mode)
+            if (DEBUG) {
+                Utils.log("chordElement", JSON.stringify(chordElement))
+                Utils.log("functionName", JSON.stringify(functionName))
+                Utils.log("degree", JSON.stringify(degree))
+                Utils.log("position", JSON.stringify(position))
+                Utils.log("revolution", JSON.stringify(revolution))
+                Utils.log("delays", JSON.stringify(delays))
+                Utils.log("extra", JSON.stringify(extra))
+                Utils.log("omit", JSON.stringify(omit))
+                Utils.log("down", JSON.stringify(down))
+                Utils.log("system", JSON.stringify(system))
+                Utils.log("mode", JSON.stringify(mode))
+            }
+
+            var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays,
+                                                                extra, omit, down, system, mode)
+
+            if (DEBUG) Utils.log("toAdd", JSON.stringify(toAdd))
 
             ret.push(toAdd)
         }
@@ -669,14 +687,14 @@ function BassTranslator() {
                 var addedSomething = false
 
                 for (var a = 0; a < toOmit.length; a++) {
-                    if (!Utils.contains(argsMap.omit, toOmit[a])) {
+                    if (!Utils.contains(argsMap.omit, toOmit[a]) && toOmit[a] !== 8) {
                         argsMap.omit.push(toOmit[a])
                         addedSomething = true
                     }
                 }
 
                 for (var a = 0; a< toExtra.length; a++) {
-                    if (!Utils.contains(argsMap.extra, toExtra[a])) {
+                    if (!Utils.contains(argsMap.extra, toExtra[a]) && toExtra[a] !== 8) {
                         argsMap.extra.push(toExtra[a])
                         addedSomething = true
                     }
