@@ -158,6 +158,16 @@ function getMeasurePlace(meter, measureCount){
     if(measureCount === 0)
         return Consts.MEASURE_PLACE.BEGINNING;
     var numerator = meter[0];
+
+    if(isPowerOf2(numerator)){
+        for(var i = 2; i < numerator; i = i + 2){
+            if(measureCount === i){
+                return Consts.MEASURE_PLACE.DOWNBEAT;
+            }
+        }
+        return Consts.MEASURE_PLACE.UPBEAT;
+    }
+
     var threesNumber, twosNumber;
     switch(numerator % 3){
         case 0:
@@ -182,6 +192,15 @@ function getMeasurePlace(meter, measureCount){
     if(twosNumber === 2 && measureCount === counter + 2)
         return Consts.MEASURE_PLACE.DOWNBEAT;
     return Consts.MEASURE_PLACE.UPBEAT;
+}
+
+function isPowerOf2(n){
+    while(n > 1){
+        if(n % 2 !== 0)
+            return false;
+        n /= 2;
+    }
+    return true;
 }
 
 // Hide method from for-in loops

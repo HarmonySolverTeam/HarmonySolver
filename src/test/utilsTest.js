@@ -13,7 +13,9 @@ var getMeasurePlaceTest = () => {
         TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.DOWNBEAT, Utils.getMeasurePlace([7,8], 0.625)) &&
         TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.UPBEAT, Utils.getMeasurePlace([5,4], 0.25)) &&
         TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.UPBEAT, Utils.getMeasurePlace([7,4], 1.5)) &&
-        TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.UPBEAT, Utils.getMeasurePlace([4,4], 0.25))
+        TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.UPBEAT, Utils.getMeasurePlace([4,4], 0.25)) &&
+        TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.DOWNBEAT, Utils.getMeasurePlace([8,4], 0.5)) &&
+        TestUtils.assertEqualsPrimitives(Consts.MEASURE_PLACE.DOWNBEAT, Utils.getMeasurePlace([8,4], 1))
 };
 
 testSuite.addTest(new TestUtils.UnitTest(getMeasurePlaceTest, "Get measure place test"));
