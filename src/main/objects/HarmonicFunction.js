@@ -206,6 +206,10 @@ function HarmonicFunction2(params){
         return false;
     };
 
+    this.isInSecondRelation = function (nextFunction) {
+        return nextFunction.degree - this.degree === 1;
+    };
+
     this.copy = function copy(){
         var args = {
             "functionName" : this.functionName,

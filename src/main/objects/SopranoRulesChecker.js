@@ -1,96 +1,124 @@
 .import "./Consts.js" as Consts
-
-
-function Connection(currentHF, prevHF, prevPrevHF){
-    this.currentHF = currentHF;
-    this.prevHF = prevHF;
-    this.prevPrevHF = prevPrevHF;
-}
-
-var RuleExecutionStatus = {
-  SUCCESS: 0,
-  WARN: 1,
-  ERROR: 2
-};
-
-function RuleExecutionReport(status, rating){
-    this.status = status;
-    this.rating = rating;
-
-    this.mergeWith = function(other){
-        var resultRating = this.rating + other.rating;
-        var resultStatus = RuleExecutionStatus.SUCCESS;
-        if(this.status === RuleExecutionStatus.ERROR || other.status === RuleExecutionStatus.ERROR){
-            resultStatus = RuleExecutionStatus.ERROR;
-        }
-        if(this.status === RuleExecutionStatus.WARN || other.status === RuleExecutionStatus.WARN){
-            resultStatus = RuleExecutionStatus.WARN;
-        }
-        return new RuleExecutionReport(resultStatus, resultRating);
-    }
-}
-
+.import "./RulesCheckerUtils.js" as RulesCheckerUtils
+.import "./Utils.js" as Utils
+.import "./IntervalUtils.js" as IntervalUtils
 
 function SopranoRulesChecker(){
-    this.rules = [];
-    this.applyConnection = function(connection){
-        var report;
-        for(var i=0; i<this.rules.length; i++){
-            report = report.mergeWith(this.rules[i].evaluate());
-            if(report.status === RuleExecutionStatus.ERROR)
-                throw new Error("Error occurred during executing rules.");
-        }
+    RulesCheckerUtils.Evaluator.call(this, 2);
 
-        return report;
+    this.hardRules = [new ForbiddenDSConnectionRule(), new ChangeFunctionAtMeasureBeginningRule()];
+    this.softRules = [new DominantRelationRule(), new ChangeFunctionConnectionRule(), new JumpRule(), new SecondRelationRule(), new ChangeFunctionOnDownBeatRule()];
+}
+
+function HarmonicFunctionWithSopranoInfo(harmonicFunction, measurePlace, sopranoNote){
+    this.harmonicFunction = harmonicFunction; // HarmonicFunction
+    this.measurePlace = measurePlace; // Consts.MEASURE_PLACE enum
+    this.sopranoNote = sopranoNote; // Note
+}
+
+function SpecialConnectionRule(punishment, prevFunctionName, currentFunctionName){
+    RulesCheckerUtils.IRule.call(this);
+    this.currentFunctionName = currentFunctionName;
+    this.prevFunctionName = prevFunctionName;
+    this.evaluate = function(connection){
+        if(connection.current.harmonicFunction.functionName === this.currentFunctionName &&
+            connection.prev.harmonicFunction.functionName === this.prevFunctionName){
+                return punishment;
+        }
+        return 0;
     }
 }
 
-function IRuleComponent(connection){
-    this.subRules = [];
-    this.connection = connection;
+function DSConnectionRule(){
+    SpecialConnectionRule.call(this, 10, Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
+}
 
-    this.evaluate = function(){
+function STConnectionRule(){
+    SpecialConnectionRule.call(this, 10, Consts.FUNCTION_NAMES.SUBDOMINANT, Consts.FUNCTION_NAMES.TONIC);
+}
 
-    }
+function TDConnectionRule(){
+    SpecialConnectionRule.call(this, 10, Consts.FUNCTION_NAMES.TONIC, Consts.FUNCTION_NAMES.DOMINANT);
+}
 
-    this.and = function(other){
-        this.evaluate().mergeWith(other.evaluate());
-    }
-
-    this.or = function(other){
-        var thisReport = this.evaluate();
-        if(thisReport.status !== RuleExecutionStatus.ERROR){
-            return thisReport;
-        } else {
-            var otherReport = other.evaluate();
-            if(otherReport.status !== RuleExecutionStatus.ERROR){
-                return otherReport;
-            }
-            return thisReport.mergeWith(otherReport);
-        }
+function ChangeFunctionConnectionRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        var stRule = new STConnectionRule();
+        var tdRule = new TDConnectionRule();
+        var dsRule = new DSConnectionRule();
+        return stRule.evaluate(connection) + tdRule.evaluate(connection) + dsRule.evaluate(connection);
     }
 }
 
-function SDConnectionRule(connection){
-    IRuleComponent.call(connection);
-    this.evaluate = function(){
-        if(connection.currentHF.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT &&
-            connection.prevHF.functionName === Consts.FUNCTION_NAMES.DOMINANT &&
-            connection.prevHF.mode === Consts.MODE.MAJOR){
-            return new RuleExecutionReport(RuleExecutionStatus.ERROR, 10000);
+function ForbiddenDSConnectionRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection) {
+        var dsRule = new DSConnectionRule();
+        if(dsRule.evaluate(connection) !== 0 && connection.prev.harmonicFunction.mode === Consts.MODE.MAJOR){
+            return -1;
         }
-        return new RuleExecutionReport(RuleExecutionStatus.SUCCESS, 0);
+        return 0;
     }
 }
 
-function SDTConnectionRule(connection) {
-    IRuleComponent.call(connection);
-    this.evaluate = function () {
-        if (connection.currentHF.functionName === Consts.FUNCTION_NAMES.TONIC &&
-            connection.prevHF.functionName === Consts.FUNCTION_NAMES.DOMINANT &&
-            connection.prevPrevHF.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT) {
-            return new RuleExecutionReport(RuleExecutionStatus.SUCCESS, 0);
+function DominantRelationRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        if(connection.prev.harmonicFunction.isInDominantRelation(connection.current.harmonicFunction))
+            return 0;
+        return 2;
+    }
+}
+
+function SecondRelationRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        if(connection.prev.harmonicFunction.isInSecondRelation(connection.current.harmonicFunction))
+            return 0;
+        return 1;
+    }
+}
+
+function NotChangeFunctionRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        if(connection.current.harmonicFunction.functionName === connection.prev.harmonicFunction.functionName)
+            return 0;
+        return -1;
+    }
+}
+
+function ChangeFunctionAtMeasureBeginningRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        var notChangeFunctionRule = new NotChangeFunctionRule();
+        if(notChangeFunctionRule.evaluate(connection) === 0 && connection.current.measurePlace === Consts.MEASURE_PLACE.BEGINNING)
+            return -1;
+        return 0;
+    }
+}
+
+function JumpRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        var sameFunctionRule = new NotChangeFunctionRule();
+        var ruleIsFulfilled = sameFunctionRule.evaluate(connection) === 0;
+        if(IntervalUtils.pitchOffsetBetween(connection.current.sopranoNote, connection.prev.sopranoNote) > 2){
+             return ruleIsFulfilled ? 0 : 5;
         }
-        return new RuleExecutionReport(RuleExecutionStatus.SUCCESS, 10);
+        return ruleIsFulfilled ? 5 : 0;
+    }
+}
+
+function ChangeFunctionOnDownBeatRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function(connection){
+        var sameFunctionRule = new NotChangeFunctionRule();
+        var ruleIsFulfilled = sameFunctionRule.evaluate(connection) === 0;
+        if(!ruleIsFulfilled && connection.current.measurePlace === Consts.MEASURE_PLACE.UPBEAT){
+            return 10;
+        }
+        return 0;
     }
 }
