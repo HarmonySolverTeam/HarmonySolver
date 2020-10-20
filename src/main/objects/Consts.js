@@ -211,6 +211,13 @@ var DEFLECTION_TYPE = {
 }
 
 //G
+var MEASURE_PLACE = {
+    UPBEAT: 0,
+    DOWNBEAT: 1,
+    BEGINNING: 2
+}
+
+//G
 var keyFromPitchBasenoteAndMode = {
     "60,0,major": 'C',
     "61,0,major": 'C#',
