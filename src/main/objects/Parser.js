@@ -213,6 +213,7 @@ function parse(input) {
         var chords = lines[i].split(";")
         var chords_parsed = []
         for (var j = 0; j < chords.length; j++) {
+            chords[j] = chords[j].trim()
             dropFirstChar = false
             dropLastChar = false
             if (DEBUG) Utils.log("Current chord: ", JSON.stringify(chords[j]))

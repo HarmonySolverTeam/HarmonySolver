@@ -158,4 +158,13 @@ const emptyElipseTest = () => {
 testSuite.addTest(new TestUtils.UnitTest(emptyElipseTest, "Empty elipse"));
 
 
+const whitespacesHandlingTest = () => {
+    var ex = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\whitespaces.txt")
+    var harmFunctions = Parser.parse(ex)
+    return TestUtils.assertDefined(harmFunctions)
+}
+
+testSuite.addTest(new TestUtils.UnitTest(whitespacesHandlingTest, "Handling whitespaces"));
+
+
 testSuite.run();

@@ -1,0 +1,11 @@
+A
+3/4
+D{"position":"3", "system":"close"}
+T{"revolution":"3"}; S{"mode":"minor"}
+   T{}    ;      S{"position":"3"}
+D{"position":"5","revolution":"3"}
+T{};  T{"revolution":"5"}
+S{};S{"mode":"minor"}
+T{"revolution":"3"};       D{"revolution":"5"}
+T{};S{};S{"mode":"minor"}
+T{}
