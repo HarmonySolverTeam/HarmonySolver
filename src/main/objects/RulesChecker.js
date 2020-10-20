@@ -475,3 +475,20 @@ function checkAllRules(prevPrevChord, prevChord, currentChord, isFixedBass, isFi
     var result = checkRules(prevPrevChord ,prevChord, currentChord, chosenRules, true);
     return result
 }
+
+function ChordRelationEvaluator() {
+
+    this.hardRules = [falseRelation, checkDelayCorrectness, checkConnection, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, hiddenOctaves]
+    this.softRules = [forbiddenJump]
+
+    //todo remove fifth argument and refactor to connection
+    this.evaluateHardRules = function(prev, curr){
+        return checkRules(undefined, prev, curr, this.hardRules, false)
+    }
+
+    //todo remove fifth argument and refactor to connection
+    this.evaluateSoftRules = function (connection){
+        return checkRules(connection.prevPrev, connection.prev, connection.current, this.softRules, true)
+    }
+
+}
