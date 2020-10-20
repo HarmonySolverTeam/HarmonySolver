@@ -26,6 +26,14 @@ function Evaluator(connectionSize){
 
 function IRule(){
     this.evaluate = function(connection){
-        return 0;
+        throw new Error("IRule default evaluate method was called");
+    };
+
+    this.isBroken = function(connection){
+        return this.evaluate(connection) !== 0;
+    };
+
+    this.isNotBroken = function(connection){
+        return this.evaluate(connection) === 0;
     }
 }

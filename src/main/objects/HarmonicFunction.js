@@ -210,6 +210,14 @@ function HarmonicFunction2(params){
         return nextFunction.degree - this.degree === 1;
     };
 
+    this.hasMajorMode = function (){
+        return this.mode === Consts.MODE.MAJOR;
+    };
+
+    this.hasMinorMode = function (){
+        return this.mode === Consts.MODE.MINOR;
+    };
+
     this.copy = function copy(){
         var args = {
             "functionName" : this.functionName,

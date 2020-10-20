@@ -55,7 +55,7 @@ function ForbiddenDSConnectionRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection) {
         var dsRule = new DSConnectionRule();
-        if(dsRule.evaluate(connection) !== 0 && connection.prev.harmonicFunction.mode === Consts.MODE.MAJOR){
+        if(dsRule.isBroken(connection) && connection.prev.harmonicFunction.hasMajorMode()){
             return -1;
         }
         return 0;
@@ -93,7 +93,7 @@ function ChangeFunctionAtMeasureBeginningRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection){
         var notChangeFunctionRule = new NotChangeFunctionRule();
-        if(notChangeFunctionRule.evaluate(connection) === 0 && connection.current.measurePlace === Consts.MEASURE_PLACE.BEGINNING)
+        if(notChangeFunctionRule.isNotBroken(connection) && connection.current.measurePlace === Consts.MEASURE_PLACE.BEGINNING)
             return -1;
         return 0;
     }
@@ -103,11 +103,11 @@ function JumpRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection){
         var sameFunctionRule = new NotChangeFunctionRule();
-        var ruleIsFulfilled = sameFunctionRule.evaluate(connection) === 0;
+        var ruleIsNotBroken = sameFunctionRule.isNotBroken(connection);
         if(IntervalUtils.pitchOffsetBetween(connection.current.sopranoNote, connection.prev.sopranoNote) > 2){
-             return ruleIsFulfilled ? 0 : 5;
+             return ruleIsNotBroken ? 0 : 5;
         }
-        return ruleIsFulfilled ? 5 : 0;
+        return ruleIsNotBroken ? 5 : 0;
     }
 }
 
@@ -115,8 +115,7 @@ function ChangeFunctionOnDownBeatRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection){
         var sameFunctionRule = new NotChangeFunctionRule();
-        var ruleIsFulfilled = sameFunctionRule.evaluate(connection) === 0;
-        if(!ruleIsFulfilled && connection.current.measurePlace === Consts.MEASURE_PLACE.UPBEAT){
+        if(sameFunctionRule.isBroken(connection) && connection.current.measurePlace === Consts.MEASURE_PLACE.UPBEAT){
             return 10;
         }
         return 0;
