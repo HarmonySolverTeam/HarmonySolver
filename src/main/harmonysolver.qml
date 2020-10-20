@@ -362,14 +362,23 @@ MuseScore {
         var durations = []
         var lastBaseNote, lastPitch
         var notes = []
+        var measure_notes = []
         var meter = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+        var measureDurationTick = (division * (4 / meter[1])) * meter[0]
+        var measures = []
         do {
+            if(cursor.tick % measureDurationTick === 0 && cursor.tick !== 0){
+                measures.push(new Note.Measure(measure_notes))
+                measure_notes = []
+            }
+
             durations.push(
                         [cursor.element.duration.numerator, cursor.element.duration.denominator])
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
-            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0)
+            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0, [cursor.element.duration.numerator, cursor.element.duration.denominator])
             notes.push(sopranoNote)
+            measure_notes.push(sopranoNote)
         } while (cursor.next())
         var key
         if (mode === "major")
@@ -378,7 +387,7 @@ MuseScore {
             key = Consts.minorKeyBySignature(curScore.keysig)
         var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
                                                                   meter, notes,
-                                                                  durations)
+                                                                  durations, measures)
 
         var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
                                                                     [],
@@ -386,6 +395,7 @@ MuseScore {
 
         var solver = new Soprano.SopranoSolver(shex)
 
+        //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
         var solution_date = get_solution_date()
 

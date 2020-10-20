@@ -3,11 +3,13 @@
 
 var cm = new ChordComponentManager.ChordComponentManager();
 
-function Note(pitch, baseNote, chordComponent) {
+function Note(pitch, baseNote, chordComponent, duration) {
     this.pitch = pitch
     this.baseNote = baseNote
 
     this.chordComponent = chordComponent
+    this.duration = duration
+
     if(typeof chordComponent === 'string'){
         this.chordComponent = cm.chordComponentFromString(chordComponent);
     }
@@ -50,4 +52,8 @@ function Note(pitch, baseNote, chordComponent) {
             && this.chordComponent.equals(other.chordComponent);
     }
 
+}
+
+function Measure(notes){
+    this.notes = notes; // [Note]
 }
