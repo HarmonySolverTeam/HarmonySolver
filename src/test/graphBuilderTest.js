@@ -23,8 +23,30 @@ function MockEvaluator() {
     }
 }
 
+//todo remove it from here
+var getFunctionsWithDelay = function (functions){
+    var newFunctions = functions.slice();
+    var addedChords = 0;
+    for(var i=0; i<functions.length; i++){
+        var delays = functions[i].delay;
+        if(delays.length === 0) continue;
+        var newFunction = functions[i].copy();
+        for(var j=0; j<delays.length; j++){
+            if(parseInt(delays[j][1].baseComponent)>=8 && !Utils.containsChordComponent(newFunction.extra, delays[j][1].chordComponentString)) newFunction.extra.push(delays[j][1]);
+            functions[i].extra.push(delays[j][0]);
+            functions[i].omit.push(delays[j][1]);
+            functions[i].extra = functions[i].extra.filter(function(elem){return elem.chordComponentString !== delays[j][1].chordComponentString});
+            if(delays[j][1] === functions[i].position) functions[i].position = delays[j][0];
+            if(delays[j][1] === functions[i].revolution) functions[i].revolution = delays[j][0];
+        }
+        newFunctions.splice(i+addedChords+1, 0, newFunction);
+        addedChords++;
+    }
+    return newFunctions;
+}
 
-var testSuite = new TestUtils.TestSuite("GraphBuilder tests");
+
+var testSuite = new TestUtils.TestSuite("GraphBuilder tests", 1000);
 
 var test = () => {
 
@@ -34,7 +56,7 @@ var test = () => {
     var graphBuilder = new Graph.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
     graphBuilder.withEvaluator(new Checker.ChordRelationEvaluator());
-    graphBuilder.withInput(ex.getHarmonicFunctionList());
+    graphBuilder.withInput(getFunctionsWithDelay(ex.getHarmonicFunctionList()));
 
     var graph = graphBuilder.build();
 
@@ -60,37 +82,13 @@ var test = () => {
     // graphBuilder.withEvaluator(new MockEvaluator())
     // graphBuilder.withInput([3,2,3,1])
 
-    graph.enumerateNodes();
-    graph.printEdges();
-
     return TestUtils.assertEqualsPrimitives(prev_count, nexts_count);
 }
 
-// testSuite.addTest(new TestUtils.UnitTest(test, "Check if number of left-site edges is equal to right-site edges in whole graph"));
+testSuite.addTest(new TestUtils.UnitTest(test, "Check if number of left-site edges is equal to right-site edges in whole graph"));
 
 
 var allHaveExactlyOneUniquePrevContent = () => {
-
-    var getFunctionsWithDelay = function (functions){
-        var newFunctions = functions.slice();
-        var addedChords = 0;
-        for(var i=0; i<functions.length; i++){
-            var delays = functions[i].delay;
-            if(delays.length === 0) continue;
-            var newFunction = functions[i].copy();
-            for(var j=0; j<delays.length; j++){
-                if(parseInt(delays[j][1].baseComponent)>=8 && !Utils.containsChordComponent(newFunction.extra, delays[j][1].chordComponentString)) newFunction.extra.push(delays[j][1]);
-                functions[i].extra.push(delays[j][0]);
-                functions[i].omit.push(delays[j][1]);
-                functions[i].extra = functions[i].extra.filter(function(elem){return elem.chordComponentString !== delays[j][1].chordComponentString});
-                if(delays[j][1] === functions[i].position) functions[i].position = delays[j][0];
-                if(delays[j][1] === functions[i].revolution) functions[i].revolution = delays[j][0];
-            }
-            newFunctions.splice(i+addedChords+1, 0, newFunction);
-            addedChords++;
-        }
-        return newFunctions;
-    }
 
     var input = TestUtils.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + "sikorski_zzip_ex65.txt");
     var ex = Parser.parse(input);
@@ -102,8 +100,7 @@ var allHaveExactlyOneUniquePrevContent = () => {
 
     var graph = graphBuilder.build();
 
-    //tmp
-    graph.enumerateNodes();
+
     var result = true;
 
     for(var i = 0; i < graph.layers.length; i++) {
@@ -117,9 +114,6 @@ var allHaveExactlyOneUniquePrevContent = () => {
             result = result && currentNode.getUniquePrevContentsCount() === 1;
         }
     }
-
-    graph.enumerateNodes();
-    graph.printEdges();
 
     return TestUtils.assertTrue(result);
 }
