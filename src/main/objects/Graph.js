@@ -82,7 +82,7 @@ function Node(content) {
 
 function NeighbourNode(node, weight) {
     this.node = node;
-    this.weight = weight === undefined ? undefined : weight;
+    this.weight = weight;
 
     this.setWeight = function (weight) {
         this.weight = weight;
@@ -130,7 +130,7 @@ function Graph(layers, first, last) {
             for(var j=0; j<this.layers[i].nodeList.length; j++){
                 var currentNode = this.layers[i].nodeList[j];
                 if(currentNode.id === undefined) {
-                    currentNode["id"] = this.current_id;
+                    currentNode.id = this.current_id;
                     this.current_id++;
                 }
             }
