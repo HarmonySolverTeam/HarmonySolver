@@ -4,20 +4,20 @@ subprocess.call(["python", "init.py"])
 print("-"*100)
 
 suites = [
-    "generatorTest",
-    "delayTest",
-    "1_HarmonicFunctionsTests",
-    "bassTranslatorTest",
-    "sopranoTests",
-    "rulesCheckerTest",
-    "harmonicFunctionValidatorTest",
-    "chordComponentManagerTest",
-    "chordComponentTest",
-    "intervalUtilsTest",
-    "parserTest",
-    "exerciseCorrectorTest",
-    "sopranoRulesCheckerTest",
-    "utilsTest"
+    # "generatorTest",
+    # "delayTest",
+    # "1_HarmonicFunctionsTests",
+    # "bassTranslatorTest",
+    # "sopranoTests",
+    # "rulesCheckerTest",
+    # "harmonicFunctionValidatorTest",
+    # "chordComponentManagerTest",
+    # "chordComponentTest",
+    # "intervalUtilsTest",
+    # "parserTest",
+    # "exerciseCorrectorTest",
+    # "sopranoRulesCheckerTest",
+    # "utilsTest",
     "graphBuilderTest"
 ]
 

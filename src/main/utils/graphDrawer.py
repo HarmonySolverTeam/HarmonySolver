@@ -33,5 +33,5 @@ G.add_edges_from(edges)
 for v, data in G.nodes(data=True):
     data['subset'] = vertex_layers[v]
 pos = nxd.multipartite_layout(G)
-nx.draw(G, pos=pos, node_size=0.2, with_labels=True) #, font_size=10)
+nx.draw(G, pos=pos, node_size=0.2, with_labels=False) #, font_size=10)
 plt.show()

@@ -481,14 +481,26 @@ function ChordRelationEvaluator() {
     this.hardRules = [falseRelation, checkDelayCorrectness, checkConnection, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, hiddenOctaves]
     this.softRules = [forbiddenJump]
 
+    this.positive = 0;
+    this.negative = 0;
+
     //todo remove fifth argument and refactor to connection
-    this.evaluateHardRules = function(prev, curr){
-        return checkRules(undefined, prev, curr, this.hardRules, false)
+    this.evaluateHardRules = function(connection){
+        return checkRules(undefined, connection.prev.content, connection.current.content, this.hardRules, false)
     }
 
     //todo remove fifth argument and refactor to connection
     this.evaluateSoftRules = function (connection){
-        return checkRules(connection.prevPrev, connection.prev, connection.current, this.softRules, true)
+        var prevPrev = connection.prevPrev === undefined ? undefined : connection.prevPrev.content;
+        var result = checkRules(prevPrev, connection.prev.content, connection.current.content, this.softRules, true);
+        if(result === 0){
+            this.positive += 1;
+        }
+        else{
+            this.negative += 1;
+        }
+        // console.log("POSITIVE: " + this.positive + "  NEGATIVE" + this.negative)
+        return result;
     }
 
 }
