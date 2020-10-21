@@ -7,6 +7,7 @@ function Node(content) {
     this.content = content;
     this.nextNeighbours = [];
     this.prevNodes = [];
+    this.distanceFromBegining = undefined;
 
     this.getPrevContentIfSingle = function () {
         var uniquePrevContents =  this.getUniquePrevContents();
@@ -72,7 +73,7 @@ function Node(content) {
     this.duplicate = function(){
         var newNode = new Node(this.content);
         for(var i=0; i<this.nextNeighbours.length; i++){
-            newNode.addNextNeighbour(new NeighbourNode(this.nextNeighbours[i].node))
+            newNode.addNextNeighbour(new NeighbourNode(this.nextNeighbours[i].node, this.nextNeighbours[i].weight))
         }
         return newNode;
     }
@@ -123,6 +124,8 @@ function Graph(layers, first, last) {
 
     this.enumerateNodes = function () {
 
+        this.first["id"] = -1;
+        this.last["id"] = -2;
         for(var i=0; i<this.layers.length; i++){
             for(var j=0; j<this.layers[i].nodeList.length; j++){
                 var currentNode = this.layers[i].nodeList[j];
@@ -135,15 +138,17 @@ function Graph(layers, first, last) {
     }
 
     this.printEdges = function () {
+        var printNodeInfo = function(currentNode, layerNumber){
+            for(var k=0; k< currentNode.nextNeighbours.length; k++){
+                // console.log(currentNode.id + "+" + currentNode.content.shortString() + ","  + currentNode.nextNeighbours[k].node.id + "+" + currentNode.nextNeighbours[k].node.content.shortString() + "," + i)
+                console.log(currentNode.id + "," + currentNode.nextNeighbours[k].node.id + "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
+            }
+        }
+
+        printNodeInfo(this.first, 0);
         for(var i=0; i<this.layers.length; i++){
             for(var j=0; j<this.layers[i].nodeList.length; j++) {
-                var currentNode = this.layers[i].nodeList[j];
-                for(var k=0; k< currentNode.nextNeighbours.length; k++){
-                    if(currentNode.content !== "first" && currentNode.nextNeighbours[k].node.content !== "last") {
-                        // console.log(currentNode.id + "+" + currentNode.content.shortString() + ","  + currentNode.nextNeighbours[k].node.id + "+" + currentNode.nextNeighbours[k].node.content.shortString() + "," + i)
-                        console.log(currentNode.id + "," + currentNode.nextNeighbours[k].node.id + "," + i + "," + currentNode.nextNeighbours[k].weight)
-                    }
-                }
+                printNodeInfo(this.layers[i].nodeList[j], i+1)
             }
         }
     }
@@ -178,66 +183,61 @@ function GraphBuilder() {
         }
     }
 
-    var addEdges = function (graph, evaluator){
-
-    }
-
-    this.build = function () {
-        var resultGraph = new Graph([]);
-
-        generateLayers(resultGraph, this.generator, this.generatorInput)
-
-        for (var i = 0; i < resultGraph.layers.length - 1; i++){
-            for (var j = 0; j < resultGraph.layers[i].nodeList.length; j++){
-                var currentNode = resultGraph.layers[i].nodeList[j];
-                var nextNodes = resultGraph.layers[i+1].nodeList;
-                for(var k = 0; k< resultGraph.layers[i+1].nodeList.length; k++){
-                    if ( this.evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k], currentNode)) === 0 )
+    var addEdges = function (graph, evaluator) {
+        for (var i = 0; i < graph.layers.length - 1; i++) {
+            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
+                var currentNode = graph.layers[i].nodeList[j];
+                var nextNodes = graph.layers[i + 1].nodeList;
+                for (var k = 0; k < graph.layers[i + 1].nodeList.length; k++) {
+                    if (evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k], currentNode)) === 0)
                         currentNode.addNextNeighbour(new NeighbourNode(nextNodes[k]));
                 }
+            }
+        }
+    }
 
-                // removing nodes that cannot be reached from begin of exercise
-                if(i > 0 && !currentNode.havePrev()){
-                    resultGraph.layers[i].removeNode(currentNode);
+    var addFirstAndLast = function(graph) {
+        graph.first = new Node("first");
+        for(var i=0; i<graph.layers[0].nodeList.length; i++){
+            graph.first.addNextNeighbour(new NeighbourNode(graph.layers[0].nodeList[i], 0))
+        }
+
+        graph.last = new Node("last");
+        var lastLayerIdx = graph.layers.length - 1;
+        for(var i=0; i<graph.layers[lastLayerIdx].nodeList.length; i++){
+            graph.layers[lastLayerIdx].nodeList[i].addNextNeighbour(new NeighbourNode(graph.last, 0))
+        }
+    }
+
+    var removeUnreachableNodes = function (graph) {
+        for (var i = 0; i < graph.layers.length; i++) {
+            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
+                var currentNode = graph.layers[i].nodeList[j];
+                if(!currentNode.havePrev()){
+                    graph.layers[i].removeNode(currentNode);
                     j--;
                 }
             }
         }
-        // removing last layer nodes that cannot be reached from begin of exercise
-        var lastLayer = resultGraph.layers[resultGraph.layers.length - 1]
-        for (var j = 0; j < lastLayer.nodeList.length; j++){
-            var currentNode = lastLayer.nodeList[j];
-            if(!currentNode.havePrev()){
-                lastLayer.removeNode(currentNode);
-                j--;
-            }
-        }
+    }
 
-
-        //-2 porobaby not what want
-        for (var i = resultGraph.layers.length - 2; i >= 0; i--) {
-            for (var j = 0; j < resultGraph.layers[i].nodeList.length; j++) {
-
-                var currentNode = resultGraph.layers[i].nodeList[j];
-
-                //removing nodes from witch end of exercise cannot be reached
-                if(i < resultGraph.layers.length - 1 && !currentNode.haveNext()){
-                    resultGraph.layers[i].removeNode(currentNode);
+    var removeUselessNodes = function (graph) {
+        for (var i = graph.layers.length - 1; i >= 0; i--) {
+            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
+                var currentNode = graph.layers[i].nodeList[j];
+                if(!currentNode.haveNext()){
+                    graph.layers[i].removeNode(currentNode);
                     j--;
                 }
-
             }
         }
+    }
 
-        resultGraph.enumerateNodes();
-        resultGraph.printEdges();
+    var makeAllNodesHavingSinglePrevContent = function (graph){
+        for (var i = graph.layers.length - 1; i >= 0; i--) {
 
-        //magic with duplication
-        for (var i = resultGraph.layers.length - 1; i >= 0; i--) {
-
-            var expectedNodeNumberInLayer = resultGraph.layers[i].getPrevConnectionsCount();
-            for(var j=0; j<resultGraph.layers[i].nodeList.length; j++){
-                var currentNode = resultGraph.layers[i].nodeList[j];
+            for(var j=0; j<graph.layers[i].nodeList.length; j++){
+                var currentNode = graph.layers[i].nodeList[j];
                 if (currentNode.prevNodes.length > 1) {
                     var duplicates = [];
                     for (k = 0; k < currentNode.prevNodes.length - 1; k++) {
@@ -248,41 +248,46 @@ function GraphBuilder() {
 
                     prevNodes[0].addNextNeighbour(new NeighbourNode(currentNode))
                     for (k = 1; k < duplicates.length + 1; k++) {
-                        prevNodes[k].addNextNeighbour(new NeighbourNode(duplicates[k - 1]));
-                        resultGraph.layers[i].nodeList.push(duplicates[k - 1]);
+                        if(i === 0) prevNodes[k].addNextNeighbour(new NeighbourNode(duplicates[k - 1], 0));
+                        else prevNodes[k].addNextNeighbour(new NeighbourNode(duplicates[k - 1]));
+                        graph.layers[i].nodeList.push(duplicates[k - 1]);
                     }
                 }
             }
         }
+    }
 
-        for(var i=0; i<resultGraph.layers.length - 1; i++){
-            for(var j=0; j<resultGraph.layers[i].nodeList.length; j++){
-                var currentNode = resultGraph.layers[i].nodeList[j];
+    var setEdgeWeights = function(graph, evaluator){
+        for(var i=0; i<graph.layers.length - 1; i++){
+            for(var j=0; j<graph.layers[i].nodeList.length; j++){
+                var currentNode = graph.layers[i].nodeList[j];
                 var prevNode = i === 0 ? undefined : currentNode.getPrevContentIfSingle();
 
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var neighbour = currentNode.nextNeighbours[k];
-                    if(neighbour.node.content.notes === undefined) console.log("ERROR WITH GRAPH: node in layer " + i + " node numeber " + j + " have udefined next neighbour no. " + k)
                     var connection = new RulesCheckerUtils.Connection(neighbour.node, currentNode, prevNode);
-                    var w = this.evaluator.evaluateSoftRules(connection);
+                    var w = evaluator.evaluateSoftRules(connection);
                     neighbour.setWeight(w);
                 }
             }
         }
 
-        //set first
-        resultGraph.first = new Node("first");
-        for(var i=0; i<resultGraph.layers[0].nodeList.length; i++){
-            resultGraph.first.addNextNeighbour(new NeighbourNode(resultGraph.layers[0].nodeList[i], 0))
-        }
+    }
 
-        //set last
-        resultGraph.last = new Node("last");
-        var lastLayerIdx = resultGraph.layers.length - 1;
-        for(var i=0; i<resultGraph.layers[lastLayerIdx].nodeList.length; i++){
-            resultGraph.layers[lastLayerIdx].nodeList[i].addNextNeighbour(new NeighbourNode(resultGraph.last, 0))
-        }
+    this.build = function () {
+        var resultGraph = new Graph([]);
 
+        generateLayers(resultGraph, this.generator, this.generatorInput);
+        addEdges(resultGraph, this.evaluator);
+        addFirstAndLast(resultGraph);
+        removeUnreachableNodes(resultGraph);
+        removeUselessNodes(resultGraph);
+        makeAllNodesHavingSinglePrevContent(resultGraph);
+
+        //just for printing
+        resultGraph.enumerateNodes();
+
+        setEdgeWeights(resultGraph, this.evaluator);
 
         return resultGraph;
     }
