@@ -122,6 +122,18 @@ function Graph(layers, first, last) {
     //just for printing
     this.current_id = 0;
 
+    this.getNodes = function (){
+        var allNodes = [];
+        for(var i=0; i<this.layers.length; i++){
+            for(var j=0; j<this.layers[i].nodeList.length; j++) {
+                allNodes.push(this.layers[i].nodeList[j])
+            }
+        }
+        allNodes.push(this.first);
+        allNodes.push(this.last);
+        return allNodes;
+    }
+
     this.enumerateNodes = function () {
 
         this.first["id"] = -1;
