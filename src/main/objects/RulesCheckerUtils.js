@@ -30,10 +30,11 @@ function IRule(){
     };
 
     this.isBroken = function(connection){
-        return this.evaluate(connection) !== 0;
+        var evaluationResult = this.evaluate(connection);
+        return evaluationResult !== 0 && evaluationResult !== true;
     };
 
     this.isNotBroken = function(connection){
-        return this.evaluate(connection) === 0;
+        return !this.isBroken(connection);
     }
 }

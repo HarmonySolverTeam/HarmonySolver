@@ -16,6 +16,10 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
         return chordStr;
     }
 
+    this.shortString = function (){
+        return this.sopranoNote.pitch + "|" + this.altoNote.pitch + "|" + this.tenorNote.pitch + "|" + this.bassNote.pitch;
+    }
+
     this.countBaseComponents = function(baseComponentString){
         var counter = 0;
         for(var i = 0; i < this.notes.length; i++){

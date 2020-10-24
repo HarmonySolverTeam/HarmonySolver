@@ -17,7 +17,8 @@ suites = [
     "parserTest",
     "exerciseCorrectorTest",
     "sopranoRulesCheckerTest",
-    "utilsTest"
+    "utilsTest",
+    "graphBuilderTest"
 ]
 
 for s in suites:

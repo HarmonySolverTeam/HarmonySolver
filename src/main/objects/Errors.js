@@ -34,3 +34,8 @@ function PreCheckerError(message, details) {
     BasicError.call(this, message, details)
     this.source = "Error during checking exercise correctness"
 }
+
+function InvalidGraphConstruction(message, details) {
+    BasicError.call(this, message, details)
+    this.source = "Some conditions on graph specific structure don't match"
+}

@@ -9,6 +9,10 @@ function contains(list, obj) {
     return false
 }
 
+function removeFrom(list, obj) {
+     list.splice(list.indexOf(obj), 1)
+}
+
 function containsChordComponent(list, cc) {
     for (var i = 0; i < list.length; i++) {
         if (list[i].chordComponentString === cc) {
