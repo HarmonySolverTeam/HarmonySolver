@@ -7,7 +7,6 @@ function Node(content) {
     this.content = content;
     this.nextNeighbours = [];
     this.prevNodes = [];
-    this.distanceFromBegining = undefined;
 
     this.getPrevContentIfSingle = function () {
         var uniquePrevContents =  this.getUniquePrevContents();
@@ -121,6 +120,18 @@ function Graph(layers, first, last) {
     this.layers = layers;
     //just for printing
     this.current_id = 0;
+
+    this.getNodes = function (){
+        var allNodes = [];
+        for(var i=0; i<this.layers.length; i++){
+            for(var j=0; j<this.layers[i].nodeList.length; j++) {
+                allNodes.push(this.layers[i].nodeList[j])
+            }
+        }
+        allNodes.push(this.first);
+        allNodes.push(this.last);
+        return allNodes;
+    }
 
     this.enumerateNodes = function () {
 
@@ -240,7 +251,7 @@ function GraphBuilder() {
                 var currentNode = graph.layers[i].nodeList[j];
                 if (currentNode.prevNodes.length > 1) {
                     var duplicates = [];
-                    for (k = 0; k < currentNode.prevNodes.length - 1; k++) {
+                    for (var k = 0; k < currentNode.prevNodes.length - 1; k++) {
                         duplicates.push(currentNode.duplicate());
                     }
                     var prevNodes = currentNode.prevNodes.slice();
