@@ -2,6 +2,7 @@
 .import "./RulesChecker.js" as Checker
 .import "./Consts.js" as Consts
 .import "./BrokenRulesCounter.js" as BrokenRulesCounter
+.import "./ChordRulesChecker.js" as ChordRulesChecker
 
 function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
@@ -43,6 +44,11 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             currentChords = chordGenerator.generate(harmonicFunctions[i], [bassLine[i], undefined, undefined, undefined])
         } else {
             currentChords = chordGenerator.generate(harmonicFunctions[i])
+        }
+
+        if(i === 0){
+            var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
+            currentChords = currentChords.filter(function(chord){return !illegalDoubledThirdRule.hasIllegalDoubled3Rule(chord)})
         }
 
         if (currentChords.length === 0) {

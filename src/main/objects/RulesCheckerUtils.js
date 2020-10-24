@@ -1,3 +1,6 @@
+.import "./Utils.js" as Utils
+.import "./Consts.js" as Consts
+
 function Connection(current, prev, prevPrev){
     this.current = current;
     this.prev = prev;
@@ -37,4 +40,23 @@ function IRule(){
     this.isNotBroken = function(connection){
         return !this.isBroken(connection);
     }
+}
+
+function getHarmonicFunctionsWithDeflectionTranslation(currentChord, prevChord){
+    var currentChordFunctionTemp = currentChord.harmonicFunction.copy();
+    currentChordFunctionTemp.key = currentChord.harmonicFunction.key;
+    var prevChordFunctionTemp = prevChord.harmonicFunction.copy();
+    prevChordFunctionTemp.key = prevChord.harmonicFunction.key;
+    if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
+        if(Utils.isDefined(prevChord.harmonicFunction.key) && !prevChord.harmonicFunction.isRelatedBackwards) {
+            currentChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
+            currentChordFunctionTemp.degree = 1;
+        }
+        else if(currentChord.harmonicFunction.isRelatedBackwards){
+            prevChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
+            prevChordFunctionTemp.degree = 1;
+        } else return undefined //checkIllegalDoubled3(currentChord)? -1 : 0;
+    }
+
+    return [currentChordFunctionTemp, prevChordFunctionTemp]
 }

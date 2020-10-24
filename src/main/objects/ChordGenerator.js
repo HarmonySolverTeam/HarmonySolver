@@ -4,6 +4,7 @@
 .import "./ChordComponentManager.js" as ChordComponentManager
 .import "./Consts.js" as Consts
 .import "./Utils.js" as Utils
+.import "./IntervalUtils.js" as IntervalUtils
 
 function ChordGenerator(key, mode) {
     this.key = key;
@@ -365,7 +366,46 @@ function ChordGenerator(key, mode) {
             })
         }
 
-        return chords;
+        return chords.filter(function (chord){
+            return checkChordCorrectness(chord)
+        });
 
     }
+}
+
+function correctDistanceBassTenor(chord){
+    return !chord.bassNote.baseChordComponentEquals('1') ||
+        chord.tenorNote.chordComponent.semitonesNumber < 12 ||
+        IntervalUtils.pitchOffsetBetween(chord.tenorNote, chord.bassNote) >= 12;
+
+}
+
+function correctChopinChord(chord){
+    if(chord.harmonicFunction.isChopin()){
+        var voiceWith6 = -1;
+        var voiceWith7 = -1;
+        for(var voice=0; voice<4; voice++){
+            if(chord.notes[voice].baseChordComponentEquals("6"))
+                voiceWith6 = voice;
+            if(chord.notes[voice].chordComponentEquals("7"))
+                voiceWith7 = voice;
+        }
+        if(voiceWith6 !== -1 && voiceWith7 !== -1 && voiceWith6 < voiceWith7)
+            return false;
+    }
+    return true;
+}
+
+function correctNoneChord(chord){
+    if(!Utils.containsBaseChordComponent(chord.harmonicFunction.extra,9))
+        return true;
+    if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.revolution)) {
+        if(!chord.sopranoNote.baseChordComponentEquals("9") || !chord.tenorNote.baseChordComponentEquals("1"))
+            return false;
+    }
+    return true;
+}
+
+function checkChordCorrectness(chord){
+    return correctDistanceBassTenor(chord) && correctChopinChord(chord) && correctNoneChord(chord)
 }
