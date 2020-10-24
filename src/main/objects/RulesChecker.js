@@ -723,6 +723,7 @@ function getInitializedBrokenRulesCounter() {
         "Incorrect none chord",
         "Altered interval"
     ])
+}
   
 //to do should be implemented as Evaluator in RulesCheckerUtils (probably if RulesChecker refactor is done)
 function ChordRelationEvaluator() {
