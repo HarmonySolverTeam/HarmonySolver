@@ -7,7 +7,6 @@ function Node(content) {
     this.content = content;
     this.nextNeighbours = [];
     this.prevNodes = [];
-    this.distanceFromBegining = undefined;
 
     this.getPrevContentIfSingle = function () {
         var uniquePrevContents =  this.getUniquePrevContents();
@@ -252,7 +251,7 @@ function GraphBuilder() {
                 var currentNode = graph.layers[i].nodeList[j];
                 if (currentNode.prevNodes.length > 1) {
                     var duplicates = [];
-                    for (k = 0; k < currentNode.prevNodes.length - 1; k++) {
+                    for (var k = 0; k < currentNode.prevNodes.length - 1; k++) {
                         duplicates.push(currentNode.duplicate());
                     }
                     var prevNodes = currentNode.prevNodes.slice();

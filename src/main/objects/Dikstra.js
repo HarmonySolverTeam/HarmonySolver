@@ -3,7 +3,7 @@
 function Dikstra(graph){
 
     this.graph = graph;
-    this.queue = new PriorityQueue.PriorityQueue();
+    this.queue = new PriorityQueue.PriorityQueue("distanceFromBegining");
 
     this.init = function() {
         var allNodes = this.graph.getNodes();
@@ -17,7 +17,11 @@ function Dikstra(graph){
 
     //Cormen p.662
     this.relax = function(u, v, w){
-        if(u.distanceFromBegining + w < v.distanceFromBegining) {
+        if(u.distanceFromBegining === "infinity"){
+            throw "u cannot have inifinity distance from begining";
+        }
+
+        if(u.distanceFromBegining + w < v.distanceFromBegining || v.distanceFromBegining === "infinity") {
             this.queue.decreaseKey(v, u.distanceFromBegining + w);
             v.prevInShortestPath = u;
         }
@@ -33,6 +37,18 @@ function Dikstra(graph){
                 this.relax(u,v,w);
             }
         }
+    }
+
+    this.getShortestPathToLastNode = function() {
+        this.findShortestPaths();
+        var currentNode = this.graph.last;
+        var result = []
+        while(currentNode.prevInShortestPath !== undefined){
+            result.unshift(currentNode);
+            currentNode = currentNode.prevInShortestPath;
+        }
+        result.splice(result.length-1, 1);
+        return result;
     }
 
 }

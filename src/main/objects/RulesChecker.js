@@ -105,6 +105,7 @@ function forbiddenJump(prevChord, currentChord, notNeighbourChords){
 
 //TODO wychylenie modulacyjne - ok, np zmiana tercji z malej na wielka, zmiana trybu
 function forbiddenSumJump(prevPrevChord, prevChord, currentChord){
+    if(prevPrevChord === undefined || prevChord === undefined || currentChord === undefined) return 0;
     if(prevPrevChord.harmonicFunction.equals(prevChord.harmonicFunction) && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
     for(var i = 0; i < 4; i++){
         if(((prevPrevChord.notes[i].isUpperThan(prevChord.notes[i]) && prevChord.notes[i].isUpperThan(currentChord.notes[i])) ||
@@ -476,31 +477,21 @@ function checkAllRules(prevPrevChord, prevChord, currentChord, isFixedBass, isFi
     return result
 }
 
+//to do should be implemented as Evaluator in RulesCheckerUtils (probably if RulesChecker refactor is done)
 function ChordRelationEvaluator() {
 
-    this.hardRules = [falseRelation, checkDelayCorrectness, checkConnection, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, hiddenOctaves]
-    this.softRules = [forbiddenJump]
+    this.hardRules = [falseRelation, checkDelayCorrectness, checkConnection, concurrentOctaves, concurrentFifths, crossingVoices, oneDirection, hiddenOctaves, forbiddenJump]
+    this.softRules = [forbiddenSumJump]
 
-    this.positive = 0;
-    this.negative = 0;
-
-    //todo remove fifth argument and refactor to connection
+    //todo remove fifth argument
     this.evaluateHardRules = function(connection){
         return checkRules(undefined, connection.prev.content, connection.current.content, this.hardRules, false)
     }
 
-    //todo remove fifth argument and refactor to connection
+    //todo remove fifth argument
     this.evaluateSoftRules = function (connection){
         var prevPrev = connection.prevPrev === undefined ? undefined : connection.prevPrev.content;
-        var result = checkRules(prevPrev, connection.prev.content, connection.current.content, this.softRules, true);
-        if(result === 0){
-            this.positive += 1;
-        }
-        else{
-            this.negative += 1;
-        }
-        // console.log("POSITIVE: " + this.positive + "  NEGATIVE" + this.negative)
-        return result;
+        return checkRules(prevPrev, connection.prev.content, connection.current.content, this.softRules, true);
     }
 
 }
