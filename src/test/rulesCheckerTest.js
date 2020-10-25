@@ -16,7 +16,7 @@ var rulesChecker = new RulesChecker.ChordRulesChecker();
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(3, rulesChecker.connectionSize) &&
         UnitTest.assertEqualsPrimitives(14, rulesChecker.hardRules.length) &&
-        UnitTest.assertEqualsPrimitives(1, rulesChecker.softRules.length);
+        UnitTest.assertEqualsPrimitives(4, rulesChecker.softRules.length);
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(initializeTest, "Initialize chord rulechecker test"));
@@ -415,8 +415,8 @@ const checkConnectionSDTest = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("S");
     var hf2 = new HarmonicFunction.HarmonicFunction("D");
 
-    var ch1 = new Chord.Chord(new Note.Note(77, 3,"1"), new Note.Note(69,5,"3"), new Note.Note(60, 0,"5"), new Note.Note(53,3,"1"), hf1);
-    var ch2 = new Chord.Chord(new Note.Note(71, 6,"3"), new Note.Note(62,1,"5"), new Note.Note(55, 4,"1"), new Note.Note(55,4,"1"), hf2);
+    var ch1 = new Chord.Chord(new Note.Note(72, 3,"5"), new Note.Note(69,5,"3"), new Note.Note(60, 0,"5"), new Note.Note(53,3,"1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(74, 6,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf2);
 
     var rule = new RulesChecker.SubdominantDominantCheckConnectionRule();
     return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2,ch1)));

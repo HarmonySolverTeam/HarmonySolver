@@ -50,7 +50,6 @@ function Evaluator(connectionSize){
             var currentEvaluation = this.softRules[i].evaluate(connection)
             if(currentEvaluation !== 0) {
                 this.brokenRulesCounter.increaseCounter(this.softRules[i].name)
-                oneRuleBroken = true;
             } else {
                 result += currentEvaluation
             }

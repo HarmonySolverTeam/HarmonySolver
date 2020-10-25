@@ -20,7 +20,7 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
         new OneDirectionRule("One direction of voices"),
         new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano, "Forbidden voice jump"),
         new CheckDelayCorrectnessRule("Incorrect delay"),
-        new HiddenOctavesRule("Hidden octaves"),
+        new HiddenOctavesRule("Hidden consecutive octaves"),
         new FalseRelationRule("False relation"),
         new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
         new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
@@ -30,12 +30,15 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
         new IllegalDoubledThirdRule("Illegal double third")
     ];
     this.softRules = [
-        new ForbiddenSumJumpRule("Forbidden voice sum jump")
+        new ForbiddenSumJumpRule("Forbidden voice sum jump"),
+        new ClosestMoveRule("Not closest move in voices"),
+        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
+        new SopranoBestLineRule("Soprano line should not contain big jumps")
     ];
 }
 
 /*
-        RULES
+        HARD RULES
  */
 
 function SameFunctionRule(){
@@ -198,34 +201,6 @@ function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano, deta
     }
 }
 
-function ForbiddenSumJumpRule(details){
-    RulesCheckerUtils.IRule.call(this, details);
-
-    this.evaluate = function(connection) {
-        if(!Utils.isDefined(connection.prevPrev))
-            return 0;
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
-        var prevPrevChord = connection.prevPrev;
-
-        var sfRule = new SameFunctionRule();
-        if (sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prevPrev, connection.prev)) &&
-            sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prev, connection.current))) return 0;
-        var forbiddenJumpRule = new ForbiddenJumpRule();
-        for (var i = 0; i < 4; i++) {
-            if (((prevPrevChord.notes[i].isUpperThan(prevChord.notes[i]) && prevChord.notes[i].isUpperThan(currentChord.notes[i])) ||
-                (prevPrevChord.notes[i].isLowerThan(prevChord.notes[i]) && prevChord.notes[i].isLowerThan(currentChord.notes[i])))
-                && forbiddenJumpRule.isBroken(new RulesCheckerUtils.Connection(connection.current, connection.prevPrev), true)) {
-                if (DEBUG) {
-                    Utils.log("forbiddenSumJump in voice " + i, prevPrevChord + " -> " + prevChord + " -> " + currentChord);
-                }
-                return -1;
-            }
-        }
-        return 0;
-    }
-}
-
 function CheckDelayCorrectnessRule(details){
     RulesCheckerUtils.IRule.call(this, details);
 
@@ -281,11 +256,6 @@ function FalseRelationRule(details){
     this.evaluate = function(connection) {
         var currentChord = connection.current;
         var prevChord = connection.prev;
-        // for (var i = 0; i < 4; i++) {
-        //     if (IntervalUtils.isChromaticAlteration(prevChord.notes[i], currentChord.notes[i])) {
-        //         return 0;
-        //     }
-        // }
 
         for (var i = 0; i < 4; i++) {
             for (var j = i + 1; j < 4; j++) {
@@ -574,41 +544,8 @@ function SubdominantDominantCheckConnectionRule(details){
             && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
             if(this.brokenVoicesMoveOppositeDirectionRule(currentChord, prevChord))
                 return -1;
-            if(this.brokenClosestMoveRule(currentChord, prevChord))
-                return -1;
         }
         return 0;
-    };
-
-    this.brokenClosestMoveRule = function(currentChord, prevChord){
-        //todo maybe for all connections?
-        var vb = new Consts.VoicesBoundary();
-        for(var i=1; i<4; i++){
-            var higherPitch, lowerPitch;
-            if(prevChord.notes[i].pitch > currentChord.notes[i].pitch){
-                higherPitch = prevChord.notes[i].pitch;
-                lowerPitch = currentChord.notes[i].pitch;
-            } else {
-                higherPitch = currentChord.notes[i].pitch;
-                lowerPitch = prevChord.notes[i].pitch;
-            }
-
-            for(var j=1; j<4; j++){
-                if(j !== i){
-                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.sopranoMax; currentPitch += 12){
-                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
-                            return true;
-                        }
-                    }
-                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.tenorMin; currentPitch -= 12){
-                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     };
 
     this.brokenVoicesMoveOppositeDirectionRule = function(currentChord, prevChord){
@@ -624,5 +561,113 @@ function SubdominantDominantCheckConnectionRule(details){
 }
 
 /*
-        END OF RULES
+        END OF HARD RULES
+ */
+
+/*
+        SOFT RULES
+ */
+function ForbiddenSumJumpRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
+
+    this.evaluate = function(connection) {
+        if(!Utils.isDefined(connection.prevPrev))
+            return 0;
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var prevPrevChord = connection.prevPrev;
+
+        var sfRule = new SameFunctionRule();
+        if (sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prevPrev, connection.prev)) &&
+            sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prev, connection.current))) return 0;
+        var forbiddenJumpRule = new ForbiddenJumpRule();
+        for (var i = 0; i < 4; i++) {
+            if (((prevPrevChord.notes[i].isUpperThan(prevChord.notes[i]) && prevChord.notes[i].isUpperThan(currentChord.notes[i])) ||
+                (prevPrevChord.notes[i].isLowerThan(prevChord.notes[i]) && prevChord.notes[i].isLowerThan(currentChord.notes[i])))
+                && forbiddenJumpRule.isBroken(new RulesCheckerUtils.Connection(connection.current, connection.prevPrev), true)) {
+                if (DEBUG) {
+                    Utils.log("forbiddenSumJump in voice " + i, prevPrevChord + " -> " + prevChord + " -> " + currentChord);
+                }
+                return 10;
+            }
+        }
+        return 0;
+    }
+}
+
+function ClosestMoveRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
+
+    this.evaluate = function(connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var vb = new Consts.VoicesBoundary();
+        for(var i=1; i<4; i++){
+            var higherPitch, lowerPitch;
+            if(prevChord.notes[i].pitch > currentChord.notes[i].pitch){
+                higherPitch = prevChord.notes[i].pitch;
+                lowerPitch = currentChord.notes[i].pitch;
+            } else {
+                higherPitch = currentChord.notes[i].pitch;
+                lowerPitch = prevChord.notes[i].pitch;
+            }
+
+            for(var j=1; j<3; j++){
+                if(j !== i){
+                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.sopranoMax; currentPitch += 12){
+                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
+                            return 5;
+                        }
+                    }
+                    for(var currentPitch=currentChord.notes[j].pitch; currentPitch<vb.tenorMin; currentPitch -= 12){
+                        if(currentPitch < higherPitch && currentPitch > lowerPitch){
+                            return 5;
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    };
+}
+
+//only for current chord - improvement
+function DoublePrimeOrFifthRule(details) {
+    RulesCheckerUtils.IRule.call(this, details);
+
+    this.evaluate = function (connection) {
+        var currentChord = connection.current;
+
+        if(currentChord.harmonicFunction.countChordComponents() > 3)
+            return 0;
+
+        //double soprano component
+        if(currentChord.harmonicFunction.revolution.chordComponentString === "1"){
+            if(currentChord.countBaseComponents(currentChord.sopranoNote.chordComponent.baseComponent) === 1)
+                return 3;
+        }
+        //double fifth if revolution === fifth
+        if(currentChord.harmonicFunction.revolution.chordComponentString === currentChord.harmonicFunction.getFifth()){
+            if(currentChord.countBaseComponents(currentChord.harmonicFunction.getFifth()) === 1)
+                return 3;
+        }
+        return 0;
+    }
+}
+
+//soprano line should not have big jumps
+function SopranoBestLineRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
+
+    this.evaluate = function (connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+
+        if(IntervalUtils.pitchOffsetBetween(prevChord.sopranoNote, currentChord.sopranoNote) > 4)
+            return 2;
+        return 0;
+    }
+}
+/*
+        END OF SOFT RULES
  */
