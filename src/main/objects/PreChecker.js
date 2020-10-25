@@ -1,7 +1,8 @@
 .import "./Errors.js" as Errors
-.import "./RulesChecker.js" as Checker
 .import "./Consts.js" as Consts
 .import "./BrokenRulesCounter.js" as BrokenRulesCounter
+.import "./ChordRulesChecker.js" as ChordRulesChecker
+.import "./RulesCheckerUtils.js" as RulesCheckerUtils
 
 function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
@@ -27,7 +28,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
 
     var isBassDefined = bassLine !== undefined
 
-    var brokenRulesCounter
+    var rulesChecker = new ChordRulesChecker.ChordRulesChecker(isBassDefined);
 
     for (var i = 0; i < harmonicFunctions.length; i++) {
         allConnections = 0
@@ -45,6 +46,12 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             currentChords = chordGenerator.generate(harmonicFunctions[i])
         }
 
+        //todo do the same in chordGenerator
+        if(i === 0){
+            var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
+            currentChords = currentChords.filter(function(chord){return !illegalDoubledThirdRule.hasIllegalDoubled3Rule(chord)})
+        }
+
         if (currentChords.length === 0) {
             console.log(harmonicFunctions[i])
             throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1  - chordsWithDelays),
@@ -55,15 +62,14 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             usedCurrentChords.push(false)
         }
 
-        brokenRulesCounter = Checker.getInitializedBrokenRulesCounter()
+        rulesChecker.initializeBrokenRulesCounter()
 
         if (i !== 0) {
             for (var a = 0; a < prevChords.length; a++) {
                 for (var b = 0; b < currentChords.length; b++) {
                     allConnections++
                     if (!usedCurrentChords[b]) {
-                        score = Checker.checkAllRules(undefined, prevChords[a], currentChords[b],
-                                                    isBassDefined, false, brokenRulesCounter)
+                        score = rulesChecker.evaluateAllRulesWithCounter(new RulesCheckerUtils.Connection(currentChords[b], prevChords[a]))
                         if (score !== -1) {
                             goodCurrentChords.push(currentChords[b])
                             usedCurrentChords[b] = true
@@ -74,16 +80,13 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
         } else {
             for (var b = 0; b < currentChords.length; b++) {
                 allConnections++
-                score = Checker.checkAllRules(undefined, undefined, currentChords[b], isBassDefined, false, brokenRulesCounter)
-                if (score !== -1) {
-                    goodCurrentChords.push(currentChords[b])
-                }
+                goodCurrentChords.push(currentChords[b])
             }
         }
-        brokenRulesCounter.setAllConnections(allConnections)
+        rulesChecker.getBrokenRulesCounter().setAllConnections(allConnections)
 
         if (goodCurrentChords.length === 0) {
-            var brokenRulesStringInfo = brokenRulesCounter.getBrokenRulesStringInfo()
+            var brokenRulesStringInfo = rulesChecker.getBrokenRulesCounter().getBrokenRulesStringInfo()
 
             if (i !== 0) {
                 throw new Errors.PreCheckerError("Could not find valid connection between chords " + (i - chordsWithDelays) + " and " + (i + 1 - chordsWithDelays),

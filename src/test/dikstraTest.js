@@ -61,6 +61,6 @@ var dikstraTest = () => {
     return TestUtils.assertEqualsPrimitives("CEF", res);
 }
 
-testSuite.addTest(new TestUtils.UnitTest(dikstraTest, "Dikstra with obnly one shortest path"));
+testSuite.addTest(new TestUtils.UnitTest(dikstraTest, "Dikstra with only one shortest path"));
 
 testSuite.run();

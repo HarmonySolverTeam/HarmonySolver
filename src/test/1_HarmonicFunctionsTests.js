@@ -4,7 +4,7 @@ var Chord = require("./objects/Chord");
 var HarmonicFunction = require("./objects/HarmonicFunction");
 var Utils = require("./objects/Utils")
 var Parser = require("./objects/Parser");
-var Solver = require("./objects/Solver");
+var Solver = require("./objects/Solver2");
 var UnitTest = require("./TestUtils");
 var ChordComponentManager = require("./objects/ChordComponentManager")
 
@@ -28,7 +28,7 @@ var check_solution_found_minor = (exName) => {
     return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
 }
 
-var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests",  1000);
+var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests",  1700);
 var targosz_p61_ex13 = () => {return check_solution_found_major("targosz_p61_ex13.txt")};
 var targosz_p61_ex14 = () => {return check_solution_found_major("targosz_p61_ex14.txt")};
 var targosz_p61_ex15 = () => {return check_solution_found_major("targosz_p61_ex15.txt")};

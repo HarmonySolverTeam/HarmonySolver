@@ -8,6 +8,7 @@
 .import "./Utils.js" as Utils
 .import "./ExerciseCorrector.js" as Corrector
 .import "./PreChecker.js" as PreChecker
+.import "./ChordRulesChecker.js" as ChordRulesChecker
 
 var DEBUG = false;
 
@@ -94,7 +95,12 @@ function Solver(exercise, bassLine, sopranoLine){
         else if (this.sopranoLine !== undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [undefined, undefined, undefined, this.sopranoLine[curr_index]])
         else chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
         var good_chords = []
-        
+
+        if(curr_index === 0){
+            var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
+            chords = chords.filter(function(chord){return !illegalDoubledThirdRule.hasIllegalDoubled3Rule(chord)})
+        }
+
         if(DEBUG){
             var log = "";
             for(var x = 0; x<curr_index; x++) log += "   "

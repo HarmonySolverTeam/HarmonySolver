@@ -2,7 +2,7 @@ b
 4/4
 So{"degree":2,"extra":["9>"]};D{"delay":[["6>","5"],["4","3"]],"extra":["7"]}
 To{"degree":6};(D{"extra":["9"]})
-So{"down":true,"degree":2};(S{"extra":["6"]});So{};D{"extra":["9>"]}
+So{"down":true,"degree":2};(So{"extra":["6"]});So{};D{"extra":["9>"]}
 To{};(D{"revolution":"7"})
 Do{"degree":7};Do{};(D{"isRelatedBackwards":true,"revolution":["7"]})
 D{"omit":["1"],"extra":["9>"]};(D{"extra":["7"]});(D{"extra":["7"]});To{"degree":6}

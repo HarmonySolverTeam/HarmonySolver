@@ -20,6 +20,10 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
         return this.sopranoNote.pitch + "|" + this.altoNote.pitch + "|" + this.tenorNote.pitch + "|" + this.bassNote.pitch;
     }
 
+    this.copy = function(){
+        return new Chord(sopranoNote, altoNote, tenorNote, bassNote,harmonicFunction.copy())
+    }
+
     this.countBaseComponents = function(baseComponentString){
         var counter = 0;
         for(var i = 0; i < this.notes.length; i++){
