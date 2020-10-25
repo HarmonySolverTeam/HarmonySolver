@@ -14,15 +14,24 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
     this.isFixedSoprano = isFixedSoprano;
 
     this.hardRules = [
-        new ConcurrentOctavesRule(), new ConcurrentFifthsRule(), new CrossingVoicesRule(),
-        new OneDirectionRule(), new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano),
-        new CheckDelayCorrectnessRule(), new HiddenOctavesRule(), new FalseRelationRule(),
-        new DominantRelationCheckConnectionRule(), new DominantSecondRelationCheckConnectionRule(),
-        new DominantSubdominantCheckConnectionRule(), new SubdominantDominantCheckConnectionRule(),
-        new SameFunctionCheckConnectionRule(), new SubdominantDominantCheckConnectionRule(),
-        new IllegalDoubledThirdRule()
+        new ConcurrentOctavesRule("Consecutive octaves"),
+        new ConcurrentFifthsRule("Consecutive fifths"),
+        new CrossingVoicesRule("Crossing voices"),
+        new OneDirectionRule("One direction of voices"),
+        new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano, "Forbidden voice jump"),
+        new CheckDelayCorrectnessRule("Incorrect delay"),
+        new HiddenOctavesRule("Hidden octaves"),
+        new FalseRelationRule("False relation"),
+        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
+        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
+        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement"),
+        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement"),
+        new SameFunctionCheckConnectionRule("Repeated function voice wrong movement"),
+        new IllegalDoubledThirdRule("Illegal double third")
     ];
-    this.softRules = [new ForbiddenSumJumpRule()];
+    this.softRules = [
+        new ForbiddenSumJumpRule("Forbidden voice sum jump")
+    ];
 }
 
 /*
@@ -50,8 +59,8 @@ function SpecificFunctionConnectionRule(prevFunctionName, currentFunctionName){
     }
 }
 
-function ConcurrentOctavesRule(){
-    RulesCheckerUtils.IRule.call(this);
+function ConcurrentOctavesRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection){
         var currentChord = connection.current;
@@ -71,8 +80,8 @@ function ConcurrentOctavesRule(){
     }
 }
 
-function ConcurrentFifthsRule(){
-    RulesCheckerUtils.IRule.call(this);
+function ConcurrentFifthsRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
@@ -92,8 +101,8 @@ function ConcurrentFifthsRule(){
     }
 }
 
-function CrossingVoicesRule(){
-    RulesCheckerUtils.IRule.call(this);
+function CrossingVoicesRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
@@ -114,8 +123,8 @@ function CrossingVoicesRule(){
     }
 }
 
-function OneDirectionRule(){
-    RulesCheckerUtils.IRule.call(this);
+function OneDirectionRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
@@ -132,8 +141,8 @@ function OneDirectionRule(){
     }
 }
 
-function IllegalDoubledThirdRule(){
-    RulesCheckerUtils.IRule.call(this);
+function IllegalDoubledThirdRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
     this.evaluate = function(connection) {
         var currentChord = connection.current;
         var prevChord = connection.prev;
@@ -157,8 +166,8 @@ function IllegalDoubledThirdRule(){
     }
 }
 
-function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano){
-    RulesCheckerUtils.IRule.call(this);
+function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano, details){
+    RulesCheckerUtils.IRule.call(this, details);
     this.notNeighbourChords = notNeighbourChords;
     this.isFixedBass = isFixedBass;
     this.isFixedSoprano = isFixedSoprano;
@@ -189,8 +198,8 @@ function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano){
     }
 }
 
-function ForbiddenSumJumpRule(){
-    RulesCheckerUtils.IRule.call(this);
+function ForbiddenSumJumpRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         if(!Utils.isDefined(connection.prevPrev))
@@ -217,8 +226,8 @@ function ForbiddenSumJumpRule(){
     }
 }
 
-function CheckDelayCorrectnessRule(){
-    RulesCheckerUtils.IRule.call(this);
+function CheckDelayCorrectnessRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
@@ -249,8 +258,8 @@ function CheckDelayCorrectnessRule(){
     }
 }
 
-function HiddenOctavesRule(){
-    RulesCheckerUtils.IRule.call(this);
+function HiddenOctavesRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
@@ -266,8 +275,8 @@ function HiddenOctavesRule(){
     }
 }
 
-function FalseRelationRule(){
-    RulesCheckerUtils.IRule.call(this);
+function FalseRelationRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
@@ -313,9 +322,8 @@ function FalseRelationRule(){
     }
 }
 
-function ICheckConnectionRule(){
-
-    RulesCheckerUtils.IRule.call(this);
+function ICheckConnectionRule(details){
+    RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var translatedConnection = this.translateConnectionIncludingDeflections(connection);
@@ -377,9 +385,9 @@ function ICheckConnectionRule(){
 
 }
 
-function DominantRelationCheckConnectionRule(){
+function DominantRelationCheckConnectionRule(details){
 
-    ICheckConnectionRule.call(this);
+    ICheckConnectionRule.call(this, details);
 
     this.evaluateIncludingDeflections = function(connection) {
         var currentChord = connection.current;
@@ -470,9 +478,9 @@ function DominantRelationCheckConnectionRule(){
     };
 }
 
-function DominantSecondRelationCheckConnectionRule() {
+function DominantSecondRelationCheckConnectionRule(details){
 
-    ICheckConnectionRule.call(this);
+    ICheckConnectionRule.call(this, details);
 
     this.evaluateIncludingDeflections = function(connection) {
         var currentChord = connection.current;
@@ -519,68 +527,9 @@ function DominantSecondRelationCheckConnectionRule() {
     }
 }
 
-function SubdominantDominantCheckConnectionRule() {
-    ICheckConnectionRule.call(this);
+function DominantSubdominantCheckConnectionRule(details){
 
-    this.evaluateIncludingDeflections = function(connection) {
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.SUBDOMINANT, Consts.FUNCTION_NAMES.DOMINANT);
-        if (specificConnectionRule.isNotBroken(connection)
-            && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction)) {
-            if(this.brokenClosestMoveRule(prevChord, currentChord))
-                return -1;
-            if(this.brokenVoicesMoveOppositeDirectionRule(prevChord, currentChord))
-                return -1;
-        }
-        return 0;
-    };
-
-    this.brokenVoicesMoveOppositeDirectionRule = function(prevChord, currentChord){
-        if(currentChord.bassNote.chordComponentEquals("1") && prevChord.bassNote.chordComponentEquals("1")) {
-            for(var i = 1; i < 4; i++) {
-                if (prevChord.notes[i].pitch - currentChord.notes[i].pitch < 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-
-    this.brokenClosestMoveRule = function(prevChord, currentChord){
-        //todo maybe for all connections?
-        var vb = new Consts.VoicesBoundary();
-        for (var i = 1; i < 4; i++) {
-            var higherPitch, lowerPitch;
-            if (prevChord.notes[i].pitch > currentChord.notes[i].pitch) {
-                higherPitch = prevChord.notes[i].pitch;
-                lowerPitch = currentChord.notes[i].pitch;
-            } else {
-                higherPitch = currentChord.notes[i].pitch;
-                lowerPitch = prevChord.notes[i].pitch;
-            }
-
-            for (var j = 1; j < 4; j++) {
-                if (j !== i) {
-                    for (var currentPitch = currentChord.notes[j].pitch; currentPitch < vb.sopranoMax; currentPitch += 12) {
-                        if (currentPitch < higherPitch && currentPitch > lowerPitch) {
-                            return true;
-                        }
-                    }
-                    for (var currentPitch = currentChord.notes[j].pitch; currentPitch < vb.tenorMin; currentPitch -= 12) {
-                        if (currentPitch < higherPitch && currentPitch > lowerPitch) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    };
-}
-
-function DominantSubdominantCheckConnectionRule() {
-    ICheckConnectionRule.call(this);
+    ICheckConnectionRule.call(this, details);
 
     this.evaluateIncludingDeflections = function(connection){
         var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
@@ -591,8 +540,9 @@ function DominantSubdominantCheckConnectionRule() {
     }
 }
 
-function SameFunctionCheckConnectionRule() {
-    ICheckConnectionRule.call(this);
+function SameFunctionCheckConnectionRule(details){
+
+    ICheckConnectionRule.call(this, details);
 
     this.evaluateIncludingDeflections = function(connection){
         var sf = new SameFunctionRule();
@@ -612,8 +562,9 @@ function SameFunctionCheckConnectionRule() {
 
 }
 
-function SubdominantDominantCheckConnectionRule() {
-    ICheckConnectionRule.call(this);
+function SubdominantDominantCheckConnectionRule(details){
+
+    ICheckConnectionRule.call(this, details);
 
     this.evaluateIncludingDeflections = function(connection){
         var currentChord = connection.current;

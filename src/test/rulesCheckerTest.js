@@ -15,7 +15,7 @@ var rulesChecker = new RulesChecker.ChordRulesChecker();
 
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(3, rulesChecker.connectionSize) &&
-        UnitTest.assertEqualsPrimitives(15, rulesChecker.hardRules.length) &&
+        UnitTest.assertEqualsPrimitives(14, rulesChecker.hardRules.length) &&
         UnitTest.assertEqualsPrimitives(1, rulesChecker.softRules.length);
 };
 
