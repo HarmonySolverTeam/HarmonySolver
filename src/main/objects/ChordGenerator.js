@@ -185,7 +185,7 @@ function ChordGenerator(key, mode) {
 
                 for(var i=0; i<possible_to_double.length; i++) {
                     chord[2] = possible_to_double[i];
-                    schemas = schemas.concat(this.permutations(chord, [0, 1, 2]));
+                    schemas = schemas.concat(this.permutations(chord, [1, 2]));
                 }
 
             } else if (needToAdd.length === 0){
