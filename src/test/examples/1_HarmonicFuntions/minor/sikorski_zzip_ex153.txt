@@ -1,6 +1,6 @@
 b
 3/4
-So{"degree":2,"down":true,"revolution":"3>"};D{}
+So{"degree":2,"down":true,"revolution":"3"};D{}
 To{"degree":6};To{"degree":3}
 So{};So{"revolution":"3>"};So{"position":"3>"}
 D{}
