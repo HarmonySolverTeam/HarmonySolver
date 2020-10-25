@@ -15,8 +15,8 @@ var rulesChecker = new RulesChecker.ChordRulesChecker();
 
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(3, rulesChecker.connectionSize) &&
-        UnitTest.assertEqualsPrimitives(16, rulesChecker.hardRules.length) &&
-        UnitTest.assertEqualsPrimitives(0, rulesChecker.softRules.length);
+        UnitTest.assertEqualsPrimitives(15, rulesChecker.hardRules.length) &&
+        UnitTest.assertEqualsPrimitives(1, rulesChecker.softRules.length);
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(initializeTest, "Initialize chord rulechecker test"));
@@ -120,7 +120,7 @@ const forbiddenJumpTest = () => {
         UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch4down, ch1))) &&
         UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch5down, ch1))) &&
         UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch6down, ch1))) //&&
-        // UnitTest.assertEqualsPrimitives(0, RulesChecker.forbiddenJump(ch1, chdownSameFun))
+    // UnitTest.assertEqualsPrimitives(0, RulesChecker.forbiddenJump(ch1, chdownSameFun))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenJumpTest, "Forbidden jump test"));
@@ -193,11 +193,14 @@ const checkConnectionDTVITest = () => {
     var hf2 = new HarmonicFunction.HarmonicFunction("T",6,undefined,"1",[],[],[],false,undefined,undefined);
     var t1 = new Chord.Chord(new Note.Note(64,2,"5"), new Note.Note(60,0,"3"), new Note.Note(60,0,"3"),new Note.Note(57,5,"1"), hf2);
     var hf3 = new HarmonicFunction.HarmonicFunction("D",5,undefined,"1",[],[],[],false,undefined,undefined);
-    var d = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
+    var d = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
 
     var rule = new RulesChecker.DominantSecondRelationCheckConnectionRule();
+    var ruleIllegal3 = new RulesChecker.IllegalDoubledThirdRule();
     return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d))) //todo double third cases
+        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d))) &&
+        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d7))) &&
+        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVITest, "D->TVI connection test"));
@@ -208,11 +211,14 @@ const checkConnectionDTVIDownTest = () => {
     var hf2 = new HarmonicFunction.HarmonicFunction("T",6,undefined,"1",[],[],[],true,undefined,undefined);
     var t1 = new Chord.Chord(new Note.Note(63,2,"5"), new Note.Note(60,0,"3"), new Note.Note(60,0,"3"),new Note.Note(56,5,"1"), hf2);
     var hf3 = new HarmonicFunction.HarmonicFunction("D",5,undefined,"1",[],[],[],false,undefined,undefined);
-    var d = new Chord.Chord(new Note.Note(67, 4,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
+    var d = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf3);
 
     var rule = new RulesChecker.DominantSecondRelationCheckConnectionRule();
+    var ruleIllegal3 = new RulesChecker.IllegalDoubledThirdRule();
     return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d))) //todo double third cases
+        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d))) &&
+        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d7))) &&
+        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVIDownTest, "D->TVI(down) connection test"));
@@ -356,6 +362,7 @@ const checkConnectionForModulations = () => {
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionForModulations, "Check connection for modulations test"));
 
+//todo move this to generatorTest?
 const isCorrectChopinChord = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],["5"],undefined,undefined,undefined, "C");
     var hf2 = new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,["7","6"],["5"],undefined,undefined,undefined, "c");

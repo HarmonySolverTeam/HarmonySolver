@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Controls 1.1
 
 //import "./qml_components"
-import "./objects/Solver.js" as Solver
+import "./objects/Solver2.js" as Solver
 import "./objects/Parser.js" as Parser
 import "./objects/FiguredBass.js" as FiguredBass
 import "./objects/Note.js" as Note

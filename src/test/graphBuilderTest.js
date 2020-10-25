@@ -2,7 +2,7 @@ var Graph = require("./objects/Graph")
 var TestUtils = require("./TestUtils")
 var Utils = require("./objects/Utils")
 var Parser = require("./objects/Parser");
-var Checker = require("./objects/RulesChecker")
+var Checker = require("./objects/ChordRulesChecker")
 var Generator = require("./objects/ChordGenerator")
 
 
@@ -55,7 +55,7 @@ var test = () => {
 
     var graphBuilder = new Graph.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
-    graphBuilder.withEvaluator(new Checker.ChordRelationEvaluator());
+    graphBuilder.withEvaluator(new Checker.ChordRulesChecker());
     graphBuilder.withInput(getFunctionsWithDelay(ex.getHarmonicFunctionList()));
 
     var graph = graphBuilder.build();
@@ -95,7 +95,7 @@ var allHaveExactlyOneUniquePrevContent = () => {
 
     var graphBuilder = new Graph.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
-    graphBuilder.withEvaluator(new Checker.ChordRelationEvaluator());
+    graphBuilder.withEvaluator(new Checker.ChordRulesChecker());
     graphBuilder.withInput( getFunctionsWithDelay(ex.getHarmonicFunctionList()) );
 
     var graph = graphBuilder.build();

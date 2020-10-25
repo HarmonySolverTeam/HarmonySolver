@@ -4,30 +4,25 @@
 .import "./IntervalUtils.js" as IntervalUtils
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./RulesCheckerUtils.js" as RulesCheckerUtils
+.import "./Graph.js" as Graph
 
 var DEBUG = false;
 
-function ChordRulesChecker(){
+function ChordRulesChecker(isFixedBass, isFixedSoprano){
     RulesCheckerUtils.Evaluator.call(this, 3);
+    this.isFixedBass = isFixedBass;
+    this.isFixedSoprano = isFixedSoprano;
+
     this.hardRules = [
         new ConcurrentOctavesRule(), new ConcurrentFifthsRule(), new CrossingVoicesRule(),
-        new OneDirectionRule(), new ForbiddenJumpRule(), new ForbiddenSumJumpRule(),
+        new OneDirectionRule(), new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano),
         new CheckDelayCorrectnessRule(), new HiddenOctavesRule(), new FalseRelationRule(),
         new DominantRelationCheckConnectionRule(), new DominantSecondRelationCheckConnectionRule(),
         new DominantSubdominantCheckConnectionRule(), new SubdominantDominantCheckConnectionRule(),
         new SameFunctionCheckConnectionRule(), new SubdominantDominantCheckConnectionRule(),
         new IllegalDoubledThirdRule()
     ];
-    this.softRules = [];
-}
-
-// I know that's bad as hell, but it was the easiest way :P
-var fixedBass = false;
-var fixedSoprano = false;
-
-function skipCheckingVoiceIncorrectJump(voiceNumber) {
-    return (voiceNumber === 0 && fixedBass)
-        || (voiceNumber === 3 && fixedSoprano)
+    this.softRules = [new ForbiddenSumJumpRule()];
 }
 
 /*
@@ -59,13 +54,15 @@ function ConcurrentOctavesRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection){
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
         var sfRule = new SameFunctionRule();
         if(sfRule.isNotBroken(connection)) return 0;
         for(var i = 0; i < 3; i++){
             for(var j = i + 1; j < 4; j++){
-                if(IntervalUtils.isOctaveOrPrime(connection.current.notes[j],connection.current.notes[i]) &&
-                    IntervalUtils.isOctaveOrPrime(connection.prev.notes[j],connection.prev.notes[i])){
-                    if(DEBUG) Utils.log("concurrentOctaves "+i+" "+j, connection.prev + " -> " + connection.current );
+                if(IntervalUtils.isOctaveOrPrime(currentChord.notes[j],currentChord.notes[i]) &&
+                    IntervalUtils.isOctaveOrPrime(prevChord.notes[j],prevChord.notes[i])){
+                    if(DEBUG) Utils.log("concurrentOctaves "+i+" "+j, prevChord + " -> " + currentChord);
                     return -1;
                 }
             }
@@ -78,13 +75,15 @@ function ConcurrentFifthsRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
         var sfRule = new SameFunctionRule();
         if (sfRule.isNotBroken(connection)) return 0;
         for (var i = 0; i < 3; i++) {
             for (var j = i + 1; j < 4; j++) {
-                if (IntervalUtils.isFive(connection.current.notes[j], connection.current.notes[i]) &&
-                    IntervalUtils.isFive(connection.prev.notes[j], connection.prev.notes[i])) {
-                    if (DEBUG) Utils.log("concurrentFifths " + i + " " + j, connection.prev + " -> " + connection.current);
+                if (IntervalUtils.isFive(currentChord.notes[j], currentChord.notes[i]) &&
+                    IntervalUtils.isFive(prevChord.notes[j], prevChord.notes[i])) {
+                    if (DEBUG) Utils.log("concurrentFifths " + i + " " + j, prevChord + " -> " + currentChord);
                     return -1;
                 }
             }
@@ -97,15 +96,17 @@ function CrossingVoicesRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
         for(var i = 0; i < 3; i++){
-            if(connection.current.notes[i].isUpperThan(connection.prev.notes[i+1])){
-                if(DEBUG) Utils.log("crossingVoices", connection.prev + " -> " + connection.current);
+            if(currentChord.notes[i].isUpperThan(prevChord.notes[i+1])){
+                if(DEBUG) Utils.log("crossingVoices", prevChord + " -> " + currentChord);
                 return -1
             }
         }
         for(var i = 3; i > 0; i--){
-            if(connection.current.notes[i].isLowerThan(connection.prev.notes[i-1])){
-                if(DEBUG) Utils.log("crossingVoices", connection.prev + " -> " + connection.current);
+            if(currentChord.notes[i].isLowerThan(prevChord.notes[i-1])){
+                if(DEBUG) Utils.log("crossingVoices", prevChord + " -> " + currentChord);
                 return -1
             }
         }
@@ -117,11 +118,13 @@ function OneDirectionRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
-        if ((connection.current.bassNote.isUpperThan(connection.prev.bassNote) && connection.current.tenorNote.isUpperThan(connection.prev.tenorNote)
-            && connection.current.altoNote.isUpperThan(connection.prev.altoNote) && connection.current.sopranoNote.isUpperThan(connection.prev.sopranoNote))
-            || (connection.current.bassNote.isLowerThan(connection.prev.bassNote) && connection.current.tenorNote.isLowerThan(connection.prev.tenorNote)
-                && connection.current.altoNote.isLowerThan(connection.prev.altoNote) && connection.current.sopranoNote.isLowerThan(connection.prev.sopranoNote))) {
-            if (DEBUG) Utils.log("oneDirection", connection.prev + " -> " + connection.current);
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        if ((currentChord.bassNote.isUpperThan(prevChord.bassNote) && currentChord.tenorNote.isUpperThan(prevChord.tenorNote)
+            && currentChord.altoNote.isUpperThan(prevChord.altoNote) && currentChord.sopranoNote.isUpperThan(prevChord.sopranoNote))
+            || (currentChord.bassNote.isLowerThan(prevChord.bassNote) && currentChord.tenorNote.isLowerThan(prevChord.tenorNote)
+                && currentChord.altoNote.isLowerThan(prevChord.altoNote) && currentChord.sopranoNote.isLowerThan(prevChord.sopranoNote))) {
+            if (DEBUG) Utils.log("oneDirection", prevChord + " -> " +currentChord);
             return -1;
         }
 
@@ -137,9 +140,10 @@ function IllegalDoubledThirdRule(){
         var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
         if ((specificConnectionRule.isNotBroken(connection) ||
             Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
-            prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction))
+            prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction) &&
+            Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5<"))
             return 0;
-        if(specificConnectionRule.isNotBroken(connection) && prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction))
+        if(specificConnectionRule.isNotBroken(connection) && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction))
             return 0;
 
         return this.hasIllegalDoubled3Rule(currentChord)? -1 : 0
@@ -147,33 +151,41 @@ function IllegalDoubledThirdRule(){
 
     this.hasIllegalDoubled3Rule = function(chord){
         var terCounter = chord.countBaseComponents("3");
-
         if(chord.harmonicFunction.isNeapolitan())
             return terCounter !== 2;
         return terCounter > 1
     }
 }
 
-function ForbiddenJumpRule(notNeighbourChords){
+function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano){
     RulesCheckerUtils.IRule.call(this);
     this.notNeighbourChords = notNeighbourChords;
+    this.isFixedBass = isFixedBass;
+    this.isFixedSoprano = isFixedSoprano;
 
     this.evaluate = function(connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
         // if(!notNeighbourChords && prevChord.harmonicFunction.equals(currentChord.harmonicFunction)) return 0;
 
         for (var i = 0; i < 4; i++) {
             //TODO upewnić się jak ze skokami jest naprawdę, basu chyba ta zasada się nie tyczy
-            if (IntervalUtils.pitchOffsetBetween(connection.current.notes[i], connection.prev.notes[i]) > 9 && !(this.notNeighbourChords && i === 0)
-                && !skipCheckingVoiceIncorrectJump(i)) {
-                if (DEBUG) Utils.log("Forbidden jump in voice " + i, connection.prev + "->" + connection.current);
+            if (IntervalUtils.pitchOffsetBetween(currentChord.notes[i], prevChord.notes[i]) > 9 && !(this.notNeighbourChords && i === 0)
+                && !(i === 0 && IntervalUtils.pitchOffsetBetween(currentChord.notes[i], prevChord.notes[i]) === 12) &&!this.skipCheckingVoiceIncorrectJump(i)) {
+                if (DEBUG) Utils.log("Forbidden jump in voice " + i, prevChord + "->" + currentChord);
                 return -1;
             }
-            if (IntervalUtils.isAlteredInterval(connection.prev.notes[i], connection.current.notes[i])) {
-                if (DEBUG) Utils.log("Altered Interval in voice " + i, connection.prev + "->" + connection.current);
+            if (IntervalUtils.isAlteredInterval(prevChord.notes[i], currentChord.notes[i])) {
+                if (DEBUG) Utils.log("Altered Interval in voice " + i, prevChord + "->" + currentChord);
                 return -1;
             }
         }
         return 0;
+    }
+
+    this.skipCheckingVoiceIncorrectJump = function(voiceNumber) {
+        return (voiceNumber === 0 && this.fixedBass)
+            || (voiceNumber === 3 && this.fixedSoprano)
     }
 }
 
@@ -181,16 +193,22 @@ function ForbiddenSumJumpRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
+        if(!Utils.isDefined(connection.prevPrev))
+            return 0;
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var prevPrevChord = connection.prevPrev;
+
         var sfRule = new SameFunctionRule();
         if (sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prevPrev, connection.prev)) &&
             sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prev, connection.current))) return 0;
         var forbiddenJumpRule = new ForbiddenJumpRule();
         for (var i = 0; i < 4; i++) {
-            if (((connection.prevPrev.notes[i].isUpperThan(connection.prev.notes[i]) && connection.prev.notes[i].isUpperThan(connection.current.notes[i])) ||
-                (connection.prevPrev.notes[i].isLowerThan(connection.prev.notes[i]) && connection.prev.notes[i].isLowerThan(connection.current.notes[i])))
-                && forbiddenJumpRule.isBroken(new RulesCheckerUtils.Connection(connection.prevPrev, connection.current), true)) {
+            if (((prevPrevChord.notes[i].isUpperThan(prevChord.notes[i]) && prevChord.notes[i].isUpperThan(currentChord.notes[i])) ||
+                (prevPrevChord.notes[i].isLowerThan(prevChord.notes[i]) && prevChord.notes[i].isLowerThan(currentChord.notes[i])))
+                && forbiddenJumpRule.isBroken(new RulesCheckerUtils.Connection(connection.current, connection.prevPrev), true)) {
                 if (DEBUG) {
-                    Utils.log("forbiddenSumJump in voice " + i, connection.prevPrev + " -> " + connection.prev + " -> " + connection.current);
+                    Utils.log("forbiddenSumJump in voice " + i, prevPrevChord + " -> " + prevChord + " -> " + currentChord);
                 }
                 return -1;
             }
@@ -203,16 +221,18 @@ function CheckDelayCorrectnessRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
-        var delay = connection.prev.harmonicFunction.delay;
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var delay = prevChord.harmonicFunction.delay;
         if (delay.length === 0) return 0;
         var delayedVoices = [];
         for (var i = 0; i < delay.length; i++) {
             var prevComponent = delay[i][0];
             var currentComponent = delay[i][1];
             for (var j = 0; j < 4; j++) {
-                if (connection.prev.notes[j].chordComponentEquals(prevComponent.chordComponentString)) {
-                    if (!connection.current.notes[j].chordComponentEquals(currentComponent.chordComponentString)) {
-                        if (DEBUG) Utils.log("delay error" + i + " " + j, connection.prev + " -> " + connection.current);
+                if (prevChord.notes[j].chordComponentEquals(prevComponent.chordComponentString)) {
+                    if (!currentChord.notes[j].chordComponentEquals(currentComponent.chordComponentString)) {
+                        if (DEBUG) Utils.log("delay error" + i + " " + j, prevChord + " -> " + currentChord);
                         return -1;
                     } else delayedVoices.push(j);
                 }
@@ -220,8 +240,8 @@ function CheckDelayCorrectnessRule(){
         }
         for (var i = 0; i < 4; i++) {
             if (Utils.contains(delayedVoices, i)) continue;
-            if (!connection.prev.notes[i].equalPitches(connection.current.notes[i]) && i !== 0) {
-                if (DEBUG) Utils.log("delay error" + i + " " + j, connection.prev + " -> " + connection.current);
+            if (!prevChord.notes[i].equalPitches(currentChord.notes[i]) && i !== 0) {
+                if (DEBUG) Utils.log("delay error" + i + " " + j, prevChord + " -> " + currentChord);
                 return -1;
             }
         }
@@ -233,11 +253,13 @@ function HiddenOctavesRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
-        var sameDirection = (connection.prev.bassNote.isLowerThan(connection.current.bassNote) && connection.prev.sopranoNote.isLowerThan(connection.current.sopranoNote) ||
-            (connection.prev.bassNote.isUpperThan(connection.current.bassNote) && connection.prev.sopranoNote.isUpperThan(connection.current.sopranoNote)));
-        if (sameDirection && Utils.abs(connection.prev.sopranoNote.pitch - connection.current.sopranoNote.pitch) > 2 &&
-            IntervalUtils.isOctaveOrPrime(connection.current.bassNote, connection.current.sopranoNote)) {
-            if (DEBUG) Utils.log("hiddenOctaves", connection.prev + " -> " + connection.current);
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var sameDirection = (prevChord.bassNote.isLowerThan(currentChord.bassNote) && prevChord.sopranoNote.isLowerThan(currentChord.sopranoNote) ||
+            (prevChord.bassNote.isUpperThan(currentChord.bassNote) && prevChord.sopranoNote.isUpperThan(currentChord.sopranoNote)));
+        if (sameDirection && Utils.abs(prevChord.sopranoNote.pitch - currentChord.sopranoNote.pitch) > 2 &&
+            IntervalUtils.isOctaveOrPrime(currentChord.bassNote, currentChord.sopranoNote)) {
+            if (DEBUG) Utils.log("hiddenOctaves", prevChord + " -> " + currentChord);
             return -1;
         }
         return 0;
@@ -248,25 +270,46 @@ function FalseRelationRule(){
     RulesCheckerUtils.IRule.call(this);
 
     this.evaluate = function(connection) {
-        for (var i = 0; i < 4; i++) {
-            if (IntervalUtils.isChromaticAlteration(connection.prev.notes[i], connection.current.notes[i])) {
-                return 0;
-            }
-        }
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        // for (var i = 0; i < 4; i++) {
+        //     if (IntervalUtils.isChromaticAlteration(prevChord.notes[i], currentChord.notes[i])) {
+        //         return 0;
+        //     }
+        // }
 
         for (var i = 0; i < 4; i++) {
             for (var j = i + 1; j < 4; j++) {
-                if (IntervalUtils.isChromaticAlteration(connection.prev.notes[i], connection.current.notes[j])) {
-                    if (DEBUG) Utils.log("false relation between voices " + i + " " + j, connection.prev + "->" + connection.current);
-                    return -1;
+                if (IntervalUtils.isChromaticAlteration(prevChord.notes[i], currentChord.notes[j])) {
+                    if(!this.causedBySopranoOrBassSettings(prevChord, currentChord, i, j)) {
+                        if (DEBUG) Utils.log("false relation between voices " + i + " " + j, prevChord + "->" + currentChord);
+                        return -1;
+                    }
                 }
-                if (IntervalUtils.isChromaticAlteration(connection.prev.notes[j], connection.current.notes[i])) {
-                    if (DEBUG) Utils.log("false relation between voices " + i + " " + j, connection.prev + "->" + connection.current);
-                    return -1;
+                if (IntervalUtils.isChromaticAlteration(prevChord.notes[j], currentChord.notes[i])) {
+                    if(!this.causedBySopranoOrBassSettings(prevChord, currentChord, j, i)) {
+                        if (DEBUG) Utils.log("false relation between voices " + j + " " + i, prevChord + "->" + currentChord);
+                        return -1;
+                    }
                 }
             }
         }
         return 0;
+    }
+
+    this.causedBySopranoOrBassSettings = function(prevChord, currentChord, prevVoice, currentVoice){
+        //for example D7 -> TVI -> (D) -> SII
+        if(prevChord.countBaseComponents("3") === 2 && prevChord.notes[prevVoice].baseChordComponentEquals("3"))
+            return true;
+        //given bass, couldn't avoid false relation
+        if(prevVoice === 0 || currentVoice === 0)
+            return true;
+        //given soprano, couldn't avoid false relation
+        if(prevVoice === 3 || currentVoice === 3){
+            if(Utils.isDefined(prevChord.harmonicFunction.position) && Utils.isDefined(currentChord.harmonicFunction.position))
+                return true;
+        }
+        return false;
     }
 }
 
@@ -278,12 +321,12 @@ function ICheckConnectionRule(){
         var translatedConnection = this.translateConnectionIncludingDeflections(connection);
         if(!Utils.isDefined(translatedConnection))
             return 0;
-        return this.evaluateIncludingDeflections(connection);
+        return this.evaluateIncludingDeflections(translatedConnection);
     };
 
     this.translateConnectionIncludingDeflections = function(connection){
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
+        var currentChord = connection.current.copy();
+        var prevChord = connection.prev.copy();
         var currentFunctionTranslated = currentChord.harmonicFunction.copy();
         currentFunctionTranslated.key = currentChord.harmonicFunction.key;
         var prevFunctionTranslated = prevChord.harmonicFunction.copy();
@@ -298,10 +341,10 @@ function ICheckConnectionRule(){
             } else
                 return undefined
         }
-        connection.current.harmonicFunction = currentFunctionTranslated;
-        connection.prev.harmonicFunction = prevFunctionTranslated;
+        currentChord.harmonicFunction = currentFunctionTranslated;
+        prevChord.harmonicFunction = prevFunctionTranslated;
 
-        return connection
+        return new RulesCheckerUtils.Connection(currentChord, prevChord)
     };
 
     this.evaluateIncludingDeflections = function(connection){
@@ -342,8 +385,8 @@ function DominantRelationCheckConnectionRule(){
         var currentChord = connection.current;
         var prevChord = connection.prev;
         var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
-        if (specificConnectionRule.isNotBroken(connection) ||
-            Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7") &&
+        if ((specificConnectionRule.isNotBroken(connection) ||
+            Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
             prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction)){
             if(this.brokenThirdMoveRule(prevChord, currentChord))
                 return -1;
@@ -377,6 +420,7 @@ function DominantRelationCheckConnectionRule(){
     };
 
     this.brokenSeventhMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
         var dominantVoiceWith7 = this.voiceWithBaseComponent(prevChord, "7");
         if (dominantVoiceWith7 > -1 &&
             !prevChord.notes[dominantVoiceWith7].equalPitches(currentChord.notes[dominantVoiceWith7]) &&
@@ -385,7 +429,7 @@ function DominantRelationCheckConnectionRule(){
             //rozwiazanie swobodne mozliwe
             if ((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
                 currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
-                (!Utils.isDefined(currentChord.harmonicFunction.position) && (currentChord.harmonicFunction.position.chordComponentString === "3" ||
+                (Utils.isDefined(currentChord.harmonicFunction.position) && (currentChord.harmonicFunction.position.chordComponentString === "3" ||
                     currentChord.harmonicFunction.position.chordComponentString === "3>"))) &&
                 dominantVoiceWith7 < dominantVoiceWith3) {
                     if (!currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5")) return true;
@@ -539,11 +583,9 @@ function DominantSubdominantCheckConnectionRule() {
     ICheckConnectionRule.call(this);
 
     this.evaluateIncludingDeflections = function(connection){
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
         var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
         if (specificConnectionRule.isNotBroken(connection) &&
-            prevChord.harmonicFunction.hasMajorMode())
+            connection.current.harmonicFunction.hasMajorMode())
             throw new Errors.RulesCheckerError("Forbidden connection: D->S");
         return 0;
     }

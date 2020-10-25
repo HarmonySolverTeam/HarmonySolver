@@ -2,9 +2,11 @@
 .import "./Consts.js" as Consts
 
 function Connection(current, prev, prevPrev){
-    this.current = current;
-    this.prev = prev;
-    this.prevPrev = prevPrev;
+    var undefinedNodeContents = ["first", "last"];
+
+    this.current = Utils.contains(undefinedNodeContents, current) ? undefined : current;
+    this.prev = Utils.contains(undefinedNodeContents, prev) ? undefined : prev;
+    this.prevPrev = Utils.contains(undefinedNodeContents, prevPrev) ? undefined : prevPrev;
 }
 
 function Evaluator(connectionSize){
@@ -40,23 +42,4 @@ function IRule(){
     this.isNotBroken = function(connection){
         return !this.isBroken(connection);
     }
-}
-
-function getHarmonicFunctionsWithDeflectionTranslation(currentChord, prevChord){
-    var currentChordFunctionTemp = currentChord.harmonicFunction.copy();
-    currentChordFunctionTemp.key = currentChord.harmonicFunction.key;
-    var prevChordFunctionTemp = prevChord.harmonicFunction.copy();
-    prevChordFunctionTemp.key = prevChord.harmonicFunction.key;
-    if(prevChord.harmonicFunction.key !== currentChord.harmonicFunction.key){
-        if(Utils.isDefined(prevChord.harmonicFunction.key) && !prevChord.harmonicFunction.isRelatedBackwards) {
-            currentChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
-            currentChordFunctionTemp.degree = 1;
-        }
-        else if(currentChord.harmonicFunction.isRelatedBackwards){
-            prevChordFunctionTemp.functionName = Consts.FUNCTION_NAMES.TONIC;
-            prevChordFunctionTemp.degree = 1;
-        } else return undefined //checkIllegalDoubled3(currentChord)? -1 : 0;
-    }
-
-    return [currentChordFunctionTemp, prevChordFunctionTemp]
 }

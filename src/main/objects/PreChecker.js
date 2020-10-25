@@ -46,6 +46,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             currentChords = chordGenerator.generate(harmonicFunctions[i])
         }
 
+        //todo do the same in chordGenerator
         if(i === 0){
             var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
             currentChords = currentChords.filter(function(chord){return !illegalDoubledThirdRule.hasIllegalDoubled3Rule(chord)})

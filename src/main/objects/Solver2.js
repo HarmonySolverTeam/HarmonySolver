@@ -4,7 +4,7 @@
 .import "./Consts.js" as Consts
 .import "./Chord.js" as Chord
 .import "./ChordGenerator.js" as ChordGenerator
-.import "./RulesChecker.js" as Checker
+.import "./ChordRulesChecker.js" as Checker
 .import "./Utils.js" as Utils
 .import "./ExerciseCorrector.js" as Corrector
 .import "./PreChecker.js" as PreChecker
@@ -79,7 +79,7 @@ function Solver(exercise, bassLine, sopranoLine){
         PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
         var graphBuilder = new Graph.GraphBuilder();
         graphBuilder.withGenerator(this.chordGenerator);
-        graphBuilder.withEvaluator(new Checker.ChordRelationEvaluator());
+        graphBuilder.withEvaluator(new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
         graphBuilder.withInput(this.harmonicFunctions);
         var graph = graphBuilder.build();
         var dikstra = new Dikstra.Dikstra(graph);

@@ -229,7 +229,8 @@ function HarmonicFunction2(params){
             "mode" : this.mode,
             "omit" : this.omit.map(function (cc) { return cc.chordComponentString; }),
             "extra" : this.extra.map(function (cc) { return cc.chordComponentString; }),
-            "key" : this.key
+            "key" : this.key,
+            "isRelatedBackwards" : this.isRelatedBackwards
         };
         return new HarmonicFunction2(args);
     }

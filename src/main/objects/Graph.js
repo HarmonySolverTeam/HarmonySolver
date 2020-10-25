@@ -200,7 +200,7 @@ function GraphBuilder() {
                 var currentNode = graph.layers[i].nodeList[j];
                 var nextNodes = graph.layers[i + 1].nodeList;
                 for (var k = 0; k < graph.layers[i + 1].nodeList.length; k++) {
-                    if (evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k], currentNode)) === 0)
+                    if (evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k].content, currentNode.content)))
                         currentNode.addNextNeighbour(new NeighbourNode(nextNodes[k]));
                 }
             }
@@ -272,11 +272,11 @@ function GraphBuilder() {
         for(var i=0; i<graph.layers.length - 1; i++){
             for(var j=0; j<graph.layers[i].nodeList.length; j++){
                 var currentNode = graph.layers[i].nodeList[j];
-                var prevNode = i === 0 ? undefined : currentNode.getPrevContentIfSingle();
+                var prevNodeContent = i === 0 ? undefined : currentNode.getPrevContentIfSingle();
 
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var neighbour = currentNode.nextNeighbours[k];
-                    var connection = new RulesCheckerUtils.Connection(neighbour.node, currentNode, prevNode);
+                    var connection = new RulesCheckerUtils.Connection(neighbour.node.content, currentNode.content, prevNodeContent)
                     var w = evaluator.evaluateSoftRules(connection);
                     neighbour.setWeight(w);
                 }
