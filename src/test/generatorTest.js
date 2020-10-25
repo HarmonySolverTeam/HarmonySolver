@@ -132,7 +132,7 @@ var generatorTest = (generator, harmonicFunction, assertion, arg) => {
 
 
 //neapolitan chord tests
-var neapolitan = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3>", undefined, [], [], true, undefined, Consts.MODE.MINOR);
+var neapolitan = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -158,9 +158,9 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         undefined,
         neapolitan,
         allResultChordsUseComponent,
-        cm.chordComponentFromString("3>", false)
+        cm.chordComponentFromString("3", true)
     ),
-    "Neapolitan chord contains chordComponent \'3>\' with down=false"
+    "Neapolitan chord contains chordComponent \'3\' with down=true"
 ));
 
 
@@ -169,7 +169,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         undefined,
         neapolitan,
         allResultChordsNotUseComponent,
-        cm.chordComponentFromString("3>", true)
+        cm.chordComponentFromString("3>", true )
     ),
     "Neapolitan chord doesn\'t contain chordComponent \'3>\' with down=true"
 ));
@@ -501,7 +501,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3>", undefined, [], [], true, undefined, Consts.MODE.MINOR);
+    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
     var res = gen.generate(hf);
     // res.forEach((x) => {console.log(x.toString())})
 
