@@ -51,19 +51,21 @@ function HarmonicFunction2(params){
     }
 
     this.getThird = function(){
+        if(this.down === true)
+            return cm.chordComponentFromString("3", true);
+
         var scale = this.mode === Consts.MODE.MAJOR ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
         var thirdPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 1, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
-        if(this.down === true)
-            return cm.basicChordComponentFromPitch(thirdPitch + 1, true);
         return cm.basicChordComponentFromPitch(thirdPitch, false);
     }
 
     this.getFifth = function (){
+        if(this.down === true)
+            return cm.chordComponentFromString("5", true);
+
         var scale = this.mode === Consts.MODE.MAJOR ? new Scale.MajorScale("X") : new Scale.MinorScale("X");
         var fifthPitch = Utils.mod(scale.pitches[Utils.mod(this.degree + 3, 7)] - scale.pitches[Utils.mod(this.degree - 1, 7)], 12);
-        if(this.down && fifthPitch === 7) {
-            return cm.basicChordComponentFromPitch(fifthPitch, true);
-        }
+
         return cm.basicChordComponentFromPitch(fifthPitch, false);
     }
 

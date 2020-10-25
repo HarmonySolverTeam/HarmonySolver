@@ -180,9 +180,9 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         undefined,
         neapolitan,
         allResultChordsUseComponent,
-        cm.chordComponentFromString("5>", false)
+        cm.chordComponentFromString("5", true)
     ),
-    "Neapolitan chord contains chordComponent \'5>\' with down=false"
+    "Neapolitan chord contains chordComponent \'5\' with down=true"
 ));
 
 // extra tests
