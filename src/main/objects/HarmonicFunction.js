@@ -96,7 +96,8 @@ function HarmonicFunction2(params){
             if (!Utils.contains(this.extra, this.delay[i][0])
                 && Utils.contains(this.omit, this.delay[i][1])) chordComponentsCount += 1;
             if (Utils.contains(this.extra, this.delay[i][0])
-                && !Utils.contains(this.omit, this.delay[i][1])) chordComponentsCount -= 1;
+                && !Utils.contains(this.omit, this.delay[i][1])
+                && this.delay[i][1].baseComponent !== "8") chordComponentsCount -= 1;
         }
         return chordComponentsCount;
     };
