@@ -210,3 +210,7 @@ function isPowerOf2(n){
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
+function convertPitchToOneOctave(pitch){
+    return pitch % 12 + 60;
+}
+

@@ -103,6 +103,7 @@ function majorKeyBySignature(signature) {
     }
 }
 
+//G
 var BASE_NOTES = {
     C: 0,
     D: 1,
