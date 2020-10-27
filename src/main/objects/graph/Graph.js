@@ -1,6 +1,6 @@
-.import "./Utils.js" as Utils
-.import "./Errors.js" as Errors
-.import "./RulesCheckerUtils.js" as RulesCheckerUtils
+.import "../Utils.js" as Utils
+.import "../Errors.js" as Errors
+.import "../RulesCheckerUtils.js" as RulesCheckerUtils
 
 function Node(content) {
 

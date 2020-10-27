@@ -4,7 +4,7 @@
 .import "./IntervalUtils.js" as IntervalUtils
 .import "./HarmonicFunction.js" as HarmonicFunction
 .import "./RulesCheckerUtils.js" as RulesCheckerUtils
-.import "./Graph.js" as Graph
+.import "./graph/Graph.js" as Graph
 
 var DEBUG = false;
 
