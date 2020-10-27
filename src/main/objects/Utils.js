@@ -211,6 +211,6 @@ function isPowerOf2(n){
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
 function convertPitchToOneOctave(pitch){
-    return pitch % 12 + 60;
+    return mod(pitch,12) + 60;
 }
 
