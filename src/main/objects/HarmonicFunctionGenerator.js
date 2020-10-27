@@ -48,9 +48,9 @@ function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
 
     for(var i=0; i<allowedHarmonicFunctions.length; i++){
         var currentFunction = allowedHarmonicFunctions[i];
-        var chordExample = this.chordGenerator.generate(currentFunction)[0];
-        for(var j=currentFunction.countChordComponents()>3?1:0; j<chordExample.notes.length; j++) {
-            this.map.pushToValues(Utils.convertPitchToOneOctave(chordExample.notes[j].pitch), chordExample.notes[j].baseNote, currentFunction);
+        var possibleNotesToHarmonize = this.chordGenerator.generatePossibleSopranoNotesFor(currentFunction);
+        for(var j=0; j<possibleNotesToHarmonize.length; j++) {
+            this.map.pushToValues(possibleNotesToHarmonize[j].pitch, possibleNotesToHarmonize[j].baseNote, currentFunction);
         }
     }
 

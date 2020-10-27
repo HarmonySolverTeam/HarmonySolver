@@ -243,6 +243,56 @@ function ChordGenerator(key, mode) {
 
     };
 
+    this.generatePossibleSopranoNotesFor = function (harmonicFunction) {
+        var temp = this.getChordTemplate(harmonicFunction);
+        var schemas = this.getSchemas(harmonicFunction, temp);
+        var schemas_mapped = this.mapSchemas(harmonicFunction, schemas);
+
+        var infered_key = harmonicFunction.key !== undefined ? harmonicFunction.key : this.key;
+        var scale = harmonicFunction.mode === Consts.MODE.MAJOR ? new Scale.MajorScale(infered_key) : new Scale.MinorScale(infered_key);
+
+        var resultNotes = [];
+
+        for (var i = 0; i < schemas_mapped.length; i++) {
+            var schema_mapped = schemas_mapped[i];
+            var vb = new Consts.VoicesBoundary()
+            var bass = getPossiblePitchValuesFromInterval(schema_mapped[3], vb.bassMin, vb.bassMax);
+            var tenor = getPossiblePitchValuesFromInterval(schema_mapped[2], vb.tenorMin, vb.tenorMax);
+            var alto = getPossiblePitchValuesFromInterval(schema_mapped[1], vb.altoMin, vb.altoMax);
+            var soprano = getPossiblePitchValuesFromInterval(schema_mapped[0], vb.sopranoMin, vb.sopranoMax);
+
+            var foundForCurrentIteration = false;
+
+            for (var n = 0; n < bass.length && !foundForCurrentIteration; n++) {
+                for (var j = 0; j < tenor.length && !foundForCurrentIteration; j++) {
+                    if (tenor[j] >= bass[n]) {
+                        for (var k = 0; k < alto.length && !foundForCurrentIteration; k++) {
+                            if (alto[k] >= tenor[j] && alto[k] - tenor[j] <= 12) {
+                                for (var m = 0; m < soprano.length && !foundForCurrentIteration; m++) {
+                                    if (soprano[m] >= alto[k] && soprano[m] - alto[k] <= 12) {
+                                        var bassNote = new Note.Note(bass[n], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][3]), schemas[i][3]);
+                                        var tenorNote = new Note.Note(tenor[j], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][2]), schemas[i][2]);
+                                        var altoNote = new Note.Note(alto[k], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][1]), schemas[i][1]);
+                                        var sopranoNote = new Note.Note(soprano[m], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][0]), schemas[i][0]);
+                                        if(checkChordCorrectness(new Chord.Chord(sopranoNote,altoNote,tenorNote,bassNote,harmonicFunction))) {
+                                            sopranoNote.pitch = Utils.convertPitchToOneOctave(soprano[m]);
+                                            if (!Utils.contains(resultNotes, sopranoNote)) {
+                                                resultNotes.push(sopranoNote);
+                                                foundForCurrentIteration = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultNotes;
+    }
+
     this.generate = function (harmonicFunction, givenNotes) {
 
         var chords = [];
@@ -261,25 +311,6 @@ function ChordGenerator(key, mode) {
             var alto = getPossiblePitchValuesFromInterval(schema_mapped[1], vb.altoMin, vb.altoMax);
             var soprano = getPossiblePitchValuesFromInterval(schema_mapped[0], vb.sopranoMin, vb.sopranoMax);
 
-            var toBaseNote = function (scaleBaseNote, harmonicFunction, chordComponent) {
-                var int = chordComponent.baseComponent;
-
-                var intervalToBaseNote = {
-                    '1': 0,
-                    '2': 1,
-                    '3': 2,
-                    '4': 3,
-                    '5': 4,
-                    '6': 5,
-                    '7': 6,
-                    '8': 7,
-                    '9': 8
-                }
-
-                return Utils.mod((scaleBaseNote + (harmonicFunction.degree - 1) + intervalToBaseNote[int]), 7);
-            }
-
-
             for (var n = 0; n < bass.length; n++) {
                 for (var j = 0; j < tenor.length; j++) {
                     if (tenor[j] >= bass[n]) {
@@ -288,10 +319,10 @@ function ChordGenerator(key, mode) {
                                 for (var m = 0; m < soprano.length; m++) {
                                     if (soprano[m] >= alto[k] && soprano[m] - alto[k] <= 12) {
 
-                                        var bassNote = new Note.Note(bass[n], toBaseNote(scale.baseNote, harmonicFunction, schemas[i][3]), schemas[i][3]);
-                                        var tenorNote = new Note.Note(tenor[j], toBaseNote(scale.baseNote, harmonicFunction, schemas[i][2]), schemas[i][2]);
-                                        var altoNote = new Note.Note(alto[k], toBaseNote(scale.baseNote, harmonicFunction, schemas[i][1]), schemas[i][1]);
-                                        var sopranoNote = new Note.Note(soprano[m], toBaseNote(scale.baseNote, harmonicFunction, schemas[i][0]), schemas[i][0]);
+                                        var bassNote = new Note.Note(bass[n], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][3]), schemas[i][3]);
+                                        var tenorNote = new Note.Note(tenor[j], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][2]), schemas[i][2]);
+                                        var altoNote = new Note.Note(alto[k], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][1]), schemas[i][1]);
+                                        var sopranoNote = new Note.Note(soprano[m], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][0]), schemas[i][0]);
                                         chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction));
 
                                     }
@@ -396,7 +427,7 @@ function correctChopinChord(chord){
     return true;
 }
 
-function correctNoneChord(chord){
+function correctNinthChord(chord){
     if(!Utils.containsBaseChordComponent(chord.harmonicFunction.extra,9))
         return true;
     if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.revolution)) {
@@ -407,5 +438,5 @@ function correctNoneChord(chord){
 }
 
 function checkChordCorrectness(chord){
-    return correctDistanceBassTenor(chord) && correctChopinChord(chord) && correctNoneChord(chord)
+    return correctDistanceBassTenor(chord) && correctChopinChord(chord) && correctNinthChord(chord)
 }
