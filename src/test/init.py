@@ -6,9 +6,9 @@ FILES_OUTPUT_DIR = "./objects"
 def count_brackets(line, bracket_type):
     return line.count(bracket_type) - line.count("\"" + bracket_type + "\"") - line.count("\'" + bracket_type + "\'")
 
-def transform_file(file_name):
-    input_file = open(FILES_ORIGIN_DIR + "/" + file_name + ".js", "r")
-    output_file = open(FILES_OUTPUT_DIR + "/" + file_name + ".js", "w+")
+def transform_file(file_name, context_path):
+    input_file = open(FILES_ORIGIN_DIR + context_path + "/" + file_name + ".js", "r")
+    output_file = open(FILES_OUTPUT_DIR + context_path + "/" + file_name + ".js", "w+")
 
     gState = 0
     brackets = 0
@@ -72,9 +72,13 @@ def transform_file(file_name):
             output_file.write(line)
 
 
-files = list(filter( lambda x: x[-3:] == ".js", os.listdir("../main/objects")))
-print(files)
+def transform_dir(context_path):
+    for file in os.listdir(FILES_ORIGIN_DIR + context_path):
+        if os.path.isdir(FILES_ORIGIN_DIR + context_path + "/" +file) and not os.path.isdir(FILES_OUTPUT_DIR + context_path + "/" + file):
+            os.mkdir(FILES_OUTPUT_DIR + context_path + "/" + file)
+            transform_dir(context_path + "/" + file)
+        else:
+            if file[-3:] == ".js":
+                transform_file(file[:-3], context_path)
 
-for file in files:
-    name = file[:-3]
-    transform_file(name)
+transform_dir("")

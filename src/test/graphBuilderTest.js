@@ -1,4 +1,4 @@
-var Graph = require("./objects/Graph")
+var Graph = require("./objects/graph/Graph")
 var TestUtils = require("./TestUtils")
 var Utils = require("./objects/Utils")
 var Parser = require("./objects/Parser");

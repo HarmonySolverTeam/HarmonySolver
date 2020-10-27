@@ -9,7 +9,7 @@
 .import "./ExerciseCorrector.js" as Corrector
 .import "./PreChecker.js" as PreChecker
 .import "./Dikstra.js" as Dikstra
-.import "./Graph.js" as Graph
+.import "./graph/Graph.js" as Graph
 
 var DEBUG = false;
 
