@@ -7,23 +7,28 @@ const Consts = require("./objects/Consts")
 
 var rulesCheckerTestSuite = new UnitTest.TestSuite("Soprano Rules Checker Tests");
 
-var rulesChecker = new RulesChecker.SopranoRulesChecker();
+var rulesChecker = new RulesChecker.SopranoRulesChecker("C");
 
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(2, rulesChecker.connectionSize) &&
-        UnitTest.assertEqualsPrimitives(2, rulesChecker.hardRules.length) &&
+        UnitTest.assertEqualsPrimitives(3, rulesChecker.hardRules.length) &&
         UnitTest.assertEqualsPrimitives(5, rulesChecker.softRules.length);
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(initializeTest, "Initialize soprano rulechecker test"));
-
+ 
 const DSTest = () => {
     var connection = new RulesCheckerUtils.Connection(
         new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("S")),
         new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("D"))
     );
+    var allowedConnection = new RulesCheckerUtils.Connection(
+        new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("S")),
+        new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,"F"))
+    );
     var rule = new RulesChecker.ForbiddenDSConnectionRule();
     return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(connection)) &&
+        UnitTest.assertEqualsPrimitives(0, rule.evaluate(allowedConnection)) &&
         UnitTest.assertFalse(rulesChecker.evaluateHardRules(connection))
 };
 
@@ -160,5 +165,24 @@ const ChangeFunctionOnDownBeatRuleTest = () => {
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(ChangeFunctionOnDownBeatRuleTest,
     "Change function on downbeat rule test"));
+
+const SecondaryDominantConnectionRuleTest = () => {
+    var connection1 = new RulesCheckerUtils.Connection(
+        new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("S")),
+        new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,"F"))
+    );
+    var connection2 = new RulesCheckerUtils.Connection(
+        new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("D")),
+        new RulesChecker.HarmonicFunctionWithSopranoInfo(new HarmonicFunction.HarmonicFunction("D",undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,"F"))
+    );
+    var rule = new RulesChecker.SecondaryDominantConnectionRule("C");
+    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(connection1)) &&
+        UnitTest.assertTrue(rulesChecker.evaluateHardRules(connection1)) &&
+        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(connection2)) &&
+        UnitTest.assertFalse(rulesChecker.evaluateHardRules(connection2))
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(SecondaryDominantConnectionRuleTest,
+    "Secondary dominant connection rule test"));
 
 rulesCheckerTestSuite.run();

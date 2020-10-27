@@ -20,7 +20,8 @@ suites = [
     "utilsTest",
     "graphBuilderTest",
     "priorityQueueTest",
-    "dikstraTest"
+    "dikstraTest",
+    "harmonicFunctionGeneratorTest"
 ]
 
 for s in suites:
