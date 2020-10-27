@@ -293,8 +293,9 @@ function GraphBuilder() {
         addFirstAndLast(resultGraph);
         removeUnreachableNodes(resultGraph);
         removeUselessNodes(resultGraph);
-        makeAllNodesHavingSinglePrevContent(resultGraph);
-
+        if (this.evaluator.connectionSize === 3){
+            makeAllNodesHavingSinglePrevContent(resultGraph);
+        }
         //just for printing
         resultGraph.enumerateNodes();
 
