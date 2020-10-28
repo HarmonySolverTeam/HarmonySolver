@@ -18,10 +18,9 @@ var sopranoUnitTest = () => {
         new Note.Note(72, 0)
     ];
 
-    var sEx = new SopranoEx.SopranoExercise("major", "C", [3, 4], notes, undefined);
-    var shEx = new SopranoEx.SopranoHarmonizationExercise(sEx, [], [t, s, d]);
+    var sEx = new SopranoEx.SopranoExercise("major", "C", [3, 4], notes, undefined, [t, s, d]);
 
-    var sopranoSolver = new Soprano.SopranoSolver(shEx);
+    var sopranoSolver = new Soprano.SopranoSolver(sEx);
 
     var solution = sopranoSolver.solve();
 

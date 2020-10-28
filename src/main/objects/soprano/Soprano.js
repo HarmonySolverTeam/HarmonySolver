@@ -68,12 +68,11 @@ function RulesChecker(){
     }
 }
 
-function SopranoSolver(sopranoHarmonizationExercise, correctDisabled, precheckDisabled){
+function SopranoSolver(sopranoExercise, correctDisabled, precheckDisabled){
 
+    this.exercise = sopranoExercise;
     this.correctDisabled = correctDisabled;
     this.precheckDisabled = precheckDisabled;
-    this.harmonizationExercise = sopranoHarmonizationExercise;
-    this.exercise = sopranoHarmonizationExercise.sopranoExercise;
     this.rulesChecker = new RulesChecker();
 
     this.chordsMap = {
@@ -179,7 +178,7 @@ function SopranoSolver(sopranoHarmonizationExercise, correctDisabled, precheckDi
     }
 
     this.solve = function(){
-        this.prepareMap(this.harmonizationExercise.possibleFunctionsList);
+        this.prepareMap(this.exercise.possibleFunctionsList);
         var solution = this.findSolution(0, [], 0);
         if(solution.length === 0){
 

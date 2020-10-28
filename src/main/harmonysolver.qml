@@ -352,7 +352,7 @@ MuseScore {
             if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
                 var text = newElement(Element.HARMONY)
                 text.text = curChord.harmonicFunction.getSimpleChordName();
-            
+
 
                 if(prevChord !== undefined && nextChord !== undefined){
                     if(curChord.harmonicFunction.key !== undefined){
@@ -429,11 +429,7 @@ MuseScore {
                                                                   meter, notes,
                                                                   durations, measures)
 
-        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
-                                                                    [],
-                                                                    functionsList)
-
-        var solver = new Soprano.SopranoSolver(shex,false,false)
+        var solver = new Soprano.SopranoSolver(sopranoExercise)
 
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
@@ -1026,7 +1022,7 @@ MuseScore {
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
                     }
-                    
+
                     Column {
                         id: exerciseOptionsColumn
                         anchors.top: preferencesLabel.bottom
