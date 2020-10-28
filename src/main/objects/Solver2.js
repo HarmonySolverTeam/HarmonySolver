@@ -75,12 +75,7 @@ function Solver(exercise, bassLine, sopranoLine){
 
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 
-    this.solve = function(){
-        PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
-        var graphBuilder = new Graph.GraphBuilder();
-        graphBuilder.withGenerator(this.chordGenerator);
-        graphBuilder.withEvaluator(new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
-
+    this.getGeneratorInput = function(){
         var input = [];
         if(Utils.isDefined(this.bassLine)){
             for(var i = 0; i < this.harmonicFunctions.length; i++)
@@ -93,7 +88,15 @@ function Solver(exercise, bassLine, sopranoLine){
             for (var i = 0; i < this.harmonicFunctions.length; i++)
                 input.push(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[i], i !== 0))
         }
-        graphBuilder.withInput(input);
+        return input;
+    }
+
+    this.solve = function(){
+        PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
+        var graphBuilder = new Graph.GraphBuilder();
+        graphBuilder.withGenerator(this.chordGenerator);
+        graphBuilder.withEvaluator(new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
+        graphBuilder.withInput(this.getGeneratorInput());
         var graph = graphBuilder.build();
         var dikstra = new Dikstra.Dikstra(graph);
         var sol_nodes = dikstra.getShortestPathToLastNode();
