@@ -56,7 +56,11 @@ var test = () => {
     var graphBuilder = new Graph.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
     graphBuilder.withEvaluator(new Checker.ChordRulesChecker());
-    graphBuilder.withInput(getFunctionsWithDelay(ex.getHarmonicFunctionList()));
+    var harmonicFunctions = getFunctionsWithDelay(ex.getHarmonicFunctionList());
+    var input = [];
+    for (var i = 0; i < harmonicFunctions.length; i++)
+        input.push(new Generator.ChordGeneratorInput(harmonicFunctions[i], i !== 0))
+    graphBuilder.withInput(input);
 
     var graph = graphBuilder.build();
 
@@ -96,7 +100,11 @@ var allHaveExactlyOneUniquePrevContent = () => {
     var graphBuilder = new Graph.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
     graphBuilder.withEvaluator(new Checker.ChordRulesChecker());
-    graphBuilder.withInput( getFunctionsWithDelay(ex.getHarmonicFunctionList()) );
+    var harmonicFunctions = getFunctionsWithDelay(ex.getHarmonicFunctionList());
+    var input = [];
+    for (var i = 0; i < harmonicFunctions.length; i++)
+        input.push(new Generator.ChordGeneratorInput(harmonicFunctions[i], i !== 0))
+    graphBuilder.withInput(input);
 
     var graph = graphBuilder.build();
 

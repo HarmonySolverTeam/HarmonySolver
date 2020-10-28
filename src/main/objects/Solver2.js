@@ -80,7 +80,20 @@ function Solver(exercise, bassLine, sopranoLine){
         var graphBuilder = new Graph.GraphBuilder();
         graphBuilder.withGenerator(this.chordGenerator);
         graphBuilder.withEvaluator(new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
-        graphBuilder.withInput(this.harmonicFunctions);
+
+        var input = [];
+        if(Utils.isDefined(this.bassLine)){
+            for(var i = 0; i < this.harmonicFunctions.length; i++)
+                input.push(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[i], i !== 0, undefined, this.bassLine[i]));
+        }
+        else if(Utils.isDefined(this.sopranoLine)){
+            for(var i = 0; i < this.harmonicFunctions.length; i++)
+                input.push(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[i], i !== 0, this.sopranoLine[i], undefined));
+        } else {
+            for (var i = 0; i < this.harmonicFunctions.length; i++)
+                input.push(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[i], i !== 0))
+        }
+        graphBuilder.withInput(input);
         var graph = graphBuilder.build();
         var dikstra = new Dikstra.Dikstra(graph);
         var sol_nodes = dikstra.getShortestPathToLastNode();

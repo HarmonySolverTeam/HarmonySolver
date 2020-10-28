@@ -3,6 +3,7 @@
 .import "./BrokenRulesCounter.js" as BrokenRulesCounter
 .import "./ChordRulesChecker.js" as ChordRulesChecker
 .import "./RulesCheckerUtils.js" as RulesCheckerUtils
+.import "./ChordGenerator.js" as ChordGenerator
 
 function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
@@ -41,9 +42,9 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
         goodCurrentChords = []
         usedCurrentChords = []
         if (isBassDefined) {
-            currentChords = chordGenerator.generate(harmonicFunctions[i], [bassLine[i], undefined, undefined, undefined])
+            currentChords = chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(harmonicFunctions[i],i!==0,undefined,bassLine[i]))
         } else {
-            currentChords = chordGenerator.generate(harmonicFunctions[i])
+            currentChords = chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(harmonicFunctions[i],i!==0))
         }
 
         //todo do the same in chordGenerator

@@ -1,7 +1,14 @@
 .import "./Consts.js" as Consts
 .import "./ChordGenerator.js" as ChordGenerator
 .import "./Utils.js" as Utils
+.import "./Generator.js" as Generator
 var BASE_NOTES = Consts.BASE_NOTES
+
+function HarmonicFunctionGeneratorInput(sopranoNote, isFirst, isLast){
+    this.sopranoNote = sopranoNote;
+    this.isFirst = isFirst;
+    this.isLast = isLast;
+}
 
 function HarmonicFunctionMap(){
     this._map = {};
@@ -41,6 +48,8 @@ function HarmonicFunctionMap(){
 }
 
 function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
+    Generator.Generator.call(this);
+
     this.key = key;
     this.mode = mode;
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.key, this.mode);
@@ -54,7 +63,17 @@ function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
         }
     }
 
-    this.generate = function(sopranoNote){
-        return this.map.getValues(sopranoNote.pitch, sopranoNote.baseNote);
+    this.generate = function(harmonicFunctionGeneratorInput){
+        var resultList = this.map.getValues(harmonicFunctionGeneratorInput.sopranoNote.pitch, harmonicFunctionGeneratorInput.sopranoNote.baseNote);
+        if(harmonicFunctionGeneratorInput.isFirst || harmonicFunctionGeneratorInput.isLast){
+            return resultList.filter(
+                function(harmonicFunction){
+                        return harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC &&
+                            harmonicFunction.degree === 1 &&
+                            !Utils.isDefined(harmonicFunction.key)
+                    }
+                )
+        }
+        return resultList;
     }
 }
