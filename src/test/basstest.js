@@ -1,4 +1,4 @@
-var bt = require("./objects/BassTranslator");
+var bt = require("./objects/bass/BassTranslator");
 var TestUtils = require("./TestUtils");
 
 var testSuite = new TestUtils.TestSuite("BassTranslator and FiguredBass tests");

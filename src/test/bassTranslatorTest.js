@@ -1,9 +1,9 @@
-var Utils = require("./objects/Utils")
+var Utils = require("./objects/utils/Utils")
 const UnitTest = require("./TestUtils");
-var BassTranslator = require("./objects/BassTranslator")
+var BassTranslator = require("./objects/bass/BassTranslator")
 var TestUtils = require("./TestUtils");
-var FiguredBass = require("./objects/FiguredBass")
-var Note = require("./objects/Note")
+var FiguredBass = require("./objects/bass/FiguredBass")
+var Note = require("./objects/model/Note")
 
 var testSuite = new TestUtils.TestSuite("BassTranslator and FiguredBass tests");
 

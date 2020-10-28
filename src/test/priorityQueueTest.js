@@ -1,6 +1,6 @@
 var TestUtils = require("./TestUtils")
-var Utils = require("./objects/Utils")
-var PriorityQueue = require("./objects/PriorityQueue")
+var Utils = require("./objects/utils/Utils")
+var PriorityQueue = require("./objects/algorithms/PriorityQueue")
 
 var testSuite = new TestUtils.TestSuite("Priority queue tests");
 

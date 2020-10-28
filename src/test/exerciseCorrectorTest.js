@@ -1,10 +1,10 @@
 const UnitTest = require("./TestUtils");
-const Exercise = require("./objects/Exercise");
-const HarmonicFunction = require("./objects/HarmonicFunction");
-const ExerciseCorrector = require("./objects/ExerciseCorrector");
-const Solver = require("./objects/Solver");
-var ChordComponentManager = require("./objects/ChordComponentManager");
-var Parser = require("./objects/Parser");
+const Exercise = require("./objects/harmonic/Exercise");
+const HarmonicFunction = require("./objects/model/HarmonicFunction");
+const ExerciseCorrector = require("./objects/commons/ExerciseCorrector");
+const Solver = require("./objects/harmonic/Solver");
+var ChordComponentManager = require("./objects/model/ChordComponentManager");
+var Parser = require("./objects/harmonic/Parser");
 
 const exerciseCorrectorTestSuite = new UnitTest.TestSuite("Exercise corrector suite");
 

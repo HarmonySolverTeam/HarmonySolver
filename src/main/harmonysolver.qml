@@ -5,19 +5,19 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Controls 1.1
 
 //import "./qml_components"
-import "./objects/Solver2.js" as Solver
-import "./objects/Parser.js" as Parser
-import "./objects/FiguredBass.js" as FiguredBass
-import "./objects/Note.js" as Note
-import "./objects/Consts.js" as Consts
-import "./objects/BassTranslator.js" as Translator
-import "./objects/SopranoExercise.js" as SopranoExercise
-import "./objects/HarmonicFunction.js" as HarmonicFunction
-import "./objects/Soprano.js" as Soprano
-import "./objects/PluginConfiguration.js" as PluginConfiguration
-import "./objects/PluginConfigurationUtils.js" as PluginConfigurationUtils
-import "./objects/Errors.js" as Errors
-import "./objects/Utils.js" as Utils
+import "./objects/harmonic/Solver2.js" as Solver
+import "./objects/harmonic/Parser.js" as Parser
+import "./objects/bass/FiguredBass.js" as FiguredBass
+import "./objects/model/Note.js" as Note
+import "./objects/commons/Consts.js" as Consts
+import "./objects/bass/BassTranslator.js" as Translator
+import "./objects/soprano/SopranoExercise.js" as SopranoExercise
+import "./objects/model/HarmonicFunction.js" as HarmonicFunction
+import "./objects/soprano/Soprano.js" as Soprano
+import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
+import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
+import "./objects/commons/Errors.js" as Errors
+import "./objects/utils/Utils.js" as Utils
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -209,7 +209,7 @@ MuseScore {
     }
 
     function prepare_score_for_solution(filePath, solution, solution_date, setDurations, taskType) {
-        readScore(filePath + "/template scores/" + solution.exercise.key + "_"
+        readScore(filePath + "/resources/template scores/" + solution.exercise.key + "_"
                   + solution.exercise.mode + ".mscz")
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + taskType + solution_date,

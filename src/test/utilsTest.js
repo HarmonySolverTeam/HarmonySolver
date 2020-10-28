@@ -1,5 +1,5 @@
-var Utils = require("./objects/Utils");
-var Consts = require("./objects/Consts");
+var Utils = require("./objects/utils/Utils");
+var Consts = require("./objects/commons/Consts");
 var TestUtils = require("./TestUtils");
 
 var testSuite  = new TestUtils.TestSuite("Utils tests");

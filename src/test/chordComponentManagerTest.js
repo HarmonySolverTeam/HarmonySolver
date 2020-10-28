@@ -1,4 +1,4 @@
-var ComponentManager = require("./objects/ChordComponentManager")
+var ComponentManager = require("./objects/model/ChordComponentManager")
 var TestUtils = require("./TestUtils")
 
 

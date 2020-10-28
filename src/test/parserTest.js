@@ -1,6 +1,6 @@
-var HarmonicFunction = require("./objects/HarmonicFunction");
-var Utils = require("./objects/Utils")
-var Parser = require("./objects/Parser");
+var HarmonicFunction = require("./objects/model/HarmonicFunction");
+var Utils = require("./objects/utils/Utils")
+var Parser = require("./objects/harmonic/Parser");
 const TestUtils = require("./TestUtils");
 var fs = require('fs');
 

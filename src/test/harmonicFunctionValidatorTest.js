@@ -1,6 +1,6 @@
 const TestUtils = require("./TestUtils");
-const HarmonicFunction = require("./objects/HarmonicFunction");
-const HarmonicFunctionValidator = require("./objects/HarmonicFunctionValidator")
+const HarmonicFunction = require("./objects/model/HarmonicFunction");
+const HarmonicFunctionValidator = require("./objects/model/HarmonicFunctionValidator")
 
 const testSuite = new TestUtils.TestSuite("HarmonicFunctionValidator tests");
 const validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
