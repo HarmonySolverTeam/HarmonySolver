@@ -5,8 +5,19 @@
 .import "./Consts.js" as Consts
 .import "./Utils.js" as Utils
 .import "./IntervalUtils.js" as IntervalUtils
+.import "./Generator.js" as Generator
+.import "./ChordRulesChecker.js" as ChordRulesChecker
+
+function ChordGeneratorInput(harmonicFunction, allowDoubleThird, sopranoNote, bassNote) {
+    this.harmonicFunction = harmonicFunction;
+    this.allowDoubleThird = allowDoubleThird;
+    this.sopranoNote = sopranoNote;
+    this.bassNote = bassNote;
+}
 
 function ChordGenerator(key, mode) {
+    Generator.Generator.call(this);
+
     this.key = key;
     this.mode = mode;
 
@@ -293,8 +304,8 @@ function ChordGenerator(key, mode) {
         return resultNotes;
     }
 
-    this.generate = function (harmonicFunction, givenNotes) {
-
+    this.generate = function (chordGeneratorInput) {
+        var harmonicFunction = chordGeneratorInput.harmonicFunction;
         var chords = [];
         var temp = this.getChordTemplate(harmonicFunction);
         var schemas = this.getSchemas(harmonicFunction, temp);
@@ -382,7 +393,7 @@ function ChordGenerator(key, mode) {
         // console.log("CHORDS END:");
 
         // filtering chords with given pitches
-        if (givenNotes !== undefined) {
+        if (Utils.isDefined(chordGeneratorInput.bassNote)) {
             chords = chords.filter(function (chord) {
                 function eq(x, y) {
                     return y === undefined
@@ -390,11 +401,26 @@ function ChordGenerator(key, mode) {
                         || x.pitch === y.pitch
                 }
 
-                return eq(chord.bassNote, givenNotes[0]) &&
-                    eq(chord.tenorNote, givenNotes[1]) &&
-                    eq(chord.altoNote, givenNotes[2]) &&
-                    eq(chord.sopranoNote, givenNotes[3])
+                return eq(chord.bassNote, chordGeneratorInput.bassNote)
             })
+        }
+        if (Utils.isDefined(chordGeneratorInput.sopranoNote)) {
+            chords = chords.filter(function (chord) {
+                function eq(x, y) {
+                    return y === undefined
+                        || y.pitch === undefined
+                        || x.pitch === y.pitch
+                }
+
+                return eq(chord.sopranoNote, chordGeneratorInput.sopranoNote)
+            })
+        }
+        if(!chordGeneratorInput.allowDoubleThird){
+            var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
+            chords.filter(function (chord) {
+                    return !illegalDoubledThirdRule.hasIllegalDoubled3Rule(chord)
+                }
+            )
         }
 
         return chords.filter(function (chord){

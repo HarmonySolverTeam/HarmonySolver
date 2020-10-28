@@ -45,8 +45,8 @@ const harmonicFunctionGeneratorInitializeTest = () => {
 testSuite.addTest(new TestUtils.UnitTest(harmonicFunctionGeneratorInitializeTest, "Harmonic function generator initialization test"));
 
 const generateTest = () => {
-    var note = new Note.Note(69, 5);
-    return TestUtils.assertEqualsPrimitives(3,hfGenerator.generate(note).length)
+    var input = new HarmonicFunctionGenerator.HarmonicFunctionGeneratorInput(new Note.Note(69, 5));
+    return TestUtils.assertEqualsPrimitives(3,hfGenerator.generate(input).length)
 };
 
 testSuite.addTest(new TestUtils.UnitTest(generateTest, "Harmonic function generate for given soprano note"));

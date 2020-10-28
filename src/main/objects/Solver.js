@@ -91,9 +91,9 @@ function Solver(exercise, bassLine, sopranoLine){
 
     this.findSolution = function(curr_index, prev_prev_chord, prev_chord){
         var chords;
-        if(this.bassLine !== undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [this.bassLine[curr_index], undefined, undefined, undefined])
-        else if (this.sopranoLine !== undefined) chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index], [undefined, undefined, undefined, this.sopranoLine[curr_index]])
-        else chords = this.chordGenerator.generate(this.harmonicFunctions[curr_index])
+        if(this.bassLine !== undefined) chords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[curr_index],curr_index!==0,undefined,this.bassLine[curr_index]))
+        else if (this.sopranoLine !== undefined) chords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[curr_index],curr_index!==0,this.sopranoLine[curr_index],undefined))
+        else chords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(this.harmonicFunctions[curr_index],curr_index!==0))
         var good_chords = []
 
         if(curr_index === 0){

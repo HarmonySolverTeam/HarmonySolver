@@ -103,19 +103,19 @@ var generatorTest = (generator, harmonicFunction, assertion, arg) => {
     if (generator === undefined || generator === 'major') {
         for (const key of Consts.possible_keys_major) {
             var gen = new Generator.ChordGenerator(key, 'major');
-            var res = gen.generate(harmonicFunction);
+            var res = gen.generate(new Generator.ChordGeneratorInput(harmonicFunction));
             if (!assertion(res, arg)) return false;
         }
     }
     if (generator === undefined || generator === 'minor') {
         for (const key of Consts.possible_keys_minor) {
             var gen = new Generator.ChordGenerator(key, 'minor');
-            var res = gen.generate(harmonicFunction);
+            var res = gen.generate(new Generator.ChordGeneratorInput(harmonicFunction));
             if (!assertion(res, arg)) return false;
         }
     }
     if (generator === undefined || generator === 'major' || generator === 'minor') return true;
-    var res = generator.generate(harmonicFunction);
+    var res = generator.generate(new Generator.ChordGeneratorInput(harmonicFunction));
     return assertion(res, arg);
 }
 
@@ -502,7 +502,7 @@ var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
     // res.forEach((x) => {console.log(x.toString())})
 
     return TestUtils.assertEqualsPrimitives(res.length, 48);
@@ -514,7 +514,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(neapolitanTest, "Neapolitan ch
 var positionAndRevolution1 = () => {
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("S", 4, "1", "1", undefined, [], [], false, undefined, undefined);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var testResult = true;
 
@@ -537,7 +537,7 @@ var doubleOnly135 = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7"], ["5"], false, undefined, undefined);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
     // res.forEach((x) => {console.log(x.toString())})
 
     var testResult = true;
@@ -560,7 +560,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(doubleOnly135, "Double only 1,
 var majorChordInMinorKeyTest = () => {
     var gen = new Generator.ChordGenerator("e");
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, undefined, undefined, [], [], false, undefined, "major");
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     return TestUtils.assertNotEqualsPrimitives(0, res.length);
 };
@@ -574,8 +574,8 @@ var chordInKeyGivenByHarmonicFunctionInMajor = () => {
     var hf_without_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major");
     var hf_with_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major", "C");
 
-    var res1 = gen_in_C.generate(hf_without_key);
-    var res2 = gen_in_D.generate(hf_with_key);
+    var res1 = gen_in_C.generate(new Generator.ChordGeneratorInput(hf_without_key));
+    var res2 = gen_in_D.generate(new Generator.ChordGeneratorInput(hf_with_key));
 
     if (!TestUtils.assertEqualsPrimitives(res1.length, res2.length)) return false;
 
@@ -596,8 +596,8 @@ var chordInKeyGivenByHarmonicFunctionInMinor = () => {
     var hf_without_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor");
     var hf_with_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor", "f");
 
-    var res1 = gen_in_f.generate(hf_without_key);
-    var res2 = gen_in_B.generate(hf_with_key);
+    var res1 = gen_in_f.generate(new Generator.ChordGeneratorInput(hf_without_key));
+    var res2 = gen_in_B.generate(new Generator.ChordGeneratorInput(hf_with_key));
 
     if (!TestUtils.assertEqualsPrimitives(res1.length, res2.length)) return false;
 
@@ -616,7 +616,7 @@ var extra7Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7"], []);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
     var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
@@ -641,7 +641,7 @@ var extra7doTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7>"], []);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
     var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
@@ -666,7 +666,7 @@ var extra7upTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["<7"], []);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
     var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
@@ -691,7 +691,7 @@ var extra7pos7Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, "7", "1", undefined, ["7"], []);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
     var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
@@ -717,7 +717,7 @@ var extra7rev7Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "7", undefined, ["7"], []);
-    var res = gen.generate(hf);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
     var basicNote = scale.tonicPitch + scale.pitches[hf.degree - 1];
