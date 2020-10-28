@@ -1,8 +1,8 @@
 var TestUtils = require("./TestUtils")
-var Utils = require("./objects/Utils")
-var PriorityQueue = require("./objects/PriorityQueue")
-var Graph = require("./objects/graph/Graph")
-var Dikstra = require("./objects/Dikstra")
+var Utils = require("./objects/utils/Utils")
+var PriorityQueue = require("./objects/algorithms/PriorityQueue")
+var Graph = require("./objects/algorithms/Graph")
+var Dikstra = require("./objects/algorithms/Dikstra")
 
 var testSuite = new TestUtils.TestSuite("Dikstra algorithm tests");
 

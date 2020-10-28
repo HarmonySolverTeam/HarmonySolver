@@ -1,4 +1,4 @@
-var ChordComponent = require("./objects/ChordComponent")
+var ChordComponent = require("./objects/model/ChordComponent")
 var TestUtils = require("./TestUtils");
 
 var testSuite = new TestUtils.TestSuite("ChordComponent tests");

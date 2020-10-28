@@ -1,13 +1,13 @@
-var Generator = require("./objects/ChordGenerator")
-var Consts = require("./objects/Consts")
-var Chord = require("./objects/Chord")
-var HarmonicFunction = require("./objects/HarmonicFunction")
-var Note = require("./objects/Note")
+var Generator = require("./objects/harmonic/ChordGenerator")
+var Consts = require("./objects/commons/Consts")
+var Chord = require("./objects/model/Chord")
+var HarmonicFunction = require("./objects/model/HarmonicFunction")
+var Note = require("./objects/model/Note")
 var TestUtils = require("./TestUtils")
-var ChordComponentManager = require("./objects/ChordComponentManager")
-var Consts = require("./objects/Consts")
-var Utils = require("./objects/Utils")
-var Scale = require("./objects/Scale")
+var ChordComponentManager = require("./objects/model/ChordComponentManager")
+var Consts = require("./objects/commons/Consts")
+var Utils = require("./objects/utils/Utils")
+var Scale = require("./objects/model/Scale")
 
 var generatorTestSuite = new TestUtils.TestSuite("ChordGenerator tests");
 

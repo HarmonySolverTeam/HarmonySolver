@@ -1,4 +1,5 @@
 import os
+import shutil
 
 FILES_ORIGIN_DIR = "../main/objects"
 FILES_OUTPUT_DIR = "./objects"
@@ -81,4 +82,9 @@ def transform_dir(context_path):
             if file[-3:] == ".js":
                 transform_file(file[:-3], context_path)
 
+try:
+    shutil.rmtree(FILES_OUTPUT_DIR)
+except FileNotFoundError:
+    pass
+os.mkdir(FILES_OUTPUT_DIR)
 transform_dir("")

@@ -1,9 +1,9 @@
-var Graph = require("./objects/graph/Graph")
+var Graph = require("./objects/algorithms/Graph")
 var TestUtils = require("./TestUtils")
-var Utils = require("./objects/Utils")
-var Parser = require("./objects/Parser");
-var Checker = require("./objects/ChordRulesChecker")
-var Generator = require("./objects/ChordGenerator")
+var Utils = require("./objects/utils/Utils")
+var Parser = require("./objects/harmonic/Parser");
+var Checker = require("./objects/harmonic/ChordRulesChecker")
+var Generator = require("./objects/harmonic/ChordGenerator")
 
 
 function MockGenerator() {

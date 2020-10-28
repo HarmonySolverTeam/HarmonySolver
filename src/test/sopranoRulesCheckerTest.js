@@ -1,9 +1,9 @@
 const UnitTest = require("./TestUtils");
-const HarmonicFunction = require("./objects/HarmonicFunction");
-const Note = require("./objects/Note");
-const RulesChecker = require("./objects/SopranoRulesChecker")
-const RulesCheckerUtils = require("./objects/RulesCheckerUtils")
-const Consts = require("./objects/Consts")
+const HarmonicFunction = require("./objects/model/HarmonicFunction");
+const Note = require("./objects/model/Note");
+const RulesChecker = require("./objects/soprano/SopranoRulesChecker")
+const RulesCheckerUtils = require("./objects/commons/RulesCheckerUtils")
+const Consts = require("./objects/commons/Consts")
 
 var rulesCheckerTestSuite = new UnitTest.TestSuite("Soprano Rules Checker Tests");
 

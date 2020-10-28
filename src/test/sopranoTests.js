@@ -1,7 +1,7 @@
-var HarmonicFunction = require("./objects/HarmonicFunction");
-var Note = require("./objects/Note");
-var Soprano = require("./objects/Soprano");
-var SopranoEx = require("./objects/SopranoExercise");
+var HarmonicFunction = require("./objects/model/HarmonicFunction");
+var Note = require("./objects/model/Note");
+var Soprano = require("./objects/soprano/Soprano");
+var SopranoEx = require("./objects/soprano/SopranoExercise");
 var TestUtils = require("./TestUtils");
 
 var testSuite  = new TestUtils.TestSuite("Soprano exercise tests");

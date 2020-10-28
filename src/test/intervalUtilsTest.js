@@ -1,6 +1,6 @@
 const TestUtils = require("./TestUtils");
-const IntervalUtils = require("./objects/IntervalUtils");
-const Note = require("./objects/Note");
+const IntervalUtils = require("./objects/utils/IntervalUtils");
+const Note = require("./objects/model/Note");
 
 const intervalUtilsTestSuite = new TestUtils.TestSuite("Interval Utils tests");
 

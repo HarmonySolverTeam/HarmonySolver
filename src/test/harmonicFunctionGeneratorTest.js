@@ -1,9 +1,9 @@
 const TestUtils = require("./TestUtils");
-const HarmonicFunction = require("./objects/HarmonicFunction");
-const HarmonicFunctionGenerator = require("./objects/HarmonicFunctionGenerator");
-const Note = require("./objects/Note");
-const Consts = require("./objects/Consts");
-const Parser = require("./objects/Parser")
+const HarmonicFunction = require("./objects/model/HarmonicFunction");
+const HarmonicFunctionGenerator = require("./objects/soprano/HarmonicFunctionGenerator");
+const Note = require("./objects/model/Note");
+const Consts = require("./objects/commons/Consts");
+const Parser = require("./objects/harmonic/Parser")
 
 const testSuite = new TestUtils.TestSuite("HarmonicFunctionGenerator tests", 20);
 const hfMap = new HarmonicFunctionGenerator.HarmonicFunctionMap();

@@ -1,8 +1,8 @@
 const UnitTest = require("./TestUtils");
-const Exercise = require("./objects/Exercise");
-const HarmonicFunction = require("./objects/HarmonicFunction");
-const Solver = require("./objects/Solver");
-var ChordComponentManager = require("./objects/ChordComponentManager");
+const Exercise = require("./objects/harmonic/Exercise");
+const HarmonicFunction = require("./objects/model/HarmonicFunction");
+const Solver = require("./objects/harmonic/Solver");
+var ChordComponentManager = require("./objects/model/ChordComponentManager");
 
 var cm = new ChordComponentManager.ChordComponentManager();
 var exercise = new Exercise.Exercise("C", [3,4],"major",[[new HarmonicFunction.HarmonicFunction("T",1,undefined,'1',[["4","3"]],[],[],false,undefined,undefined)]]);

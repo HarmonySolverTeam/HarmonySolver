@@ -1,12 +1,12 @@
-var Generator = require("./objects/ChordGenerator");
-var Consts = require("./objects/Consts");
-var Chord = require("./objects/Chord");
-var HarmonicFunction = require("./objects/HarmonicFunction");
-var Utils = require("./objects/Utils")
-var Parser = require("./objects/Parser");
-var Solver = require("./objects/Solver2");
+var Generator = require("./objects/harmonic/ChordGenerator");
+var Consts = require("./objects/commons/Consts");
+var Chord = require("./objects/model/Chord");
+var HarmonicFunction = require("./objects/model/HarmonicFunction");
+var Utils = require("./objects/utils/Utils")
+var Parser = require("./objects/harmonic/Parser");
+var Solver = require("./objects/harmonic/Solver2");
 var UnitTest = require("./TestUtils");
-var ChordComponentManager = require("./objects/ChordComponentManager")
+var ChordComponentManager = require("./objects/model/ChordComponentManager")
 
 var cm = new ChordComponentManager.ChordComponentManager();
 
