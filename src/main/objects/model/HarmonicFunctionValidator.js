@@ -54,7 +54,7 @@ function HarmonicFunctionValidator(){
 
     function validateDegree(_this) {
         var degree = _this.harmonicFunction.degree;
-        if(!Utils.isNumber(degree)){
+        if(!Utils.isIntegerNumber(degree)){
             handleValidationFailure(_this, "Degree is not a number");
             return
         }

@@ -214,6 +214,10 @@ function convertPitchToOneOctave(pitch){
     return mod(pitch,12) + 60;
 }
 
-function isNumber(x){
-    return x !== x+""
+function isIntegerNumber(x){
+    var xString = x+"";
+    var match = xString.match(/0|([1-9]\d*)/gi);
+    if(match === null)
+        return false;
+    return x !== xString && match.length === 1 && match[0] === xString
 }
