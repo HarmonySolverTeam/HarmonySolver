@@ -20,4 +20,13 @@ var getMeasurePlaceTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(getMeasurePlaceTest, "Get measure place test"));
 
+var isNumberTest = () => {
+    return TestUtils.assertTrue(Utils.isIntegerNumber(19)) &&
+        TestUtils.assertFalse(Utils.isIntegerNumber("1")) &&
+        TestUtils.assertFalse(Utils.isIntegerNumber({"x":12, "y":14})) &&
+        TestUtils.assertFalse(Utils.isIntegerNumber(19.2))
+};
+
+testSuite.addTest(new TestUtils.UnitTest(isNumberTest, "Is number test"));
+
 testSuite.run();

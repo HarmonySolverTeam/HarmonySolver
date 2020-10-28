@@ -199,11 +199,6 @@ function HarmonicFunction2(params){
             "Key: " + this.key
     };
 
-    if(DEBUG) {
-        var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
-        validator.validate(this);
-    }
-
     this.getSimpleChordName = function() {
     //    functionName [moll] [delay] [deg] [down]
         var functionNameAdapter = { "T" : "A", "S" : "B", "D":"D", "same_as_prev" : "C"};
@@ -306,6 +301,11 @@ function HarmonicFunction2(params){
         }
     }
 // *****CONSTUCTOR PART 2 END*****
+
+    if(DEBUG) {
+        var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
+        validator.validate(this);
+    }
 
 }
 

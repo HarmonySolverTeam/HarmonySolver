@@ -54,7 +54,7 @@ function HarmonicFunctionValidator(){
 
     function validateDegree(_this) {
         var degree = _this.harmonicFunction.degree;
-        if(! Number.isInteger(degree)){
+        if(!Utils.isIntegerNumber(degree)){
             handleValidationFailure(_this, "Degree is not a number");
             return
         }
@@ -137,7 +137,7 @@ function HarmonicFunctionValidator(){
 
     function validateMode(_this) {
         var mode = _this.harmonicFunction.mode;
-        if(!Utils.contains(Object.values(Consts.MODE), mode)) handleValidationFailure(_this, "Invalid value of mode: " + mode);
+        if(!Utils.contains([Consts.MODE.MAJOR, Consts.MODE.MINOR], mode)) handleValidationFailure(_this, "Invalid value of mode: " + mode);
     }
 
     function checkAllChordComponentNumber(_this){
