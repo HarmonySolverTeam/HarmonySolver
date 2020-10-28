@@ -214,3 +214,6 @@ function convertPitchToOneOctave(pitch){
     return mod(pitch,12) + 60;
 }
 
+function isNumber(x){
+    return x !== x+""
+}
