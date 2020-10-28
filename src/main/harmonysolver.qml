@@ -387,13 +387,9 @@ MuseScore {
             key = Consts.minorKeyBySignature(curScore.keysig)
         var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
                                                                   meter, notes,
-                                                                  durations, measures)
+                                                                  durations, measures, functionsList)
 
-        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
-                                                                    [],
-                                                                    functionsList)
-
-        var solver = new Soprano.SopranoSolver(shex)
+        var solver = new Soprano.SopranoSolver(sopranoExercise)
 
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()

@@ -68,10 +68,9 @@ function RulesChecker(){
     }
 }
 
-function SopranoSolver(sopranoHarmonizationExercise){
+function SopranoSolver(sopranoExercise){
     
-    this.harmonizationExercise = sopranoHarmonizationExercise;
-    this.exercise = sopranoHarmonizationExercise.sopranoExercise;
+    this.exercise = sopranoExercise;
     this.rulesChecker = new RulesChecker();
 
     this.chordsMap = {
@@ -177,7 +176,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
     }
 
     this.solve = function(){
-        this.prepareMap(this.harmonizationExercise.possibleFunctionsList);
+        this.prepareMap(this.exercise.possibleFunctionsList);
         var solution = this.findSolution(0, [], 0);
         if(solution.length === 0){
 
