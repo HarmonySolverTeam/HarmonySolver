@@ -13,8 +13,7 @@
 
 var DEBUG = false;
 
-function Solver(exercise, bassLine, sopranoLine){
-
+function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabled){
     function getFunctionsWithDelays(functions){
         var newFunctions = functions.slice();
         var addedChords = 0;
@@ -63,6 +62,8 @@ function Solver(exercise, bassLine, sopranoLine){
     this.exercise = exercise;
     this.bassLine = handleDelaysInBassLine(bassLine, exercise.measures);
     this.sopranoLine = sopranoLine;
+    this.correctDisabled = correctDisabled;
+    this.precheckDisabled = precheckDisabled;
 
     this.harmonicFunctions = [];
     for(var i=0; i<exercise.measures.length; i++){
@@ -70,8 +71,10 @@ function Solver(exercise, bassLine, sopranoLine){
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
 
-    var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
-    this.harmonicFunctions = corrector.correctHarmonicFunctions();
+    if(!this.correctDisabled) {
+        var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
+        this.harmonicFunctions = corrector.correctHarmonicFunctions();
+    }
 
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 
@@ -92,7 +95,9 @@ function Solver(exercise, bassLine, sopranoLine){
     }
 
     this.solve = function(){
-        PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
+        if(!precheckDisabled) {
+            PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
+        }
         var graphBuilder = new Graph.GraphBuilder();
         graphBuilder.withGenerator(this.chordGenerator);
         graphBuilder.withEvaluator(new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));

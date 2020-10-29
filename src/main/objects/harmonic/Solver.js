@@ -12,7 +12,7 @@
 
 var DEBUG = false;
 
-function Solver(exercise, bassLine, sopranoLine){
+function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabled){
 
     function getFunctionsWithDelays(functions){
         var newFunctions = functions.slice();
@@ -63,6 +63,8 @@ function Solver(exercise, bassLine, sopranoLine){
     this.bassLine = handleDelaysInBassLine(bassLine, exercise.measures);
 
     this.sopranoLine = sopranoLine;
+    this.correctDisabled = correctDisabled;
+    this.precheckDisabled = precheckDisabled;
 
     this.harmonicFunctions = [];
     for(var i=0; i<exercise.measures.length; i++){
@@ -71,14 +73,18 @@ function Solver(exercise, bassLine, sopranoLine){
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
 
-    var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
-    this.harmonicFunctions = corrector.correctHarmonicFunctions();
+    if(!this.correctDisabled) {
+        var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
+        this.harmonicFunctions = corrector.correctHarmonicFunctions();
+    }
 
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 
     this.solve = function(){
-        PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
-        var sol_chords =  this.findSolution(0, undefined, undefined);
+        if(!this.precheckDisabled) {
+            PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
+            var sol_chords = this.findSolution(0, undefined, undefined);
+        }
         //dopełenienie pustymi chordami
         var N = sol_chords.length;
         for(var i = 0; i<this.harmonicFunctions.length - N; i++){
