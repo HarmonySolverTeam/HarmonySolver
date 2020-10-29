@@ -106,7 +106,7 @@ testSuite.addTest(new TestUtils.UnitTest(deflectionTopBackwardDeflectionTest, "D
 
 const emptyDeflectionTest = () => {
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "Deflection cannot be empty.", Parser.parse, ["C\n4/4\nT{};();T{}"])
+        "Deflection cannot be empty.", Parser.parse, ["dev\nC\n4/4\nT{};();T{}"])
 }
 
 testSuite.addTest(new TestUtils.UnitTest(emptyDeflectionTest, "Empty deflection"));
@@ -152,7 +152,7 @@ testSuite.addTest(new TestUtils.UnitTest(oneChordInElipseTest, "One chord in eli
 
 const emptyElipseTest = () => {
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "Elipse cannot be empty.", Parser.parse, ["C\n/3/4\n(D{});[];T{}"])
+        "Elipse cannot be empty.", Parser.parse, ["dev\nC\n/3/4\n(D{});[];T{}"])
 }
 
 testSuite.addTest(new TestUtils.UnitTest(emptyElipseTest, "Empty elipse"));
@@ -166,5 +166,57 @@ const whitespacesHandlingTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(whitespacesHandlingTest, "Handling whitespaces"));
 
+const newNotationTest = () => {
+    var input = get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\new_notation\\example_correct.txt");
+    input = input.replace(/\r/g,"")
+
+    var lines = input.split("\n")
+    var translated = Parser.translateToOldNotation(lines.splice(2,2));
+    return TestUtils.assertEqualsObjects([
+            '(D{"position":"5"});(S{"system":"open","degree":2,"omit":["5","7"],"delay":[["2","3"],["4","5"]]}',
+            'Do{"position":"1","revolution":"3","isRelatedBackwards":true,"down":true});T{"extra":["6","7"]}'
+        ], translated) &&
+        TestUtils.assertDefined(Parser.parse(input))
+}
+
+testSuite.addTest(new TestUtils.UnitTest(newNotationTest, "New notation test"));
+
+const newNotationEmptyDeflectionTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Wrong harmonic structure. Check name, curly parenthesis and deflection parenthesis. ()", Parser.parse, ["C\n4/4\nT{};();T{}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(newNotationEmptyDeflectionTest, "New notation empty deflection test"));
+
+const newNotationIllegalPropertyTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Invalid property name. Allowed: \"position\", \"revolution\", \"system\", \"degree\", \"extra\", " +
+        "\"omit\", \"delay\",\"down\", \"isRelatedBackwards\". Found \"positio\"", Parser.parse, ["C\n4/4\nT{positio:5}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(newNotationIllegalPropertyTest, "New notation illegal property test"));
+
+const newNotationWrongDelayTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Delay should match pattern \"X-Y\". Found: 5", Parser.parse, ["C\n4/4\nT{delay:5,4}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(newNotationWrongDelayTest, "New notation wrong delay test"));
+
+const newNotationInvalidKeyValueTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Invalid number of \":\" delay:5:4", Parser.parse, ["C\n4/4\nT{delay:5:4}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(newNotationInvalidKeyValueTest, "New notation invalid key:value relation test"));
+
+const newNotationInvalidBooleanPropertyTest = () => {
+    return TestUtils.assertThrows("Error during parsing harmonic functions input",
+        "Property \"isRelatedBackwards\" should not have any value. Found: true", Parser.parse, ["C\n4/4\nT{isRelatedBackwards:true}"]) &&
+        TestUtils.assertThrows("Error during parsing harmonic functions input",
+            "Property \"down\" should not have any value. Found: true", Parser.parse, ["C\n4/4\nT{down:true}"])
+}
+
+testSuite.addTest(new TestUtils.UnitTest(newNotationInvalidBooleanPropertyTest, "New notation invalid boolean property test"));
 
 testSuite.run();

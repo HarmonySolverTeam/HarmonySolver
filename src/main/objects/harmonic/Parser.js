@@ -171,12 +171,125 @@ function handleDeflections(measures, key, deflections){
         }
     }
 }
+/*
+        "delay" : delay,
+*/
+
+function translateContent(content){
+    var subcontents = content.split("/");
+    for(var i = 0; i < subcontents.length; i++){
+        if(subcontents[i].length === 0)
+            continue;
+        var subcontentSplitted = subcontents[i].split(":");
+        if(subcontentSplitted.length > 2) {
+                throw new Errors.HarmonicFunctionsParserError("Invalid number of \":\"", subcontents[i]);
+        }
+        var key = subcontentSplitted[0];
+        var value = subcontentSplitted[1];
+        subcontents[i] = "\""+key+"\":";
+        switch(key){
+            case "position":
+                subcontents[i] += "\""+value+"\"";
+                break;
+            case "revolution":
+                subcontents[i] += "\""+value+"\"";
+                break;
+            case "system":
+                subcontents[i] += "\""+value+"\"";
+                break;
+            case "isRelatedBackwards":
+                if(Utils.isDefined(value))
+                    throw new Errors.HarmonicFunctionsParserError("Property \"isRelatedBackwards\" should not have any value.", "Found: " + value);
+                subcontents[i] += "true";
+                break;
+            case "down":
+                if(Utils.isDefined(value))
+                    throw new Errors.HarmonicFunctionsParserError("Property \"down\" should not have any value.", "Found: " + value);
+                subcontents[i] += "true";
+                break;
+            case "degree":
+                subcontents[i] += value;
+                break;
+            case "extra":
+                var values = value.split(",");
+                for(var j = 0; j < values.length; j++){
+                    values[j] = "\""+values[j]+"\"";
+                }
+                subcontents[i] += "["+values.join(",")+"]";
+                break;
+            case "omit":
+                var values = value.split(",");
+                for(var j = 0; j < values.length; j++){
+                    values[j] = "\""+values[j]+"\"";
+                }
+                subcontents[i] += "["+values.join(",")+"]";
+                break;
+            case "delay":
+                var values = value.split(",");
+                var delay;
+                for(var j = 0; j < values.length; j++){
+                    delay = values[j].split("-");
+                    if(delay.length !== 2)
+                        throw new Errors.HarmonicFunctionsParserError("Delay should match pattern \"X-Y\".", "Found: "+values[j]);
+                    delay[0] = "\""+delay[0]+"\"";
+                    delay[1] = "\""+delay[1]+"\"";
+                    values[j] = "["+delay.join(",")+"]"
+                }
+                subcontents[i] += "["+values.join(",")+"]";
+                break;
+            default:
+                throw new Errors.HarmonicFunctionsParserError("Invalid property name. Allowed: " +
+                    "\"position\", \"revolution\", \"system\", \"degree\", " +
+                    "\"extra\", \"omit\", \"delay\",\"down\", \"isRelatedBackwards\".", "Found \"" + key + "\"");
+        }
+    }
+    return subcontents.join(",");
+}
+
+function translateHarmonicFunction(harmonicFunctionString){
+    if(!(/[\(\[]?([TSD])o?\{.*\}[\)\]]?/ig).test(harmonicFunctionString))
+        throw new Errors.HarmonicFunctionsParserError("Wrong harmonic structure. Check name, curly parenthesis and deflection parenthesis.", harmonicFunctionString);
+    var result = "";
+    var i = 0;
+    while(harmonicFunctionString[i] !== "{"){
+        result += harmonicFunctionString[i];
+        i++;
+    }
+    result += "{";
+    result += translateContent(harmonicFunctionString.substring(i+1, harmonicFunctionString.lastIndexOf("}")));
+    result += "}";
+    if(harmonicFunctionString.lastIndexOf("}") === harmonicFunctionString.length - 2)
+        result += ")";
+    return result;
+}
+
+function translateToOldNotation(lines) {
+    for(var i = 0; i < lines.length; i++){
+        if(!lines[i] || lines[i].startsWith("//")) continue;
+        var harmonicFunctionString = lines[i].split(";")
+        for(var j = 0; j < harmonicFunctionString.length; j++){
+            try {
+                harmonicFunctionString[j] = translateHarmonicFunction(harmonicFunctionString[j]);
+            } catch(e){
+                throw new Errors.HarmonicFunctionsParserError(e.message + " " + e.details,
+                    "at "+(i+1)+" measure, "+(j+1)+" harmonic function: "+harmonicFunctionString[j]);
+            }
+        }
+        lines[i] = harmonicFunctionString.join(";");
+    }
+    return lines;
+}
 
 function parse(input) {
     input = input.replace(/\r/g,"")
 
     var lines = input.split("\n")
-
+    var isInNewNotation = false;
+    if(lines[0] === "dev") {
+        lines = lines.splice(1, lines.length);
+    } else {
+        isInNewNotation = true;
+    }
     var key = lines[0]
 
     var mode = null
@@ -196,7 +309,9 @@ function parse(input) {
     } else {
         metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
     }
-
+    lines = lines.splice(2, lines.length);
+    if(isInNewNotation)
+        lines = translateToOldNotation(lines);
     var measures = []
 
     var insideDeflection = false
@@ -208,7 +323,7 @@ function parse(input) {
     var dropFirstChar = false
     var dropLastChar = false
 
-    for (var i = 2; i < lines.length; i++) {
+    for (var i = 0; i < lines.length; i++) {
         if(!lines[i] || lines[i].startsWith("//")) continue
         var chords = lines[i].split(";")
         var chords_parsed = []
