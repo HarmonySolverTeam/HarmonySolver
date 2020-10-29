@@ -2,12 +2,14 @@
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 .import "../utils/Utils.js" as Utils
 .import "../commons/Generator.js" as Generator
+.import "../soprano/SopranoRulesChecker.js" as SopranoRulesChecker
 var BASE_NOTES = Consts.BASE_NOTES
 
-function HarmonicFunctionGeneratorInput(sopranoNote, isFirst, isLast){
+function HarmonicFunctionGeneratorInput(sopranoNote, isFirst, isLast, measurePlace){
     this.sopranoNote = sopranoNote;
     this.isFirst = isFirst;
     this.isLast = isLast;
+    this.measurePlace = measurePlace;
 }
 
 function HarmonicFunctionMap(){
@@ -37,7 +39,8 @@ function HarmonicFunctionMap(){
     this._initializeMap();
 
     this.getValues = function(pitch, baseNote){
-        return this._map[pitch + " " + baseNote];
+        var p = Utils.mod(pitch, 12) + 60;
+        return this._map[p + " " + baseNote];
     };
 
     this.pushToValues = function(pitch, baseNote, harmonicFunction){
@@ -66,7 +69,7 @@ function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
     this.generate = function(harmonicFunctionGeneratorInput){
         var resultList = this.map.getValues(harmonicFunctionGeneratorInput.sopranoNote.pitch, harmonicFunctionGeneratorInput.sopranoNote.baseNote);
         if(harmonicFunctionGeneratorInput.isFirst || harmonicFunctionGeneratorInput.isLast){
-            return resultList.filter(
+            resultList = resultList.filter(
                 function(harmonicFunction){
                         return harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC &&
                             harmonicFunction.degree === 1 &&
@@ -74,6 +77,11 @@ function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
                     }
                 )
         }
-        return resultList;
+
+        var resList = []
+        for(var i=0; i<resultList.length; i++)
+            resList.push(new SopranoRulesChecker.HarmonicFunctionWithSopranoInfo(resultList[i], harmonicFunctionGeneratorInput.measurePlace, harmonicFunctionGeneratorInput.sopranoNote));
+
+        return resList;
     }
 }
