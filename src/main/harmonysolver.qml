@@ -13,7 +13,7 @@ import "./objects/commons/Consts.js" as Consts
 import "./objects/bass/BassTranslator.js" as Translator
 import "./objects/soprano/SopranoExercise.js" as SopranoExercise
 import "./objects/model/HarmonicFunction.js" as HarmonicFunction
-import "./objects/soprano/Soprano.js" as Soprano
+import "./objects/soprano/SopranoSolver.js" as Soprano
 import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
 import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
 import "./objects/commons/Errors.js" as Errors
@@ -417,6 +417,7 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0, [cursor.element.duration.numerator, cursor.element.duration.denominator])
+            //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0, [" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
             notes.push(sopranoNote)
             measure_notes.push(sopranoNote)
         } while (cursor.next())
