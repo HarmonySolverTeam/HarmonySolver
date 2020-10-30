@@ -20,26 +20,33 @@ function SopranoSolver(exercise){
         var measures = []
         var current_measure = []
         var counter = 0
+        // var tmp = "";
         for(var i=0; i<this.exercise.notes.length; i++){
             var note = this.exercise.notes[i];
             counter += note.duration[0] / note.duration[1]
             current_measure.push(harmonicFunctions[i])
+            // tmp += harmonicFunctions[i].shortString() + " "
             if(counter === 1){
+                // tmp += "| "
                 measures.push(current_measure)
                 current_measure = []
                 counter = 0
             }
         }
-
+        // tmp += "\n"
+        // console.log(tmp)
         return new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, measures);
     }
 
     this.prepareSopranoGeneratorInputs = function(sopranoExercise){
         var inputs = [];
-        var duration_sum = 0;
-        for(var i=0; i<sopranoExercise.notes.length; i++){
-            duration_sum = duration_sum + sopranoExercise.notes[i].duration[0]/sopranoExercise.notes[i].duration[1];
-            inputs.push(new HarmonicFunctionGenerator.HarmonicFunctionGeneratorInput(sopranoExercise.notes[i], i===0, i===sopranoExercise.notes.length-1, Utils.getMeasurePlace(sopranoExercise.meter, Utils.mod(duration_sum, sopranoExercise.meter[1])) ))
+        for(var i=0; i<sopranoExercise.measures.length; i++){
+            var duration_sum = 0;
+            for(var j=0; j<sopranoExercise.measures[i].notes.length; j++){
+                // console.log( "Duration sum: " + duration_sum + " \tMeasure place " + Utils.getMeasurePlace(sopranoExercise.meter, duration_sum));
+                inputs.push(new HarmonicFunctionGenerator.HarmonicFunctionGeneratorInput(sopranoExercise.measures[i].notes[j], i===0 && j==0, i===sopranoExercise.measures.length-1 && j === sopranoExercise.measures[i].notes.length -1 , Utils.getMeasurePlace(sopranoExercise.meter, duration_sum)))
+                duration_sum = duration_sum + sopranoExercise.measures[i].notes[j].duration[0]/sopranoExercise.measures[i].notes[j].duration[1];
+            }
         }
         return inputs;
     }
