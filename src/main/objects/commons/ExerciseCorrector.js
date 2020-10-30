@@ -5,9 +5,11 @@
 
 var DEBUG = false;
 
-function ExerciseCorrector(exercise, harmonicFunctions){
+function ExerciseCorrector(exercise, harmonicFunctions, isDefinedBassLine, sopranoLine){
     this.exercise = exercise;
     this.harmonicFunctions = harmonicFunctions;
+    this.isDefinedBassLine = isDefinedBassLine;
+    this.sopranoLine = sopranoLine;
 
     this._makeChordsIncompleteToAvoidConcurrent5 = function(startIndex, endIndex) {
         var changeCurrentChord = (endIndex - startIndex) % 2 === 0;
@@ -32,6 +34,8 @@ function ExerciseCorrector(exercise, harmonicFunctions){
     };
 
     this._handleDominantConnectionsWith7InBass = function(dominantHarmonicFunction, tonicHarmonicFunction) {
+        if(isDefinedBassLine)
+            return;
         if(dominantHarmonicFunction.isInDominantRelation(tonicHarmonicFunction) &&
             dominantHarmonicFunction.revolution.baseComponent === "7" &&
             tonicHarmonicFunction.revolution.baseComponent === "1") {
@@ -65,7 +69,8 @@ function ExerciseCorrector(exercise, harmonicFunctions){
                     resultHarmonicFunctions[i].revolution.baseComponent === "1" &&
                     resultHarmonicFunctions[i+1].revolution.baseComponent === "1" &&
                     Utils.containsBaseChordComponent(resultHarmonicFunctions[i].extra, "7") &&
-                    resultHarmonicFunctions[i].omit.length === 0 && resultHarmonicFunctions[i+1].omit.length === 0){
+                    resultHarmonicFunctions[i].omit.length === 0 && resultHarmonicFunctions[i+1].omit.length === 0 &&
+                    !(Utils.isDefined(this.sopranoLine) && this.sopranoLine[i].baseChordComponentEquals("5"))){
                     if(!insideChain){
                         startIndexOfChain = i;
                         insideChain = true;

@@ -424,4 +424,17 @@ const checkConnectionSDTest = () => {
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionSDTest, "S->D connection test"));
 
+const checkConnectionDT64Test = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined, undefined, undefined, undefined,["7"]);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T", undefined, undefined, undefined, [["6","5"],["4","3"]],["6","4"], ["5","3"], undefined, undefined, Consts.MODE.MINOR);
+
+    var ch1 = new Chord.Chord(new Note.Note(77, 3,"7"), new Note.Note(71,6,"3"), new Note.Note(62, 1,"5"), new Note.Note(55,4,"1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(77, 6,"4"), new Note.Note(72,0,"1"), new Note.Note(69, 6,"6"), new Note.Note(60,0,"1"), hf2);
+
+    var rule = new RulesChecker.DominantRelationCheckConnectionRule();
+    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch2,ch1)));
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDT64Test, "D->T6-4 connection test"));
+
 rulesCheckerTestSuite.run();
