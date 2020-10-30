@@ -2,12 +2,12 @@
 
 var DEBUG = false
 
-function ExerciseSolution(exercise, rating, chords) {
+function ExerciseSolution(exercise, rating, chords, success) {
     this.exercise = exercise;
     this.rating = rating;
     this.chords = chords;
 
-    this.success = true //todo for later use
+    this.success = success === undefined ? true : success //todo for later use
     this.infoMessages = []
     this.errorMessages = []
 
