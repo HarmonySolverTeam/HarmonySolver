@@ -101,18 +101,15 @@ function Solver(exercise, bassLine, sopranoLine){
         var dikstra = new Dikstra.Dikstra(graph);
         var sol_nodes = dikstra.getShortestPathToLastNode();
 
+        if(sol_nodes.length !== graph.layers.length) {
+            return new ExerciseSolution.ExerciseSolution(this.exercise, -1, [], false);
+        }
+
         var sol_chords = []
         for(var i=0; i<sol_nodes.length; i++)
             sol_chords.push(sol_nodes[i].content)
 
-        //dopełenienie pustymi chordami
-        var N = sol_chords.length;
-        for(var i = 0; i<this.harmonicFunctions.length - N; i++){
-            var n = new Note.Note(undefined, undefined, undefined)
-            sol_chords.push(new Chord.Chord(n,n,n,n, this.harmonicFunctions[N + i]));
-        }
-
-        return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords);
+        return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords, true);
     }
 
 }

@@ -272,7 +272,8 @@ function GraphBuilder() {
         for(var i=0; i<graph.layers.length - 1; i++){
             for(var j=0; j<graph.layers[i].nodeList.length; j++){
                 var currentNode = graph.layers[i].nodeList[j];
-                var prevNodeContent = i === 0 ? undefined : currentNode.getPrevContentIfSingle();
+
+                var prevNodeContent = i === 0 ? undefined : ( evaluator.connectionSize !== 3 ? undefined : currentNode.getPrevContentIfSingle());
 
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var neighbour = currentNode.nextNeighbours[k];

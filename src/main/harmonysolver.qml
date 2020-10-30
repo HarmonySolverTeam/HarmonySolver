@@ -394,18 +394,27 @@ MuseScore {
 
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
-        var solution_date = get_solution_date()
+//        console.log("SOLUTION:")
+//        console.log(solution.chords);
 
-        prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
+        if(solution.success) {
+            var solution_date = get_solution_date()
 
-        fill_score_with_solution(solution, sopranoExercise.durations)
+            prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
 
-        writeScore(curScore,
-                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                   "mscz")
+            fill_score_with_solution(solution, sopranoExercise.durations)
 
-        Utils.log("sopranoExercise:",sopranoExercise)
-    }
+            writeScore(curScore,
+                       filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                       "mscz")
+
+            Utils.log("sopranoExercise:",sopranoExercise)
+        }
+        else{
+            console.log("cannot find solution");
+        }
+
+        }
 
     function addComponentToScore(cursor, componentValue) {
         var component = newElement(Element.FINGERING)
