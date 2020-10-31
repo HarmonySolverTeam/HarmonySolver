@@ -271,7 +271,6 @@ function HarmonicFunction2(params){
         if(this.degree !== undefined && this.degree !== 1 && this.degree !== 4 && this.degree !== 5)
             res += "deg" + degreeAdapter[this.degree];
 
-        console.log(res);
         return res;
     }
 

@@ -421,6 +421,7 @@ MuseScore {
             notes.push(sopranoNote)
             measure_notes.push(sopranoNote)
         } while (cursor.next())
+        measures.push(new Note.Measure(measure_notes))
         var key
         if (mode === "major")
             key = Consts.majorKeyBySignature(curScore.keysig)
