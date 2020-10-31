@@ -112,7 +112,11 @@ function HarmonicFunction2(params){
     }
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
     if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
-    if(Utils.contains(this.extra, cm.chordComponentFromString("5<", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("5>", this.down))) this.omit.push(cm.chordComponentFromString("5", this.down));
+    if(Utils.contains(this.extra, cm.chordComponentFromString("5<", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("5>", this.down))) {
+        if (!Utils.contains(this.extra, cm.chordComponentFromString("5", this.down))){
+            this.omit.push(cm.chordComponentFromString("5", this.down));
+        }
+    }
 
     if(Utils.contains(this.omit, this.cm.chordComponentFromString("1", this.down)) && this.revolution === this.cm.chordComponentFromString("1", this.down)){
         this.revolution = this.getBasicChordComponents()[1];
@@ -223,6 +227,30 @@ function HarmonicFunction2(params){
             "omit" : this.omit.map(function (cc) { return cc.chordComponentString; }),
             "extra" : this.extra.map(function (cc) { return cc.chordComponentString; }),
             "key" : this.key
+        }
+    }
+
+    this.getDelaysCopy = function() {
+        var ret = []
+        for (var a = 0; a < this.delay.length; a++) {
+            ret.push([this.delay[a][0].chordComponentString, this.delay[a][1].chordComponentString])
+        }
+        return ret
+    }
+
+    this.getArgsMapWithDelays = function() {
+        return {
+            "functionName" : this.functionName,
+            "degree" : this.degree,
+            "position" : (this.position === undefined ? undefined : this.position.chordComponentString),
+            "revolution" : this.revolution.chordComponentString,
+            "down" : this.down,
+            "system" : this.system,
+            "mode" : this.mode,
+            "omit" : this.omit.map(function (cc) { return cc.chordComponentString; }),
+            "extra" : this.extra.map(function (cc) { return cc.chordComponentString; }),
+            "key" : this.key,
+            "delay" : this.getDelaysCopy()
         }
     }
 

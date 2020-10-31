@@ -118,7 +118,6 @@ MuseScore {
                         i++
                     }
                     Utils.log("component: " + component)
-//todo jak chcesz dodać 8 do syboli, to nie dodawaj, bo to pryma
 
                     if ((component.length === 1 && isAlterationSymbol(component[0])) ||
                         (component.length === 2 && isAlterationSymbol(component[0]) && component[0] === component[1])) {
@@ -134,16 +133,26 @@ MuseScore {
                             var splittedSymbols = component.split('-')
                             var firstSymbol = splittedSymbols[0]
                             var secondSymbol = splittedSymbols[1]
+//todo do osobnej funkcji
 
                             if (isAlterationSymbol(secondSymbol[0])) {
-                                if (parseInt(secondSymbol[1]) !== 8) {
-                                    symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[1]),
-                                                                                      secondSymbol[0]))
+                                if (secondSymbol[0] === secondSymbol[1]){
+                                    if (parseInt(secondSymbol[2]) !== 8) {
+                                        symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[2]), secondSymbol[0]))
+                                    }
+                                } else {
+                                    if (parseInt(secondSymbol[1]) !== 8) {
+                                        symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[1]), secondSymbol[0]))
+                                    }
+                                }
+                            } else if (isAlterationSymbol(secondSymbol[secondSymbol.length - 1])) {
+                                if (parseInt(secondSymbol[0]) !== 8) {
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol[0]),
+                                                                            secondSymbol[secondSymbol.length - 1]))
                                 }
                             } else {
                                 if (parseInt(secondSymbol) !== 8) {
-                                    symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol),
-                                                                            undefined))
+                                    symbols.push(new FiguredBass.BassSymbol(parseInt(secondSymbol), undefined))
                                 }
                             }
                             delays.push([firstSymbol, secondSymbol])

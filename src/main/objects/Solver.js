@@ -63,11 +63,8 @@ function Solver(exercise, bassLine, sopranoLine){
 
 
     this.exercise = exercise;
-    Utils.log("exercise before handleDelaysInBassLine", JSON.stringify(exercise))
 
     this.bassLine = handleDelaysInBassLine(bassLine, exercise.measures);
-
-    Utils.log("exercise after handleDelaysInBassLine", JSON.stringify(exercise))
 
     this.sopranoLine = sopranoLine;
 
@@ -80,7 +77,6 @@ function Solver(exercise, bassLine, sopranoLine){
 
     var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
     this.harmonicFunctions = corrector.correctHarmonicFunctions();
-    Utils.log("exercise after correctHarmonicFunctions", JSON.stringify(this.harmonicFunctions))
 
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
 

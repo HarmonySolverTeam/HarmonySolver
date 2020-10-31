@@ -5,6 +5,7 @@
 .import "./Consts.js" as Consts
 .import "./Errors.js" as Errors
 .import "./Scale.js" as Scale
+.import "./IntervalUtils.js" as IntervalUtils
 
 var DEBUG = false;
 
@@ -162,7 +163,15 @@ function BassTranslator() {
             //3,4,6 -> 3,4,6
             //2,4,6 -> 2,4,6
             //2,4,10 -> 2,4,10
+            //3,7,9 -> 3,7,9
             //nothing to add
+            return bassNumbers
+        }
+        //3,5,7,9
+        if (bassNumbers.length === 4) {
+            bassNumbers.sort(function (a, b) {
+                return (a > b) ? 1 : -1
+            })
             return bassNumbers
         }
 
@@ -177,7 +186,7 @@ function BassTranslator() {
         }
 
         var bassNumbers = []
-        for (var i = 0; i < element.symbols.length; i++){
+        for (var i = 0; i < element.symbols.length; i++) {
             if (element.symbols[i].component !== undefined) {
                 bassNumbers.push(element.symbols[i].component)
             }
@@ -259,7 +268,7 @@ function BassTranslator() {
         chordElement.notesNumbers.push(chordElement.notesNumbers[chordElement.notesNumbers.length - 1] + 2)
         if (chordElement.notesNumbers.length >= 5) {
             //nothing?
-      //      chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
+            //      chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
         }
     }
 
@@ -279,16 +288,14 @@ function BassTranslator() {
             scaleNotes.push(Utils.mod(chordElement.notesNumbers[i], 7))
         }
 
-        if (DEBUG) Utils.log( "Scale Notes: ", scaleNotes.toString())
+        if (DEBUG) Utils.log("Scale Notes: ", scaleNotes.toString())
 
         for (var i = 0; i < scaleNotes.length; i++) {
             var note = scaleNotes[i]
-            //console.log(note)
 
             while (Utils.contains(scaleNotes, Utils.mod((note - 2), 7))) {
                 note = Utils.mod((note - 2), 7)
             }
-            //console.log(note)
 
             if (Utils.contains(scaleNotes, Utils.mod((note + 2), 7)) && Utils.contains(scaleNotes, Utils.mod((note + 4), 7))) {
                 primeNote = note
@@ -306,7 +313,7 @@ function BassTranslator() {
 
     this.getValidFunctions = function (chordElement, key) {
         var primeNote = chordElement.primeNote
-        if (DEBUG) Utils.log("Chordelement:",chordElement)
+        if (DEBUG) Utils.log("Chordelement:", chordElement)
         if (DEBUG) Utils.log("key: " + key)
 
         primeNote -= Consts.keyStrBase[key]
@@ -360,7 +367,7 @@ function BassTranslator() {
 
     }
 
-    this.getValidPositionAndRevolution = function (chordElement, mode, functionName) {
+    this.getValidPositionAndRevolution = function (chordElement, mode, functionName, degree, key) {
 
         var revolution = 1
 
@@ -372,23 +379,26 @@ function BassTranslator() {
             bass = Utils.mod((bass - 1), 7)
             revolution++
         }
-//todo handle this somewere else
-        if (mode === Consts.MODE.MINOR && revolution === 3) {
-            revolution = "3>"
+
+        if (revolution === 3) {
+            if (IntervalUtils.getThirdMode(key, degree === 7 ? 4 : degree - 1) === Consts.MODE.MINOR) {
+                revolution = "3>"
+            }
         }
 
-        if (mode === Consts.MODE.MINOR && revolution === 7
-            && functionName !== Consts.FUNCTION_NAMES.DOMINANT) {
-            revolution = "7<"
-        }
+        // if (mode === Consts.MODE.MINOR && revolution === 7
+        //     && functionName !== Consts.FUNCTION_NAMES.DOMINANT) {
+        //     revolution = "7<"
+        // }
 
         var position = this.getValidPosition(chordElement)
 
         return [position, revolution]
     }
 
-    this.addExtraAndOmit = function (extra, omit, chordElement) {
+    this.addExtraAndOmit = function (extra, omit, chordElement, mode, key) {
         var symbols = this.getSortedSymbolsFromChordElement(chordElement)
+
 
         if (symbols.equals([3, 5, 7]) || symbols.equals([2, 4, 6]) ||
             symbols.equals([3, 4, 6]) || symbols.equals([3, 5, 6]) ||
@@ -397,7 +407,7 @@ function BassTranslator() {
             if (!Utils.contains(extra, "7") &&
                 !Utils.contains(extra, "7>") &&
                 !Utils.contains(extra, "7<")) {
-                extra.push("7")
+                extra.push("7" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 7))
             }
         }
 
@@ -405,16 +415,83 @@ function BassTranslator() {
             if (!Utils.contains(extra, "9") &&
                 !Utils.contains(extra, "9>") &&
                 !Utils.contains(extra, "9<")) {
-                extra.push("9")
+                extra.push("9" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 9))
             }
 
             if (!Utils.contains(omit, "5") &&
                 !Utils.contains(omit, "5>") &&
                 !Utils.contains(omit, "5<")) {
-                omit.push("5")
+                omit.push("5" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 5))
             }
         }
 
+    }
+
+    this.bassSymbolsHasGivenNumber = function (chordElement, number) {
+        for (var i = 0; i < chordElement.bassElement.symbols.length; i++) {
+            if (chordElement.bassElement.symbols[i].component === number) {
+                return true
+            }
+        }
+        return false
+    }
+
+    //works for 5 and 7 and 9
+    this.calculateAngleBracketForSpecificNote = function (mode, key, primeNote, noteNumber) {
+        //zrób to na podstawie pitchy
+        var realPrime = Utils.mod(primeNote - Consts.keyStrBase[key], 7)
+        var pitches = mode === Consts.MODE.MAJOR ? new Scale.MajorScale("a").pitches : new Scale.MinorScale("a").pitches
+        var primePitch = pitches[realPrime]
+        var notePitch = pitches[Utils.mod(realPrime + noteNumber - 1, 7)]
+        var pitchDifference = Utils.mod(notePitch - primePitch, 12)
+
+        if (DEBUG) Utils.log("realPrime", realPrime)
+        if (DEBUG) Utils.log("pitches", pitches)
+        if (DEBUG) Utils.log("primePitch", primePitch)
+        if (DEBUG) Utils.log("notePitch", notePitch)
+        if (DEBUG) Utils.log("pitchDifference", pitchDifference)
+
+        if (noteNumber === 7) {
+            return pitchDifference === 10 ? "" : "<"
+        } else if (noteNumber === 9) {
+            return pitchDifference === 1 ? ">" : ""
+        } else { /// 5
+            return pitchDifference === 6 ? ">" : ""
+        }
+
+    }
+
+    this.substituteDelaysSymbols = function (delays) {
+        var ret = delays
+        for (var a = 0; a < ret.length; a++) {
+            for (var b = 0; b < ret[a].length; b++) {
+                ret[a][b] = ret[a][b].replace('b', '>')
+                ret[a][b] = ret[a][b].replace('#', '<')
+            }
+        }
+        return ret
+    }
+
+    this.translateDelays = function (delays, revolution) {
+        var revNumber = parseInt(revolution[0])
+        revNumber -= 1
+        var delayNumber
+        var delayString
+        for (var a = 0; a < delays.length; a++) {
+            for (var b = 0; b < delays[a].length; b++) {
+                delayNumber = parseInt(delays[a][b][0])
+                delayNumber += revNumber
+                delayNumber = delayNumber > 9 ? delayNumber - 7 : delayNumber
+                delayString = delays[a][b].length > 1 ? delayNumber + "" + delays[a][b].substring(1) : delayNumber + ""
+                delays[a][b] = delayString
+            }
+        }
+        return delays
+    }
+
+    this.fixDelaysSymbols = function (delays, revolution) {
+        var ret = this.substituteDelaysSymbols(delays)
+        return this.translateDelays(ret, revolution)
     }
 
 
@@ -437,7 +514,7 @@ function BassTranslator() {
             }
 
 
-            var posAndRev = this.getValidPositionAndRevolution(chordElement, mode, functionName)
+            var posAndRev = this.getValidPositionAndRevolution(chordElement, mode, functionName, degree, key)
 
             var position = posAndRev[0]
             var revolution = posAndRev[1].toString()
@@ -446,19 +523,56 @@ function BassTranslator() {
             var system = undefined
             var extra = []
 
-            this.addExtraAndOmit(extra, omit, chordElement)
+            this.addExtraAndOmit(extra, omit, chordElement, mode, key)
 
             if (functionName === Consts.FUNCTION_NAMES.DOMINANT
-                   // && revolution === "1"
-                    && degree === 7
-                   // && this.getSortedSymbolsFromChordElement(chordElement).equals([3, 5])
+                // && revolution === "1"
+                && degree === 7
+                // && this.getSortedSymbolsFromChordElement(chordElement).equals([3, 5])
             ) {
                 if (DEBUG) Utils.log("Handling special situation: equivalent to hdf in C major -> D omit 1 extra 7")
                 //revolution = mode === Consts.MODE.MAJOR ? "3" : "3>"
-                omit.push("1")
-                extra.push("7")
+
+                if (!Utils.contains(omit, "1") &&
+                    !Utils.contains(omit, "1>") &&
+                    !Utils.contains(omit, "1<")) {
+                    omit.push("1")
+                }
+                if (!Utils.contains(extra, "7") &&
+                    !Utils.contains(extra, "7>") &&
+                    !Utils.contains(extra, "7<")) {
+                    extra.push("7" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 7))
+                }
+                if (this.bassSymbolsHasGivenNumber(chordElement, 7)
+                    || (parseInt(revolution[0]) === 5 && this.bassSymbolsHasGivenNumber(chordElement, 5))
+                    || (parseInt(revolution[0]) === 7 && this.bassSymbolsHasGivenNumber(chordElement, 3))) {
+                    if (!Utils.contains(extra, "9") &&
+                        !Utils.contains(extra, "9>") &&
+                        !Utils.contains(extra, "9<")) {
+                        extra.push("9" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 9))
+                    }
+                }
+
                 degree = 5
             }
+
+            if (revolution === "2") {
+                revolution = "9" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 9)
+            }
+
+            if (revolution === "5") {
+                revolution = revolution + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 5)
+            }
+
+            if (revolution === "7") {
+                revolution = revolution + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 7)
+            }
+
+            var delays1 = this.fixDelaysSymbols(delays, revolution)
+
+            //var delays1 = this.substituteDelaysSymbols(delays)
+
+            var mode1 = !Utils.contains([2, 3, 6], degree) ? IntervalUtils.getThirdMode(key, degree === 7 ? 4 : degree - 1) : mode
 
             if (DEBUG) {
                 Utils.log("chordElement", JSON.stringify(chordElement))
@@ -466,16 +580,16 @@ function BassTranslator() {
                 Utils.log("degree", JSON.stringify(degree))
                 Utils.log("position", JSON.stringify(position))
                 Utils.log("revolution", JSON.stringify(revolution))
-                Utils.log("delays", JSON.stringify(delays))
+                Utils.log("delays", JSON.stringify(delays1))
                 Utils.log("extra", JSON.stringify(extra))
                 Utils.log("omit", JSON.stringify(omit))
                 Utils.log("down", JSON.stringify(down))
                 Utils.log("system", JSON.stringify(system))
-                Utils.log("mode", JSON.stringify(mode))
+                Utils.log("mode", JSON.stringify(mode1))
             }
 
-            var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays,
-                                                                extra, omit, down, system, mode)
+            var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays1,
+                extra, omit, down, system, mode1)
 
             if (DEBUG) Utils.log("toAdd", JSON.stringify(toAdd))
 
@@ -484,6 +598,7 @@ function BassTranslator() {
 
         return ret
     }
+
 
     this.convertToFunctions = function (figuredBassExercise) {
 
@@ -506,7 +621,7 @@ function BassTranslator() {
             this.completeUntillTwoNextThirds(chordElement)
 
             this.findPrime(chordElement)
-            if (DEBUG) Utils.log("Chord element:",JSON.stringify(chordElement))
+            if (DEBUG) Utils.log("Chord element:", JSON.stringify(chordElement))
 
             var harmFunction = this.createHarmonicFunctionOrFunctions(chordElement,
                 figuredBassExercise.mode,
@@ -515,7 +630,7 @@ function BassTranslator() {
 
             bassElements[i].bassNote.chordComponent = parseInt(harmFunction[0].revolution)
 
-            if (DEBUG) Utils.log("Harmonic function:",JSON.stringify(harmFunction))
+            if (DEBUG) Utils.log("Harmonic function:", JSON.stringify(harmFunction))
 
             harmonicFunctions.push(harmFunction)
             chordElements.push(chordElement)
@@ -530,25 +645,103 @@ function BassTranslator() {
         var functions = chordElementsAndHarmonicFunctions[1]
         var elements = chordElementsAndHarmonicFunctions[0]
 
-        if (DEBUG) Utils.log("Harmonic functions before split:",functions)
+        if (DEBUG) Utils.log("Harmonic functions before split:", functions)
         return [elements, this.makeChoiceAndSplit(functions)]
     }
 
+    this.removeRevolutionFromExtra = function (argsMap, revolution) {
+        for (var a = 0; a < argsMap.extra.length; a++) {
+            if (argsMap.extra[a][0] === (revolution + "")) {
+                argsMap.extra.splice(a, 1)
+            }
+        }
+    }
+
+    this.increaseByHalfTone = function (a) {
+        if (a === undefined) {
+            return undefined
+        }
+
+        if (a.length === 1) {
+            return a + "<"
+        }
+
+        if (a.length === 2 && a[1] === ">") {
+            return a[0]
+        } else {
+            return a + "<"
+        }
+    }
+
+    this.handleDownChord = function (argsMap) {
+        if (Utils.contains(argsMap.extra, "1>")) {
+            argsMap.omit = []
+            argsMap.mode = Consts.MODE.MINOR
+            argsMap.down = true
+            var extra = []
+            for (var a = 0; a < argsMap.extra.length; a++) {
+                if (parseInt(argsMap.extra[a][0]) > 5) {
+                    extra.push(this.increaseByHalfTone(argsMap.extra[a]))
+                }
+            }
+            argsMap.extra = extra
+            if (argsMap.position !== undefined) {
+                argsMap.position = this.increaseByHalfTone(argsMap.position)
+            }
+            if (argsMap.revolution !== undefined) {
+                argsMap.revolution = this.increaseByHalfTone(argsMap.revolution)
+            }
+            //probably?
+            for (var a = 0; a < argsMap.delay.length; a++) {
+                for (var b = 0; b < argsMap.delay[a].length; b++) {
+                    argsMap.delay[a][b] = this.increaseByHalfTone(argsMap.delay[a][b])
+                }
+            }
+        }
+    }
+
+
+    this.fixExtraAfterModeChange = function (argsMap) {
+        if (argsMap.mode === Consts.MODE.MAJOR && Utils.contains(argsMap.extra, "3")) {
+            argsMap.extra.splice(argsMap.extra.indexOf("3"), 1)
+        }
+        if (argsMap.mode === Consts.MODE.MINOR && Utils.contains(argsMap.extra, "3>")) {
+            argsMap.extra.splice(argsMap.extra.indexOf("3>"), 1)
+        }
+    }
+
+    this.handleThirdAlterationIn236Chords = function (argsMap, toOmit, toExtra) {
+        if (Utils.contains([2, 3, 6], argsMap.degree)) {
+            if (argsMap.mode === Consts.MODE.MAJOR || argsMap.degree === 2) {
+                if (Utils.contains(toOmit, 3) && Utils.contains(toExtra, "3<")) {
+                    toOmit.splice(toOmit.indexOf(3), 1)
+                    toOmit.push("3>")
+                    toExtra.splice(toExtra.indexOf("3<"), 1)
+                    toExtra.push("3")
+                }
+            } else {
+                //nothing?
+            }
+        }
+    }
 
     this.handleAlterations = function (harmonicFunctions, chordElements, figuredBassExercise) {
         var mode = figuredBassExercise.mode
 
         var majorPitches = new Scale.MajorScale("a").pitches
 
-        if (DEBUG) Utils.log("Handle Alterations")
-        if (DEBUG) Utils.log("harmonicFunctions:", JSON.stringify(harmonicFunctions))
-        if (DEBUG) Utils.log("chordElements:", JSON.stringify(chordElements))
-        if (DEBUG) Utils.log("mode:", JSON.stringify(mode))
-        if (DEBUG) Utils.log("meter:", JSON.stringify(figuredBassExercise.meter))
-        if (DEBUG) Utils.log("durations:", JSON.stringify(figuredBassExercise.durations))
-       // if (DEBUG) Utils.log("harmonicFunctions[0].length:", harmonicFunctions[0].length)
-       // if (DEBUG) Utils.log("figuredBassExercise.elements.length:", figuredBassExercise.elements.length)
-        if (DEBUG) Utils.log("figuredBassExercise:", JSON.stringify(figuredBassExercise))
+        if (DEBUG) {
+            Utils.log("Handle Alterations")
+            Utils.log("harmonicFunctions:", JSON.stringify(harmonicFunctions))
+            Utils.log("chordElements:", JSON.stringify(chordElements))
+            Utils.log("mode:", JSON.stringify(mode))
+            Utils.log("meter:", JSON.stringify(figuredBassExercise.meter))
+            Utils.log("durations:", JSON.stringify(figuredBassExercise.durations))
+            // if (DEBUG) Utils.log("harmonicFunctions[0].length:", harmonicFunctions[0].length)
+            // if (DEBUG) Utils.log("figuredBassExercise.elements.length:", figuredBassExercise.elements.length)
+            Utils.log("figuredBassExercise:", JSON.stringify(figuredBassExercise))
+        }
+
 
         for (var i = 0; i < harmonicFunctions[0].length; i++) {
 
@@ -574,12 +767,12 @@ function BassTranslator() {
 
                         var baseNotePitch = majorPitches[baseNoteToAlter]
                         //maybe for future bass deflections
-                        var keyToUse = harmonicFunctions[0][i].key !== undefined ? harmonicFunctions[0][i].key: figuredBassExercise.key
+                        var keyToUse = harmonicFunctions[0][i].key !== undefined ? harmonicFunctions[0][i].key : figuredBassExercise.key
 
-                        var pitches = harmonicFunctions[0][i].mode === Consts.MODE.MAJOR ? new Scale.MajorScale("a").pitches : new Scale.MinorScale("a").pitches
+                        var pitches = Utils.contains(Consts.possible_keys_major, keyToUse) ? new Scale.MajorScale("a").pitches : new Scale.MinorScale("a").pitches
 
                         var realNotePitch = Utils.mod(
-                            Consts.keyStrPitch[keyToUse] + pitches[Utils.mod(Consts.keyStrBase[keyToUse] - baseNoteToAlter, 7)], 12)
+                            Consts.keyStrPitch[keyToUse] + pitches[Utils.mod(baseNoteToAlter - Consts.keyStrBase[keyToUse], 7)], 12)
 
                         alterationSymbol = Utils.mod(realNotePitch - baseNotePitch, 12) === 1 ? Consts.ALTERATIONS.SHARP : Consts.ALTERATIONS.FLAT
 
@@ -599,10 +792,14 @@ function BassTranslator() {
                     if (DEBUG) Utils.log("Alteration: " + alteration)
 
                     var componentToAlter = Utils.mod(baseNoteToAlter - chordElements[i].primeNote, 7) + 1
+                    componentToAlter = componentToAlter === 2 ? 9 : componentToAlter
+
                     if (DEBUG) Utils.log("componentToAlter: " + componentToAlter)
 
-                    toOmit.push(componentToAlter)
-                    toExtra.push(componentToAlter + alteration)
+                    if (!Utils.contains(toOmit, componentToAlter)) {
+                        toOmit.push(componentToAlter)
+                        toExtra.push(componentToAlter + alteration)
+                    }
                 }
             }
 
@@ -623,13 +820,14 @@ function BassTranslator() {
                 if (DEBUG) Utils.log("revolution", revolution)
                 if (DEBUG) Utils.log("alterationSymbol", alterationSymbol)
 
-                toOmit.push(revolution)
-                var argsMap = harmonicFunctions[0][i].getArgsMap()
+                if (!Utils.contains([7, 9], revolution)) {
+                    toOmit.push(revolution)
+                }
+                var argsMap = harmonicFunctions[0][i].getArgsMapWithDelays()
 
                 if (alterationSymbol === Consts.ALTERATIONS.SHARP) {
                     toExtra.push(revolution + "" + "<")
-                    if (revolutionString[revolutionString.length - 1] !== ">" &&
-                        !(argsMap.functionName === Consts.FUNCTION_NAMES.DOMINANT && revolution === 3)) {
+                    if (revolutionString[revolutionString.length - 1] !== ">") {
                         argsMap.revolution = revolutionString + "<"
                     } else {
                         argsMap.revolution = revolution + ""
@@ -637,8 +835,7 @@ function BassTranslator() {
 
                 } else {
                     toExtra.push(revolution + "" + ">")
-                    if (revolutionString[revolutionString.length - 1] !== "<" &&
-                        !(argsMap.functionName === Consts.FUNCTION_NAMES.DOMINANT && revolution === 3)) {
+                    if (revolutionString[revolutionString.length - 1] !== "<") {
                         argsMap.revolution = revolutionString + ">"
                     } else {
                         argsMap.revolution = revolution + ""
@@ -646,87 +843,138 @@ function BassTranslator() {
                 }
                 if (DEBUG) Utils.log("harm function before copy", JSON.stringify(harmonicFunctions[0][i]))
 
-                if (toOmit.length === 1 && revolution === 3) {
+                if (revolution === 3) {
                     if (mode === Consts.MODE.MINOR && Utils.contains(toExtra, "3<")) {
                         if (DEBUG) Utils.log("Changing chord mode to major")
-                        argsMap.mode = Consts.MODE.MAJOR;
-                        toExtra.splice( toExtra.indexOf("3<"),1)
+                        argsMap.mode = !Utils.contains([2, 3, 6], argsMap.degree) ? Consts.MODE.MAJOR : argsMap.mode;
+                        toExtra.splice(toExtra.indexOf("3<"), 1)
+                        toOmit.splice(toOmit.indexOf(3), 1)
                     }
                     if (mode === Consts.MODE.MAJOR && Utils.contains(toExtra, "3>")) {
                         if (DEBUG) Utils.log("Changing chord mode to minor")
-                        argsMap.mode = Consts.MODE.MINOR;
-                        toExtra.splice( toExtra.indexOf("3>"),1)
-
+                        argsMap.mode = !Utils.contains([2, 3, 6], argsMap.degree) ? Consts.MODE.MINOR : argsMap.mode;
+                        toExtra.splice(toExtra.indexOf("3>"), 1)
+                        toOmit.splice(toOmit.indexOf(3), 1)
                     }
-                    toOmit = []
                 }
                 if (DEBUG) Utils.log("toOmit", JSON.stringify(toOmit))
                 if (DEBUG) Utils.log("toExtra", JSON.stringify(toExtra))
+
+                this.removeRevolutionFromExtra(argsMap, revolution)
+
+                this.handleDownChord(argsMap)
 
                 harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
                 if (DEBUG) Utils.log("harm function after copy", JSON.stringify(harmonicFunctions[0][i]))
 
             }
 
-            //Utils.log("toOmit", JSON.stringify(toOmit))
-            //Utils.log("toExtra", JSON.stringify(toExtra))
+            if (DEBUG) Utils.log("toOmit", JSON.stringify(toOmit))
+            if (DEBUG) Utils.log("toExtra", JSON.stringify(toExtra))
 
-            if (toOmit.length === 1 && Utils.contains(toOmit, 3)
+            if (Utils.contains(toOmit, 3)
                 && ((mode === Consts.MODE.MINOR && toExtra[0] === "3<")
-                    ||(mode === Consts.MODE.MAJOR && toExtra[0] === "3>"))) {
+                    || (mode === Consts.MODE.MAJOR && toExtra[0] === "3>"))) {
                 if (mode === Consts.MODE.MINOR && toExtra[0] === "3<") {
                     if (DEBUG) Utils.log("Changing chord mode to major")
-                    harmonicFunctions[0][i].mode = Consts.MODE.MAJOR;
+                    harmonicFunctions[0][i].mode = !Utils.contains([2, 3, 6], harmonicFunctions[0][i].degree) ? Consts.MODE.MAJOR : harmonicFunctions[0][i].mode;
+                    //harmonicFunctions[0][i].mode = Consts.MODE.MAJOR;
+                    toExtra.splice(toExtra.indexOf("3<"), 1)
+                    toOmit.splice(toOmit.indexOf(3), 1)
                 }
                 if (mode === Consts.MODE.MAJOR && toExtra[0] === "3>") {
                     if (DEBUG) Utils.log("Changing chord mode to minor")
-                    harmonicFunctions[0][i].mode = Consts.MODE.MINOR;
+                    harmonicFunctions[0][i].mode = !Utils.contains([2, 3, 6], harmonicFunctions[0][i].degree) ? Consts.MODE.MINOR : harmonicFunctions[0][i].mode;
+                    toExtra.splice(toExtra.indexOf("3>"), 1)
+                    toOmit.splice(toOmit.indexOf(3), 1)
                 }
-            } else {
-                var argsMap = harmonicFunctions[0][i].getArgsMap()
-                var addedSomething = false
+            }
 
-                for (var a = 0; a < toOmit.length; a++) {
-                    if (!Utils.contains(argsMap.omit, toOmit[a]) && toOmit[a] !== 8) {
-                        argsMap.omit.push(toOmit[a])
+            var argsMap = harmonicFunctions[0][i].getArgsMapWithDelays()
+            if (DEBUG) Utils.log("argsMap " + JSON.stringify(argsMap))
+            var addedSomething = false
+
+            this.handleThirdAlterationIn236Chords(argsMap, toOmit, toExtra)
+
+            for (var a = 0; a < toOmit.length; a++) {
+                if (!Utils.contains(argsMap.omit, toOmit[a] + "") && toOmit[a] !== 8) {
+                    argsMap.omit.push(toOmit[a] + "")
+                    addedSomething = true
+                }
+            }
+
+            for (var a = 0; a < toExtra.length; a++) {
+                var notAdd = false
+                if (!Utils.contains(argsMap.extra, toExtra[a])
+                    && (toExtra[a] !== "8" || toExtra[a] !== 8)) {
+                    if (toExtra[a].length === 2) {
+                        var toAlter = parseInt(toExtra[a][0])
+                        var alter = toExtra[a][1]
+                        //todo some refactor?
+                        if (alter === "<") {
+                            if (Utils.contains(argsMap.extra, toAlter + "" + ">")) {
+                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + ">"), 1)
+                                argsMap.extra.push(toAlter + "")
+                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                addedSomething = true
+                                notAdd = true
+                            } else if (Utils.contains(argsMap.extra, toAlter + "")) {
+                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
+                                argsMap.extra.push(toAlter + "<")
+                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                addedSomething = true
+                                notAdd = true
+                            }
+                        } else {
+                            if (Utils.contains(argsMap.extra, toAlter + "" + "<")) {
+                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + "<"), 1)
+                                argsMap.extra.push(toAlter + "")
+                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                addedSomething = true
+                                notAdd = true
+                            } else if (Utils.contains(argsMap.extra, toAlter + "")) {
+                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
+                                argsMap.extra.push(toAlter + ">")
+                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                addedSomething = true
+                                notAdd = true
+                            }
+                        }
+                    }
+                    if (!notAdd) {
+                        argsMap.extra.push(toExtra[a] + "")
                         addedSomething = true
                     }
                 }
+            }
 
-                for (var a = 0; a< toExtra.length; a++) {
-                    if (!Utils.contains(argsMap.extra, toExtra[a]) && toExtra[a] !== 8) {
-                        argsMap.extra.push(toExtra[a])
-                        addedSomething = true
-                    }
-                }
-
-                if (addedSomething) {
-                    harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
-                    if (DEBUG) Utils.log("harm function after copy adding toExtra and toOmit",
-                        JSON.stringify(harmonicFunctions[0][i]))
-                }
-
+            if (addedSomething) {
+                this.handleDownChord(argsMap)
+                this.fixExtraAfterModeChange(argsMap)
+                harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                if (DEBUG) Utils.log("harm function after copy adding toExtra and toOmit",
+                    JSON.stringify(harmonicFunctions[0][i]))
             }
 
         }
     }
 
-    this.isD7 = function(harmonicFunction) {
+    this.isD7 = function (harmonicFunction) {
         return harmonicFunction.functionName === Consts.FUNCTION_NAMES.DOMINANT &&
             (Utils.contains(harmonicFunction.extra, "7") || Utils.contains(harmonicFunction.extra, ">7") ||
                 Utils.contains(harmonicFunction.extra, "<7"));
     }
 
-    this.isT = function(harmonicFunction) {
+    this.isT = function (harmonicFunction) {
         return harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC;
     }
 
-    this.hasOmit5 = function(harmonicFunction) {
+    this.hasOmit5 = function (harmonicFunction) {
         return (Utils.contains(harmonicFunction.omit, "5") || Utils.contains(harmonicFunction.omit, ">5") ||
             Utils.contains(harmonicFunction.omit, "<5"))
     }
 
-    this.handleD7_TConnection = function(harmonicFunctions){
+    this.handleD7_TConnection = function (harmonicFunctions) {
         for (var i = 0; i < harmonicFunctions[0].length - 1; i++) {
             if (this.isD7(harmonicFunctions[0][i]) && this.isT(harmonicFunctions[0][i + 1])) {
                 if (!this.hasOmit5(harmonicFunctions[0][i + 1])) {
@@ -736,14 +984,13 @@ function BassTranslator() {
         }
     }
 
-
     this.createExerciseFromFiguredBass = function (figuredBassExercise) {
         var chordElementsAndHarmonicFunctions = this.convertBassToHarmonicFunctions(figuredBassExercise)
 
         var harmonicFunctions = chordElementsAndHarmonicFunctions[1]
         var chordElements = chordElementsAndHarmonicFunctions[0]
 
-        if (DEBUG) Utils.log("Harmonic functions after split",harmonicFunctions)
+        if (DEBUG) Utils.log("Harmonic functions after split", harmonicFunctions)
 
         var key = figuredBassExercise.mode === Consts.MODE.MAJOR ? figuredBassExercise.key : figuredBassExercise.key.toLowerCase()
 
@@ -754,6 +1001,5 @@ function BassTranslator() {
         return new Exercise.Exercise(key, figuredBassExercise.meter,
             figuredBassExercise.mode, harmonicFunctions)
     }
-
 
 }

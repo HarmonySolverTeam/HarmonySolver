@@ -251,7 +251,7 @@ function checkConnection(prevChord, currentChord){
                 }
             }
             if (dominantVoiceWith3 > -1 && !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("3") &&
-                !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
+                !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return 10;
 
             var dominantVoiceWith5 = -1;
             for (var i = 0; i < 4; i++) {
@@ -261,7 +261,7 @@ function checkConnection(prevChord, currentChord){
                 }
             }
             if (dominantVoiceWith5 > -1 && !currentChord.notes[dominantVoiceWith5].baseChordComponentEquals("3") &&
-                !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
+                !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return 10;
 
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 var dominantVoiceWith7 = -1;
@@ -272,7 +272,7 @@ function checkConnection(prevChord, currentChord){
                     }
                 }
                 if (dominantVoiceWith7 > -1 && !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5") &&
-                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5")) return -1;
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5")) return 10;
             }
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>")) {
                 var dominantVoiceWithAlt5 = -1;
@@ -285,7 +285,7 @@ function checkConnection(prevChord, currentChord){
                 if (dominantVoiceWithAlt5 > -1 &&
                     !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
                     !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
-                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return -1;
+                    !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) return 10;
             }
         }
     }
