@@ -44,7 +44,8 @@ function HarmonicFunctionMap(){
     };
 
     this.pushToValues = function(pitch, baseNote, harmonicFunction){
-        if(Utils.contains(this._map[pitch + " " + baseNote], harmonicFunction))
+        if(!(pitch >= 60 && pitch < 72) || !(baseNote >= 0 && baseNote < 7) ||
+            Utils.contains(this._map[pitch + " " + baseNote], harmonicFunction))
             return;
         this._map[pitch + " " + baseNote].push(harmonicFunction)
     };
@@ -59,10 +60,14 @@ function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
     this.map = new HarmonicFunctionMap();
 
     for(var i=0; i<allowedHarmonicFunctions.length; i++){
-        var currentFunction = allowedHarmonicFunctions[i];
+        var currentFunction = allowedHarmonicFunctions[i].copy();
         var possibleNotesToHarmonize = this.chordGenerator.generatePossibleSopranoNotesFor(currentFunction);
+        var filledValues = [];
         for(var j=0; j<possibleNotesToHarmonize.length; j++) {
-            this.map.pushToValues(possibleNotesToHarmonize[j].pitch, possibleNotesToHarmonize[j].baseNote, currentFunction);
+                if(!Utils.contains(filledValues, possibleNotesToHarmonize[j].pitch+" "+possibleNotesToHarmonize[j].baseNote)) {
+                    this.map.pushToValues(possibleNotesToHarmonize[j].pitch, possibleNotesToHarmonize[j].baseNote, currentFunction.withPosition(possibleNotesToHarmonize[j].chordComponent));
+                    filledValues.push(possibleNotesToHarmonize[j].pitch+" "+possibleNotesToHarmonize[j].baseNote);
+                }
         }
     }
 

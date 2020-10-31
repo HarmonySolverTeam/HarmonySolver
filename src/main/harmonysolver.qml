@@ -497,6 +497,8 @@ MuseScore {
         Dtoiii.key = Parser.calculateKey(key, Diii)
         var Dtoiv = D7.copy()
         Dtoiv.key = Parser.calculateKey(key, S)
+        var Dtov = D7.copy()
+        Dtov.key = Parser.calculateKey(key, D)
         var Dtovi = D7.copy()
         Dtovi.key = Parser.calculateKey(key, Tvi)
         var Dtovii = D7.copy()
@@ -534,6 +536,7 @@ MuseScore {
             chordsList.push(Dtoii)
             chordsList.push(Dtoiii)
             chordsList.push(Dtoiv)
+            chordsList.push(Dtov)
             chordsList.push(Dtovi)
             chordsList.push(Dtovii)
         }
