@@ -21,12 +21,8 @@ const harmonicFunctionMapTest = () => {
     hfMap.pushToValues(60,1, hf)
     return TestUtils.assertTrue(hfMap.getValues(60,0)) &&
         TestUtils.assertContains(hfMap.getValues(60,1), hf) &&
-        TestUtils.assertThrows(undefined,
-            "Cannot read property '0 0' of undefined",
-            hfMap.getValues, [0, 0]) &&
-        TestUtils.assertThrows(undefined,
-            "Cannot read property '0 0' of undefined",
-            hfMap.pushToValues, [0, 0, undefined])
+        TestUtils.assertEqualsPrimitives(0, hfMap.getValues(0, 0).length) &&
+        TestUtils.assertUndefined(hfMap.pushToValues(0, 0, undefined))
 };
 
 testSuite.addTest(new TestUtils.UnitTest(harmonicFunctionMapTest, "Harmonic function map test"));

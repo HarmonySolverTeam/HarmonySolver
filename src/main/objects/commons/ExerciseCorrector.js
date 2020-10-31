@@ -19,7 +19,12 @@ function ExerciseCorrector(exercise, harmonicFunctions, isDefinedBassLine, sopra
         }
         for(var i=startIndex; i<endIndex; i++){
             if(changeCurrentChord){
-                this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].getFifth());
+                if(Utils.isDefined(this.harmonicFunctions[i].position) && this.harmonicFunctions[i].position === this.harmonicFunctions[i].getFifth()){
+                    this.harmonicFunctions[i].revolution = this.harmonicFunctions[i].getThird();
+                    //todo maybe it is wrong strategy
+                    this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].getPrime());
+                } else
+                    this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].getFifth());
             }
             changeCurrentChord = !changeCurrentChord;
         }
@@ -69,8 +74,7 @@ function ExerciseCorrector(exercise, harmonicFunctions, isDefinedBassLine, sopra
                     resultHarmonicFunctions[i].revolution.baseComponent === "1" &&
                     resultHarmonicFunctions[i+1].revolution.baseComponent === "1" &&
                     Utils.containsBaseChordComponent(resultHarmonicFunctions[i].extra, "7") &&
-                    resultHarmonicFunctions[i].omit.length === 0 && resultHarmonicFunctions[i+1].omit.length === 0 &&
-                    !(Utils.isDefined(this.sopranoLine) && this.sopranoLine[i].baseChordComponentEquals("5"))){
+                    resultHarmonicFunctions[i].omit.length === 0 && resultHarmonicFunctions[i+1].omit.length === 0){
                     if(!insideChain){
                         startIndexOfChain = i;
                         insideChain = true;
