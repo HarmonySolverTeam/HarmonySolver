@@ -256,5 +256,6 @@ var keyFromPitchBasenoteAndMode = {
 var PREFERENCES_NAMES = {
     PRECHECK: "precheck",
     CORRECT: "correct",
-    PRINT_SYMBOLS: "printSymbols"
+    PRINT_SYMBOLS: "printSymbols",
+    PRINT_COMPONENTS: "printComponents"
 }

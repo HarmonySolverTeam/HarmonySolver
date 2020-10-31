@@ -38,6 +38,7 @@ MuseScore {
       preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = true
       preferences[Consts.PREFERENCES_NAMES.CORRECT] = true
       preferences[Consts.PREFERENCES_NAMES.PRECHECK] = true
+      preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = true
         //readPluginConfiguration()
     }
 
@@ -419,6 +420,8 @@ MuseScore {
     }
 
     function addComponentToScore(cursor, componentValue) {
+        if(!preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS])
+            return
         var component = newElement(Element.FINGERING)
         component.text = componentValue
         curScore.startCmd()
@@ -1008,6 +1011,20 @@ MuseScore {
                                           return Qt.Unchecked
                                     }else{
                                           preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = false
+                                          return Qt.Checked
+                                    }
+                            }
+                        }
+                        CheckBox {
+                             id: printComponentsCheckbox
+                             checked: true
+                             text: qsTr("print chord components")
+                             onCheckedChanged: function() {
+                                    if (this.checkedState === Qt.Checked){
+                                          preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = true
+                                          return Qt.Unchecked
+                                    }else{
+                                          preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = false
                                           return Qt.Checked
                                     }
                             }
