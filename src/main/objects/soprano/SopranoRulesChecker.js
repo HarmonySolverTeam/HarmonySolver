@@ -9,7 +9,7 @@ function SopranoRulesChecker(key){
     RulesCheckerUtils.Evaluator.call(this, 2);
 
     this.hardRules = [new ForbiddenDSConnectionRule(), new SecondaryDominantConnectionRule(this.key)];
-    this.softRules = [new DominantRelationRule(), new ChangeFunctionConnectionRule(), new JumpRule(), new SecondRelationRule(), new ChangeFunctionOnDownBeatRule(), new ChangeFunctionAtMeasureBeginningRule(),];
+    this.softRules = [new FourthChordsRule(), new DominantRelationRule(), new ChangeFunctionConnectionRule(), new JumpRule(), new SecondRelationRule(), new ChangeFunctionOnDownBeatRule(), new ChangeFunctionAtMeasureBeginningRule(),];
 }
 
 function HarmonicFunctionWithSopranoInfo(harmonicFunction, measurePlace, sopranoNote){
@@ -161,6 +161,16 @@ function SecondaryDominantConnectionRule(key) {
         if(dt.isBroken(connection) && connection.prev.harmonicFunction.key !== connection.current.harmonicFunction.key){
             if(Parser.calculateKey(key, connection.current.harmonicFunction) !== connection.prev.harmonicFunction.key)
                 return -1;
+        }
+        return 0;
+    }
+}
+
+function FourthChordsRule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function (connection) {
+        if(connection.current.harmonicFunction.countChordComponents() === 3){
+            return 4;
         }
         return 0;
     }
