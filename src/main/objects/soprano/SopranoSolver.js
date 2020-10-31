@@ -13,7 +13,7 @@ function SopranoSolver(exercise){
 
     this.exercise = exercise;
     this.harmonicFunctionGenerator = new HarmonicFunctionGenerator.HarmonicFunctionGenerator(this.exercise.possibleFunctionsList, this.exercise.key, this.exercise.mode);
-    this.sopranoRulesChecker = new SopranoRulesChecker.SopranoRulesChecker(this.exercise.key);
+    this.sopranoRulesChecker = new SopranoRulesChecker.SopranoRulesChecker(this.exercise.key, this.exercise.mode);
     this.numberOfRetry = 10;
 
     this.mapToHarmonisationExercise = function(harmonicFunctions){

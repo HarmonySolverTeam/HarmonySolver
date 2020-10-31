@@ -3,19 +3,58 @@
 .import "../utils/Utils.js" as Utils
 .import "../utils/IntervalUtils.js" as IntervalUtils
 .import "../harmonic/Parser.js" as Parser
+.import "../harmonic/ChordGenerator.js" as ChordGenerator
+.import "../harmonic/ChordRulesChecker.js" as ChordRulesChecker
 
-function SopranoRulesChecker(key){
+function SopranoRulesChecker(key, mode){
     this.key = key;
+    this.mode = mode;
     RulesCheckerUtils.Evaluator.call(this, 2);
 
-    this.hardRules = [new ForbiddenDSConnectionRule(), new SecondaryDominantConnectionRule(this.key)];
-    this.softRules = [new FourthChordsRule(), new DominantRelationRule(), new ChangeFunctionConnectionRule(), new JumpRule(), new SecondRelationRule(), new ChangeFunctionOnDownBeatRule(), new ChangeFunctionAtMeasureBeginningRule(),];
+    this.hardRules = [
+        new ForbiddenDSConnectionRule(),
+        new ExistsSolutionRule(new ChordRulesChecker.ChordRulesChecker(false,true),new ChordGenerator.ChordGenerator(this.key,this.mode)),
+        new SecondaryDominantConnectionRule(this.key)
+    ];
+    this.softRules = [
+        new FourthChordsRule(),
+        new DominantRelationRule(),
+        new ChangeFunctionConnectionRule(),
+        new JumpRule(),
+        new SecondRelationRule(),
+        new ChangeFunctionOnDownBeatRule(),
+        new ChangeFunctionAtMeasureBeginningRule()
+        ];
 }
 
 function HarmonicFunctionWithSopranoInfo(harmonicFunction, measurePlace, sopranoNote){
     this.harmonicFunction = harmonicFunction; // HarmonicFunction
     this.measurePlace = measurePlace; // Consts.MEASURE_PLACE enum
     this.sopranoNote = sopranoNote; // Note
+}
+
+function ExistsSolutionRule(chordRulesChecker, chordGenerator){
+    RulesCheckerUtils.IRule.call(this);
+    this.chordRulesChecker = chordRulesChecker;
+    this.chordGenerator = chordGenerator;
+
+    this.evaluate = function(connection) {
+        var prevFunction = connection.prev.harmonicFunction;
+        var prevSopranoNote = connection.prev.sopranoNote;
+        var prevPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(prevFunction, true, prevSopranoNote))
+        var currentFunction = connection.current.harmonicFunction;
+        var currentSopranoNote = connection.current.sopranoNote;
+        var currentPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(currentFunction, true, currentSopranoNote));
+
+        for(var i = 0; i < prevPossibleChords.length; i++){
+            for(var j = 0; j < currentPossibleChords.length; j++){
+                if(this.chordRulesChecker.evaluateHardRules(new RulesCheckerUtils.Connection(currentPossibleChords[j], prevPossibleChords[i]))){
+                    return 0;
+                }
+            }
+        }
+        return -1;
+    }
 }
 
 function SpecialConnectionRule(punishment, prevFunctionName, currentFunctionName){

@@ -11,7 +11,7 @@ var rulesChecker = new RulesChecker.SopranoRulesChecker("C");
 
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(2, rulesChecker.connectionSize) &&
-        UnitTest.assertEqualsPrimitives(2, rulesChecker.hardRules.length) &&
+        UnitTest.assertEqualsPrimitives(3, rulesChecker.hardRules.length) &&
         UnitTest.assertEqualsPrimitives(7, rulesChecker.softRules.length);
 };
 
