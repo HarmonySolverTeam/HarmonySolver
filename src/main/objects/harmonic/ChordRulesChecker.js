@@ -504,7 +504,7 @@ function DominantSubdominantCheckConnectionRule(details){
     this.evaluateIncludingDeflections = function(connection){
         var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
         if (specificConnectionRule.isNotBroken(connection) &&
-            connection.current.harmonicFunction.hasMajorMode())
+            connection.prev.harmonicFunction.hasMajorMode())
             throw new Errors.RulesCheckerError("Forbidden connection: D->S");
         return 0;
     }

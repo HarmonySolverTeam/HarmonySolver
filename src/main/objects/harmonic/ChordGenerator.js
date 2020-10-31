@@ -306,6 +306,10 @@ function ChordGenerator(key, mode) {
 
     this.generate = function (chordGeneratorInput) {
         var harmonicFunction = chordGeneratorInput.harmonicFunction;
+        if(harmonicFunction.isTVIMinorDown()){
+            harmonicFunction = harmonicFunction.copy();
+            harmonicFunction.mode = Consts.MODE.MAJOR;
+        }
         var chords = [];
         var temp = this.getChordTemplate(harmonicFunction);
         var schemas = this.getSchemas(harmonicFunction, temp);
@@ -334,7 +338,7 @@ function ChordGenerator(key, mode) {
                                         var tenorNote = new Note.Note(tenor[j], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][2]), schemas[i][2]);
                                         var altoNote = new Note.Note(alto[k], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][1]), schemas[i][1]);
                                         var sopranoNote = new Note.Note(soprano[m], IntervalUtils.toBaseNote(scale.baseNote, harmonicFunction, schemas[i][0]), schemas[i][0]);
-                                        chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction));
+                                        chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, chordGeneratorInput.harmonicFunction));
 
                                     }
                                 }

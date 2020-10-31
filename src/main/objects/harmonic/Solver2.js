@@ -70,7 +70,7 @@ function Solver(exercise, bassLine, sopranoLine){
         this.harmonicFunctions = this.harmonicFunctions.concat(exercise.measures[i]);
     }
 
-    var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
+    var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions, Utils.isDefined(this.bassLine), sopranoLine);
     this.harmonicFunctions = corrector.correctHarmonicFunctions();
 
     this.chordGenerator = new ChordGenerator.ChordGenerator(this.exercise.key, this.exercise.mode);
