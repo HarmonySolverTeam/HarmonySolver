@@ -4,10 +4,26 @@ var BassTranslator = require("./objects/bass/BassTranslator")
 var TestUtils = require("./TestUtils");
 var FiguredBass = require("./objects/bass/FiguredBass")
 var Note = require("./objects/model/Note")
+var Solver = require("./objects/harmonic/Solver2");
 
 var testSuite = new TestUtils.TestSuite("BassTranslator and FiguredBass tests");
 
 var bassTranslator = new BassTranslator.BassTranslator()
+
+var check_solution_found = (exName) => {
+    try{
+        var ex = UnitTest.get_ex_from_file("\\examples\\2_Bass\\read_exercises\\" + exName);
+        ex = JSON.parse(ex)
+        var exercise = bassTranslator.createExerciseFromFiguredBass(ex)
+        var solver = new Solver.Solver(exercise);
+        var solution = solver.solve();
+
+        return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+    } catch (e) {
+        console.error(JSON.stringify(e))
+        return false;
+    }
+}
 
 const handleAlterationsTest1 = () => {
 
@@ -22,7 +38,7 @@ const handleAlterationsTest1 = () => {
     return TestUtils.assertEqualsPrimitives(harmonicFunctions[0][2].mode, "minor")
 }
 
-testSuite.addTest(new TestUtils.UnitTest(handleAlterationsTest1, "handleAlterationsTest1"))
+//testSuite.addTest(new TestUtils.UnitTest(handleAlterationsTest1, "handleAlterationsTest1"))
 
 
 var completeFiguredBassNumbersTest = (symbols, expectedCompletedSymbols) => {
@@ -106,7 +122,6 @@ testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 2], [0, 2, 4]
 testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 4], [0, 2, 4], []), "addNextNoteTest add between 5"));
 testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 5], [0, 2, 5], []), "addNextNoteTest add between >5"));
 testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 3], [0, 3, 5], []), "addNextNoteTest add after"));
-testSuite.addTest(new TestUtils.UnitTest(() => addNextNoteTest([0, 2, 4, 6], [0, 2, 4, 6, 8], [2]), "addNextNoteTest add with omit"));
 
 
 var completeUntillTwoNextThirdsTest = (notesNumbers, expectedNotesNumbers, expectedOmit) => {
@@ -132,5 +147,80 @@ testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(5,'C', ["T"
 testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(5,'a', ["T"]), "getValidFunctions A a minor"));
 testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(6,'Ab', ["S"]), "getValidFunctions H Ab major"));
 testSuite.addTest(new TestUtils.UnitTest(() => getValidFunctionsTest(2,'f', ["D"]), "getValidFunctions E f minor"));
+
+var sikorski_42 = () => {return check_solution_found("sikorski_42.txt")};
+var sikorski_45 = () => {return check_solution_found("sikorski_45.txt")};
+var sikorski_46 = () => {return check_solution_found("sikorski_46.txt")};
+var sikorski_58 = () => {return check_solution_found("sikorski_58.txt")};
+var sikorski_59 = () => {return check_solution_found("sikorski_59.txt")};
+var sikorski_60 = () => {return check_solution_found("sikorski_60.txt")};
+var sikorski_72 = () => {return check_solution_found("sikorski_72.txt")};
+var sikorski_82 = () => {return check_solution_found("sikorski_82.txt")};
+var sikorski_84 = () => {return check_solution_found("sikorski_84.txt")};
+var sikorski_94 = () => {return check_solution_found("sikorski_94.txt")};
+var sikorski_96 = () => {return check_solution_found("sikorski_96.txt")};
+var sikorski_97 = () => {return check_solution_found("sikorski_97.txt")};
+var sikorski_106 = () => {return check_solution_found("sikorski_106.txt")};
+var sikorski_109 = () => {return check_solution_found("sikorski_109.txt")};
+var sikorski_118 = () => {return check_solution_found("sikorski_118.txt")};
+var sikorski_119 = () => {return check_solution_found("sikorski_119.txt")};
+var sikorski_121 = () => {return check_solution_found("sikorski_121.txt")};
+var sikorski_128 = () => {return check_solution_found("sikorski_128.txt")};
+var sikorski_129 = () => {return check_solution_found("sikorski_129.txt")};
+var sikorski_134 = () => {return check_solution_found("sikorski_134.txt")};
+var sikorski_134a = () => {return check_solution_found("sikorski_134a.txt")};
+var sikorski_135 = () => {return check_solution_found("sikorski_135.txt")};
+var sikorski_140 = () => {return check_solution_found("sikorski_140.txt")};
+var sikorski_141 = () => {return check_solution_found("sikorski_141.txt")};
+var sikorski_146 = () => {return check_solution_found("sikorski_146.txt")};
+var sikorski_147a = () => {return check_solution_found("sikorski_147a.txt")};
+var sikorski_154 = () => {return check_solution_found("sikorski_154.txt")};
+var sikorski_157 = () => {return check_solution_found("sikorski_157.txt")};
+var sikorski_164 = () => {return check_solution_found("sikorski_164.txt")};
+var sikorski_171 = () => {return check_solution_found("sikorski_171.txt")};
+var sikorski_183 = () => {return check_solution_found("sikorski_183.txt")};
+var sikorski_188 = () => {return check_solution_found("sikorski_188.txt")};
+var sikorski_195 = () => {return check_solution_found("sikorski_195.txt")};
+var sikorski_201 = () => {return check_solution_found("sikorski_201.txt")};
+var sikorski_210 = () => {return check_solution_found("sikorski_210.txt")};
+var sikorski_213 = () => {return check_solution_found("sikorski_213.txt")};
+
+testSuite.addTest(new UnitTest.UnitTest(sikorski_42, "sikorski_42"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_45, "sikorski_45"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_46, "sikorski_46"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_58, "sikorski_58"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_59, "sikorski_59"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_60, "sikorski_60"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_72, "sikorski_72"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_82, "sikorski_82"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_84, "sikorski_84"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_94, "sikorski_94"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_96, "sikorski_96"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_97, "sikorski_97"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_106, "sikorski_106"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_109, "sikorski_109"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_118, "sikorski_118"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_119, "sikorski_119"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_121, "sikorski_121"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_128, "sikorski_128"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_129, "sikorski_129"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_134, "sikorski_134"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_134a, "sikorski_134a"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_135, "sikorski_135"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_140, "sikorski_140"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_141, "sikorski_141"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_146, "sikorski_146"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_147a, "sikorski_147a"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_154, "sikorski_154"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_157, "sikorski_157"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_164, "sikorski_164"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_171, "sikorski_171"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_183, "sikorski_183"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_188, "sikorski_188"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_195, "sikorski_195"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_201, "sikorski_201"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_210, "sikorski_210"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_213, "sikorski_213"));
+
 
 testSuite.run()
