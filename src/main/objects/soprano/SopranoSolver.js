@@ -20,20 +20,20 @@ function SopranoSolver(exercise){
         var measures = []
         var current_measure = []
         var counter = 0
-        // var tmp = "";
+        var tmp = "";
         for(var i=0; i<this.exercise.notes.length; i++){
             var note = this.exercise.notes[i];
             counter += note.duration[0] / note.duration[1]
             current_measure.push(harmonicFunctions[i])
-            // tmp += harmonicFunctions[i].shortString() + " "
-            if(counter === 1){
-                // tmp += "| "
+            tmp += harmonicFunctions[i].getSimpleChordName() + " "
+            if( counter === this.exercise.meter[0]/this.exercise.meter[1]){
+                tmp += "| "
                 measures.push(current_measure)
                 current_measure = []
                 counter = 0
             }
         }
-        // tmp += "\n"
+        tmp += "\n"
         // console.log(tmp)
         return new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, measures);
     }
@@ -83,7 +83,7 @@ function SopranoSolver(exercise){
                     for(var i=0; i<path.length-1; i++){
                         var currentNode = path[i];
                         for(var j=0; j<currentNode.nextNeighbours.length; j++){
-                            if(currentNode === currentNode.nextNeighbours[j].node)
+                            if(path[i+1] === currentNode.nextNeighbours[j].node)
                                 currentNode.nextNeighbours[j].weight = currentNode.nextNeighbours[j].weight * t;
                         }
                     }
