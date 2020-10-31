@@ -401,7 +401,7 @@ MuseScore {
                                                                     [],
                                                                     functionsList)
 
-        var solver = new Soprano.SopranoSolver(shex,!preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
+        var solver = new Soprano.SopranoSolver(shex,false,false)
 
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
