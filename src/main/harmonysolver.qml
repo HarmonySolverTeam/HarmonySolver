@@ -380,7 +380,7 @@ MuseScore {
             addComponentToScore(cursor,
                                 solution.chords[i].bassNote.chordComponent.toXmlString())
             selectSoprano(cursor)
-            console.log(cursor.element)
+//            console.log(cursor.element)
             cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].sopranoNote)
             selectAlto(cursor)
             cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].altoNote)

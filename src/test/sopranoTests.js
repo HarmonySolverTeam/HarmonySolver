@@ -7,9 +7,12 @@ var TestUtils = require("./TestUtils");
 
 var testSuite  = new TestUtils.TestSuite("Soprano exercise tests");
 
-var t = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", [], [], [], false, undefined);
-var s = new HarmonicFunction.HarmonicFunction("S", 4, undefined, "1", [], [], [], false, undefined);
-var d = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", [], [], [], false, undefined);
+var T = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", [], [], [], false, undefined);
+var S = new HarmonicFunction.HarmonicFunction("S", 4, undefined, "1", [], [], [], false, undefined);
+var D = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", [], [], [], false, undefined);
+
+var To = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", [], [], [], false, undefined, 'minor');
+var So = new HarmonicFunction.HarmonicFunction("S", 4, undefined, "1", [], [], [], false, undefined, 'minor');
 
 var sopranoBaseTest = (mode, key, meter, notes, harmonicFunctions) => {
     var measures = [];
@@ -39,7 +42,7 @@ var sopranoBaseTest = (mode, key, meter, notes, harmonicFunctions) => {
 //         [
 //             <>
 //         ],
-//         [t,s,d]
+//         [T, S, D]
 //     ), "<>"));
 
 testSuite.addTest(new TestUtils.UnitTest(
@@ -74,7 +77,7 @@ testSuite.addTest(new TestUtils.UnitTest(
             new Note.Note(74, 1, 0, [1, 1])
 
 ],
-        [t,s,d]
+        [T, S, D]
     ), "Targosz p.59 ex.1"));
 
 testSuite.addTest(new TestUtils.UnitTest(
@@ -112,7 +115,7 @@ testSuite.addTest(new TestUtils.UnitTest(
             new Note.Note(73, 0, 0, [1, 2]),
             new Note.Note(69, 5, 0, [1, 2])
         ],
-        [t,s,d]
+        [T, S, D]
     ), "Targosz p.59 ex.2"));
 
 testSuite.addTest(new TestUtils.UnitTest(
@@ -146,7 +149,7 @@ testSuite.addTest(new TestUtils.UnitTest(
             new Note.Note(69, 5, 0, [1, 4]),
             new Note.Note(70, 6, 0, [1, 1])
         ],
-        [t,s,d]
+        [T, S, D]
     ), "Targosz p.59 ex.3"));
 
 testSuite.addTest(new TestUtils.UnitTest(
@@ -177,7 +180,7 @@ testSuite.addTest(new TestUtils.UnitTest(
             new Note.Note(62, 1, 0, [1, 4]),
             new Note.Note(63, 2, 0, [3, 4])
         ],
-        [t,s,d]
+        [T, S, D]
     ), "Targosz p.60 ex.4"));
 
 testSuite.addTest(new TestUtils.UnitTest(
@@ -210,7 +213,7 @@ testSuite.addTest(new TestUtils.UnitTest(
             new Note.Note(68, 5, 0, [1, 1]),
             new Note.Note(68, 5, 0, [1, 1])
         ],
-        [t,s,d]
+        [T, S, D]
     ), "Targosz p.60 ex.5"));
 
 testSuite.addTest(new TestUtils.UnitTest(
@@ -241,7 +244,207 @@ testSuite.addTest(new TestUtils.UnitTest(
             new Note.Note(68, 5, 0, [1, 4]),
             new Note.Note(70, 6, 0, [3, 4])
         ],
-        [t,s,d]
+        [T, S, D]
     ), "Targosz p.60 ex.6"));
+
+testSuite.addTest(new TestUtils.UnitTest(
+    () => sopranoBaseTest(
+        "minor",
+        "B",
+        [2,4],
+        [
+            new Note.Note(74, 1, 0, [1, 8]),
+            new Note.Note(71, 6, 0, [1, 8]),
+            new Note.Note(74, 1, 0, [1, 8]),
+            new Note.Note(76, 2, 0, [1, 8]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(70, 5, 0, [1, 4]),
+            new Note.Note(71, 6, 0, [1, 4]),
+            new Note.Note(66, 3, 0, [1, 4]),
+            new Note.Note(67, 4, 0, [1, 8]),
+            new Note.Note(64, 2, 0, [1, 8]),
+            new Note.Note(67, 4, 0, [1, 8]),
+            new Note.Note(71, 6, 0, [1, 8]),
+            new Note.Note(70, 5, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(74, 1, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 4]),
+            new Note.Note(79, 4, 0, [1, 8]),
+            new Note.Note(76, 2, 0, [1, 8]),
+            new Note.Note(74, 1, 0, [1, 8]),
+            new Note.Note(76, 2, 0, [1, 8]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(70, 5, 0, [1, 4]),
+            new Note.Note(71, 6, 0, [1, 2])
+        ],
+        [To, So, D]
+    ), "Targosz p.60 ex.7"));
+
+testSuite.addTest(new TestUtils.UnitTest(
+    () => sopranoBaseTest(
+        "minor",
+        "F#",
+        [4,4],
+        [
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(66, 3, 0, [1, 2]),
+            new Note.Note(74, 1, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(68, 4, 0, [1, 4]),
+            new Note.Note(69, 5, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(68, 4, 0, [1, 4]),
+            new Note.Note(69, 5, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 2]),
+            new Note.Note(77, 2, 0, [1, 2]),
+            new Note.Note(78, 3, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 2]),
+            new Note.Note(80, 4, 0, [1, 4]),
+            new Note.Note(81, 5, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 2]),
+            new Note.Note(74, 1, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(80, 4, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(77, 2, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 1])
+        ],
+        [To, So, D]
+    ), "Targosz p.60 ex.8"));
+
+testSuite.addTest(new TestUtils.UnitTest(
+    () => sopranoBaseTest(
+        "minor",
+        "C#",
+        [3,4],
+        [
+            new Note.Note(68, 4, 0, [1, 2]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(72, 6, 0, [1, 4]),
+            new Note.Note(68, 4, 0, [1, 4]),
+            new Note.Note(75, 1, 0, [1, 4]),
+            new Note.Note(76, 2, 0, [1, 4]),
+            new Note.Note(68, 4, 0, [1, 4]),
+            new Note.Note(76, 2, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 2]),
+            new Note.Note(75, 1, 0, [1, 4]),
+            new Note.Note(76, 2, 0, [1, 2]),
+            new Note.Note(80, 4, 0, [1, 4]),
+            new Note.Note(81, 5, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [1, 4]),
+            new Note.Note(78, 3, 0, [1, 4]),
+            new Note.Note(75, 1, 0, [1, 4]),
+            new Note.Note(80, 4, 0, [1, 4]),
+            new Note.Note(72, 6, 0, [1, 4]),
+            new Note.Note(73, 0, 0, [3, 4])
+        ],
+        [To, So, D]
+    ), "Targosz p.60 ex.9"));
+
+// testSuite.addTest(new TestUtils.UnitTest(
+//     () => sopranoBaseTest(
+//         "minor",
+//         "G#",
+//         [3,4],
+//         [
+//             new Note.Note(68, 4, 0, [1, 2]),
+//             new Note.Note(67, 3, 0, [1, 4]),
+//             new Note.Note(68, 4, 0, [1, 4]),
+//             new Note.Note(71, 6, 0, [1, 4]),
+//             new Note.Note(70, 5, 0, [1, 4]),
+//             new Note.Note(71, 6, 0, [1, 4]),
+//             new Note.Note(75, 1, 0, [1, 4]),
+//             new Note.Note(76, 2, 0, [1, 4]),
+//             new Note.Note(75, 1, 0, [1, 2]),
+//             new Note.Note(70, 5, 0, [1, 4]),
+//             new Note.Note(71, 6, 0, [1, 2]),
+//             new Note.Note(73, 0, 0, [1, 4]),
+//             new Note.Note(70, 5, 0, [1, 4]),
+//             new Note.Note(71, 6, 0, [1, 4]),
+//             new Note.Note(68, 4, 0, [1, 4]),
+//             new Note.Note(68, 4, 0, [1, 2]),
+//             new Note.Note(67, 3, 0, [1, 4]),
+//             new Note.Note(68, 4, 0, [3, 4])
+//         ],
+//         [To, So, D]
+//     ), "Targosz p.60 ex.10"));
+
+testSuite.addTest(new TestUtils.UnitTest(
+    () => sopranoBaseTest(
+        "minor",
+        "F",
+        [6,8],
+        [
+            new Note.Note(77, 3, 0, [3, 8]),
+            new Note.Note(77, 3, 0, [1, 8]),
+            new Note.Note(73, 1, 0, [1, 8]),
+            new Note.Note(70, 6, 0, [1, 8]),
+            new Note.Note(68, 5, 0, [1, 8]),
+            new Note.Note(72, 0, 0, [1, 8]),
+            new Note.Note(73, 1, 0, [1, 8]),
+            new Note.Note(72, 0, 0, [1, 4]),
+            new Note.Note(67, 4, 0, [1, 8]),
+            new Note.Note(68, 5, 0, [3, 8]),
+            new Note.Note(70, 6, 0, [1, 8]),
+            new Note.Note(65, 3, 0, [1, 8]),
+            new Note.Note(70, 6, 0, [1, 8]),
+            new Note.Note(67, 4, 0, [3, 8]),
+            new Note.Note(72, 0, 0, [3, 8]),
+            new Note.Note(72, 0, 0, [1, 8]),
+            new Note.Note(68, 5, 0, [1, 8]),
+            new Note.Note(65, 3, 0, [1, 8]),
+            new Note.Note(64, 2, 0, [1, 8]),
+            new Note.Note(67, 4, 0, [1, 8]),
+            new Note.Note(72, 0, 0, [1, 8]),
+            new Note.Note(72, 0, 0, [1, 8]),
+            new Note.Note(68, 5, 0, [1, 8]),
+            new Note.Note(72, 0, 0, [1, 8]),
+            new Note.Note(73, 1, 0, [1, 8]),
+            new Note.Note(70, 6, 0, [1, 8]),
+            new Note.Note(73, 1, 0, [1, 8]),
+            new Note.Note(72, 0, 0, [3, 8]),
+            new Note.Note(72, 0, 0, [1, 8]),
+            new Note.Note(77, 3, 0, [1, 8]),
+            new Note.Note(80, 5, 0, [1, 8]),
+            new Note.Note(79, 4, 0, [1, 4]),
+            new Note.Note(76, 2, 0, [1, 8]),
+            new Note.Note(77, 3, 0, [3, 8])
+        ],
+        [To, So, D]
+    ), "Targosz p.60 ex.11"));
+
+testSuite.addTest(new TestUtils.UnitTest(
+    () => sopranoBaseTest(
+        "minor",
+        "Bb",
+        [4,4],
+        [
+            new Note.Note(65, 3, 0, [1, 2]),
+            new Note.Note(70, 6, 0, [1, 2]),
+            new Note.Note(70, 6, 0, [1, 4]),
+            new Note.Note(66, 4, 0, [1, 4]),
+            new Note.Note(65, 3, 0, [1, 4]),
+            new Note.Note(72, 0, 0, [1, 4]),
+            new Note.Note(73, 1, 0, [1, 2]),
+            new Note.Note(70, 6, 0, [1, 2]),
+            new Note.Note(69, 5, 0, [1, 1]),
+            new Note.Note(70, 6, 0, [1, 2]),
+            new Note.Note(77, 3, 0, [1, 2]),
+            new Note.Note(78, 4, 0, [1, 2]),
+            new Note.Note(75, 2, 0, [1, 4]),
+            new Note.Note(78, 4, 0, [1, 4]),
+            new Note.Note(77, 3, 0, [1, 2]),
+            new Note.Note(72, 0, 0, [1, 2]),
+            new Note.Note(73, 1, 0, [1, 2]),
+            new Note.Note(77, 3, 0, [1, 4]),
+            new Note.Note(73, 1, 0, [1, 4]),
+            new Note.Note(72, 0, 0, [1, 2]),
+            new Note.Note(69, 5, 0, [1, 2]),
+            new Note.Note(70, 6, 0, [1, 1])
+        ],
+        [To, So, D]
+    ), "Targosz p.60 ex.12"));
 
 testSuite.run();

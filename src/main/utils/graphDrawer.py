@@ -8,6 +8,7 @@ vertex_layers = {}
 vertexes = []
 edge_weights = {}
 while line != "":
+    line = line.split(" ")[1]
     v, u, layer_of_v, weight = line.split(",")[0], line.split(",")[1], int(line.split(",")[2]), line.split(",")[3]
     edges += [(v, u)]
     edge_weights[(v,u)] = weight
