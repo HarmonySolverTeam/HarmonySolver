@@ -215,7 +215,16 @@ MuseScore {
     }
 
     function prepare_score_for_solution(filePath, solution, solution_date, setDurations, taskType) {
-        readScore(filePath + "/resources/template scores/" + solution.exercise.key + "_"
+        var resources_path = "";
+
+        if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
+            resources_path = "/resources/template scores/";
+        }
+        else{
+            resources_path = "/resources/lightweight_template_scores/";
+        }
+
+        readScore(filePath + resources_path + solution.exercise.key + "_"
                   + solution.exercise.mode + ".mscz")
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + taskType + solution_date,
