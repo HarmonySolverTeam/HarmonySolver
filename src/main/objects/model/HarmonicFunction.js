@@ -129,6 +129,14 @@ function HarmonicFunction2(params){
             && this.mode === Consts.MODE.MINOR
     };
 
+    this.isTIIIMinorDown = function () {
+        return this.functionName === Consts.FUNCTION_NAMES.TONIC
+            && this.degree === 3
+            && this.down
+            && this.mode === Consts.MODE.MINOR
+    };
+
+
     this.containsDelayedChordComponent = function (cc) {
         for(var i = 0; i < this.delay.length; i++){
             if(this.delay[i][1] === cc)
@@ -282,7 +290,7 @@ function HarmonicFunction2(params){
         if(this.delay[i][1].baseComponent === "5"){
             this.delay[i][1] = this.getFifth();
         }
-        if(this.delay[i][1].baseComponent === "3"){
+        if(this.delay[i][1].baseComponent === "3" && this.getThird() !== this.delay[i][0]){
             this.delay[i][1] = this.getThird();
         }
     }

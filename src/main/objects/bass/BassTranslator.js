@@ -721,6 +721,13 @@ function BassTranslator() {
         }
     }
 
+    // this.addOmit3ForS2IfNecessary = function(argsMap) {
+    //     if (argsMap.degree === 2 && argsMap.mode === Consts.MODE.MINOR
+    //         && argsMap.revolution === "3<" && !Utils.contains(argsMap.omit, 3)) {
+    //         argsMap.omit.push(3)
+    //     }
+    // }
+
     this.handleAlterations = function (harmonicFunctions, chordElements, figuredBassExercise) {
         var mode = figuredBassExercise.mode
 
@@ -947,6 +954,7 @@ function BassTranslator() {
             if (addedSomething) {
                 this.handleDownChord(argsMap)
                 this.fixExtraAfterModeChange(argsMap)
+                //this.addOmit3ForS2IfNecessary(argsMap)
                 harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
                 if (DEBUG) Utils.log("harm function after copy adding toExtra and toOmit",
                     JSON.stringify(harmonicFunctions[0][i]))
@@ -993,6 +1001,8 @@ function BassTranslator() {
         this.handleD7_TConnection(harmonicFunctions)
 
         this.handleAlterations(harmonicFunctions, chordElements, figuredBassExercise)
+
+        //todo handle delay 3-3> -> rozbić na 2 akordy D major i D minor
 
         return new Exercise.Exercise(key, figuredBassExercise.meter,
             figuredBassExercise.mode, harmonicFunctions)
