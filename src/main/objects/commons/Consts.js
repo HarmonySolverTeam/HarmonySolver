@@ -250,8 +250,8 @@ var keyFromPitchBasenoteAndMode = {
     "70,5,minor": 'a#',
     "70,6,minor": 'bb',
     "71,6,minor": 'b',
+    "69,6,major": 'Bbb'
 }
-
 //G
 var PREFERENCES_NAMES = {
     PRECHECK: "precheck",
