@@ -113,7 +113,7 @@ function HarmonicFunction2(params){
     this.isNeapolitan = function () {
         return this.degree === 2 && this.down
             && this.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && this.mode === Consts.MODE.MINOR
-            && this.revolution.baseComponent === "3"
+            && this.revolution.baseComponent === "3" && this.extra.length === 0
     };
 
     this.isChopin = function () {

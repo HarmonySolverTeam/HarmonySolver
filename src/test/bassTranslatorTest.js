@@ -173,7 +173,6 @@ var sikorski_121 = () => {return check_solution_found("sikorski_121.txt")};
 var sikorski_128 = () => {return check_solution_found("sikorski_128.txt")};
 var sikorski_129 = () => {return check_solution_found("sikorski_129.txt")};
 var sikorski_134 = () => {return check_solution_found("sikorski_134.txt")};
-//var sikorski_134a = () => {return check_solution_found("sikorski_134a.txt")};
 var sikorski_135 = () => {return check_solution_found("sikorski_135.txt")};
 var sikorski_140 = () => {return check_solution_found("sikorski_140.txt")};
 var sikorski_141 = () => {return check_solution_found("sikorski_141.txt")};
@@ -205,7 +204,6 @@ testSuite.addTest(new UnitTest.UnitTest(sikorski_97, "sikorski_97"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_106, "sikorski_106"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_109, "sikorski_109"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_118, "sikorski_118"));
-//testSuite.addTest(new UnitTest.UnitTest(sikorski_119, "sikorski_119"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_121, "sikorski_121"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_128, "sikorski_128"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_129, "sikorski_129"));
@@ -224,7 +222,8 @@ testSuite.addTest(new UnitTest.UnitTest(sikorski_188, "sikorski_188"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_195, "sikorski_195"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_201, "sikorski_201"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_210, "sikorski_210"));
-//testSuite.addTest(new UnitTest.UnitTest(sikorski_213, "sikorski_213"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_213, "sikorski_213"));
+testSuite.addTest(new UnitTest.UnitTest(sikorski_119, "sikorski_119"));
 
 
 testSuite.run()

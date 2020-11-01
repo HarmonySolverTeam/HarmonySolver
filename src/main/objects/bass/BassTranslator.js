@@ -150,6 +150,12 @@ function BassTranslator() {
                 return [5, 6, 7]
             }
 
+            ///3,7,9 -> 3,5,7,9
+            if (Utils.contains(bassNumbers, 3) && Utils.contains(bassNumbers, 9)
+                && Utils.contains(bassNumbers, 7)) {
+                return [3, 5, 7, 9]
+            }
+
             bassNumbers.sort(function (a, b) {
                 return (a > b) ? 1 : -1
             })
@@ -159,7 +165,6 @@ function BassTranslator() {
             //3,4,6 -> 3,4,6
             //2,4,6 -> 2,4,6
             //2,4,10 -> 2,4,10
-            //3,7,9 -> 3,7,9
             //nothing to add
             return bassNumbers
         }
@@ -721,12 +726,12 @@ function BassTranslator() {
         }
     }
 
-    // this.addOmit3ForS2IfNecessary = function(argsMap) {
-    //     if (argsMap.degree === 2 && argsMap.mode === Consts.MODE.MINOR
-    //         && argsMap.revolution === "3<" && !Utils.contains(argsMap.omit, 3)) {
-    //         argsMap.omit.push(3)
-    //     }
-    // }
+    this.addOmit3ForS2IfNecessary = function(argsMap) {
+        if (argsMap.degree === 2 && argsMap.mode === Consts.MODE.MINOR
+            && argsMap.revolution === "3" && !Utils.contains(argsMap.omit, "3>")) {
+            argsMap.omit.push("3>")
+        }
+    }
 
     this.handleAlterations = function (harmonicFunctions, chordElements, figuredBassExercise) {
         var mode = figuredBassExercise.mode
@@ -916,29 +921,37 @@ function BassTranslator() {
                         //todo some refactor?
                         if (alter === "<") {
                             if (Utils.contains(argsMap.extra, toAlter + "" + ">")) {
-                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + ">"), 1)
-                                argsMap.extra.push(toAlter + "")
-                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                if (argsMap.revolution !== toAlter + "" + "<") {
+                                    argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + ">"), 1)
+                                    argsMap.extra.push(toAlter + "")
+                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                }
                                 addedSomething = true
                                 notAdd = true
                             } else if (Utils.contains(argsMap.extra, toAlter + "")) {
-                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
-                                argsMap.extra.push(toAlter + "<")
-                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                if (argsMap.revolution !== toAlter + "") {
+                                    argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
+                                    argsMap.extra.push(toAlter + "<")
+                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                }
                                 addedSomething = true
                                 notAdd = true
                             }
                         } else {
                             if (Utils.contains(argsMap.extra, toAlter + "" + "<")) {
-                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + "<"), 1)
-                                argsMap.extra.push(toAlter + "")
-                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                if (argsMap.revolution !== toAlter + "" + "<") {
+                                    argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + "<"), 1)
+                                    argsMap.extra.push(toAlter + "")
+                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                }
                                 addedSomething = true
                                 notAdd = true
                             } else if (Utils.contains(argsMap.extra, toAlter + "")) {
-                                argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
-                                argsMap.extra.push(toAlter + ">")
-                                if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                if (argsMap.revolution !== toAlter + "") {
+                                    argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
+                                    argsMap.extra.push(toAlter + ">")
+                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                }
                                 addedSomething = true
                                 notAdd = true
                             }
@@ -954,7 +967,7 @@ function BassTranslator() {
             if (addedSomething) {
                 this.handleDownChord(argsMap)
                 this.fixExtraAfterModeChange(argsMap)
-                //this.addOmit3ForS2IfNecessary(argsMap)
+                this.addOmit3ForS2IfNecessary(argsMap)
                 harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
                 if (DEBUG) Utils.log("harm function after copy adding toExtra and toOmit",
                     JSON.stringify(harmonicFunctions[0][i]))
