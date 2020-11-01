@@ -13,9 +13,14 @@ var bassTranslator = new BassTranslator.BassTranslator()
 var check_solution_found = (exName) => {
     try{
         var ex = UnitTest.get_ex_from_file("\\examples\\2_Bass\\read_exercises\\" + exName);
-        ex = JSON.parse(ex)
-        var exercise = bassTranslator.createExerciseFromFiguredBass(ex)
-        var solver = new Solver.Solver(exercise);
+        var ex1 = JSON.parse(ex)
+        var bassTranslator = new BassTranslator.BassTranslator()
+        var exercise = bassTranslator.createExerciseFromFiguredBass(ex1)
+        var bassLine = []
+        for (var i = 0; i < ex1.elements.length; i++) {
+            bassLine.push(ex1.elements[i].bassNote)
+        }
+        var solver = new Solver.Solver(exercise, bassLine);
         var solution = solver.solve();
 
         return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
@@ -168,7 +173,7 @@ var sikorski_121 = () => {return check_solution_found("sikorski_121.txt")};
 var sikorski_128 = () => {return check_solution_found("sikorski_128.txt")};
 var sikorski_129 = () => {return check_solution_found("sikorski_129.txt")};
 var sikorski_134 = () => {return check_solution_found("sikorski_134.txt")};
-var sikorski_134a = () => {return check_solution_found("sikorski_134a.txt")};
+//var sikorski_134a = () => {return check_solution_found("sikorski_134a.txt")};
 var sikorski_135 = () => {return check_solution_found("sikorski_135.txt")};
 var sikorski_140 = () => {return check_solution_found("sikorski_140.txt")};
 var sikorski_141 = () => {return check_solution_found("sikorski_141.txt")};
@@ -200,12 +205,11 @@ testSuite.addTest(new UnitTest.UnitTest(sikorski_97, "sikorski_97"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_106, "sikorski_106"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_109, "sikorski_109"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_118, "sikorski_118"));
-testSuite.addTest(new UnitTest.UnitTest(sikorski_119, "sikorski_119"));
+//testSuite.addTest(new UnitTest.UnitTest(sikorski_119, "sikorski_119"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_121, "sikorski_121"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_128, "sikorski_128"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_129, "sikorski_129"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_134, "sikorski_134"));
-testSuite.addTest(new UnitTest.UnitTest(sikorski_134a, "sikorski_134a"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_135, "sikorski_135"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_140, "sikorski_140"));
 testSuite.addTest(new UnitTest.UnitTest(sikorski_141, "sikorski_141"));

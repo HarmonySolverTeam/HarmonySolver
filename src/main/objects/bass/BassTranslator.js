@@ -350,13 +350,13 @@ function BassTranslator() {
     }
 
 
-    this.getValidPosition = function (chordElement) {
+    this.getValidPosition = function (chordElement, mode, key) {
 
         var symbols = this.getSortedSymbolsFromChordElement(chordElement)
 
         if (symbols.equals([5, 6, 7]) ||
             symbols.equals([2, 4, 10])) {
-            return 9
+            return "9" + this.calculateAngleBracketForSpecificNote(mode, key, chordElement.primeNote, 9)
         } else {
             return undefined
         }
@@ -387,7 +387,7 @@ function BassTranslator() {
         //     revolution = "7<"
         // }
 
-        var position = this.getValidPosition(chordElement)
+        var position = this.getValidPosition(chordElement, mode, key)
 
         return [position, revolution]
     }

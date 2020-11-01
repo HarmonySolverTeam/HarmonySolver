@@ -196,8 +196,8 @@ function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano, deta
     }
 
     this.skipCheckingVoiceIncorrectJump = function(voiceNumber) {
-        return (voiceNumber === 0 && this.fixedBass)
-            || (voiceNumber === 3 && this.fixedSoprano)
+        return (voiceNumber === 0 && this.isFixedBass)
+            || (voiceNumber === 3 && this.isFixedSoprano)
     }
 }
 
