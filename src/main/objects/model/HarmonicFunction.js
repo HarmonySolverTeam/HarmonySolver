@@ -94,7 +94,8 @@ function HarmonicFunction2(params){
         chordComponentsCount -= this.omit.length;
         for(var i=0; i<this.delay.length; i++) {
             if (!Utils.contains(this.extra, this.delay[i][0])
-                && Utils.contains(this.omit, this.delay[i][1])) chordComponentsCount += 1;
+                && (Utils.contains(this.omit, this.delay[i][1])
+                || this.delay[i][1].baseComponent === "8")) chordComponentsCount += 1;
             if (Utils.contains(this.extra, this.delay[i][0])
                 && !Utils.contains(this.omit, this.delay[i][1])
                 && this.delay[i][1].baseComponent !== "8") chordComponentsCount -= 1;
@@ -341,7 +342,14 @@ function HarmonicFunction2(params){
 
     //handle ninth chords
     // todo obnizenia -> czy nie powinno sie sprawdzac po baseComponentach 1 i 5?
-    if(Utils.containsBaseChordComponent(this.extra, "9")){
+    var has9ComponentInDelay = false;
+    for(var i = 0; i < this.delay.length; i++){
+        if(this.delay[i][0].baseComponent === "9"){
+            has9ComponentInDelay = true;
+            break;
+        }
+    }
+    if(Utils.containsBaseChordComponent(this.extra, "9") || has9ComponentInDelay){
         if(this.countChordComponents() > 4){
             var prime = this.getPrime()
             var fifth = this.getFifth()
