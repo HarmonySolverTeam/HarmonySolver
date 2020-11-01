@@ -149,7 +149,7 @@ const checkIllegalDouble3Test = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
     var ch1 = new Chord.Chord(new Note.Note(76,0,"3"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var neapolitan = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, 'minor');
-    var ch2 = new Chord.Chord(new Note.Note(69,5,"5"), new Note.Note(65, 3, "3>"), new Note.Note(61, 1, "1>"), new Note.Note(41, 3, "3"),neapolitan);
+    var ch2 = new Chord.Chord(new Note.Note(69,5,"5"), new Note.Note(65, 3, "3"), new Note.Note(61, 1, "1"), new Note.Note(41, 3, "3"),neapolitan);
 
     var rule = new RulesChecker.IllegalDoubledThirdRule();
     return UnitTest.assertTrue(rule.hasIllegalDoubled3Rule(ch1)) &&
