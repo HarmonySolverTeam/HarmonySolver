@@ -738,4 +738,37 @@ var extra7rev7Test = () => {
 
 generatorTestSuite.addTest(new TestUtils.UnitTest(extra7rev7Test, "Generating extra 7 with 7 in bass test"));
 
+var TVIMinorDownTest = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'major');
+    var hf = new HarmonicFunction.HarmonicFunction("T", 6, undefined, undefined, undefined, [], [],true,undefined,Consts.MODE.MINOR);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
+
+    return TestUtils.assertDefined(res) &&
+        TestUtils.assertTrue(hf.isTVIMinorDown()) &&
+        TestUtils.assertEqualsPrimitives(68, Utils.convertPitchToOneOctave(res[0].bassNote.pitch)) &&
+        TestUtils.assertEqualsPrimitives(5, res[0].bassNote.baseNote);
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(TVIMinorDownTest, "Generating To 6 degree down test"));
+
+var T64Test = () => {
+
+    var gen = new Generator.ChordGenerator("C", 'minor');
+    var hf = new HarmonicFunction.HarmonicFunction("T", undefined, undefined, undefined, [["6","5"],["4","3"]],["6","4"], ["5","3"], undefined, undefined, Consts.MODE.MINOR);
+    var res = gen.generate(new Generator.ChordGeneratorInput(hf));
+    var ch = new Chord.Chord(new Note.Note(77, 6,"4"), new Note.Note(72,0,"1"), new Note.Note(69, 6,"6"), new Note.Note(60,0,"1"), hf);
+
+    for(var i=0; i<res.length; i++){
+        if(res[i].bassNote.equalPitches(ch.bassNote) &&
+            res[i].tenorNote.equalPitches(ch.tenorNote) &&
+            res[i].altoNote.equalPitches(ch.altoNote) &&
+            res[i].sopranoNote.equalPitches(ch.sopranoNote)) return true;
+    }
+
+    return false;
+}
+
+generatorTestSuite.addTest(new TestUtils.UnitTest(T64Test, "Generating T 6-4 test"));
+
 generatorTestSuite.run();

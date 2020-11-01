@@ -22,18 +22,18 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
         new CheckDelayCorrectnessRule("Incorrect delay"),
         new HiddenOctavesRule("Hidden consecutive octaves"),
         new FalseRelationRule("False relation"),
-        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
-        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
-        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement"),
-        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement"),
         new SameFunctionCheckConnectionRule("Repeated function voice wrong movement"),
-        new IllegalDoubledThirdRule("Illegal double third")
+        new IllegalDoubledThirdRule("Illegal double third"),
+        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement")
     ];
     this.softRules = [
         new ForbiddenSumJumpRule("Forbidden voice sum jump"),
         new ClosestMoveRule("Not closest move in voices"),
         new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
-        new SopranoBestLineRule("Soprano line should not contain big jumps")
+        new SopranoBestLineRule("Soprano line should not contain big jumps"),
+        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
+        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
+        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement")
     ];
 }
 
@@ -355,148 +355,6 @@ function ICheckConnectionRule(details){
 
 }
 
-function DominantRelationCheckConnectionRule(details){
-
-    ICheckConnectionRule.call(this, details);
-
-    this.evaluateIncludingDeflections = function(connection) {
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
-        if ((specificConnectionRule.isNotBroken(connection) ||
-            Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
-            prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction)){
-            if(this.brokenThirdMoveRule(prevChord, currentChord))
-                return -1;
-            if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
-                if(this.brokenSeventhMoveRule(prevChord, currentChord))
-                    return -1;
-                if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "9") && this.brokenNinthMoveRule(prevChord, currentChord))
-                        return -1;
-            }
-            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5<")  && this.brokenUpFifthMoveRule(prevChord, currentChord))
-                return -1;
-            if ((Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>") || prevChord.harmonicFunction.getFifth().chordComponentString === "5>") &&
-                this.brokenDownFifthMoveRule(prevChord, currentChord))
-                return -1;
-            if (prevChord.harmonicFunction.isChopin() && this.brokenChopinMoveRule(prevChord, currentChord))
-                        return -1;
-            return 0;
-        }
-        return 0;
-    };
-
-    this.brokenThirdMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
-        return dominantVoiceWith3 > -1 &&
-            !prevChord.notes[dominantVoiceWith3].equalPitches(currentChord.notes[dominantVoiceWith3]) &&
-            !Utils.containsBaseChordComponent(currentChord.harmonicFunction.omit, "1") &&
-            !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("1") &&
-            !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("7") &&
-            !currentChord.harmonicFunction.containsDelayedChordComponent("1") &&
-            !(prevChord.bassNote.baseChordComponentEquals("3") && currentChord.bassNote.baseChordComponentEquals("3"));
-    };
-
-    this.brokenSeventhMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
-        var dominantVoiceWith7 = this.voiceWithBaseComponent(prevChord, "7");
-        if (dominantVoiceWith7 > -1 &&
-            !prevChord.notes[dominantVoiceWith7].equalPitches(currentChord.notes[dominantVoiceWith7]) &&
-            !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) {
-            //rozwiazanie swobodne mozliwe
-            if ((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
-                currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
-                (Utils.isDefined(currentChord.harmonicFunction.position) && (currentChord.harmonicFunction.position.chordComponentString === "3" ||
-                    currentChord.harmonicFunction.position.chordComponentString === "3>"))) &&
-                dominantVoiceWith7 < dominantVoiceWith3) {
-                    if (!currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5")) return true;
-            } else return true;
-        }
-        return false;
-    };
-
-    this.brokenNinthMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith9 = this.voiceWithBaseComponent(prevChord, "9");
-        return dominantVoiceWith9 > -1 &&
-            !prevChord.notes[dominantVoiceWith9].equalPitches(currentChord.notes[dominantVoiceWith9]) &&
-            !currentChord.notes[dominantVoiceWith9].baseChordComponentEquals("5") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5");
-    };
-
-    this.brokenUpFifthMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWithAlt5 = this.voiceWithComponent(prevChord, "5<");
-        return dominantVoiceWithAlt5 > -1 &&
-            !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
-            !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3");
-    };
-
-    this.brokenDownFifthMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWithAlt5 = this.voiceWithComponent(prevChord, "5>");
-        return dominantVoiceWithAlt5 > -1 &&
-            !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
-            !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("1") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("1");
-    };
-
-    this.brokenChopinMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith6 = this.voiceWithBaseComponent(prevChord, "6");
-        return dominantVoiceWith6 > -1 &&
-            !currentChord.notes[dominantVoiceWith6].chordComponentEquals("1") &&
-            !currentChord.harmonicFunction.containsDelayedChordComponent("1");
-    };
-}
-
-function DominantSecondRelationCheckConnectionRule(details){
-
-    ICheckConnectionRule.call(this, details);
-
-    this.evaluateIncludingDeflections = function(connection) {
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
-        if (specificConnectionRule.isNotBroken(connection)
-            && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction)) {
-            if(this.brokenThirdMoveRule(prevChord, currentChord))
-                return -1;
-            if(this.brokenFifthMoveRule(prevChord, currentChord))
-                return -1;
-            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7") && this.brokenSeventhMoveRule(prevChord, currentChord))
-                return -1;
-            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>") && this.brokenDownFifthMoveRule(prevChord, currentChord))
-                return -1;
-        }
-        return 0;
-    };
-
-    this.brokenThirdMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
-        return dominantVoiceWith3 > -1 && !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("3") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3");
-    };
-
-    this.brokenFifthMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith5 = this.voiceWithBaseComponent(prevChord, "5");
-        return (dominantVoiceWith5 > -1 && !currentChord.notes[dominantVoiceWith5].baseChordComponentEquals("3") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3"));
-    };
-
-    this.brokenSeventhMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWith7 = this.voiceWithBaseComponent(prevChord, "7");
-        return dominantVoiceWith7 > -1 && !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5");
-    };
-
-    this.brokenDownFifthMoveRule = function(prevChord, currentChord){
-        var dominantVoiceWithAlt5 = this.voiceWithComponent(prevChord, "5>");
-        return dominantVoiceWithAlt5 > -1 &&
-            !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
-            !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
-            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3");
-    }
-}
-
 function DominantSubdominantCheckConnectionRule(details){
 
     ICheckConnectionRule.call(this, details);
@@ -504,7 +362,7 @@ function DominantSubdominantCheckConnectionRule(details){
     this.evaluateIncludingDeflections = function(connection){
         var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
         if (specificConnectionRule.isNotBroken(connection) &&
-            connection.current.harmonicFunction.hasMajorMode())
+            connection.prev.harmonicFunction.hasMajorMode())
             throw new Errors.RulesCheckerError("Forbidden connection: D->S");
         return 0;
     }
@@ -531,35 +389,6 @@ function SameFunctionCheckConnectionRule(details){
     };
 
 }
-
-function SubdominantDominantCheckConnectionRule(details){
-
-    ICheckConnectionRule.call(this, details);
-
-    this.evaluateIncludingDeflections = function(connection){
-        var currentChord = connection.current;
-        var prevChord = connection.prev;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.SUBDOMINANT, Consts.FUNCTION_NAMES.DOMINANT);
-        if (specificConnectionRule.isNotBroken(connection)
-            && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
-            if(this.brokenVoicesMoveOppositeDirectionRule(currentChord, prevChord))
-                return -1;
-        }
-        return 0;
-    };
-
-    this.brokenVoicesMoveOppositeDirectionRule = function(currentChord, prevChord){
-        if(currentChord.bassNote.chordComponentEquals("1") && prevChord.bassNote.chordComponentEquals("1")) {
-            for(var i = 1; i < 4; i++) {
-                if (prevChord.notes[i].pitch - currentChord.notes[i].pitch < 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-}
-
 /*
         END OF HARD RULES
  */
@@ -666,6 +495,177 @@ function SopranoBestLineRule(details){
         if(IntervalUtils.pitchOffsetBetween(prevChord.sopranoNote, currentChord.sopranoNote) > 4)
             return 2;
         return 0;
+    }
+}
+
+function DominantRelationCheckConnectionRule(details){
+
+    ICheckConnectionRule.call(this, details);
+
+    this.evaluateIncludingDeflections = function(connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var result = 0;
+        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
+        if ((specificConnectionRule.isNotBroken(connection) ||
+            Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
+            prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction)){
+            if(this.brokenThirdMoveRule(prevChord, currentChord))
+                result += 50;
+            if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
+                if(this.brokenSeventhMoveRule(prevChord, currentChord))
+                    result += 20;
+                if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "9") && this.brokenNinthMoveRule(prevChord, currentChord))
+                    result += 20;
+            }
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5<")  && this.brokenUpFifthMoveRule(prevChord, currentChord))
+                result += 20;
+            if ((Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>") || prevChord.harmonicFunction.getFifth().chordComponentString === "5>") &&
+                this.brokenDownFifthMoveRule(prevChord, currentChord))
+                result += 20;
+            if (prevChord.harmonicFunction.isChopin() && this.brokenChopinMoveRule(prevChord, currentChord))
+                result += 50;
+        }
+        return result;
+    };
+
+    this.brokenThirdMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
+        return dominantVoiceWith3 > -1 &&
+            !prevChord.notes[dominantVoiceWith3].equalPitches(currentChord.notes[dominantVoiceWith3]) &&
+            !Utils.containsBaseChordComponent(currentChord.harmonicFunction.omit, "1") &&
+            !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("1") &&
+            !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("7") &&
+            !currentChord.harmonicFunction.containsDelayedChordComponent("1") &&
+            !(prevChord.bassNote.baseChordComponentEquals("3") && currentChord.bassNote.baseChordComponentEquals("3"));
+    };
+
+    this.brokenSeventhMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
+        var dominantVoiceWith7 = this.voiceWithBaseComponent(prevChord, "7");
+        if (dominantVoiceWith7 > -1 &&
+            !prevChord.notes[dominantVoiceWith7].equalPitches(currentChord.notes[dominantVoiceWith7]) &&
+            !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) {
+            //rozwiazanie swobodne mozliwe
+            if ((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
+                currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
+                (Utils.isDefined(currentChord.harmonicFunction.position) && (currentChord.harmonicFunction.position.chordComponentString === "3" ||
+                    currentChord.harmonicFunction.position.chordComponentString === "3>"))) &&
+                dominantVoiceWith7 < dominantVoiceWith3) {
+                if (!currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5")) return true;
+            } else return true;
+        }
+        return false;
+    };
+
+    this.brokenNinthMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith9 = this.voiceWithBaseComponent(prevChord, "9");
+        return dominantVoiceWith9 > -1 &&
+            !prevChord.notes[dominantVoiceWith9].equalPitches(currentChord.notes[dominantVoiceWith9]) &&
+            !currentChord.notes[dominantVoiceWith9].baseChordComponentEquals("5") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5");
+    };
+
+    this.brokenUpFifthMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWithAlt5 = this.voiceWithComponent(prevChord, "5<");
+        return dominantVoiceWithAlt5 > -1 &&
+            !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
+            !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3");
+    };
+
+    this.brokenDownFifthMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWithAlt5 = this.voiceWithComponent(prevChord, "5>");
+        return dominantVoiceWithAlt5 > -1 &&
+            !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
+            !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("1") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("1");
+    };
+
+    this.brokenChopinMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith6 = this.voiceWithBaseComponent(prevChord, "6");
+        return dominantVoiceWith6 > -1 &&
+            !currentChord.notes[dominantVoiceWith6].chordComponentEquals("1") &&
+            !currentChord.harmonicFunction.containsDelayedChordComponent("1");
+    };
+}
+
+function DominantSecondRelationCheckConnectionRule(details){
+
+    ICheckConnectionRule.call(this, details);
+
+    this.evaluateIncludingDeflections = function(connection) {
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var result = 0;
+        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
+        if (specificConnectionRule.isNotBroken(connection)
+            && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction)) {
+            if(this.brokenThirdMoveRule(prevChord, currentChord))
+                result += 50;
+            if(this.brokenFifthMoveRule(prevChord, currentChord))
+                result += 20;
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7") && this.brokenSeventhMoveRule(prevChord, currentChord))
+                result += 20;
+            if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5>") && this.brokenDownFifthMoveRule(prevChord, currentChord))
+                result += 20;
+        }
+        return result;
+    };
+
+    this.brokenThirdMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith3 = this.voiceWithBaseComponent(prevChord, "3");
+        return dominantVoiceWith3 > -1 && !currentChord.notes[dominantVoiceWith3].baseChordComponentEquals("3") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3");
+    };
+
+    this.brokenFifthMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith5 = this.voiceWithBaseComponent(prevChord, "5");
+        return (dominantVoiceWith5 > -1 && !currentChord.notes[dominantVoiceWith5].baseChordComponentEquals("3") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3"));
+    };
+
+    this.brokenSeventhMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWith7 = this.voiceWithBaseComponent(prevChord, "7");
+        return dominantVoiceWith7 > -1 && !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("5") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("5");
+    };
+
+    this.brokenDownFifthMoveRule = function(prevChord, currentChord){
+        var dominantVoiceWithAlt5 = this.voiceWithComponent(prevChord, "5>");
+        return dominantVoiceWithAlt5 > -1 &&
+            !prevChord.notes[dominantVoiceWithAlt5].equalPitches(currentChord.notes[dominantVoiceWithAlt5]) &&
+            !currentChord.notes[dominantVoiceWithAlt5].baseChordComponentEquals("3") &&
+            !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3");
+    }
+}
+
+function SubdominantDominantCheckConnectionRule(details){
+
+    ICheckConnectionRule.call(this, details);
+
+    this.evaluateIncludingDeflections = function(connection){
+        var currentChord = connection.current;
+        var prevChord = connection.prev;
+        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.SUBDOMINANT, Consts.FUNCTION_NAMES.DOMINANT);
+        if (specificConnectionRule.isNotBroken(connection)
+            && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
+            if(this.brokenVoicesMoveOppositeDirectionRule(currentChord, prevChord))
+                return 40;
+        }
+        return 0;
+    };
+
+    this.brokenVoicesMoveOppositeDirectionRule = function(currentChord, prevChord){
+        if(currentChord.bassNote.chordComponentEquals("1") && prevChord.bassNote.chordComponentEquals("1")) {
+            for(var i = 1; i < 4; i++) {
+                if (prevChord.notes[i].pitch - currentChord.notes[i].pitch < 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 /*

@@ -15,8 +15,8 @@ var rulesChecker = new RulesChecker.ChordRulesChecker();
 
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(3, rulesChecker.connectionSize) &&
-        UnitTest.assertEqualsPrimitives(14, rulesChecker.hardRules.length) &&
-        UnitTest.assertEqualsPrimitives(4, rulesChecker.softRules.length);
+        UnitTest.assertEqualsPrimitives(11, rulesChecker.hardRules.length) &&
+        UnitTest.assertEqualsPrimitives(7, rulesChecker.softRules.length);
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(initializeTest, "Initialize chord rulechecker test"));
@@ -29,8 +29,8 @@ const concurrentOctavesTest = () => {
     var ch3 = new Chord.Chord(new Note.Note(77,3,"1"),new Note.Note(69, 5, "3"), new Note.Note(60, 0, "5"), new Note.Note(53, 3, "1"),hf2);
 
     var rule = new RulesChecker.ConcurrentOctavesRule();
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3, ch1)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3, ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(concurrentOctavesTest, "Concurrent octaves test"));
@@ -43,8 +43,8 @@ const concurrentFifthsTest = () => {
     var ch3 = new Chord.Chord(new Note.Note(81,5,"3"),new Note.Note(72, 0, "5"), new Note.Note(60, 0, "5"), new Note.Note(53, 3, "1"),hf2);
 
     var rule = new RulesChecker.ConcurrentFifthsRule();
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3, ch1)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3, ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(concurrentFifthsTest, "Concurrent fifths test"));
@@ -60,12 +60,12 @@ const crossingVoicesTest = () => {
     var ch7 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(52, 2, "3"), new Note.Note(60, 0, "1"),hf1);
 
     var rule = new RulesChecker.CrossingVoicesRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch4, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch5, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch6, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch7, ch2)))
+    return UnitTest.assertTrue(rule.evaluate(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch4, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch5, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch6, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch7, ch2)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(crossingVoicesTest, "Crossing voices test"));
@@ -77,8 +77,8 @@ const oneDirectionTest = () => {
     var ch3 = new Chord.Chord(new Note.Note(60,0,"1"), new Note.Note(55, 4, "5"), new Note.Note(52, 2, "3"), new Note.Note(36, 0, "1"),hf1);
 
     var rule = new RulesChecker.OneDirectionRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1,  rule.evaluate(new Connection(ch3, ch1)))
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3, ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(oneDirectionTest, "One direction test"));
@@ -107,19 +107,19 @@ const forbiddenJumpTest = () => {
     var chdownSameFun = new Chord.Chord(new Note.Note(60,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
 
     var rule = new RulesChecker.ForbiddenJumpRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch1up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch4up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch5up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch6up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch1down, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2down, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3down, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch4down, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch5down, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch6down, ch1))) //&&
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch1up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch2up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch4up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch5up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch6up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch1down, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch2down, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3down, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch4down, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch5down, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch6down, ch1))) //&&
     // UnitTest.assertEqualsPrimitives(0, RulesChecker.forbiddenJump(ch1, chdownSameFun))
 };
 
@@ -137,9 +137,9 @@ const forbiddenSumJumpTest = () => {
     var ch3downSameFun = new Chord.Chord(new Note.Note(66,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
 
     var rule = new RulesChecker.ForbiddenJumpRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3up, ch2up, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3down, ch2down, ch1))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch3downSameFun, ch2downSameFun, ch1)))
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch3up, ch2up, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3down, ch2down, ch1))) &&
+        UnitTest.assertTrue(rule.isNotBroken(new Connection(ch3downSameFun, ch2downSameFun, ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenSumJumpTest, "Forbidden sum jump test"));
@@ -181,8 +181,8 @@ const checkConnectionDTTest = () => {
     var t2 = new Chord.Chord(new Note.Note(67,4,"5"), new Note.Note(64,2,"3"), new Note.Note(60,0,"1"),new Note.Note(48,1,"1"), hf2);
 
     var rule = new RulesChecker.DominantRelationCheckConnectionRule();
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t2,d)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(t1,d7))) &&
+        UnitTest.assertTrue(rule.isNotBroken(new Connection(t2,d)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTTest, "D->T connection test"));
@@ -197,10 +197,10 @@ const checkConnectionDTVITest = () => {
 
     var rule = new RulesChecker.DominantSecondRelationCheckConnectionRule();
     var ruleIllegal3 = new RulesChecker.IllegalDoubledThirdRule();
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d))) &&
-        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(t1,d7))) &&
+        UnitTest.assertTrue(rule.isNotBroken(new Connection(t1,d))) &&
+        UnitTest.assertTrue(ruleIllegal3.isNotBroken(new Connection(t1,d7))) &&
+        UnitTest.assertTrue(ruleIllegal3.isNotBroken(new Connection(t1,d)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVITest, "D->TVI connection test"));
@@ -215,10 +215,10 @@ const checkConnectionDTVIDownTest = () => {
 
     var rule = new RulesChecker.DominantSecondRelationCheckConnectionRule();
     var ruleIllegal3 = new RulesChecker.IllegalDoubledThirdRule();
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(t1,d))) &&
-        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d7))) &&
-        UnitTest.assertEqualsPrimitives(0, ruleIllegal3.evaluate(new Connection(t1,d)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(t1,d7))) &&
+        UnitTest.assertTrue(rule.isNotBroken(new Connection(t1,d))) &&
+        UnitTest.assertTrue(ruleIllegal3.isNotBroken(new Connection(t1,d7))) &&
+        UnitTest.assertTrue(ruleIllegal3.isNotBroken(new Connection(t1,d)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVIDownTest, "D->TVI(down) connection test"));
@@ -233,9 +233,9 @@ const checkDelayCorrectnessTest = () => {
     var ch4 = new Chord.Chord(new Note.Note(69, 4,"3"), new Note.Note(62,1,"5"), new Note.Note(55, 6,"1"), new Note.Note(43,4,"1"), hf2);
 
     var rule = new RulesChecker.CheckDelayCorrectnessRule();
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch4, ch1)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch4, ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkDelayCorrectnessTest, "Delay correctness test"));
@@ -247,7 +247,7 @@ const hiddenOctavesTest = () => {
     var ch2 = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(64,2,"3"), new Note.Note(55, 4,"5"), new Note.Note(48,0,"1"), hf2);
 
     var rule = new RulesChecker.HiddenOctavesRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2, ch1)))
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch2, ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(hiddenOctavesTest, "Hidden octaves test"));
@@ -265,8 +265,8 @@ const falseRelationTest = () => {
     var ch4 = new Chord.Chord(new Note.Note(72, 0,"7"), new Note.Note(66,3,"3"), new Note.Note(62, 1,"1"), new Note.Note(50,1,"1"), d2);
 
     var rule = new RulesChecker.FalseRelationRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch4, ch3)))
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch4, ch3)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(falseRelationTest, "False relation test"));
@@ -354,10 +354,10 @@ const checkConnectionForModulations = () => {
 
     var rule = new RulesChecker.DominantRelationCheckConnectionRule();
 
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch2, ch1))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch3, ch1))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch2, ch4))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2, ch5)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(ch2, ch1))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch3, ch1))) &&
+        UnitTest.assertTrue(rule.isNotBroken(new Connection(ch2, ch4))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch2, ch5)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionForModulations, "Check connection for modulations test"));
@@ -393,9 +393,9 @@ const chopinTonicConnection = () => {
 
     var rule = new RulesChecker.DominantRelationCheckConnectionRule();
 
-    return UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch3,ch1))) &&
-        UnitTest.assertEqualsPrimitives(0, rule.evaluate(new Connection(ch4,ch2))) &&
-        UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch5,ch1)))
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(ch3,ch1))) &&
+        UnitTest.assertTrue(rule.isNotBroken(new Connection(ch4,ch2))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(ch5,ch1)))
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(chopinTonicConnection, "Check correctness of Chopin -> T test"));
@@ -406,7 +406,7 @@ const sameFunctionConnectionTest = () => {
     var ch2 = new Chord.Chord(new Note.Note(72, 0, "1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(60, 0, "1"), hf1);
 
     var rule = new RulesChecker.SameFunctionCheckConnectionRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2,ch1)));
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch2,ch1)));
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(sameFunctionConnectionTest, "Same function connection test"));
@@ -419,9 +419,22 @@ const checkConnectionSDTest = () => {
     var ch2 = new Chord.Chord(new Note.Note(74, 6,"5"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(55,4,"1"), hf2);
 
     var rule = new RulesChecker.SubdominantDominantCheckConnectionRule();
-    return UnitTest.assertEqualsPrimitives(-1, rule.evaluate(new Connection(ch2,ch1)));
+    return UnitTest.assertTrue(rule.isBroken(new Connection(ch2,ch1)));
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionSDTest, "S->D connection test"));
+
+const checkConnectionDT64Test = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined, undefined, undefined, undefined,["7"]);
+    var hf2 = new HarmonicFunction.HarmonicFunction("T", undefined, undefined, undefined, [["6","5"],["4","3"]],["6","4"], ["5","3"], undefined, undefined, Consts.MODE.MINOR);
+
+    var ch1 = new Chord.Chord(new Note.Note(77, 3,"7"), new Note.Note(71,6,"3"), new Note.Note(62, 1,"5"), new Note.Note(55,4,"1"), hf1);
+    var ch2 = new Chord.Chord(new Note.Note(77, 6,"4"), new Note.Note(72,0,"1"), new Note.Note(69, 6,"6"), new Note.Note(60,0,"1"), hf2);
+
+    var rule = new RulesChecker.DominantRelationCheckConnectionRule();
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(ch2,ch1)));
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDT64Test, "D->T6-4 connection test"));
 
 rulesCheckerTestSuite.run();

@@ -122,6 +122,13 @@ function HarmonicFunction2(params){
             && Utils.containsBaseChordComponent(this.extra, "6")
     };
 
+    this.isTVIMinorDown = function () {
+        return this.functionName === Consts.FUNCTION_NAMES.TONIC
+            && this.degree === 6
+            && this.down
+            && this.mode === Consts.MODE.MINOR
+    };
+
     this.containsDelayedChordComponent = function (cc) {
         for(var i = 0; i < this.delay.length; i++){
             if(this.delay[i][1] === cc)
@@ -242,6 +249,13 @@ function HarmonicFunction2(params){
     for(var i=0; i<this.delay.length; i++){
         this.delay[i][0] = this.getChordComponentFromStringInThisHfContext(this.delay[i][0]);
         this.delay[i][1] = this.getChordComponentFromStringInThisHfContext(this.delay[i][1]);
+        //todo czy zostawiamy to walidatorowi?
+        if(this.delay[i][1].baseComponent === "5"){
+            this.delay[i][1] = this.getFifth();
+        }
+        if(this.delay[i][1].baseComponent === "3"){
+            this.delay[i][1] = this.getThird();
+        }
     }
     for(i=0; i<this.extra.length; i++) this.extra[i] = this.getChordComponentFromStringInThisHfContext(this.extra[i]);
     for(i=0; i<this.omit.length; i++) this.omit[i] = this.getChordComponentFromStringInThisHfContext(this.omit[i]);
@@ -265,6 +279,14 @@ function HarmonicFunction2(params){
         if(five !== this.getBasicChordComponents()[2]){
             this.omit = this.omit.filter(function(x){return x !== five});
             this.omit.push(this.getBasicChordComponents()[2]);
+        }
+    }
+
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("3", this.down))){
+        var third = this.cm.chordComponentFromString("3", this.down);
+        if(third !== this.getBasicChordComponents()[1]){
+            this.omit = this.omit.filter(function(x){return x !== third});
+            this.omit.push(this.getBasicChordComponents()[1]);
         }
     }
 
