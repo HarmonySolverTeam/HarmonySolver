@@ -5,6 +5,9 @@
 .import "../harmonic/Parser.js" as Parser
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 .import "../harmonic/ChordRulesChecker.js" as ChordRulesChecker
+.import "../commons/ExerciseCorrector.js" as Corrector
+.import "../harmonic/Exercise.js" as Exercise
+.import "../model/Note.js" as Note
 
 function SopranoRulesChecker(key, mode){
     this.key = key;
@@ -40,10 +43,18 @@ function ExistsSolutionRule(chordRulesChecker, chordGenerator){
 
     this.evaluate = function(connection) {
         var prevFunction = connection.prev.harmonicFunction;
-        var prevSopranoNote = connection.prev.sopranoNote;
-        var prevPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(prevFunction, true, prevSopranoNote))
         var currentFunction = connection.current.harmonicFunction;
+        var prevSopranoNote = connection.prev.sopranoNote;
         var currentSopranoNote = connection.current.sopranoNote;
+
+        var exercise = new Exercise.Exercise(this.key, undefined, this.mode, [new Note.Measure([prevFunction, currentFunction])])
+        var corrector = new Corrector.ExerciseCorrector(exercise, [prevFunction, currentFunction], false, [prevSopranoNote, currentSopranoNote ]);
+        var harmonicFunctions = corrector.correctHarmonicFunctions();
+
+        prevFunction = harmonicFunctions[0];
+        currentFunction = harmonicFunctions[1];
+
+        var prevPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(prevFunction, true, prevSopranoNote))
         var currentPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(currentFunction, true, currentSopranoNote));
 
         for(var i = 0; i < prevPossibleChords.length; i++){

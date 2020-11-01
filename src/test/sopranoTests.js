@@ -8,7 +8,7 @@ var Consts = require("./objects/commons/Consts")
 var Parser = require("./objects/harmonic/Parser")
 var Utils = require("./objects/utils/Utils")
 
-var testSuite = new TestUtils.TestSuite("Soprano exercise tests", 1000);
+var testSuite = new TestUtils.TestSuite("Soprano exercise tests", 10000);
 
 // ************************** HARMONIC FUNCTIONS *********************************
 
