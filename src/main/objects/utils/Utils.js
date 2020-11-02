@@ -1,4 +1,5 @@
 .import "../commons/Consts.js" as Consts
+.import "../model/Scale.js" as Scale
 
 function contains(list, obj) {
     for (var i = 0; i < list.length; i++) {
@@ -220,4 +221,18 @@ function isIntegerNumber(x){
     if(match === null)
         return false;
     return x !== xString && match.length === 1 && match[0] === xString
+}
+
+function getAlterationSymbolForNote(note, mode, key){
+    var scalePitches = mode === Consts.MODE.MAJOR ? new Scale.MajorScale(key).pitches : new Scale.MinorScale(key).pitches
+    var noteNumber = mod(note.baseNote - Consts.keyStrBase[key],7)
+
+    if (mod(scalePitches[noteNumber] + Consts.keyStrPitch[key] + 1, 12) === mod(note.pitch, 12)) {
+        return Consts.ALTERATIONS.SHARP
+    } else  if (mod(scalePitches[noteNumber] + Consts.keyStrPitch[key] - 1, 12) === mod(note.pitch, 12)) {
+        return Consts.ALTERATIONS.FLAT
+    } else {
+        return undefined
+    }
+
 }

@@ -24,9 +24,8 @@ function Solver(exercise, bassLine, sopranoLine){
             var newFunction = functions[i].copy();
             for(var j=0; j<delays.length; j++){
                 if(parseInt(delays[j][1].baseComponent)>=8 && !Utils.containsChordComponent(newFunction.extra, delays[j][1].chordComponentString))
-                {
                     newFunction.extra.push(delays[j][1]);
-                }
+
                 functions[i].extra.push(delays[j][0]);
                 functions[i].omit.push(delays[j][1]);
                 functions[i].extra = functions[i].extra.filter(function(elem){return elem.chordComponentString !== delays[j][1].chordComponentString});

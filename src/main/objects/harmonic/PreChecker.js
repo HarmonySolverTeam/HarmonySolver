@@ -5,6 +5,8 @@
 .import "../commons/RulesCheckerUtils.js" as RulesCheckerUtils
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 
+var DEBUG = false;
+
 function checkDSConnection(harmonicFunctions) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
         if (harmonicFunctions[i].functionName === Consts.FUNCTION_NAMES.DOMINANT
@@ -12,8 +14,8 @@ function checkDSConnection(harmonicFunctions) {
             && harmonicFunctions[i].mode === Consts.MODE.MAJOR
             && harmonicFunctions[i].key === harmonicFunctions[i+1].key) {
             throw new Errors.PreCheckerError("Forbidden connection: D->S", "Chords: " + (i + 1) + " " + (i + 2)
-                , "Chord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i-1])
-                + "\nChord " + (i + 2) + "\n" + JSON.stringify(harmonicFunctions[i]))
+                + "\nChord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i])
+                + "\nChord " + (i + 2) + "\n" + JSON.stringify(harmonicFunctions[i+1]))
         }
     }
 }
@@ -47,6 +49,8 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             currentChords = chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(harmonicFunctions[i],i!==0))
         }
 
+        if (DEBUG) console.log("generated for " + i + " " + currentChords.length)
+
         //todo do the same in chordGenerator
         if(i === 0){
             var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
@@ -54,7 +58,7 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
         }
 
         if (currentChords.length === 0) {
-            console.log(harmonicFunctions[i])
+            if (DEBUG) console.log(harmonicFunctions[i])
             throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1  - chordsWithDelays),
                                                 JSON.stringify(harmonicFunctions[i]))
         }
@@ -106,6 +110,9 @@ function preCheck(harmonicFunctions, chordGenerator, bassLine, sopranoLine) {
         //we create those harmonic function exercises by ourselves
         return
     }
+    if (DEBUG) console.log("Prechecker harmonic functions")
+    if (DEBUG) console.log(JSON.stringify(harmonicFunctions))
+
     checkDSConnection(harmonicFunctions)
     checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine)
 }

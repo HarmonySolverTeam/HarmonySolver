@@ -306,7 +306,7 @@ function ChordGenerator(key, mode) {
 
     this.generate = function (chordGeneratorInput) {
         var harmonicFunction = chordGeneratorInput.harmonicFunction;
-        if(harmonicFunction.isTVIMinorDown()){
+        if(harmonicFunction.isTVIMinorDown()  || harmonicFunction.isTIIIMinorDown()){
             harmonicFunction = harmonicFunction.copy();
             harmonicFunction.mode = Consts.MODE.MAJOR;
         }

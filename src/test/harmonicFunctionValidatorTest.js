@@ -33,8 +33,7 @@ const validateDelayWithOtherAttributesTest = () => {
 testSuite.addTest(new TestUtils.UnitTest(validateDelayWithOtherAttributesTest, "Validate delay with omit, extra, revolution and position"));
 
 const omit5AddingToNinthTest = () => {
-    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined, undefined, undefined,[["9","8"]], ["9"]);
-
+    var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined, undefined, undefined,[["9","8"]], ["7"]);
     return TestUtils.assertContains(hf1.omit, hf1.cm.chordComponentFromString("5"));
 };
 

@@ -11,53 +11,121 @@ var ChordComponentManager = require("./objects/model/ChordComponentManager")
 var cm = new ChordComponentManager.ChordComponentManager();
 
 var check_solution_found_major = (exName) => {
-    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
+    try {
+        var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + exName);
+        var ex = Parser.parse(input);
+        var solver = new Solver.Solver(ex);
+        var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+        return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+    } catch (e) {
+        console.error(JSON.stringify(e))
+        return false;
+    }
 }
 
 var check_solution_found_minor = (exName) => {
-    var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
-    var ex = Parser.parse(input);
-    var solver = new Solver.Solver(ex);
-    var solution = solver.solve();
+    try {
+        var input = UnitTest.get_ex_from_file("\\examples\\1_HarmonicFuntions\\minor\\" + exName);
+        var ex = Parser.parse(input);
+        var solver = new Solver.Solver(ex);
+        var solution = solver.solve();
 
-    return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+        return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
+    } catch (e) {
+        console.error(JSON.stringify(e))
+        return false;
+    }
 }
 
-var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests",  1700);
-var targosz_p61_ex13 = () => {return check_solution_found_major("targosz_p61_ex13.txt")};
-var targosz_p61_ex14 = () => {return check_solution_found_major("targosz_p61_ex14.txt")};
-var targosz_p61_ex15 = () => {return check_solution_found_major("targosz_p61_ex15.txt")};
-var targosz_p61_ex16 = () => {return check_solution_found_major("targosz_p61_ex16.txt")};
-var sikorski_zzip_ex1 = () => {return check_solution_found_major("sikorski_zzip_ex1.txt")};
-var sikorski_zzip_ex3 = () => {return check_solution_found_major("sikorski_zzip_ex3.txt")};
-var sikorski_zzip_ex53 = () => {return check_solution_found_major("sikorski_zzip_ex53.txt")};
-var sikorski_zzip_ex54 = () => {return check_solution_found_major("sikorski_zzip_ex54.txt")};
-var sikorski_zzip_ex77 = () => {return check_solution_found_major("sikorski_zzip_ex77.txt")};
-var sikorski_zzip_ex65 = () => {return check_solution_found_major("sikorski_zzip_ex65.txt")};
-var sikorski_zzip_ex66 = () => {return check_solution_found_major("sikorski_zzip_ex66.txt")};
-var delay_9_8 = () => {return check_solution_found_major("example_delay_9-8.txt")};
-var delays_test = () => {return check_solution_found_major("delay_test.txt")};
-var sikorski_zzip_ex102 = () => {return check_solution_found_major("sikorski_zzip_ex102.txt")};
-var sikorski_zzip_ex114 = () => {return check_solution_found_major("sikorski_zzip_ex114.txt")};
-var sikorski_zzip_ex126 = () => {return check_solution_found_major("sikorski_zzip_ex126.txt")};
-var d_altered_major= () => {return check_solution_found_major("d_altered_test.txt")};
-var sikorski_zzip_ex162 = () => {return check_solution_found_major("sikorski_zzip_ex162.txt")};
-var sikorski_zzip_ex168 = () => {return check_solution_found_major("sikorski_zzip_ex168.txt")};
-var d_vi_test = () => {return check_solution_found_major("d_tvi_test.txt")};
-var sikorski_zzip_ex180 = () => {return check_solution_found_major("sikorski_zzip_ex180.txt")};
-var sikorski_zzip_ex186 = () => {return check_solution_found_major("sikorski_zzip_ex186.txt")};
-var sikorski_zzip_ex198 = () => {return check_solution_found_major("sikorski_zzip_ex198.txt")};
-var chained_deflection_basic = () => {return check_solution_found_major("chained_deflection_basic.txt")};
-var d_with_7_revolution = () => {return check_solution_found_major("d_with_7_revolution.txt")};
-var d9_without_omits = () => {return check_solution_found_major("d9_without_omits.txt")};
-var sikorski_zzip_ex206 = () => {return check_solution_found_major("sikorski_zzip_ex206.txt")};
-var sikorski_zzip_ex207 = () => {return check_solution_found_major("sikorski_zzip_ex207.txt")};
-var sikorski_zzip_ex207_new_notation = () => {return check_solution_found_major("new_notation\\sikorski_zzip_ex207.txt")};
+var harmonicFunctionsTestSuite = new UnitTest.TestSuite("1_HarmonicFunctions tests", 1700);
+var targosz_p61_ex13 = () => {
+    return check_solution_found_major("targosz_p61_ex13.txt")
+};
+var targosz_p61_ex14 = () => {
+    return check_solution_found_major("targosz_p61_ex14.txt")
+};
+var targosz_p61_ex15 = () => {
+    return check_solution_found_major("targosz_p61_ex15.txt")
+};
+var targosz_p61_ex16 = () => {
+    return check_solution_found_major("targosz_p61_ex16.txt")
+};
+var sikorski_zzip_ex1 = () => {
+    return check_solution_found_major("sikorski_zzip_ex1.txt")
+};
+var sikorski_zzip_ex3 = () => {
+    return check_solution_found_major("sikorski_zzip_ex3.txt")
+};
+var sikorski_zzip_ex53 = () => {
+    return check_solution_found_major("sikorski_zzip_ex53.txt")
+};
+var sikorski_zzip_ex54 = () => {
+    return check_solution_found_major("sikorski_zzip_ex54.txt")
+};
+var sikorski_zzip_ex77 = () => {
+    return check_solution_found_major("sikorski_zzip_ex77.txt")
+};
+var sikorski_zzip_ex65 = () => {
+    return check_solution_found_major("sikorski_zzip_ex65.txt")
+};
+var sikorski_zzip_ex66 = () => {
+    return check_solution_found_major("sikorski_zzip_ex66.txt")
+};
+var delay_9_8 = () => {
+    return check_solution_found_major("example_delay_9-8.txt")
+};
+var delays_test = () => {
+    return check_solution_found_major("delay_test.txt")
+};
+var sikorski_zzip_ex102 = () => {
+    return check_solution_found_major("sikorski_zzip_ex102.txt")
+};
+var sikorski_zzip_ex114 = () => {
+    return check_solution_found_major("sikorski_zzip_ex114.txt")
+};
+var sikorski_zzip_ex126 = () => {
+    return check_solution_found_major("sikorski_zzip_ex126.txt")
+};
+var d_altered_major = () => {
+    return check_solution_found_major("d_altered_test.txt")
+};
+var sikorski_zzip_ex162 = () => {
+    return check_solution_found_major("sikorski_zzip_ex162.txt")
+};
+var sikorski_zzip_ex168 = () => {
+    return check_solution_found_major("sikorski_zzip_ex168.txt")
+};
+var d_vi_test = () => {
+    return check_solution_found_major("d_tvi_test.txt")
+};
+var sikorski_zzip_ex180 = () => {
+    return check_solution_found_major("sikorski_zzip_ex180.txt")
+};
+var sikorski_zzip_ex186 = () => {
+    return check_solution_found_major("sikorski_zzip_ex186.txt")
+};
+var sikorski_zzip_ex198 = () => {
+    return check_solution_found_major("sikorski_zzip_ex198.txt")
+};
+var chained_deflection_basic = () => {
+    return check_solution_found_major("chained_deflection_basic.txt")
+};
+var d_with_7_revolution = () => {
+    return check_solution_found_major("d_with_7_revolution.txt")
+};
+var d9_without_omits = () => {
+    return check_solution_found_major("d9_without_omits.txt")
+};
+var sikorski_zzip_ex206 = () => {
+    return check_solution_found_major("sikorski_zzip_ex206.txt")
+};
+var sikorski_zzip_ex207 = () => {
+    return check_solution_found_major("sikorski_zzip_ex207.txt")
+};
+var sikorski_zzip_ex207_new_notation = () => {
+    return check_solution_found_major("new_notation\\sikorski_zzip_ex207.txt")
+};
 
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex13, "HarmonicFunctions Major test 1 - from targosz_p61_ex13"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex14, "HarmonicFunctions Major test 2 - from targosz_p61_ex14"));
@@ -90,24 +158,60 @@ harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex207, "H
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(sikorski_zzip_ex207_new_notation, "HarmonicFunctions Major test 29 - from sikorski_zzip_ex207 (new notation)"));
 
 // MINOR
-var targosz_p61_ex17 = () => {return check_solution_found_minor("targosz_p61_ex17.txt")};
-var targosz_p61_ex18 = () => {return check_solution_found_minor("targosz_p61_ex18.txt")};
-var targosz_p61_ex19 = () => {return check_solution_found_minor("targosz_p61_ex19.txt")};
-var targosz_p61_ex20 = () => {return check_solution_found_minor("targosz_p61_ex20.txt")};
-var sikorski_zzip_ex67 = () => {return check_solution_found_minor("sikorski_zzip_ex67.txt")};
-var sikorski_zzip_ex68 = () => {return check_solution_found_minor("sikorski_zzip_ex68.txt")};
-var delay_D65 = () => {return check_solution_found_minor("example_delay_D65.txt")};
-var sikorski_zzip_ex92 = () => {return check_solution_found_minor("sikorski_zzip_ex92.txt")};
-var sikorski_zzip_ex105 = () => {return check_solution_found_minor("sikorski_zzip_ex105.txt")};
-var sikorski_zzip_ex116 = () => {return check_solution_found_minor("sikorski_zzip_ex116.txt")};
-var sikorski_zzip_ex127 = () => {return check_solution_found_minor("sikorski_zzip_ex127.txt")};
-var sikorski_zzip_ex163 = () => {return check_solution_found_minor("sikorski_zzip_ex163.txt")};
-var sikorski_zzip_ex169 = () => {return check_solution_found_minor("sikorski_zzip_ex169.txt")};
-var sikorski_zzip_ex153 = () => {return check_solution_found_minor("sikorski_zzip_ex153.txt")};
-var sikorski_zzip_ex175 = () => {return check_solution_found_minor("sikorski_zzip_ex175.txt")};
-var sikorski_zzip_ex181 = () => {return check_solution_found_minor("sikorski_zzip_ex181.txt")};
-var sikorski_zzip_ex193 = () => {return check_solution_found_minor("sikorski_zzip_ex193.txt")};
-var sikorski_zzip_ex208 = () => {return check_solution_found_minor("sikorski_zzip_ex208.txt")};
+var targosz_p61_ex17 = () => {
+    return check_solution_found_minor("targosz_p61_ex17.txt")
+};
+var targosz_p61_ex18 = () => {
+    return check_solution_found_minor("targosz_p61_ex18.txt")
+};
+var targosz_p61_ex19 = () => {
+    return check_solution_found_minor("targosz_p61_ex19.txt")
+};
+var targosz_p61_ex20 = () => {
+    return check_solution_found_minor("targosz_p61_ex20.txt")
+};
+var sikorski_zzip_ex67 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex67.txt")
+};
+var sikorski_zzip_ex68 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex68.txt")
+};
+var delay_D65 = () => {
+    return check_solution_found_minor("example_delay_D65.txt")
+};
+var sikorski_zzip_ex92 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex92.txt")
+};
+var sikorski_zzip_ex105 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex105.txt")
+};
+var sikorski_zzip_ex116 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex116.txt")
+};
+var sikorski_zzip_ex127 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex127.txt")
+};
+var sikorski_zzip_ex163 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex163.txt")
+};
+var sikorski_zzip_ex169 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex169.txt")
+};
+var sikorski_zzip_ex153 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex153.txt")
+};
+var sikorski_zzip_ex175 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex175.txt")
+};
+var sikorski_zzip_ex181 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex181.txt")
+};
+var sikorski_zzip_ex193 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex193.txt")
+};
+var sikorski_zzip_ex208 = () => {
+    return check_solution_found_minor("sikorski_zzip_ex208.txt")
+};
 
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex17, "HarmonicFunctions Minor test 1 - from targosz_p61_ex17"));
 harmonicFunctionsTestSuite.addTest(new UnitTest.UnitTest(targosz_p61_ex18, "HarmonicFunctions Minor test 2 - from targosz_p61_ex18"));
