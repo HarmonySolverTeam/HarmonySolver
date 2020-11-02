@@ -29,10 +29,16 @@ MuseScore {
 
     property var exercise: ({})
     property var exerciseLoaded: false
+    property var preferences: ({})
+
     id: window
     width: 800
     height: 600
     onRun: {
+      preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = true
+      preferences[Consts.PREFERENCES_NAMES.CORRECT] = true
+      preferences[Consts.PREFERENCES_NAMES.PRECHECK] = true
+      preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = true
         //readPluginConfiguration()
     }
 
@@ -231,7 +237,16 @@ MuseScore {
     }
 
     function prepare_score_for_solution(filePath, solution, solution_date, setDurations, taskType) {
-        readScore(filePath + "/resources/template scores/" + solution.exercise.key + "_"
+        var resources_path = "";
+
+        if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
+            resources_path = "/resources/template scores/";
+        }
+        else{
+            resources_path = "/resources/lightweight_template_scores/";
+        }
+
+        readScore(filePath + resources_path + solution.exercise.key + "_"
                   + solution.exercise.mode + ".mscz")
         writeScore(curScore,
                    filePath + "/solutions/harmonic functions exercise/solution" + taskType + solution_date,
@@ -334,24 +349,27 @@ MuseScore {
             addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
 
-            var text = newElement(Element.HARMONY)
-            text.text = curChord.harmonicFunction.getSimpleChordName();
+            if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
+                var text = newElement(Element.HARMONY)
+                text.text = curChord.harmonicFunction.getSimpleChordName();
+            
 
-            if(prevChord !== undefined && nextChord !== undefined){
-                if(curChord.harmonicFunction.key !== undefined){
-                    if(prevChord.harmonicFunction.key !== curChord.harmonicFunction.key){
-                        text.text = text.text[0] + "lb" + text.text.slice(1);
-                    }
-                    if(nextChord.harmonicFunction.key !== curChord.harmonicFunction.key){
-                        text.text = text.text + "rb";
+                if(prevChord !== undefined && nextChord !== undefined){
+                    if(curChord.harmonicFunction.key !== undefined){
+                        if(prevChord.harmonicFunction.key !== curChord.harmonicFunction.key){
+                            text.text = text.text[0] + "lb" + text.text.slice(1);
+                        }
+                        if(nextChord.harmonicFunction.key !== curChord.harmonicFunction.key){
+                            text.text = text.text + "rb";
+                        }
                     }
                 }
-            }
 
-            if(prevChord !== undefined)
-                if(prevChord.harmonicFunction.isDelayRoot()) text.text = "";
-            text.offsetY = 7;
-            text.placement = Placement.BELOW;
+                if(prevChord !== undefined)
+                    if(prevChord.harmonicFunction.isDelayRoot()) text.text = "";
+                text.offsetY = 7;
+                text.placement = Placement.BELOW;
+            }
             cursor.add(text);
             cursor.addNote(curChord.bassNote.pitch, false)
         }
@@ -415,7 +433,7 @@ MuseScore {
                                                                     [],
                                                                     functionsList)
 
-        var solver = new Soprano.SopranoSolver(shex)
+        var solver = new Soprano.SopranoSolver(shex,false,false)
 
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
@@ -433,6 +451,8 @@ MuseScore {
     }
 
     function addComponentToScore(cursor, componentValue) {
+        if(!preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS])
+            return
         var component = newElement(Element.FINGERING)
         component.text = componentValue
         curScore.startCmd()
@@ -452,7 +472,8 @@ MuseScore {
             for (var i = 0; i < ex.elements.length; i++) {
                 bassLine.push(ex.elements[i].bassNote)
             }
-            var solver = new Solver.Solver(exercise, bassLine)
+            var solver = new Solver.Solver(exercise, bassLine, undefined,
+                !preferences[Consts.PREFERENCES_NAMES.CORRECT], !preferences[Consts.PREFERENCES_NAMES.PRECHECK])
             var solution = solver.solve()
             var solution_date = get_solution_date()
             Utils.log("Solution:", JSON.stringify(solution))
@@ -719,7 +740,8 @@ MuseScore {
                                 showError(new Errors.BasicError("File with harmonic functions exercise was not loaded correctly"))
                             } else {
                                 try {
-                                    var solver = new Solver.Solver(exercise)
+                                    var solver = new Solver.Solver(exercise,undefined,undefined,
+                                        !preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
                                     var solution = solver.solve()
                                     var solution_date = get_solution_date()
 
@@ -983,7 +1005,7 @@ MuseScore {
                     id: tabRectangle4
 
                     Label{
-                        id: savePathLabel
+                        id: preferencesLabel
                         anchors.top: tabRectangle4.top
                         anchors.left: tabRectangle4.left
                         anchors.topMargin: 10
@@ -994,7 +1016,7 @@ MuseScore {
 
                     TextArea {
                         id: savePathTextArea
-                        anchors.top: savePathLabel.bottom
+                        anchors.top: preferencesLabel.bottom
                         anchors.left: tabRectangle4.left
 
                         anchors.topMargin: 10
@@ -1003,6 +1025,69 @@ MuseScore {
                         height: 40
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
+                    }
+                    
+                    Column {
+                        id: exerciseOptionsColumn
+                        anchors.top: preferencesLabel.bottom
+                        anchors.left: savePathTextArea.right
+                        anchors.leftMargin: 30
+                        CheckBox {
+                            id: printCheckbox
+                            checked: true
+                            text: qsTr("print chord symbols")
+                            onCheckedChanged: function() {
+                                    if (this.checkedState === Qt.Checked){
+                                          preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = true
+                                          return Qt.Unchecked
+                                    }else{
+                                          preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = false
+                                          return Qt.Checked
+                                    }
+                            }
+                        }
+                        CheckBox {
+                             id: printComponentsCheckbox
+                             checked: true
+                             text: qsTr("print chord components")
+                             onCheckedChanged: function() {
+                                    if (this.checkedState === Qt.Checked){
+                                          preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = true
+                                          return Qt.Unchecked
+                                    }else{
+                                          preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = false
+                                          return Qt.Checked
+                                    }
+                            }
+                        }
+                        CheckBox {
+                            id: precheckCheckbox
+                            checked: true
+                            text: qsTr("precheck for unavoidable errors")
+                            onCheckedChanged: function() {
+                                    if (this.checkedState === Qt.Checked){
+                                          preferences[Consts.PREFERENCES_NAMES.PRECHECK] = true
+                                          return Qt.Unchecked
+                                    }else{
+                                          preferences[Consts.PREFERENCES_NAMES.PRECHECK] = false
+                                          return Qt.Checked
+                                    }
+                            }
+                        }
+                        CheckBox {
+                             id: correctCheckbox
+                             checked: true
+                             text: qsTr("correct given exercise")
+                             onCheckedChanged: function() {
+                                    if (this.checkedState === Qt.Checked){
+                                          preferences[Consts.PREFERENCES_NAMES.CORRECT] = true
+                                          return Qt.Unchecked
+                                    }else{
+                                          preferences[Consts.PREFERENCES_NAMES.CORRECT] = false
+                                          return Qt.Checked
+                                    }
+                            }
+                        }
                     }
 
                     Button {

@@ -68,8 +68,10 @@ function RulesChecker(){
     }
 }
 
-function SopranoSolver(sopranoHarmonizationExercise){
-    
+function SopranoSolver(sopranoHarmonizationExercise, correctDisabled, precheckDisabled){
+
+    this.correctDisabled = correctDisabled;
+    this.precheckDisabled = precheckDisabled;
     this.harmonizationExercise = sopranoHarmonizationExercise;
     this.exercise = sopranoHarmonizationExercise.sopranoExercise;
     this.rulesChecker = new RulesChecker();
@@ -200,7 +202,7 @@ function SopranoSolver(sopranoHarmonizationExercise){
         var i=0
         for(; i<solution.length; i++){
             var ex = new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, [solution[i][0]]);
-            var solver = new Solver.Solver(ex, undefined, this.exercise.notes);
+            var solver = new Solver.Solver(ex, undefined, this.exercise.notes, this.correctDisabled, this.precheckDisabled);
             var sol = solver.solve();
             
             //temporary condition for full solution

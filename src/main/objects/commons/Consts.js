@@ -251,3 +251,11 @@ var keyFromPitchBasenoteAndMode = {
     "70,6,minor": 'bb',
     "71,6,minor": 'b',
 }
+
+//G
+var PREFERENCES_NAMES = {
+    PRECHECK: "precheck",
+    CORRECT: "correct",
+    PRINT_SYMBOLS: "printSymbols",
+    PRINT_COMPONENTS: "printComponents"
+}
