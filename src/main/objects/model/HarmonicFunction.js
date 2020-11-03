@@ -230,6 +230,12 @@ function HarmonicFunction2(params){
             && this.key === other.key
     };
 
+    this.withPosition = function (position) {
+        var functionWithPosition = this.copy();
+        functionWithPosition.position = position;
+        return functionWithPosition;
+    };
+
     this.toString = function () {
         return "FunctionName: " + this.functionName + " " +
             "Degree: " + this.degree + " " +
@@ -271,7 +277,6 @@ function HarmonicFunction2(params){
         if(this.degree !== undefined && this.degree !== 1 && this.degree !== 4 && this.degree !== 5)
             res += "deg" + degreeAdapter[this.degree];
 
-        console.log(res);
         return res;
     }
 

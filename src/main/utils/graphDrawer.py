@@ -6,9 +6,12 @@ line = input("")
 edges = []
 vertex_layers = {}
 vertexes = []
+edge_weights = {}
 while line != "":
-    v, u, layer_of_v = line.split(",")[0], line.split(",")[1], int(line.split(",")[2])
+    # line = line.split(" ")[1]
+    v, u, layer_of_v, weight = line.split(",")[0], line.split(",")[1], int(line.split(",")[2]), line.split(",")[3]
     edges += [(v, u)]
+    edge_weights[(v,u)] = weight
     if v not in vertexes:
         vertexes += [v]
     if u not in vertexes:
@@ -33,5 +36,7 @@ G.add_edges_from(edges)
 for v, data in G.nodes(data=True):
     data['subset'] = vertex_layers[v]
 pos = nxd.multipartite_layout(G)
-nx.draw(G, pos=pos, node_size=0.2, with_labels=False) #, font_size=10)
+nx.draw(G, pos=pos, node_size=0.2, with_labels=True, edge_labels=edge_weights) #, font_size=10)
+nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_weights)
+# plt.axis('off')
 plt.show()

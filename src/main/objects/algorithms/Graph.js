@@ -7,6 +7,7 @@ function Node(content) {
     this.content = content;
     this.nextNeighbours = [];
     this.prevNodes = [];
+    // this.pp2 = 0
 
     this.getPrevContentIfSingle = function () {
         var uniquePrevContents =  this.getUniquePrevContents();
@@ -151,8 +152,15 @@ function Graph(layers, first, last) {
     this.printEdges = function () {
         var printNodeInfo = function(currentNode, layerNumber){
             for(var k=0; k< currentNode.nextNeighbours.length; k++){
+                // version for first exercise
                 // console.log(currentNode.id + "+" + currentNode.content.shortString() + ","  + currentNode.nextNeighbours[k].node.id + "+" + currentNode.nextNeighbours[k].node.content.shortString() + "," + i)
-                console.log(currentNode.id + "," + currentNode.nextNeighbours[k].node.id + "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
+
+                // version for soprano
+                if(currentNode.content !== "first" && currentNode.nextNeighbours[k].node.content !== "last")
+                console.log(currentNode.id + currentNode.content.harmonicFunction.functionName + "," + currentNode.nextNeighbours[k].node.id + currentNode.nextNeighbours[k].node.content.harmonicFunction.functionName+ "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
+
+                // default version
+                // console.log(currentNode.id + "," + currentNode.nextNeighbours[k].node.id + "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
             }
         }
 
@@ -162,6 +170,25 @@ function Graph(layers, first, last) {
                 printNodeInfo(this.layers[i].nodeList[j], i+1)
             }
         }
+    }
+
+    this.getPossiblePathCount = function(){
+        var n = 0;
+        this.first.pp2 = 1
+        for(var i=0; i<this.layers.length;i++){
+            for(var j=0; j<this.layers[i].nodeList.length; j++) {
+                var curr = this.layers[i].nodeList[j];
+                curr.pp2 = 0
+                for (var k = 0; k < curr.prevNodes.length; k++) {
+                    curr.pp2 += curr.prevNodes[k].pp2;
+                }
+                if (i === this.layers.length -1) {
+                    console.log(curr.pp2)
+                    n += curr.pp2
+                }
+            }
+        }
+        return n;
     }
 }
 
@@ -272,7 +299,8 @@ function GraphBuilder() {
         for(var i=0; i<graph.layers.length - 1; i++){
             for(var j=0; j<graph.layers[i].nodeList.length; j++){
                 var currentNode = graph.layers[i].nodeList[j];
-                var prevNodeContent = i === 0 ? undefined : currentNode.getPrevContentIfSingle();
+
+                var prevNodeContent = i === 0 ? undefined : ( evaluator.connectionSize !== 3 ? undefined : currentNode.getPrevContentIfSingle());
 
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var neighbour = currentNode.nextNeighbours[k];
@@ -300,6 +328,7 @@ function GraphBuilder() {
         resultGraph.enumerateNodes();
 
         setEdgeWeights(resultGraph, this.evaluator);
+        // if(this.evaluator.connectionSize === 2) resultGraph.printEdges()
 
         return resultGraph;
     }

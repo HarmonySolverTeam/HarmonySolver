@@ -4,3 +4,5 @@ src/test/objects/*
 src/main/solutions/*
 .idea
 HarmonySolver.iml
+*.log
+.gitignore

@@ -13,7 +13,7 @@ import "./objects/commons/Consts.js" as Consts
 import "./objects/bass/BassTranslator.js" as Translator
 import "./objects/soprano/SopranoExercise.js" as SopranoExercise
 import "./objects/model/HarmonicFunction.js" as HarmonicFunction
-import "./objects/soprano/Soprano.js" as Soprano
+import "./objects/soprano/SopranoSolver.js" as Soprano
 import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
 import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
 import "./objects/commons/Errors.js" as Errors
@@ -352,7 +352,7 @@ MuseScore {
             if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
                 var text = newElement(Element.HARMONY)
                 text.text = curChord.harmonicFunction.getSimpleChordName();
-            
+
 
                 if(prevChord !== undefined && nextChord !== undefined){
                     if(curChord.harmonicFunction.key !== undefined){
@@ -380,7 +380,7 @@ MuseScore {
             addComponentToScore(cursor,
                                 solution.chords[i].bassNote.chordComponent.toXmlString())
             selectSoprano(cursor)
-            console.log(cursor.element)
+//            console.log(cursor.element)
             cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].sopranoNote)
             selectAlto(cursor)
             cursor.element.notes[0].tpc = Utils.convertToTpc(solution.chords[i].altoNote)
@@ -417,9 +417,11 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0, [cursor.element.duration.numerator, cursor.element.duration.denominator])
+            //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0, [" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
             notes.push(sopranoNote)
             measure_notes.push(sopranoNote)
         } while (cursor.next())
+        measures.push(new Note.Measure(measure_notes))
         var key
         if (mode === "major")
             key = Consts.majorKeyBySignature(curScore.keysig)
@@ -429,26 +431,31 @@ MuseScore {
                                                                   meter, notes,
                                                                   durations, measures)
 
-        var shex = new SopranoExercise.SopranoHarmonizationExercise(sopranoExercise,
-                                                                    [],
-                                                                    functionsList)
-
-        var solver = new Soprano.SopranoSolver(shex,false,false)
+        var solver = new Soprano.SopranoSolver(sopranoExercise)
 
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
-        var solution_date = get_solution_date()
+//        console.log("SOLUTION:")
+//        console.log(solution.chords);
 
-        prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
+        if(solution.success) {
+            var solution_date = get_solution_date()
 
-        fill_score_with_solution(solution, sopranoExercise.durations)
+            prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
 
-        writeScore(curScore,
-                   filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                   "mscz")
+            fill_score_with_solution(solution, sopranoExercise.durations)
 
-        Utils.log("sopranoExercise:",sopranoExercise)
-    }
+            writeScore(curScore,
+                       filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                       "mscz")
+
+            Utils.log("sopranoExercise:",sopranoExercise)
+        }
+        else{
+            console.log("cannot find solution");
+        }
+
+        }
 
     function addComponentToScore(cursor, componentValue) {
         if(!preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS])
@@ -533,6 +540,8 @@ MuseScore {
         Dtoiii.key = Parser.calculateKey(key, Diii)
         var Dtoiv = D7.copy()
         Dtoiv.key = Parser.calculateKey(key, S)
+        var Dtov = D7.copy()
+        Dtov.key = Parser.calculateKey(key, D)
         var Dtovi = D7.copy()
         Dtovi.key = Parser.calculateKey(key, Tvi)
         var Dtovii = D7.copy()
@@ -570,6 +579,7 @@ MuseScore {
             chordsList.push(Dtoii)
             chordsList.push(Dtoiii)
             chordsList.push(Dtoiv)
+            chordsList.push(Dtov)
             chordsList.push(Dtovi)
             chordsList.push(Dtovii)
         }
@@ -1026,7 +1036,7 @@ MuseScore {
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
                     }
-                    
+
                     Column {
                         id: exerciseOptionsColumn
                         anchors.top: preferencesLabel.bottom

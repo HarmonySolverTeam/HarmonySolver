@@ -21,12 +21,8 @@ const harmonicFunctionMapTest = () => {
     hfMap.pushToValues(60,1, hf)
     return TestUtils.assertTrue(hfMap.getValues(60,0)) &&
         TestUtils.assertContains(hfMap.getValues(60,1), hf) &&
-        TestUtils.assertThrows(undefined,
-            "Cannot read property '0 0' of undefined",
-            hfMap.getValues, [0, 0]) &&
-        TestUtils.assertThrows(undefined,
-            "Cannot read property '0 0' of undefined",
-            hfMap.pushToValues, [0, 0, undefined])
+        TestUtils.assertEqualsPrimitives(0, hfMap.getValues(0, 0).length) &&
+        TestUtils.assertUndefined(hfMap.pushToValues(0, 0, undefined))
 };
 
 testSuite.addTest(new TestUtils.UnitTest(harmonicFunctionMapTest, "Harmonic function map test"));
@@ -50,6 +46,25 @@ const generateTest = () => {
 };
 
 testSuite.addTest(new TestUtils.UnitTest(generateTest, "Harmonic function generate for given soprano note"));
+
+const generate73InDmajor = () => {
+    var gen = new HarmonicFunctionGenerator.HarmonicFunctionGenerator([t, d, s], "D", "major");
+    var input = new HarmonicFunctionGenerator.HarmonicFunctionGeneratorInput(new Note.Note(71, 6, 0, [1, 4]))
+
+    var res = gen.generate(input).map( (hfi) => hfi.harmonicFunction.functionName);
+    return TestUtils.assertEqualsPrimitives(1, res.length);
+}
+testSuite.addTest(new TestUtils.UnitTest(generate73InDmajor, "Harmonic function generate in D from soprano note with pitch 73"));
+
+const generate74InDmajor = () => {
+    var gen = new HarmonicFunctionGenerator.HarmonicFunctionGenerator([t, d, s], "D", "major");
+    var input = new HarmonicFunctionGenerator.HarmonicFunctionGeneratorInput(new Note.Note(74, 1, 0, [1, 2]))
+
+    var res = gen.generate(input).map( (hfi) => hfi.harmonicFunction.functionName);
+    return TestUtils.assertEqualsPrimitives(2, res.length);
+}
+testSuite.addTest(new TestUtils.UnitTest(generate74InDmajor, "Harmonic function generate in D from soprano note with pitch 74"));
+
 
 const allFunctionsInitializationTest = () => {
     var key = "C"
