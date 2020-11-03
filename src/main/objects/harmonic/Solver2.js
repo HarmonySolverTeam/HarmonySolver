@@ -2,6 +2,7 @@
 .import "../model/HarmonicFunction.js" as HarmonicFunction
 .import "../commons/ExerciseSolution.js" as ExerciseSolution
 .import "../commons/Consts.js" as Consts
+.import "../commons/Errors.js" as Errors
 .import "../model/Chord.js" as Chord
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 .import "../harmonic/ChordRulesChecker.js" as Checker
@@ -13,7 +14,7 @@
 
 var DEBUG = false;
 
-function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabled){
+function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabled, punishmentRatios){
     function getFunctionsWithDelays(functions){
         var newFunctions = functions.slice();
         var addedChords = 0;
@@ -63,6 +64,10 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
     this.sopranoLine = sopranoLine;
     this.correctDisabled = correctDisabled;
     this.precheckDisabled = precheckDisabled;
+    this.punishmentRatios = punishmentRatios;
+
+    if(Utils.isDefined(this.punishmentRatios) && !Utils.isDefined(this.sopranoLine))
+        throw new Errors.ProbablyUnexpectedError("Punishment ratios available only for soprano harmonization!");
 
     this.harmonicFunctions = [];
     for(var i=0; i<exercise.measures.length; i++){
@@ -99,7 +104,10 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
         }
         var graphBuilder = new Graph.GraphBuilder();
         graphBuilder.withGenerator(this.chordGenerator);
-        graphBuilder.withEvaluator(new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
+        graphBuilder.withEvaluator(
+            Utils.isDefined(this.punishmentRatios) ?
+            new Checker.AdaptiveChordRulesChecker(this.punishmentRatios) :
+            new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
         graphBuilder.withInput(this.getGeneratorInput());
         var graph = graphBuilder.build();
         var dikstra = new Dikstra.Dikstra(graph);

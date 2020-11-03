@@ -392,7 +392,7 @@ MuseScore {
         }
     }
 
-    function sopranoHarmonization(functionsList) {
+    function sopranoHarmonization(functionsList, punishmentRatios) {
 
         var mode = tab3.item.getSelectedMode()
         //should be read from input
@@ -429,10 +429,10 @@ MuseScore {
             key = Consts.minorKeyBySignature(curScore.keysig)
         var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
                                                                   meter, notes,
-                                                                  durations, measures)
+                                                                  durations, measures,
+                                                                  functionsList)
 
-        var solver = new Soprano.SopranoSolver(sopranoExercise)
-
+        var solver = new Soprano.SopranoSolver(sopranoExercise, punishmentRatios)
         //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
         var solution = solver.solve()
 //        console.log("SOLUTION:")
@@ -1133,8 +1133,9 @@ MuseScore {
                         onClicked: {
                             if (isSopranoScore()) {
                                 var func_list = getPossibleChordsList()
+                                var punishments = getPunishmentRatios()
                                 try{
-                                    sopranoHarmonization(func_list)
+                                    sopranoHarmonization(func_list, punishments)
                                 } catch (error) {
                                     showError(error)
                                }

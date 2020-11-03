@@ -238,7 +238,7 @@ function getAlterationSymbolForNote(note, mode, key){
 }
 
 function getValuesOf(object){
-    propertyList = [];
+    var propertyList = [];
     for(var key in object)
         propertyList.push(object[key]);
     return propertyList;
