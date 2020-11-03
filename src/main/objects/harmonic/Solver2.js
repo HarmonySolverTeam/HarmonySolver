@@ -71,7 +71,7 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
     }
 
     if(!this.correctDisabled) {
-        var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions);
+        var corrector = new Corrector.ExerciseCorrector(this.exercise, this.harmonicFunctions, Utils.isDefined(this.bassLine), this.sopranoLine);
         this.harmonicFunctions = corrector.correctHarmonicFunctions();
     }
 
