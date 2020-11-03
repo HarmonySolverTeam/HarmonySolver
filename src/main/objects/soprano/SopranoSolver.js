@@ -9,12 +9,13 @@
 .import "../commons/ExerciseSolution.js" as ExerciseSolution
 .import "../commons/Errors.js" as Errors
 
-function SopranoSolver(exercise){
+function SopranoSolver(exercise, punishmentRatios){
 
     this.exercise = exercise;
     this.harmonicFunctionGenerator = new HarmonicFunctionGenerator.HarmonicFunctionGenerator(this.exercise.possibleFunctionsList, this.exercise.key, this.exercise.mode);
-    this.sopranoRulesChecker = new SopranoRulesChecker.SopranoRulesChecker(this.exercise.key, this.exercise.mode);
     this.numberOfRetry = 10;
+    this.punishmentRatios = punishmentRatios;
+    this.sopranoRulesChecker = new SopranoRulesChecker.SopranoRulesChecker(this.exercise.key, this.exercise.mode, this.punishmentRatios);
 
     this.mapToHarmonisationExercise = function(harmonicFunctions){
         var measures = []
@@ -74,8 +75,7 @@ function SopranoSolver(exercise){
             }
 
             var harmonisationExercise = this.mapToHarmonisationExercise(sol_functions);
-
-            var harmonisationSolver = new HarmonisationSolver.Solver(harmonisationExercise, undefined, this.exercise.notes);
+            var harmonisationSolver = new HarmonisationSolver.Solver(harmonisationExercise, undefined, this.exercise.notes, false, false, this.punishmentRatios);
             var solutionCandidate = harmonisationSolver.solve();
 
             if (!solutionCandidate.success) {

@@ -9,14 +9,19 @@
 .import "../harmonic/Exercise.js" as Exercise
 .import "../model/Note.js" as Note
 
-function SopranoRulesChecker(key, mode){
+function SopranoRulesChecker(key, mode, punishmentRatios){
     this.key = key;
     this.mode = mode;
+    this.punishmentRatios = punishmentRatios;
     RulesCheckerUtils.Evaluator.call(this, 2);
 
     this.hardRules = [
         new ForbiddenDSConnectionRule(),
-        new ExistsSolutionRule(new ChordRulesChecker.ChordRulesChecker(false,true),new ChordGenerator.ChordGenerator(this.key,this.mode)),
+        new ExistsSolutionRule(
+            Utils.isDefined(this.punishmentRatios)?
+            new ChordRulesChecker.AdaptiveChordRulesChecker(this.punishmentRatios):
+            new ChordRulesChecker.ChordRulesChecker(false,true),
+            new ChordGenerator.ChordGenerator(this.key,this.mode)),
         new SecondaryDominantConnectionRule(this.key)
     ];
     this.softRules = [
@@ -46,13 +51,6 @@ function ExistsSolutionRule(chordRulesChecker, chordGenerator){
         var currentFunction = connection.current.harmonicFunction;
         var prevSopranoNote = connection.prev.sopranoNote;
         var currentSopranoNote = connection.current.sopranoNote;
-
-        var exercise = new Exercise.Exercise(this.key, undefined, this.mode, [new Note.Measure([prevFunction, currentFunction])])
-        var corrector = new Corrector.ExerciseCorrector(exercise, [prevFunction, currentFunction], false, [prevSopranoNote, currentSopranoNote ]);
-        var harmonicFunctions = corrector.correctHarmonicFunctions();
-
-        prevFunction = harmonicFunctions[0];
-        currentFunction = harmonicFunctions[1];
 
         var prevPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(prevFunction, true, prevSopranoNote))
         var currentPossibleChords = this.chordGenerator.generate(new ChordGenerator.ChordGeneratorInput(currentFunction, true, currentSopranoNote));
@@ -143,18 +141,27 @@ function ForbiddenDSConnectionRule(){
 function DominantRelationRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection){
-        if(connection.prev.harmonicFunction.isInDominantRelation(connection.current.harmonicFunction))
-            return 0;
-        return 2;
+        if(connection.prev.harmonicFunction.isInDominantRelation(connection.current.harmonicFunction)){
+            if(connection.prev.harmonicFunction.key !== connection.current.harmonicFunction.key){
+                return 2;
+            } else
+                return 0;
+        }
+        return 9;
     }
 }
 
 function SecondRelationRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection){
-        if(connection.prev.harmonicFunction.isInSecondRelation(connection.current.harmonicFunction))
-            return 0;
-        return 1;
+        if(connection.prev.harmonicFunction.isInSecondRelation(connection.current.harmonicFunction)){
+            if(Utils.containsBaseChordComponent(connection.prev.harmonicFunction.extra, "7") ||
+                connection.prev.harmonicFunction.degree === 5)
+                return 0;
+            else
+                return 3;
+        }
+        return 7;
     }
 }
 
@@ -220,7 +227,7 @@ function FourthChordsRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function (connection) {
         if(connection.current.harmonicFunction.countChordComponents() === 3){
-            return 4;
+            return 8;
         }
         return 0;
     }
