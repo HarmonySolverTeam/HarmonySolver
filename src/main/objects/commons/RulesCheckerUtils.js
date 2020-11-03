@@ -1,5 +1,6 @@
 .import "../utils/Utils.js" as Utils
 .import "../commons/Consts.js" as Consts
+.import "../commons/Errors.js" as Errors
 .import "../commons/BrokenRulesCounter.js" as BrokenRulesCounter
 
 function Connection(current, prev, prevPrev){
@@ -16,7 +17,7 @@ function Evaluator(connectionSize){
     this.hardRules = [];
     this.evaluateHardRules = function(connection){
         for(var i = 0; i < this.hardRules.length; i++){
-            if(this.hardRules[i].evaluate(connection) !== 0)
+            if(this.hardRules[i].isBroken(connection))
                 return false;
         }
         return true;
@@ -67,13 +68,18 @@ function Evaluator(connectionSize){
     }
 }
 
-function IRule(details){
+function IRule(details, evaluationRatio){
     this.evaluate = function(connection){
         throw new Error("IRule default evaluate method was called");
     };
 
+    if(Utils.isDefined(evaluationRatio) && (evaluationRatio > 1 || evaluationRatio < 0)){
+        throw new Errors.ProbablyUnexpectedError("Incorrect evaluation ratio in Rule. Should be in [0,1].")
+    };
+
     this.name = this.constructor.name;
     this.details = details;
+    this.evaluationRatio = Utils.isDefined(evaluationRatio)? evaluationRatio : 1;
 
     this.isBroken = function(connection){
         var evaluationResult = this.evaluate(connection);

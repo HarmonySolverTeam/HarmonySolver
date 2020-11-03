@@ -259,3 +259,16 @@ var PREFERENCES_NAMES = {
     PRINT_SYMBOLS: "printSymbols",
     PRINT_COMPONENTS: "printComponents"
 }
+
+//G
+var CHORD_RULES = {
+    ConcurrentOctaves: "ConcurrentOctaves",
+    ConcurrentFifths: "ConcurrentFifths",
+    CrossingVoices: "CrossingVoices",
+    OneDirection: "OneDirection",
+    ForbiddenJump: "ForbiddenJump",
+    HiddenOctaves: "Hidden consecutive octaves",
+    FalseRelation: "FalseRelation",
+    SameFunctionCheckConnection: "SameFunctionCheckConnection",
+    IllegalDoubledThird: "IllegalDoubledThird",
+}

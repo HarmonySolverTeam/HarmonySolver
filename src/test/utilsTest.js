@@ -29,4 +29,11 @@ var isNumberTest = () => {
 
 testSuite.addTest(new TestUtils.UnitTest(isNumberTest, "Is number test"));
 
+var getValuesOfTest = () => {
+    var testObject = {x: 0, y: 1};
+    return TestUtils.assertEqualsObjects([0, 1], Utils.getValuesOf(testObject))
+};
+
+testSuite.addTest(new TestUtils.UnitTest(getValuesOfTest, "Get values of object test"));
+
 testSuite.run();

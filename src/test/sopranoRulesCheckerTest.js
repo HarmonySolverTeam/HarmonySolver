@@ -1,7 +1,9 @@
 const UnitTest = require("./TestUtils");
 const HarmonicFunction = require("./objects/model/HarmonicFunction");
+const Chord = require("./objects/model/Chord");
 const Note = require("./objects/model/Note");
 const RulesChecker = require("./objects/soprano/SopranoRulesChecker")
+const ChordRulesChecker = require("./objects/harmonic/ChordRulesChecker")
 const RulesCheckerUtils = require("./objects/commons/RulesCheckerUtils")
 const Consts = require("./objects/commons/Consts")
 
@@ -201,5 +203,49 @@ const FourthChordsRuleTest = () => {
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(FourthChordsRuleTest,
     "Fourth chords rule test"));
+
+// AdaptiveRulesChecker
+
+var punishmentRatios = {};
+punishmentRatios[Consts.CHORD_RULES.ConcurrentFifths] = 1;
+punishmentRatios[Consts.CHORD_RULES.ConcurrentOctaves] = 1;
+punishmentRatios[Consts.CHORD_RULES.CrossingVoices] = 1;
+punishmentRatios[Consts.CHORD_RULES.OneDirection] = 1;
+punishmentRatios[Consts.CHORD_RULES.ForbiddenJump] = 1;
+punishmentRatios[Consts.CHORD_RULES.HiddenOctaves] = 1;
+punishmentRatios[Consts.CHORD_RULES.FalseRelation] = 1;
+punishmentRatios[Consts.CHORD_RULES.SameFunctionCheckConnection] = 1;
+punishmentRatios[Consts.CHORD_RULES.IllegalDoubledThird] = 1;
+
+var adaptiveChordRulesChecker = new ChordRulesChecker.AdaptiveChordRulesChecker(punishmentRatios);
+
+
+const AdaptiveRulesCheckerInitWithHardTest = () => {
+    return UnitTest.assertEqualsPrimitives(11, adaptiveChordRulesChecker.hardRules.length)
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(AdaptiveRulesCheckerInitWithHardTest,
+    "Adaptive chord rules checker init with all hard rules test"));
+
+const AdaptiveRulesCheckerInitWithSomeSoftTest = () => {
+    var hf1 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
+    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"),new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var hf2 = new HarmonicFunction.HarmonicFunction("S",4,undefined,"1",[],[],[],false,undefined,undefined);
+    var ch2 = new Chord.Chord(new Note.Note(77,3,"1"),new Note.Note(69, 5, "3"), new Note.Note(60, 0, "5"), new Note.Note(53, 3, "1"),hf2);
+    var connection = new RulesCheckerUtils.Connection(ch2, ch1)
+    var rule1 = adaptiveChordRulesChecker.hardRules.find((x)=>{return x.name === "ConcurrentOctavesRule"});
+    var firstResult = rule1.evaluate(connection);
+    punishmentRatios[Consts.CHORD_RULES.ConcurrentFifths] = 0.5;
+    punishmentRatios[Consts.CHORD_RULES.ConcurrentOctaves] = 0.5;
+    adaptiveChordRulesChecker = new ChordRulesChecker.AdaptiveChordRulesChecker(punishmentRatios);
+    var rule2 = adaptiveChordRulesChecker.softRules.find((x)=>{return x.name === "ConcurrentOctavesRule"});
+    var secondResult = rule2.evaluate(connection);
+    return UnitTest.assertEqualsPrimitives(9, adaptiveChordRulesChecker.hardRules.length) &&
+        UnitTest.assertDefined(rule1) && UnitTest.assertDefined(rule2) &&
+        UnitTest.assertEqualsPrimitives(firstResult * 0.5, secondResult);
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(AdaptiveRulesCheckerInitWithSomeSoftTest,
+    "Adaptive chord rules checker init with some soft rules test"));
 
 rulesCheckerTestSuite.run();

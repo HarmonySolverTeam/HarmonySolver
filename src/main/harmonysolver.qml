@@ -850,132 +850,276 @@ MuseScore {
                         }
                     }
 
-                    Label {
+                    /*Label {
                         id: textLabelSoprano
                         wrapMode: Text.WordWrap
-                        text: qsTr("Select all harmonic functions that you want to use for soprano\nharmonization:")
-                        font.pointSize: 12
+                        text: qsTr("Select all harmonic functions you want to use:")
                         anchors.left: tabRectangle3.left
                         anchors.top: tabRectangle3.top
-                        //anchors.bottom: infoText.top
                         anchors.leftMargin: 20
                         anchors.topMargin: 20
-                        font.pixelSize: 20
-                    }
-                    
-                    Text {
-                        id: triadTextLabel
-                        anchors.bottom: triadColumn.top
-                        anchors.left: tabRectangle3.left
-                        text: qsTr("Triad")
-                    }
-
-                    Column {
-                        id: triadColumn
-                        anchors.top: textLabelSoprano.bottom
-                        anchors.topMargin: 30
+                        font.pixelSize: 17
+                    }*/
+                    Row{
+                        id: harmonicFunctionRow
                         anchors.left: tabRectangle3.left
                         anchors.leftMargin: 10
-                        CheckBox {
-                            checked: true
-                            enabled: false
-                            text: qsTr("T")
+                        anchors.top: tabRectangle3.top
+                        anchors.topMargin: 10
+                        anchors.right: tabRectangle3.right
+                        spacing: 30
+                   
+
+                        Column {
+                            id: triadColumn
+                             Text {
+                                  id: triadTextLabel
+                                  text: qsTr("Triad")
+                            }
+                            CheckBox {
+                                checked: true
+                                enabled: false
+                                text: qsTr("T")
+                            }
+                            CheckBox {
+                                checked: true
+                                enabled: false
+                                text: qsTr("S")
+                            }
+                            CheckBox {
+                                checked: true
+                                enabled: false
+                                text: qsTr("D")
+                            }
                         }
-                        CheckBox {
-                            checked: true
-                            enabled: false
-                            text: qsTr("S")
+
+                        Column {
+                            id: extraChordsColumn
+                            Text {
+                                  id: extraChordsTextLabel
+                                  text: qsTr("Extra Chords")
+                            }
+                            CheckBox {
+                                id: s6Checkbox
+                                checked: false
+                                text: qsTr("S6")
+                            }
+                            CheckBox {
+                                id: d7Checkbox
+                                checked: false
+                                text: qsTr("D7")
+                            }
+                            CheckBox {
+                                id: neapolitanCheckbox
+                                checked: false
+                                text: qsTr("neapolitan chord")
+                            }
+                            CheckBox {
+                                id: secondaryDCheckbox
+                                checked: false
+                                text: qsTr("secondary dominants")
+                            }
                         }
-                        CheckBox {
-                            checked: true
-                            enabled: false
-                            text: qsTr("D")
+
+                        Column {
+                            id: sideChordsColumn
+                            Text {
+                                id: sideChordsTextLabelt
+                                text: qsTr("Side Chords")
+                            }
+                            CheckBox {
+                                id: degree2Checkbox
+                                checked: false
+                                text: qsTr("II")
+                            }
+                            CheckBox {
+                                id: degree3Checkbox
+                                checked: false
+                                text: qsTr("III")
+                            }
+                            CheckBox {
+                                id: degree6Checkbox
+                                checked: false
+                                text: qsTr("VI")
+                            }
+                            CheckBox {
+                                id: degree7Checkbox
+                                checked: false
+                                text: qsTr("VII")
+                            }
                         }
+
+                        Column {
+                            id: extraOptions
+                            CheckBox {
+                                id: useMinorCheckbox
+                                checked: false
+                                text: qsTr("use minor scale")
+                            }
+                        }
+                    }
+                    Row{
+                        id: ruleRaw
+                        anchors.left: tabRectangle3.left
+                        anchors.leftMargin: 10
+                        anchors.top: harmonicFunctionRow.bottom
+                        anchors.topMargin: 30
+                        anchors.right: tabRectangle3.right
+                        spacing: 30
+                        
+                        Column {
+                              spacing: 10
+                              Column {
+                                    Text {
+                                          text: qsTr("Consecutive Octaves")
+                                    }
+                                    Slider {
+                                          id: consecutiveOctavesSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(consecutiveOctavesSlider.value+" %")
+                                    }
+                              }
+                              Column {      
+                                    Text {
+                                          text: qsTr("Consecutive Fifths")
+                                    }
+                                    Slider {
+                                          id: consecutiveFifthsSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(consecutiveFifthsSlider.value+" %")
+                                    }
+                              }
+                              Column {      
+                                    Text {
+                                          text: qsTr("Crossing Voices")
+                                    }
+                                    Slider {
+                                          id: crossingVoicesSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(crossingVoicesSlider.value+" %")
+                                    }
+                              }
+                              Column {      
+                                    Text {
+                                          text: qsTr("One Direction")
+                                    }
+                                    Slider {
+                                          id: oneDirectionSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                          }
+                                    Text {
+                                          text: qsTr(oneDirectionSlider.value+" %")
+                                    }
+                              }    
+                              Column {  
+                                    Text {
+                                          text: qsTr("Forbidden jump")
+                                    }
+                                    Slider {
+                                          id: forbiddenJumpSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(forbiddenJumpSlider.value+" %")
+                                    }
+                              }      
+                        }
+                        Column {
+                              spacing: 10
+                              Column {
+                                    Text {
+                                          text: qsTr("Hidden Octaves")
+                                    }
+                                    Slider {
+                                          id: hiddenOctavesSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(hiddenOctavesSlider.value+" %")
+                                    }
+                              }
+                              Column {
+                                    Text {
+                                          text: qsTr("False Relation")
+                                    }
+                                    Slider {
+                                          id: falseRelationSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(falseRelationSlider.value+" %")
+                                    }
+                              }
+                              Column {
+                                    Text {
+                                          text: qsTr("Repeated function")
+                                    }
+                                    Slider {
+                                          id: sameFunctionCheckConnectionSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }      
+                                    Text {
+                                          text: qsTr(sameFunctionCheckConnectionSlider.value+" %")
+                                    }
+                              }
+                              Column {      
+                                    Text {
+                                          text: qsTr("Illegal Doubled Third")
+                                    }
+                                    Slider {
+                                          id: illegalDoubledThirdSlider
+                                          maximumValue: 100
+                                          minimumValue: 0
+                                          stepSize: 1.0
+                                    }
+                                    Text {
+                                          text: qsTr(illegalDoubledThirdSlider.value+" %")
+                                    }
+                              }
+                        }
+                        
                     }
                     
-                    Text {
-                        id: extraChordsTextLabel
-                        anchors.bottom: extraChordsColumn.top
-                        anchors.left: triadColumn.right
-                        text: qsTr("Extra Chords")
+                    function getRatioFromSlider(x){
+                        return (100 - x.value) / 100
                     }
+                    
+                    function getPunishmentRatios(){
+                        var punishmentRatios = {};
+                        punishmentRatios[Consts.CHORD_RULES.ConcurrentOctaves] = getRatioFromSlider(consecutiveOctavesSlider)
+                        punishmentRatios[Consts.CHORD_RULES.ConcurrentFifths] = getRatioFromSlider(consecutiveFifthsSlider)
+                        punishmentRatios[Consts.CHORD_RULES.CrossingVoices] = getRatioFromSlider(crossingVoicesSlider)
+                        punishmentRatios[Consts.CHORD_RULES.OneDirection] = getRatioFromSlider(oneDirectionSlider)
+                        punishmentRatios[Consts.CHORD_RULES.ForbiddenJump] = getRatioFromSlider(forbiddenJumpSlider)
+                        punishmentRatios[Consts.CHORD_RULES.HiddenOctaves] = getRatioFromSlider(hiddenOctavesSlider)
+                        punishmentRatios[Consts.CHORD_RULES.FalseRelation] = getRatioFromSlider(falseRelationSlider)
+                        punishmentRatios[Consts.CHORD_RULES.SameFunctionCheckConnection] = getRatioFromSlider(sameFunctionCheckConnectionSlider)
+                        punishmentRatios[Consts.CHORD_RULES.IllegalDoubledThird] = getRatioFromSlider(illegalDoubledThirdSlider)
 
-                    Column {
-                        id: extraChordsColumn
-                        anchors.top: textLabelSoprano.bottom
-                        anchors.topMargin: 30
-                        anchors.left: triadColumn.right
-                        anchors.leftMargin: 30
-                        CheckBox {
-                            id: s6Checkbox
-                            checked: false
-                            text: qsTr("S6")
-                        }
-                        CheckBox {
-                            id: d7Checkbox
-                            checked: false
-                            text: qsTr("D7")
-                        }
-                        CheckBox {
-                            id: neapolitanCheckbox
-                            checked: false
-                            text: qsTr("neapolitan chord")
-                        }
-                        CheckBox {
-                            id: secondaryDCheckbox
-                            checked: false
-                            text: qsTr("secondary dominants")
-                        }
-                    }
-
-                    Text {
-                        id: sideChordsTextLabel
-                        anchors.bottom: sideChordsColumn.top
-                        anchors.left: extraChordsColumn.right
-                        text: qsTr("Side Chords")
-                    }
-
-                    Column {
-                        id: sideChordsColumn
-                        anchors.top: textLabelSoprano.bottom
-                        anchors.topMargin: 30
-                        anchors.left: extraChordsColumn.right
-                        anchors.leftMargin: 30
-                        CheckBox {
-                            id: degree2Checkbox
-                            checked: false
-                            text: qsTr("II")
-                        }
-                        CheckBox {
-                            id: degree3Checkbox
-                            checked: false
-                            text: qsTr("III")
-                        }
-                        CheckBox {
-                             id: degree6Checkbox
-                             checked: false
-                             text: qsTr("VI")
-                        }
-                        CheckBox {
-                              id: degree7Checkbox
-                              checked: false
-                              text: qsTr("VII")
-                        }
-                    }
-
-                    Column {
-                        id: extraOptions
-                        anchors.top: textLabelSoprano.bottom
-                        anchors.topMargin: 30
-                        anchors.left: sideChordsColumn.right
-                        anchors.leftMargin: 20
-                        CheckBox {
-                            id: useMinorCheckbox
-                            checked: false
-                            text: qsTr("use minor scale")
-                        }
-                    }
-
+                        return punishmentRatios
+                    }     
 
                     Button {
 
