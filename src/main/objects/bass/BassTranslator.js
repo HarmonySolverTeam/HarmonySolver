@@ -114,7 +114,7 @@ function BassTranslator() {
                 //2,4 -> 2,4,6
                 if (Utils.contains(bassNumbers, 2)) {
                     return [2, 4, 6]
-                } else {
+                } else if (Utils.contains(bassNumbers, 6)) {
                     //4,6 -> 4,6
                     return [4, 6]
                 }
@@ -131,11 +131,11 @@ function BassTranslator() {
             }
 
             //2,10 -> 2,4,10
-            if (Utils.contains(bassNumbers, 2)) {
+            if (Utils.contains(bassNumbers, 2) && Utils.contains(bassNumbers, 10)) {
                 return [2, 4, 10]
             }
             //9,7 -> 3,5,7,9
-            if (Utils.contains(bassNumbers, 9)) {
+            if (Utils.contains(bassNumbers, 9) && Utils.contains(bassNumbers, 7)) {
                 return [3, 5, 7, 9]
             }
 
@@ -156,24 +156,44 @@ function BassTranslator() {
                 return [3, 5, 7, 9]
             }
 
-            bassNumbers.sort(function (a, b) {
-                return (a > b) ? 1 : -1
-            })
-
             //3,5,7 -> 3,5,7
+            if (Utils.contains(bassNumbers, 3) && Utils.contains(bassNumbers, 5)
+                && Utils.contains(bassNumbers, 7)) {
+                return [3, 5, 7]
+            }
+
             //3,5,6 -> 3,5,6
+            if (Utils.contains(bassNumbers, 3) && Utils.contains(bassNumbers, 5)
+                && Utils.contains(bassNumbers, 6)) {
+                return [3, 5, 6]
+            }
+
             //3,4,6 -> 3,4,6
+            if (Utils.contains(bassNumbers, 3) && Utils.contains(bassNumbers, 4)
+                && Utils.contains(bassNumbers, 6)) {
+                return [3, 4, 6]
+            }
+
             //2,4,6 -> 2,4,6
+            if (Utils.contains(bassNumbers, 2) && Utils.contains(bassNumbers, 4)
+                && Utils.contains(bassNumbers, 6)) {
+                return [2, 4, 6]
+            }
+
             //2,4,10 -> 2,4,10
-            //nothing to add
-            return bassNumbers
+            if (Utils.contains(bassNumbers, 2) && Utils.contains(bassNumbers, 4)
+                && Utils.contains(bassNumbers, 10)) {
+                return [2, 4, 10]
+            }
+
         }
-        //3,5,7,9
+
         if (bassNumbers.length === 4) {
-            bassNumbers.sort(function (a, b) {
-                return (a > b) ? 1 : -1
-            })
-            return bassNumbers
+            //3,5,7,9
+            if (Utils.contains(bassNumbers, 3) && Utils.contains(bassNumbers, 5)
+                && Utils.contains(bassNumbers, 7) && Utils.contains(bassNumbers, 9)) {
+                return [3, 5, 7, 9]
+            }
         }
 
         throw new Errors.FiguredBassInputError("Invalid bass symbols:", bassNumbers)
@@ -726,6 +746,29 @@ function BassTranslator() {
         }
     }
 
+    this.handleFifthAlterationIn236Chords = function (argsMap, toOmit, toExtra) {
+        if (argsMap.degree === 2 && argsMap.mode === Consts.MODE.MINOR) {
+            if (Utils.contains(toExtra, "5<")) {
+                if (Utils.contains(toOmit, 5)) {
+                    toOmit.splice(toOmit.indexOf(5), 1)
+                } else if (Utils.contains(toOmit, "5")) {
+                    toOmit.splice(toOmit.indexOf("5"), 1)
+                }
+                if (!Utils.contains(toOmit, "5>")) {
+                    toOmit.push("5>")
+                }
+
+                toExtra.splice(toExtra.indexOf("5<"), 1)
+                toExtra.push("5")
+            }
+        }
+    }
+
+    this.handle35AlterationsIn236Chords = function(argsMap, toOmit, toExtra) {
+        this.handleThirdAlterationIn236Chords(argsMap, toOmit, toExtra)
+        this.handleFifthAlterationIn236Chords(argsMap, toOmit, toExtra)
+    }
+
     this.addOmit3ForS2IfNecessary = function(argsMap) {
         if (argsMap.degree === 2 && argsMap.mode === Consts.MODE.MINOR
             && argsMap.revolution === "3" && !Utils.contains(argsMap.omit, "3>")) {
@@ -902,7 +945,7 @@ function BassTranslator() {
             if (DEBUG) Utils.log("argsMap " + JSON.stringify(argsMap))
             var addedSomething = false
 
-            this.handleThirdAlterationIn236Chords(argsMap, toOmit, toExtra)
+            this.handle35AlterationsIn236Chords(argsMap, toOmit, toExtra)
 
             for (var a = 0; a < toOmit.length; a++) {
                 if (!Utils.contains(argsMap.omit, toOmit[a] + "") && toOmit[a] !== 8) {
