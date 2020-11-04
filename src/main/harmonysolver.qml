@@ -30,7 +30,6 @@ MuseScore {
     property var exercise: ({})
     property var exerciseLoaded: false
     property var preferences: ({})
-    property var input_text_copy: ({})
 
     id: window
     width: 800
@@ -641,7 +640,7 @@ MuseScore {
         width: 300
         height: 400
         title: "Parse status"
-        text: "Parsing exercise was successful. Solving is now available."
+        text: "Parsing exercise was successful. Input is correct."
         icon: StandardIcon.Information
         standardButtons: StandardButton.Ok
     }
@@ -651,7 +650,7 @@ MuseScore {
         width: 300
         height: 400
         title: "Exercise is empty"
-        text: "Empty exercise box. \nPlease type in or import one before parsing."
+        text: "Empty exercise box. \nPlease type in or import one before solving."
         icon: StandardIcon.Warning
         standardButtons: StandardButton.Ok
     }
@@ -717,7 +716,7 @@ MuseScore {
 
                     Button {
                         id: buttonParse
-                        text: qsTr("Parse")
+                        text: qsTr("Check input")
                         anchors.bottom: tabRectangle1.bottom
                         anchors.left: buttonOpenFile.right
                         anchors.topMargin: 10
@@ -729,10 +728,7 @@ MuseScore {
                               emptyExerciseDialog.open()
                             } else {
                                 try{
-                                    exerciseLoaded = false
                                     exercise = Parser.parse(input_text)
-                                    exerciseLoaded = true
-                                    input_text_copy = input_text
                                     parseSuccessDialog.open()
                                 } catch (error) {
                                     showError(error)
@@ -744,7 +740,7 @@ MuseScore {
                     Button {
                         id: buttonRun
                         text: qsTr("Solve")
-                        enabled: exerciseLoaded
+                        //enabled: exerciseLoaded
                         anchors.bottom: tabRectangle1.bottom
                         anchors.right: tabRectangle1.right
                         anchors.topMargin: 10
@@ -752,8 +748,24 @@ MuseScore {
                         anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
+                                //parsing
+                            exerciseLoaded = false
+                            var input_text = abcText.text
+                            if (input_text === undefined || input_text === "") {
+                              emptyExerciseDialog.open()
+                            } else {
+                                try{
+                                    exercise = Parser.parse(input_text)
+                                    exerciseLoaded = true
+                                } catch (error) {
+                                    showError(error)
+                                }
+                            }
+
+                            //solving
+                            if (exerciseLoaded) {
                                 try {
-                                    exercise = Parser.parse(input_text_copy)
+                                    exercise = Parser.parse(input_text)
                                     var solver = new Solver.Solver(exercise,undefined,undefined,
                                         !preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
                                     var solution = solver.solve()
@@ -770,6 +782,7 @@ MuseScore {
                                 } catch (error) {
                                     showError(error)
                                 }
+                            }
                         }
                     }
                 }
