@@ -113,8 +113,6 @@ MuseScore {
             if (typeof cursor.element.parent.annotations[0] !== "undefined") {
                 var readSymbols = cursor.element.parent.annotations[0].text
                 Utils.log("readSymbols:", readSymbols)
-                if (!Parser.check_figured_bass_symbols(readSymbols))
-                    throw new Errors.FiguredBassInputError("Wrong symbols", symbols)
                 for (var i = 0; i < readSymbols.length; i++) {
                     var component = "", alteration = undefined
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
@@ -498,13 +496,52 @@ MuseScore {
     }
 
     function isFiguredBassScore() {
-        //todo
-        return true
+        var cursor = curScore.newCursor()
+        cursor.rewind(0)
+        var vb = new Consts.VoicesBoundary()
+        var elementCounter = 0
+        while(cursor.next()){
+            elementCounter++
+            if(!Utils.isDefined(cursor.element.noteType)){
+                  throw new Errors.FiguredBassInputError(
+                        "Forbidden element at "+elementCounter+" position from beginning",
+                        "Score should contain only notes (no rests etc.)"
+                        )
+            }
+            var currentPitch = cursor.element.notes[0].pitch
+            if(currentPitch > vb.bassMax || currentPitch < vb.bassMin){
+                  throw new Errors.FiguredBassInputError(
+                        "Bass note not in voice scale at "+elementCounter+" position from beginning"
+                        )
+            }
+            if (typeof cursor.element.parent.annotations[0] !== "undefined") {
+                var readSymbols = cursor.element.parent.annotations[0].text
+                if (!Parser.check_figured_bass_symbols(readSymbols))
+                    throw new Errors.FiguredBassInputError("Wrong symbols "+readSymbols,"At "+elementCounter+" position from beginning") 
+            }
+        }
     }
 
     function isSopranoScore() {
-        //todo
-        return true
+                var cursor = curScore.newCursor()
+                cursor.rewind(0)
+                var vb = new Consts.VoicesBoundary()
+                var elementCounter = 0
+                while(cursor.next()){
+                    elementCounter++
+                    if(!Utils.isDefined(cursor.element.noteType)){
+                          throw new Errors.FiguredBassInputError(
+                                "Forbidden element at "+elementCounter+" position from beginning",
+                                "Score should contain only notes (no rests etc.)"
+                                )
+                    }
+                    var currentPitch = cursor.element.notes[0].pitch
+                    if(currentPitch > vb.sopranoMax || currentPitch < vb.sopranoMin){
+                          throw new Errors.FiguredBassInputError(
+                                "Soprano note not in voice scale at "+elementCounter+" position from beginning"
+                                )
+                    }
+                }
     }
 
     function getPossibleChordsList() {
@@ -785,10 +822,11 @@ MuseScore {
                         anchors.right: tabRectangle2.right
                         anchors.bottom: tabRectangle2.bottom
                         onClicked: {
-                            if (isFiguredBassScore()) {
+                            try {
+                                isFiguredBassScore()
                                 figuredBassSolve()
-                            } else {
-                                showError(new Errors.FiguredBassInputError("No score with figured bass"))
+                            } catch (error) {
+                                showError(error)
                             }
                         }
                     }
@@ -1131,18 +1169,14 @@ MuseScore {
                         anchors.bottomMargin: 10
                         anchors.rightMargin: 40
                         onClicked: {
-                            if (isSopranoScore()) {
+                            try{
+                                isSopranoScore()
                                 var func_list = getPossibleChordsList()
                                 var punishments = getPunishmentRatios()
-                                try{
-                                    sopranoHarmonization(func_list, punishments)
-                                } catch (error) {
-                                    showError(error)
-                               }
-
-                            } else {
-                                showError(new Errors.SopranoHarmonizationInputError("No score with soprano"))
-                            }
+                                sopranoHarmonization(func_list, punishments)
+                            } catch (error) {
+                                showError(error)
+                           }
                         }
                     }
                 }
