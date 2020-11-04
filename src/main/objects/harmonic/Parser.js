@@ -266,6 +266,10 @@ function translateHarmonicFunction(harmonicFunctionString){
 function translateToOldNotation(lines) {
     for(var i = 0; i < lines.length; i++){
         if(!lines[i] || lines[i].startsWith("//")) continue;
+        lines[i] = lines[i].replace(/[\s^(\n)]/g,"");
+        if(lines[i].endsWith(";")){
+            lines[i] = lines[i].substring(0, lines[i].length-1);
+        }
         var harmonicFunctionString = lines[i].split(";")
         for(var j = 0; j < harmonicFunctionString.length; j++){
             try {

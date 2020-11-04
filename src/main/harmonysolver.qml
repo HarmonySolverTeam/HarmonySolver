@@ -1,7 +1,7 @@
 import QtQuick 2.2
 import MuseScore 3.0
 import FileIO 3.0
-import QtQuick.Dialogs 1.1
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.1
 
 //import "./qml_components"
@@ -600,36 +600,8 @@ MuseScore {
             var filename = fileDialog.fileUrl
             if (filename) {
                 myFileAbc.source = filename
-
                 var input_text = String(myFileAbc.read())
                 tab1.item.setText(input_text)
-                try{
-                    exerciseLoaded = false
-                    exercise = Parser.parse(input_text)
-                    exerciseLoaded = true
-                } catch (error) {
-                    showError(error)
-                }
-            }
-        }
-    }
-
-    FileDialog {
-        id: fileDialogParse
-        title: qsTr("Please choose a file to parse")
-        onAccepted: {
-            var filename = fileDialogParse.fileUrl
-            if (filename) {
-                myFileAbc.source = filename
-                var input_text = String(myFileAbc.read())
-                try{
-                    exerciseLoaded = false
-                    exercise = Parser.parse(input_text)
-                    exerciseLoaded = true
-                    tab1.item.setText(JSON.stringify(exercise))
-                } catch (error) {
-                    showError(error)
-                }
             }
         }
     }
@@ -669,6 +641,25 @@ MuseScore {
         icon: StandardIcon.Critical
     }
 
+    MessageDialog {
+        id: parseSuccessDialog
+        width: 300
+        height: 400
+        title: "Parse status"
+        text: "Parsing exercise was successful. Input is correct."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
+    MessageDialog {
+        id: emptyExerciseDialog
+        width: 300
+        height: 400
+        title: "Exercise is empty"
+        text: "Empty exercise box. \nPlease type in or import one before solving."
+        icon: StandardIcon.Warning
+        standardButtons: StandardButton.Ok
+    }
 
     Rectangle {
 
@@ -692,7 +683,7 @@ MuseScore {
                     Label {
                         id: textLabel
                         wrapMode: Text.WordWrap
-                        text: qsTr("Your task will show here")
+                        text: qsTr("Provide task below:")
                         font.pointSize: 12
                         anchors.left: tabRectangle1.left
                         anchors.top: tabRectangle1.top
@@ -718,7 +709,7 @@ MuseScore {
 
                     Button {
                         id: buttonOpenFile
-                        text: qsTr("Open file")
+                        text: qsTr("Import file")
                         anchors.bottom: tabRectangle1.bottom
                         anchors.left: abcText.left
                         anchors.topMargin: 10
@@ -731,20 +722,31 @@ MuseScore {
 
                     Button {
                         id: buttonParse
-                        text: qsTr("Parse file")
+                        text: qsTr("Check input")
                         anchors.bottom: tabRectangle1.bottom
                         anchors.left: buttonOpenFile.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 10
                         onClicked: {
-                            fileDialogParse.open()
+                            var input_text = abcText.text
+                            if (input_text === undefined || input_text === "") {
+                              emptyExerciseDialog.open()
+                            } else {
+                                try{
+                                    exercise = Parser.parse(input_text)
+                                    parseSuccessDialog.open()
+                                } catch (error) {
+                                    showError(error)
+                                }
+                            }
                         }
                     }
 
                     Button {
                         id: buttonRun
                         text: qsTr("Solve")
+                        //enabled: exerciseLoaded
                         anchors.bottom: tabRectangle1.bottom
                         anchors.right: tabRectangle1.right
                         anchors.topMargin: 10
@@ -752,10 +754,24 @@ MuseScore {
                         anchors.rightMargin: 40
                         anchors.leftMargin: 10
                         onClicked: {
-                            if (!exerciseLoaded) {
-                                showError(new Errors.BasicError("File with harmonic functions exercise was not loaded correctly"))
+                                //parsing
+                            exerciseLoaded = false
+                            var input_text = abcText.text
+                            if (input_text === undefined || input_text === "") {
+                              emptyExerciseDialog.open()
                             } else {
+                                try{
+                                    exercise = Parser.parse(input_text)
+                                    exerciseLoaded = true
+                                } catch (error) {
+                                    showError(error)
+                                }
+                            }
+
+                            //solving
+                            if (exerciseLoaded) {
                                 try {
+                                    exercise = Parser.parse(input_text)
                                     var solver = new Solver.Solver(exercise,undefined,undefined,
                                         !preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
                                     var solution = solver.solve()
