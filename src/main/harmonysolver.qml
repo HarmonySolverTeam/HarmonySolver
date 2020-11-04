@@ -635,12 +635,18 @@ MuseScore {
     }
     
     function showError(error) {
-      while (error.message.length !== 120) {
+      while (error.message.length < 120) {
             error.message += " "
       }
       errorDialog.text = error.source !== undefined ? error.source + "\n" : ""
       errorDialog.text +=  error.message + "\n"
-      errorDialog.text += error.details !== undefined ? error.details : ""
+      if (error.details !== undefined) {
+        if (error.details.length >= 1500) {
+            errorDialog.text += error.details.substring(0,1500) + "..."
+        } else {
+            errorDialog.text += error.details
+        }
+      }
 
       if (error.stack !== undefined) {
         if (error.stack.length >= 1500) {
@@ -656,7 +662,7 @@ MuseScore {
 
     MessageDialog {
         id: errorDialog
-        width: 300
+        width: 600
         height: 400
         title: "HarmonySolver - Error"
         text: ""
