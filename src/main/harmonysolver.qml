@@ -1,7 +1,7 @@
 import QtQuick 2.2
 import MuseScore 3.0
 import FileIO 3.0
-import QtQuick.Dialogs 1.1
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.1
 
 //import "./qml_components"
@@ -30,6 +30,7 @@ MuseScore {
     property var exercise: ({})
     property var exerciseLoaded: false
     property var preferences: ({})
+    property var input_text_copy: ({})
 
     id: window
     width: 800
@@ -640,10 +641,20 @@ MuseScore {
         width: 300
         height: 400
         title: "Parse status"
-        text: "Success"
+        text: "Parsing exercise was successful. Solving is now available."
         icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
     }
 
+    MessageDialog {
+        id: emptyExerciseDialog
+        width: 300
+        height: 400
+        title: "Exercise is empty"
+        text: "Empty exercise box. \nPlease type in or import one before parsing."
+        icon: StandardIcon.Warning
+        standardButtons: StandardButton.Ok
+    }
 
     Rectangle {
 
@@ -714,13 +725,18 @@ MuseScore {
                         anchors.leftMargin: 10
                         onClicked: {
                             var input_text = abcText.text
-                            try{
-                                exerciseLoaded = false
-                                exercise = Parser.parse(input_text)
-                                exerciseLoaded = true
-                                parseSuccessDialog.open()
-                            } catch (error) {
-                                showError(error)
+                            if (input_text === undefined || input_text === "") {
+                              emptyExerciseDialog.open()
+                            } else {
+                                try{
+                                    exerciseLoaded = false
+                                    exercise = Parser.parse(input_text)
+                                    exerciseLoaded = true
+                                    input_text_copy = input_text
+                                    parseSuccessDialog.open()
+                                } catch (error) {
+                                    showError(error)
+                                }
                             }
                         }
                     }
@@ -737,6 +753,7 @@ MuseScore {
                         anchors.leftMargin: 10
                         onClicked: {
                                 try {
+                                    exercise = Parser.parse(input_text_copy)
                                     var solver = new Solver.Solver(exercise,undefined,undefined,
                                         !preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
                                     var solution = solver.solve()
