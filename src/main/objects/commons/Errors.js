@@ -10,6 +10,11 @@ function FiguredBassInputError(message, details) {
     this.source = "Error in figured bass input"
 }
 
+function SopranoInputError(message, details) {
+    BasicError.call(this, message, details)
+    this.source = "Error in soprano harmonization input"
+}
+
 function HarmonicFunctionsParserError(message, details) {
     BasicError.call(this, message,details)
     this.source = "Error during parsing harmonic functions input"
