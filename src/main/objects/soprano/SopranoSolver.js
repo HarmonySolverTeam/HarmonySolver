@@ -75,7 +75,7 @@ function SopranoSolver(exercise, punishmentRatios){
             }
 
             var harmonisationExercise = this.mapToHarmonisationExercise(sol_functions);
-            var harmonisationSolver = new HarmonisationSolver.Solver(harmonisationExercise, undefined, this.exercise.notes, false, false, this.punishmentRatios);
+            var harmonisationSolver = new HarmonisationSolver.Solver(harmonisationExercise, undefined, this.exercise.notes, true, false, this.punishmentRatios);
             var solutionCandidate = harmonisationSolver.solve();
 
             if (!solutionCandidate.success) {
