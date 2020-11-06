@@ -2,7 +2,7 @@ import QtQuick 2.2
 import MuseScore 3.0
 import FileIO 3.0
 import QtQuick.Dialogs 1.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.4
 
 //import "./qml_components"
 import "./objects/harmonic/Solver2.js" as Solver
@@ -29,39 +29,23 @@ MuseScore {
 
     property var exercise: ({})
     property var exerciseLoaded: false
-    property var preferences: ({})
+    property var configuration: ({})
 
     id: window
     width: 800
     height: 600
     onRun: {
-      preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = true
-      preferences[Consts.PREFERENCES_NAMES.CORRECT] = true
-      preferences[Consts.PREFERENCES_NAMES.PRECHECK] = true
-      preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = true
-        //readPluginConfiguration()
+      configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
     }
 
+    function savePluginConfiguration(){
+        PluginConfigurationUtils.saveConfiguration(outConfFile, filePath, configuration)
+    }
 
-//    function readPluginConfiguration(){
-//        PluginConfigurationUtils.readConfiguration()
-//        Utils.info(JSON.stringify(PluginConfigurationUtils.configuration_holder))
-//    }
-    
     FileIO{
       id: outConfFile
       onError: Utils.warn(msg + "  Filename = " + outConfFile.source)
     }
-    
-//    function savePluginConfiguration(){
-//       var json_conf = String(JSON.stringify(PluginConfigurationUtils.configuration_holder))
-       //ale drut ja piernicze...
-//       outConfFile.setSource(String(Qt.resolvedUrl(".") + PluginConfigurationUtils.configuration_save_path))
-//              console.log(outConfFile.source)
-//              console.log(filePath)
-//              console.log(outConfFile.exists())
-//       Utils.log(outConfFile.write(json_conf))
-//    }
 
     function getBaseNote(museScoreBaseNote) {
         var result
@@ -239,7 +223,7 @@ MuseScore {
     function prepare_score_for_solution(filePath, solution, solution_date, setDurations, taskType) {
         var resources_path = "";
 
-        if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
+        if(configuration.enableChordSymbolsPrinting){
             resources_path = "/resources/template scores/";
         }
         else{
@@ -349,7 +333,7 @@ MuseScore {
             addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
 
-            if(preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS]){
+            if(configuration.enableChordSymbolsPrinting){
                 var text = newElement(Element.HARMONY)
                 text.text = curChord.harmonicFunction.getSimpleChordName();
 
@@ -458,7 +442,7 @@ MuseScore {
         }
 
     function addComponentToScore(cursor, componentValue) {
-        if(!preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS])
+        if(!configuration.enableChordComponentsPrinting)
             return
         var component = newElement(Element.FINGERING)
         component.text = componentValue
@@ -480,7 +464,7 @@ MuseScore {
                 bassLine.push(ex.elements[i].bassNote)
             }
             var solver = new Solver.Solver(exercise, bassLine, undefined,
-                !preferences[Consts.PREFERENCES_NAMES.CORRECT], !preferences[Consts.PREFERENCES_NAMES.PRECHECK])
+                !configuration.enableCorrector, !configuration.enablePrechecker)
             var solution = solver.solve()
             var solution_date = get_solution_date()
             Utils.log("Solution:", JSON.stringify(solution))
@@ -773,7 +757,7 @@ MuseScore {
                                 try {
                                     exercise = Parser.parse(input_text)
                                     var solver = new Solver.Solver(exercise,undefined,undefined,
-                                        !preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
+                                        !configuration.enableCorrector,!configuration.enablePrechecker)
                                     var solution = solver.solve()
                                     var solution_date = get_solution_date()
 
@@ -1175,98 +1159,131 @@ MuseScore {
                 id: tab4
 
                 function showConfiguration(){
-                    savePathTextArea.text = PluginConfigurationUtils.configuration_holder.solutionPath
+                    savePathTextArea.text = configuration.solutionPath
                 }
 
                 Rectangle{
                     id: tabRectangle4
 
-                    Label{
-                        id: preferencesLabel
+                    Label {
+                        id: savedPathLabel
                         anchors.top: tabRectangle4.top
                         anchors.left: tabRectangle4.left
                         anchors.topMargin: 10
-                        anchors.leftMargin: 10
-                        text: qsTr("Solution Path")
+                        anchors.leftMargin: 15
+                        text: qsTr("Solutions save path")
                     }
 
-
-                    TextArea {
-                        id: savePathTextArea
-                        anchors.top: preferencesLabel.bottom
+                    TextField {
+                        id: savedPathTextField
+                        anchors.top: savedPathLabel.bottom
                         anchors.left: tabRectangle4.left
-
-                        anchors.topMargin: 10
                         anchors.leftMargin: 10
                         width: 200
-                        height: 40
-                        wrapMode: TextEdit.WrapAnywhere
-                        textFormat: TextEdit.PlainText
+                        height: 25
+                        readOnly: true
+                        text: configuration.solutionPath
                     }
+
+                    FileDialog {
+                        id: selectSolutionPathDirDialog
+                        title: "Please choose a directory"
+                        folder: filePath
+                        selectFolder: true
+                        onAccepted: {
+                            var path = selectSolutionPathDirDialog.fileUrl.toString().slice(8)
+                            savedPathTextField.text = path
+                            configuration.solutionPath = path
+                            savePluginConfiguration()
+                        }
+                    }
+
+                    Button{
+                        id: selectSolutionPath
+                        anchors.left: savedPathTextField.right
+                        anchors.top: savedPathTextField.top
+                        anchors.leftMargin: 10
+                        text: qsTr("Select")
+                        onClicked: {
+                            selectSolutionPathDirDialog.open()
+                        }
+                    }
+
 
                     Column {
                         id: exerciseOptionsColumn
-                        anchors.top: preferencesLabel.bottom
-                        anchors.left: savePathTextArea.right
-                        anchors.leftMargin: 30
+                        anchors.top: savedPathTextField.bottom
+                        anchors.left: tabRectangle4.left
+                        anchors.leftMargin: 35
+                        anchors.topMargin: 20
+                        spacing: 10
                         CheckBox {
                             id: printCheckbox
-                            checked: true
+                            checked: configuration.enableChordSymbolsPrinting
                             text: qsTr("print chord symbols")
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
-                                          preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = true
+                                          configuration.enableChordSymbolsPrinting = true
+                                          savePluginConfiguration()
                                           return Qt.Unchecked
                                     }else{
-                                          preferences[Consts.PREFERENCES_NAMES.PRINT_SYMBOLS] = false
+                                          configuration.enableChordSymbolsPrinting = false
+                                          savePluginConfiguration()
                                           return Qt.Checked
                                     }
                             }
                         }
                         CheckBox {
                              id: printComponentsCheckbox
-                             checked: true
+                             checked: configuration.enableChordComponentsPrinting
                              text: qsTr("print chord components")
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
-                                          preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = true
+                                          configuration.enableChordComponentsPrinting = true
+                                          savePluginConfiguration()
                                           return Qt.Unchecked
                                     }else{
-                                          preferences[Consts.PREFERENCES_NAMES.PRINT_COMPONENTS] = false
+                                          configuration.enableChordComponentsPrinting = false
+                                          savePluginConfiguration()
                                           return Qt.Checked
                                     }
                             }
                         }
                         CheckBox {
                             id: precheckCheckbox
-                            checked: true
+                            checked: configuration.enablePrechecker
                             text: qsTr("precheck for unavoidable errors")
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
-                                          preferences[Consts.PREFERENCES_NAMES.PRECHECK] = true
+                                          configuration.enablePrechecker = true
+                                          savePluginConfiguration()
                                           return Qt.Unchecked
                                     }else{
-                                          preferences[Consts.PREFERENCES_NAMES.PRECHECK] = false
+                                          configuration.enablePrechecker = false
+                                          savePluginConfiguration()
                                           return Qt.Checked
                                     }
                             }
                         }
                         CheckBox {
                              id: correctCheckbox
-                             checked: true
+                             checked: configuration.enableCorrector
                              text: qsTr("correct given exercise")
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
-                                          preferences[Consts.PREFERENCES_NAMES.CORRECT] = true
+                                          configuration.enableCorrector = true
+                                          savePluginConfiguration()
                                           return Qt.Unchecked
                                     }else{
-                                          preferences[Consts.PREFERENCES_NAMES.CORRECT] = false
+                                          configuration.enableCorrector = false
+                                          savePluginConfiguration()
                                           return Qt.Checked
                                     }
                             }
                         }
                     }
 
+                    //istnieje ale nie musi
                     Button {
                         id: saveConfigurationButton
                         text: qsTr("Save Configuration")
@@ -1275,7 +1292,6 @@ MuseScore {
                         anchors.bottomMargin: 20
                         anchors.leftMargin: 40
                         onClicked: {
-                            PluginConfigurationUtils.configuration_holder.solutionPath = savePathTextArea.text
                             savePluginConfiguration()
                         }
                     }
