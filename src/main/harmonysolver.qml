@@ -27,7 +27,7 @@ MuseScore {
     pluginType: "dock"
     dockArea: "right"
 
-    property var exercise: ({})
+    property var currentExercise: ({})
     property var exerciseLoaded: false
     property var preferences: ({})
 
@@ -803,7 +803,7 @@ MuseScore {
                               emptyExerciseDialog.open()
                             } else {
                                 try{
-                                    exercise = Parser.parse(input_text)
+                                    currentExercise = Parser.parse(input_text)
                                     parseSuccessDialog.open()
                                 } catch (error) {
                                     showError(error)
@@ -830,7 +830,7 @@ MuseScore {
                               emptyExerciseDialog.open()
                             } else {
                                 try{
-                                    exercise = Parser.parse(input_text)
+                                    currentExercise = Parser.parse(input_text)
                                     exerciseLoaded = true
                                 } catch (error) {
                                     showError(error)
@@ -840,8 +840,8 @@ MuseScore {
                             //solving
                             if (exerciseLoaded) {
                                 try {
-                                    exercise = Parser.parse(input_text)
-                                    var solver = new Solver.Solver(exercise,undefined,undefined,
+                                    currentExercise = Parser.parse(input_text)
+                                    var solver = new Solver.Solver(currentExercise,undefined,undefined,
                                         !preferences[Consts.PREFERENCES_NAMES.CORRECT],!preferences[Consts.PREFERENCES_NAMES.PRECHECK])
                                     var solution = solver.solve()
                                     var solution_date = get_solution_date()

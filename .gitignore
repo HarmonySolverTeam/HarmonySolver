@@ -6,3 +6,4 @@ src/main/solutions/*
 HarmonySolver.iml
 *.log
 .gitignore
+src/main/harmonysolverzip.qml
