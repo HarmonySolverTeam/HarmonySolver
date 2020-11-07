@@ -15,17 +15,14 @@ var check_solution_found = (exName) => {
         var ex = UnitTest.get_ex_from_file("\\examples\\2_Bass\\read_exercises\\" + exName);
         var ex1 = JSON.parse(ex)
         var bassTranslator = new BassTranslator.BassTranslator()
-        var exercise = bassTranslator.createExerciseFromFiguredBass(ex1)
-        var bassLine = []
-        for (var i = 0; i < ex1.elements.length; i++) {
-            bassLine.push(ex1.elements[i].bassNote)
-        }
-        var solver = new Solver.Solver(exercise, bassLine);
+        var exerciseAndBassLine = bassTranslator.createExerciseFromFiguredBass(ex1)
+        var solver = new Solver.Solver(exerciseAndBassLine[0], exerciseAndBassLine[1]);
         var solution = solver.solve();
 
         return UnitTest.assertDefined(solution.chords[solution.chords.length - 1].sopranoNote.pitch);
     } catch (e) {
         console.error(JSON.stringify(e))
+        console.error(e)
         return false;
     }
 }
