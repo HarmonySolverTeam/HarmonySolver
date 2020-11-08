@@ -255,22 +255,14 @@ var FUNCTION_NAMES = {
 }
 
 //G
-var possible_keys_major = ['Cbb', 'Cb', 'C', 'C#', 'C##',
-    'Dbb', 'Db', 'D', 'D#', 'D##',
-    'Ebb', 'Eb', 'E', 'E#', 'E##',
-    'Fbb', 'Fb', 'F', 'F#', 'F##',
-    'Gbb', 'Gb', 'G', 'G#', 'G##',
-    'Abb', 'Ab', 'A', 'A#', 'A##',
-    'Bbb', 'Bb', 'B', 'B#', 'B##']
+var possible_keys_major = ['C', 'C#', 'Db',
+    'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A',
+    'Bb', 'B', 'Cb']
 
 //G
-var possible_keys_minor = ['cbb', 'cb', 'c', 'c#', 'c##',
-    'dbb', 'db', 'd', 'd#', 'd##',
-    'ebb', 'eb', 'e', 'e#', 'e##',
-    'fbb', 'fb', 'f', 'f#', 'f##',
-    'gbb', 'gb', 'g', 'g#', 'g##',
-    'abb', 'ab', 'a', 'a#', 'a##',
-    'bbb', 'bb', 'b', 'b#', 'b##']
+var possible_keys_minor = ['c', 'c#',
+    'd', 'd#', 'eb', 'e', 'f', 'f#', 'g', 'g#', 'ab', 'a',
+    'a#', 'bb', 'b']
 
 //G
 var possible_systems = ['close', 'open']
