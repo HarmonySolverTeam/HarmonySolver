@@ -724,7 +724,7 @@ function BassTranslator() {
 
 
     this.fixExtraAfterModeChange = function (argsMap) {
-        if (argsMap.mode === Consts.MODE.MAJOR && Utils.contains(argsMap.extra, "3")) {
+        if (argsMap.mode === Consts.MODE.MAJOR && Utils.contains(argsMap.extra, "3") && !Utils.contains([2, 3, 6], argsMap.degree)) {
             argsMap.extra.splice(argsMap.extra.indexOf("3"), 1)
         }
         if (argsMap.mode === Consts.MODE.MINOR && Utils.contains(argsMap.extra, "3>")) {
@@ -1083,6 +1083,15 @@ function BassTranslator() {
     this.handleDeflections = function(harmonicFunctions, key, chordElements) {
         var newFunctions = [];
 
+        /*
+            * has 7 in extra
+            * has 3 in extra or getThird is MAJOR (so semitonesNumber = 4)
+            * is in dominant relation with next one
+            * calculated key for possible deflection is different from exercise key
+            * bass pitch is the same, as calculated pitch for this chord's revolution
+            => calculated deflection key pith + 7 (as this is gonna be dominant) + semitones from chord's revolution
+         */
+
         for (var i = 0; i < harmonicFunctions[0].length - 1; i++) {
             if (Utils.containsBaseChordComponent(harmonicFunctions[0][i].extra, "7")
                 && (Utils.containsBaseChordComponent(harmonicFunctions[0][i].extra, "3")
@@ -1091,7 +1100,8 @@ function BassTranslator() {
                 && harmonicFunctions[0][i].isInDominantRelation(harmonicFunctions[0][i + 1])
                 && Parser.calculateKey(key, harmonicFunctions[0][i + 1]) !== key
                 && (Utils.mod(chordElements[i].bassElement.bassNote.pitch, 12)
-                        === Utils.mod(Consts.keyStrPitch[Parser.calculateKey(key, harmonicFunctions[0][i + 1])] + harmonicFunctions[0][i].revolution.semitonesNumber + 7,12))) {
+                        === Utils.mod(Consts.keyStrPitch[Parser.calculateKey(key, harmonicFunctions[0][i + 1])]
+                        + harmonicFunctions[0][i].revolution.semitonesNumber + 7,12))) {
                 if (DEBUG) {
                     Utils.log("deflection here!")
                     // console.log(JSON.stringify(harmonicFunctions[0][i]))
@@ -1157,8 +1167,6 @@ function BassTranslator() {
                 }
 
                 var newHF = new HarmonicFunction.HarmonicFunction2(argsMap)
-
-                console.log(JSON.stringify(newHF))
 
                 newFunctions.push(newHF)
 
