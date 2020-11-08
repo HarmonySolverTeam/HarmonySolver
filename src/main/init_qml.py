@@ -17,7 +17,7 @@ def count_brackets(line, bracket_type):
 def transform_js_file(file_name, context_path):
     input_file = open(FILES_ORIGIN_DIR + context_path + "/" + file_name + ".js", "r")
 
-    tabs = "\t\t"
+    tabs = "\t"
     buffer = ""
     gState = 0
     brackets = 0
@@ -27,17 +27,32 @@ def transform_js_file(file_name, context_path):
     properties = set([])
     fileObject = file_name[:1].lower()+file_name[1:]
     fileObjects.append(fileObject)
-    buffer += tabs + fileObject+" = {\n"
+    imports = []
+    #buffer += tabs + fileObject+" = {\n"
+    buffer += "\n"
+    # for obj in fileObjects:
+    #     buffer += "\t\t"+fileObject+"."+obj+" = "+obj+"\n"
     for line in input_file:
         if line.lstrip().startswith("//"):
             continue
-        if "for" not in line and countColons(line) <= 1:
-            line = line.replace(";","")
         for obj in objects:
-            line = line.replace(" "+obj[1], " "+obj[0])
-            line = line.replace("("+obj[1], "("+obj[0])
-            line = line.replace("["+obj[1], "["+obj[0])
-            line = line.replace("!"+obj[1], "!"+obj[0])
+            def containsExact(obj, line):
+                i = 0
+                while i < len(line) - len(obj) - 1:
+                    if line[i:i+len(obj)] == obj and not line[i+len(obj)].isalpha():
+                        return True
+                    i = i + 1
+                return False
+            if containsExact(" "+obj[1], line):
+                line = line.replace(" "+obj[1], " "+fileObject+"."+obj[0])
+            if containsExact("("+obj[1], line):
+                line = line.replace("("+obj[1], "("+fileObject+"."+obj[0])
+            if containsExact("["+obj[1], line):
+                line = line.replace("["+obj[1], "["+fileObject+"."+obj[0])
+            if containsExact("!"+obj[1], line):
+                line = line.replace("!"+obj[1], "!"+fileObject+"."+obj[0])
+            if containsExact(","+obj[1], line):
+                line = line.replace(","+obj[1], ","+fileObject+"."+obj[0])
         for property in properties:
             if "function" not in line:
                 line = line.replace(property, fileObject+"."+property)
@@ -52,8 +67,8 @@ def transform_js_file(file_name, context_path):
                             string = ""
                             while x[p].isalpha() or x[p] == "_":
                                     string += x[p]
-                                    p=p+1
-                            if string not in properties or (line[i].isalpha() or line[i] == "_"):
+                                    p = p + 1
+                            if ((string not in properties) or (line[i].isalpha() or line[i] == "_")) and string not in imports:
                                 correctedLine += line[i]
                                 i = i + len(fileObject+".") + 1
                             else:
@@ -75,14 +90,16 @@ def transform_js_file(file_name, context_path):
             brackets3 -= count_brackets(line, ")")
 
             if brackets == 0 and brackets2 == 0 and brackets3 == 0:
-                line = line.replace("\n",",\n")
+                # line = line.replace("\n",",\n")
                 gState = 0
 
             buffer += tabs + "\t"+line
             continue
         splited = line.split(" ")
         if splited[0] == "function":
-            buffer += tabs + "\t"+splited[1].split("(")[0] + " : " + line
+            if splited[1].split("(")[0] == "SameFunctionCheckConnectionRule":
+                print(splited[1].split("(")[0].strip())
+            buffer += tabs + "\t"+fileObject+"."+splited[1].split("(")[0] + " = " + line
             gState = 1
             properties.add(splited[1].split("(")[0].strip())
 
@@ -98,6 +115,8 @@ def transform_js_file(file_name, context_path):
             orginal = orginal[:1].lower() + orginal[1:]
             mapped = line.split(" ")[-1].replace("\n","")
             objects.add((orginal, mapped))
+            imports.append(orginal)
+            buffer += "\t\t"+fileObject+"."+orginal+" = "+orginal+"\n"
             pass
         elif splited[0] == "var":
 
@@ -111,17 +130,17 @@ def transform_js_file(file_name, context_path):
             gState = 1
             if brackets == 0 and brackets2 == 0 and brackets3 == 0 :
                 if "=" not in line[4: ]:
-                    buffer += tabs + "\t"+line[4:].replace("\n"," : undefined,\n")
+                    buffer += tabs + "\t"+fileObject+"."+line[4:].replace("\n"," = undefined\n")
                 else:
-                    buffer += tabs + "\t"+line[4:].replace("=",":").replace("\n",",\n")
+                    buffer += tabs + "\t"+fileObject+"."+line[4:]
                 gState = 0
             else:
-                buffer += tabs + "\t"+line[4:].replace("=",":")
+                buffer += tabs + "\t"+fileObject+"."+line[4:]
             properties.add(splited[1].strip())
             continue
         else:
             buffer += tabs + "\t"+line
-    buffer += "\n\t\t}\n"
+    # buffer += "\n\t\t}\n"
     return buffer
 
 def transform_qml_file(qmlBuffer):
@@ -145,6 +164,7 @@ def transform_qml_file(qmlBuffer):
             line = line.replace("("+obj[1], "("+obj[0])
             line = line.replace("["+obj[1], "["+obj[0])
             line = line.replace("!"+obj[1], "!"+obj[0])
+            line = line.replace(","+obj[1], ","+obj[0])
 
         if line.lstrip().startswith("//"):
             continue

@@ -8,97 +8,6 @@
 
 var DEBUG = false;
 
-function ChordRulesChecker(isFixedBass, isFixedSoprano){
-    RulesCheckerUtils.Evaluator.call(this, 3);
-    this.isFixedBass = isFixedBass;
-    this.isFixedSoprano = isFixedSoprano;
-
-    this.hardRules = [
-        new ConcurrentOctavesRule("Consecutive octaves"),
-        new ConcurrentFifthsRule("Consecutive fifths"),
-        new CrossingVoicesRule("Crossing voices"),
-        new OneDirectionRule("One direction of voices"),
-        new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano, "Forbidden voice jump"),
-        new CheckDelayCorrectnessRule("Incorrect delay"), //should stand here always
-        new HiddenOctavesRule("Hidden consecutive octaves"),
-        new FalseRelationRule("False relation"),
-        new SameFunctionCheckConnectionRule("Repeated function voice wrong movement"),
-        new IllegalDoubledThirdRule("Illegal double third"),
-        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement") //should stand here always
-    ];
-    this.softRules = [
-        new ForbiddenSumJumpRule("Forbidden voice sum jump"),
-        new ClosestMoveRule("Not closest move in voices"),
-        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
-        new SopranoBestLineRule("Soprano line should not contain big jumps"),
-        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
-        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
-        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement")
-    ];
-}
-
-function AdaptiveChordRulesChecker(punishmentRatios){
-    ChordRulesChecker.call(this, false, true);
-    this.punishmentRatios = punishmentRatios;
-
-    this.hardRules = [
-        new CheckDelayCorrectnessRule("Incorrect delay"), //should stand here
-        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement") //should stand here
-    ];
-    this.softRules = [
-        new ForbiddenSumJumpRule("Forbidden voice sum jump"),
-        new ClosestMoveRule("Not closest move in voices"),
-        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
-        new SopranoBestLineRule("Soprano line should not contain big jumps"),
-        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
-        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
-        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement")
-    ];
-
-    this.addPunishmentRatiosToRules = function() {
-        var rulesToAlter = Utils.getValuesOf(Consts.CHORD_RULES);
-
-        for (var i = 0; i < rulesToAlter.length; i++) {
-            var targetRuleSet = this.punishmentRatios[rulesToAlter[i]] === 1 ? this.hardRules : this.softRules;
-            switch (rulesToAlter[i]) {
-                case Consts.CHORD_RULES.ConcurrentOctaves:
-                    targetRuleSet.push(new ConcurrentOctavesRule("Consecutive octaves", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.ConcurrentFifths:
-                    targetRuleSet.push(new ConcurrentFifthsRule("Consecutive fifths", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.CrossingVoices:
-                    targetRuleSet.push(new CrossingVoicesRule("Crossing voices", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.OneDirection:
-                    targetRuleSet.push(new OneDirectionRule("One direction of voices", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.ForbiddenJump:
-                    targetRuleSet.push(new ForbiddenJumpRule(false, this.isFixedBass, this.isFixedSoprano, "Forbidden voice jump", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.HiddenOctaves:
-                    targetRuleSet.push(new HiddenOctavesRule("Hidden consecutive octaves", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.FalseRelation:
-                    targetRuleSet.push(new FalseRelationRule("False relation", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.SameFunctionCheckConnection:
-                    targetRuleSet.push(new SameFunctionCheckConnectionRule("Repeated function voice wrong movement", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                case Consts.CHORD_RULES.IllegalDoubledThird:
-                    targetRuleSet.push(new IllegalDoubledThirdRule("Illegal double third", this.punishmentRatios[rulesToAlter[i]]));
-                    break;
-                default:
-                    throw new Errors.ProbablyUnexpectedError("Incorrect rule type to alter");
-            }
-        }
-    }
-
-    if(Utils.getValuesOf(this.punishmentRatios).length > 0)
-        this.addPunishmentRatiosToRules();
-
-}
-
 /*
         HARD RULES
  */
@@ -733,3 +642,94 @@ function SubdominantDominantCheckConnectionRule(details){
 /*
         END OF SOFT RULES
  */
+
+function ChordRulesChecker(isFixedBass, isFixedSoprano){
+    RulesCheckerUtils.Evaluator.call(this, 3);
+    this.isFixedBass = isFixedBass;
+    this.isFixedSoprano = isFixedSoprano;
+
+    this.hardRules = [
+        new ConcurrentOctavesRule("Consecutive octaves"),
+        new ConcurrentFifthsRule("Consecutive fifths"),
+        new CrossingVoicesRule("Crossing voices"),
+        new OneDirectionRule("One direction of voices"),
+        new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano, "Forbidden voice jump"),
+        new CheckDelayCorrectnessRule("Incorrect delay"), //should stand here always
+        new HiddenOctavesRule("Hidden consecutive octaves"),
+        new FalseRelationRule("False relation"),
+        new SameFunctionCheckConnectionRule("Repeated function voice wrong movement"),
+        new IllegalDoubledThirdRule("Illegal double third"),
+        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement") //should stand here always
+    ];
+    this.softRules = [
+        new ForbiddenSumJumpRule("Forbidden voice sum jump"),
+        new ClosestMoveRule("Not closest move in voices"),
+        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
+        new SopranoBestLineRule("Soprano line should not contain big jumps"),
+        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
+        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
+        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement")
+    ];
+}
+
+function AdaptiveChordRulesChecker(punishmentRatios){
+    ChordRulesChecker.call(this, false, true);
+    this.punishmentRatios = punishmentRatios;
+
+    this.hardRules = [
+        new CheckDelayCorrectnessRule("Incorrect delay"), //should stand here
+        new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement") //should stand here
+    ];
+    this.softRules = [
+        new ForbiddenSumJumpRule("Forbidden voice sum jump"),
+        new ClosestMoveRule("Not closest move in voices"),
+        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
+        new SopranoBestLineRule("Soprano line should not contain big jumps"),
+        new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
+        new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
+        new SubdominantDominantCheckConnectionRule("Subdominant Dominant relation voice wrong movement")
+    ];
+
+    this.addPunishmentRatiosToRules = function() {
+        var rulesToAlter = Utils.getValuesOf(Consts.CHORD_RULES);
+
+        for (var i = 0; i < rulesToAlter.length; i++) {
+            var targetRuleSet = this.punishmentRatios[rulesToAlter[i]] === 1 ? this.hardRules : this.softRules;
+            switch (rulesToAlter[i]) {
+                case Consts.CHORD_RULES.ConcurrentOctaves:
+                    targetRuleSet.push(new ConcurrentOctavesRule("Consecutive octaves", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.ConcurrentFifths:
+                    targetRuleSet.push(new ConcurrentFifthsRule("Consecutive fifths", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.CrossingVoices:
+                    targetRuleSet.push(new CrossingVoicesRule("Crossing voices", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.OneDirection:
+                    targetRuleSet.push(new OneDirectionRule("One direction of voices", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.ForbiddenJump:
+                    targetRuleSet.push(new ForbiddenJumpRule(false, this.isFixedBass, this.isFixedSoprano, "Forbidden voice jump", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.HiddenOctaves:
+                    targetRuleSet.push(new HiddenOctavesRule("Hidden consecutive octaves", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.FalseRelation:
+                    targetRuleSet.push(new FalseRelationRule("False relation", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.SameFunctionCheckConnection:
+                    targetRuleSet.push(new SameFunctionCheckConnectionRule("Repeated function voice wrong movement", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                case Consts.CHORD_RULES.IllegalDoubledThird:
+                    targetRuleSet.push(new IllegalDoubledThirdRule("Illegal double third", this.punishmentRatios[rulesToAlter[i]]));
+                    break;
+                default:
+                    throw new Errors.ProbablyUnexpectedError("Incorrect rule type to alter");
+            }
+        }
+    }
+
+    if(Utils.getValuesOf(this.punishmentRatios).length > 0)
+        this.addPunishmentRatiosToRules();
+
+}
