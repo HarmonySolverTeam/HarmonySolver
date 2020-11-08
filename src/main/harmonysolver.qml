@@ -455,14 +455,12 @@ MuseScore {
             var ex = read_figured_bass()
             var translator = new Translator.BassTranslator()
             Utils.log("ex",JSON.stringify(ex))
-            var exercise = translator.createExerciseFromFiguredBass(ex)
-            Utils.log("Translated exercise",JSON.stringify(exercise))
-            var bassLine = []
-            for (var i = 0; i < ex.elements.length; i++) {
-                bassLine.push(ex.elements[i].bassNote)
-            }
-            var solver = new Solver.Solver(exercise, bassLine, undefined,
+
+            var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
+            Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
+            var solver = new Solver.Solver(exerciseAndBassline[0], exerciseAndBassline[1], undefined,
                 !configuration.enableCorrector, !configuration.enablePrechecker)
+
             var solution = solver.solve()
             var solution_date = get_solution_date()
             Utils.log("Solution:", JSON.stringify(solution))
