@@ -155,8 +155,11 @@ function HarmonicFunction2(params){
     };
 
     this.isInDominantRelation = function (nextFunction) {
-        if(this.down !== nextFunction.down && this.key === nextFunction.key)
+        if(this.down !== nextFunction.down && this.key === nextFunction.key && !(this.functionName === Consts.FUNCTION_NAMES.TONIC
+            && this.degree === 6
+            && this.mode === Consts.MODE.MINOR && nextFunction.down)) {
             return false;
+        }
         if(this.key !== nextFunction.key && Utils.isDefined(this.key)){
             return Utils.contains([4,-3], this.degree - 1);
         }

@@ -968,7 +968,9 @@ function BassTranslator() {
                                 if (argsMap.revolution !== toAlter + "" + "<") {
                                     argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + ">"), 1)
                                     argsMap.extra.push(toAlter + "")
-                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                    if (Utils.contains(argsMap.omit, toAlter + "") && argsMap.revolution[0] !== toAlter + "") {
+                                        argsMap.omit.splice(argsMap.omit.indexOf(toAlter + ""), 1)
+                                    }
                                 }
                                 addedSomething = true
                                 notAdd = true
@@ -976,7 +978,9 @@ function BassTranslator() {
                                 if (argsMap.revolution !== toAlter + "") {
                                     argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
                                     argsMap.extra.push(toAlter + "<")
-                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                    if (Utils.contains(argsMap.omit, toAlter + "") && argsMap.revolution[0] !== toAlter + "") {
+                                        argsMap.omit.splice(argsMap.omit.indexOf(toAlter + ""), 1)
+                                    }
                                 }
                                 addedSomething = true
                                 notAdd = true
@@ -986,7 +990,9 @@ function BassTranslator() {
                                 if (argsMap.revolution !== toAlter + "" + "<") {
                                     argsMap.extra.splice(argsMap.extra.indexOf(toAlter + "" + "<"), 1)
                                     argsMap.extra.push(toAlter + "")
-                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                    if (Utils.contains(argsMap.omit, toAlter + "") && argsMap.revolution[0] !== toAlter + "") {
+                                        argsMap.omit.splice(argsMap.omit.indexOf(toAlter + ""), 1)
+                                    }
                                 }
                                 addedSomething = true
                                 notAdd = true
@@ -994,7 +1000,9 @@ function BassTranslator() {
                                 if (argsMap.revolution !== toAlter + "") {
                                     argsMap.extra.splice(argsMap.extra.indexOf(toAlter + ""), 1)
                                     argsMap.extra.push(toAlter + ">")
-                                    if (Utils.contains(argsMap.omit, toAlter + "")) argsMap.omit.splice(argsMap.extra.indexOf(toAlter), 1)
+                                    if (Utils.contains(argsMap.omit, toAlter + "") && argsMap.revolution[0] !== toAlter + "") {
+                                        argsMap.omit.splice(argsMap.omit.indexOf(toAlter + ""), 1)
+                                    }
                                 }
                                 addedSomething = true
                                 notAdd = true
@@ -1080,6 +1088,15 @@ function BassTranslator() {
         return [[newFunctions], newBassLine, newChordElements]
     }
 
+    this.testThird = function(hf) {
+        var test3 = hf.getThird().chordComponentString === "3"
+        if (hf.down) {
+            return test3 && (hf.getThird().semitonesNumber === 3)
+        } else {
+            return test3 && (hf.getThird().semitonesNumber === 4)
+        }
+    }
+
     this.handleDeflections = function(harmonicFunctions, key, chordElements) {
         var newFunctions = [];
 
@@ -1095,13 +1112,13 @@ function BassTranslator() {
         for (var i = 0; i < harmonicFunctions[0].length - 1; i++) {
             if (Utils.containsBaseChordComponent(harmonicFunctions[0][i].extra, "7")
                 && (Utils.containsBaseChordComponent(harmonicFunctions[0][i].extra, "3")
-                    || (harmonicFunctions[0][i].getThird().chordComponentString === "3"
-                        && harmonicFunctions[0][i].getThird().semitonesNumber === 4))
+                    || this.testThird(harmonicFunctions[0][i]))
                 && harmonicFunctions[0][i].isInDominantRelation(harmonicFunctions[0][i + 1])
                 && Parser.calculateKey(key, harmonicFunctions[0][i + 1]) !== key
                 && (Utils.mod(chordElements[i].bassElement.bassNote.pitch, 12)
-                        === Utils.mod(Consts.keyStrPitch[Parser.calculateKey(key, harmonicFunctions[0][i + 1])]
-                        + harmonicFunctions[0][i].revolution.semitonesNumber + 7,12))) {
+                    === Utils.mod(Consts.keyStrPitch[Parser.calculateKey(key, harmonicFunctions[0][i + 1])]
+                        + harmonicFunctions[0][i].revolution.semitonesNumber + 7
+                        + (harmonicFunctions[0][i].down ? 1 : 0),12))) {
                 if (DEBUG) {
                     Utils.log("deflection here!")
                     // console.log(JSON.stringify(harmonicFunctions[0][i]))
@@ -1113,6 +1130,7 @@ function BassTranslator() {
                 argsMap.mode = Consts.MODE.MAJOR
                 argsMap.degree = 5
                 argsMap.functionName = Consts.FUNCTION_NAMES.DOMINANT
+                argsMap.down = false
 
                 for (var a = 0; a < argsMap.omit.length; a++) {
                     if (argsMap.omit[a] === 3 || argsMap.omit[a][0] === "3") {
