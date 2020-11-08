@@ -1,29 +1,24 @@
 .import "./PluginConfiguration.js" as Configuration
 
-var configuration_holder
-
-var configuration_path = "../resources/harmony_solver_plugin_configuration.json"
 var configuration_save_path = "resources/harmony_solver_plugin_configuration.json"
 
-function readTextFile(file)
-{
-    var request = new XMLHttpRequest();
-    request.open("GET", file, false);
-    request.send(null);
-    return request.responseText;
+function readConfiguration(fileIO, absolutePath){
+    fileIO.source = absolutePath + "/" + configuration_save_path;
+    var conf_text = fileIO.read();
+    var conf_json = JSON.parse(conf_text);
+
+    var confBuilder = new Configuration.PluginConfigurationBuilder();
+    confBuilder.solutionPath(conf_json["solutionPath"]);
+    confBuilder.enableChordSymbolsPrinting(conf_json["enableChordSymbolsPrinting"]);
+    confBuilder.enableChordComponentsPrinting(conf_json["enableChordComponentsPrinting"]);
+    confBuilder.enableCorrector(conf_json["enableCorrector"]);
+    confBuilder.enablePrechecker(conf_json["enablePrechecker"]);
+
+    return confBuilder.build();
 }
 
-function readConfiguration(){
-    var conf_text = readTextFile(configuration_path)
-    var conf_json = JSON.parse(conf_text)
-
-    var _solutionPath = conf_json["solutionPath"] === undefined ? "" : conf_json["solutionPath"]
-
-    configuration_holder = new Configuration.PluginConfiguration(_solutionPath)
-}
-
-
-function saveConfiguration(){
-    var conf_json = JSON.stringify(configuration_holder)
-    save_text_file(configuration_path, conf_json)
+function saveConfiguration(fileIO, absolutePath, configuration){
+    var conf_json = JSON.stringify(configuration);
+    fileIO.source = absolutePath + "/" + configuration_save_path;
+    fileIO.write(conf_json);
 }
