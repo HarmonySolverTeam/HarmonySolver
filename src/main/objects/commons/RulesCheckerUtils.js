@@ -32,10 +32,6 @@ function Evaluator(connectionSize){
     this.initializeBrokenRulesCounter = function(){
         var rulesList = [];
         var rulesDetails = [];
-        for(var i = 0; i < this.softRules.length; i++){
-            rulesList.push(this.softRules[i].name)
-            rulesDetails.push(this.softRules[i].details)
-        }
         for(var i = 0; i < this.hardRules.length; i++){
             rulesList.push(this.hardRules[i].name)
             rulesDetails.push(this.hardRules[i].details)
@@ -47,14 +43,6 @@ function Evaluator(connectionSize){
             return
         var result = 0;
         var oneRuleBroken = false;
-        for(var i = 0; i < this.softRules.length; i++){
-            var currentEvaluation = this.softRules[i].evaluate(connection)
-            if(currentEvaluation !== 0) {
-                this.brokenRulesCounter.increaseCounter(this.softRules[i].name)
-            } else {
-                result += currentEvaluation
-            }
-        }
         for(var i = 0; i < this.hardRules.length; i++){
             if(this.hardRules[i].isBroken(connection)) {
                 this.brokenRulesCounter.increaseCounter(this.hardRules[i].name)
