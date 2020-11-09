@@ -385,15 +385,18 @@ function parse(input) {
     }
 
     var metre1 = lines[1]
+    metre1 = metre1.replace(/\s/g, '')
     var metre
 
-    if (metre === 'C') {
+    if (metre1 === 'C') {
         metre = [4,4]
     } else {
-        metre = [parseInt(metre1.split('/')[0]), parseInt(metre1.split('/')[1])]
+        metre = [parseInt(metre1.split('/')[0]),
+                parseInt(metre1.split('/')[1])]
 
         if (lines[1] === undefined || lines[1] === ""
-            || metre[0] === undefined || metre[0] <= 0 || isNaN(metre[0]) || !Utils.isIntegerNumber(metre1.split('/')[0])
+            || metre[0] === undefined || metre[0] <= 0 || isNaN(metre[0])
+            || !(/^[0-9]+$/.test(metre1.split('/')[0])) || !(/^[0-9]+$/.test(metre1.split('/')[1]))
             || metre[1] === undefined || isNaN(metre[1]) || !Utils.contains([1, 2, 4, 8, 16 ,32 ,64], metre[1])) {
             throw new Errors.HarmonicFunctionsParserError("Invalid metre", lines[1])
         }
