@@ -354,7 +354,18 @@ function translateToOldNotation(lines) {
 function parse(input) {
     input = input.replace(/\r/g,"")
 
+    if (input === undefined || input === "") {
+        throw new Errors.HarmonicFunctionsParserError("Exercise is empty")
+    }
+
     var lines = input.split("\n")
+
+    if (lines === undefined || lines[0] === undefined || lines[0] === ""
+        || lines[1] === undefined  || lines[1] === ""
+        || lines[2] === undefined || lines[2] === "") {
+        throw new Errors.HarmonicFunctionsParserError("Exercise is empty")
+    }
+
     var isInNewNotation = false;
     if(lines[0] === "dev") {
         lines = lines.splice(1, lines.length);
@@ -379,7 +390,14 @@ function parse(input) {
         metre = [4,4]
     } else {
         metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
+
+        if (lines[1] === undefined || lines[1] === ""
+            || metre[0] === undefined || metre[0] === 0 || isNaN(metre[0])
+            || metre[1] === undefined || isNaN(metre[1]) || !Utils.contains([1, 2, 4, 8, 16 ,32 ,64], metre[1])) {
+            throw new Errors.HarmonicFunctionsParserError("Invalid metre", lines[1])
+        }
     }
+
     lines = lines.splice(2, lines.length);
     if(isInNewNotation)
         lines = translateToOldNotation(lines);
