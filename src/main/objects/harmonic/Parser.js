@@ -384,15 +384,16 @@ function parse(input) {
         throw new Errors.HarmonicFunctionsParserError("Unrecognized key", key)
     }
 
-    var metre = lines[1]
+    var metre1 = lines[1]
+    var metre
 
     if (metre === 'C') {
         metre = [4,4]
     } else {
-        metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
+        metre = [parseInt(metre1.split('/')[0]), parseInt(metre1.split('/')[1])]
 
         if (lines[1] === undefined || lines[1] === ""
-            || metre[0] === undefined || metre[0] === 0 || isNaN(metre[0])
+            || metre[0] === undefined || metre[0] <= 0 || isNaN(metre[0]) || !Utils.isIntegerNumber(metre1.split('/')[0])
             || metre[1] === undefined || isNaN(metre[1]) || !Utils.contains([1, 2, 4, 8, 16 ,32 ,64], metre[1])) {
             throw new Errors.HarmonicFunctionsParserError("Invalid metre", lines[1])
         }
