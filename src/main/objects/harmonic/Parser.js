@@ -175,6 +175,15 @@ function handleDeflections(measures, key, deflections){
         "delay" : delay,
 */
 
+function validateSymbol(symbol) {
+    return /^[1-9][<>]?$/.test(symbol)
+}
+
+function isIntegerString(symbol) {
+    return /^[1-9]$/.test(symbol)
+}
+
+
 function translateContent(content){
     var subcontents = content.split("/");
     for(var i = 0; i < subcontents.length; i++){
@@ -189,12 +198,27 @@ function translateContent(content){
         subcontents[i] = "\""+key+"\":";
         switch(key){
             case "position":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"position\", if specified, cannot be empty");
+                }
+                if (!validateSymbol(value)) {
+                    throw new Errors.HarmonicFunctionsParserError("\"position\" value is invalid.", value);
+                }
                 subcontents[i] += "\""+value+"\"";
                 break;
             case "revolution":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"revolution\", if specified, cannot be empty");
+                }
+                if (!validateSymbol(value)) {
+                    throw new Errors.HarmonicFunctionsParserError("\"revolution\" value is invalid.", value);
+                }
                 subcontents[i] += "\""+value+"\"";
                 break;
             case "system":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"system\", if specified, cannot be empty");
+                }
                 subcontents[i] += "\""+value+"\"";
                 break;
             case "isRelatedBackwards":
@@ -208,29 +232,72 @@ function translateContent(content){
                 subcontents[i] += "true";
                 break;
             case "degree":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"degree\", if specified, cannot be empty");
+                }
+                if (!isIntegerString(value)) {
+                    throw new Errors.HarmonicFunctionsParserError("\"degree\" value should be integer.", "Found: " + value);
+                }
                 subcontents[i] += value;
                 break;
             case "extra":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"extra\", if specified, cannot be empty");
+                }
                 var values = value.split(",");
                 for(var j = 0; j < values.length; j++){
+                    if (values[j] === undefined || values[j].length === 0) {
+                        throw new Errors.HarmonicFunctionsParserError("One \"extra\" value is empty.", value);
+                    }
+                    if (!validateSymbol(values[j])) {
+                        throw new Errors.HarmonicFunctionsParserError("\"extra\" value is invalid.", values[j]);
+                    }
                     values[j] = "\""+values[j]+"\"";
                 }
                 subcontents[i] += "["+values.join(",")+"]";
                 break;
             case "omit":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"omit\", if specified, cannot be empty");
+                }
                 var values = value.split(",");
                 for(var j = 0; j < values.length; j++){
+                    if (values[j] === undefined || values[j].length === 0) {
+                        throw new Errors.HarmonicFunctionsParserError("One \"omit\" value is empty.", value);
+                    }
+                    if (!validateSymbol(values[j])) {
+                        throw new Errors.HarmonicFunctionsParserError("\"omit\" value is invalid.", values[j]);
+                    }
                     values[j] = "\""+values[j]+"\"";
                 }
                 subcontents[i] += "["+values.join(",")+"]";
                 break;
             case "delay":
+                if (value === undefined || value.length === 0) {
+                    throw new Errors.HarmonicFunctionsParserError("\"delay\", if specified, cannot be empty");
+                }
                 var values = value.split(",");
                 var delay;
                 for(var j = 0; j < values.length; j++){
+                    if (values[j] === undefined || values[j].length === 0) {
+                        throw new Errors.HarmonicFunctionsParserError("Empty delay.", values);
+                    }
                     delay = values[j].split("-");
                     if(delay.length !== 2)
                         throw new Errors.HarmonicFunctionsParserError("Delay should match pattern \"X-Y\".", "Found: "+values[j]);
+                    if (delay[0] === undefined || delay[0].length === 0) {
+                        throw new Errors.HarmonicFunctionsParserError("Empty left side of delay.", "Invalid delay: " + values[j]);
+                    }
+                    if (delay[1] === undefined || delay[1].length === 0) {
+                        throw new Errors.HarmonicFunctionsParserError("Empty right side of delay.", "Invalid delay: " + values[j]);
+                    }
+                    if (!validateSymbol(delay[0])) {
+                        throw new Errors.HarmonicFunctionsParserError("Left \"delay\" value is invalid.", values[j]);
+                    }
+                    if (!validateSymbol(delay[1])) {
+                        throw new Errors.HarmonicFunctionsParserError("Right \"delay\" value is invalid.", values[j]);
+                    }
+
                     delay[0] = "\""+delay[0]+"\"";
                     delay[1] = "\""+delay[1]+"\"";
                     values[j] = "["+delay.join(",")+"]"
@@ -259,7 +326,7 @@ function translateHarmonicFunction(harmonicFunctionString){
     result += translateContent(harmonicFunctionString.substring(i+1, harmonicFunctionString.lastIndexOf("}")));
     result += "}";
     if(harmonicFunctionString.lastIndexOf("}") === harmonicFunctionString.length - 2)
-        result += ")";
+        result += harmonicFunctionString[harmonicFunctionString.length-1];
     return result;
 }
 
@@ -287,7 +354,18 @@ function translateToOldNotation(lines) {
 function parse(input) {
     input = input.replace(/\r/g,"")
 
+    if (input === undefined || input === "") {
+        throw new Errors.HarmonicFunctionsParserError("Exercise is empty")
+    }
+
     var lines = input.split("\n")
+
+    if (lines === undefined || lines[0] === undefined || lines[0] === ""
+        || lines[1] === undefined  || lines[1] === ""
+        || lines[2] === undefined || lines[2] === "") {
+        throw new Errors.HarmonicFunctionsParserError("Exercise is empty")
+    }
+
     var isInNewNotation = false;
     if(lines[0] === "dev") {
         lines = lines.splice(1, lines.length);
@@ -306,13 +384,24 @@ function parse(input) {
         throw new Errors.HarmonicFunctionsParserError("Unrecognized key", key)
     }
 
-    var metre = lines[1]
+    var metre1 = lines[1]
+    metre1 = metre1.replace(/\s/g, '')
+    var metre
 
-    if (metre === 'C') {
+    if (metre1 === 'C') {
         metre = [4,4]
     } else {
-        metre = [parseInt(metre.split('/')[0]), parseInt(metre.split('/')[1])]
+        metre = [parseInt(metre1.split('/')[0]),
+                parseInt(metre1.split('/')[1])]
+
+        if (lines[1] === undefined || lines[1] === ""
+            || metre[0] === undefined || metre[0] <= 0 || isNaN(metre[0])
+            || !(/^[0-9]+$/.test(metre1.split('/')[0])) || !(/^[0-9]+$/.test(metre1.split('/')[1]))
+            || metre[1] === undefined || isNaN(metre[1]) || !Utils.contains([1, 2, 4, 8, 16 ,32 ,64], metre[1])) {
+            throw new Errors.HarmonicFunctionsParserError("Invalid metre", lines[1])
+        }
     }
+
     lines = lines.splice(2, lines.length);
     if(isInNewNotation)
         lines = translateToOldNotation(lines);
