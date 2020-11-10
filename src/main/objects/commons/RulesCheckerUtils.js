@@ -2,6 +2,7 @@
 .import "../commons/Consts.js" as Consts
 .import "../commons/Errors.js" as Errors
 .import "../commons/BrokenRulesCounter.js" as BrokenRulesCounter
+.import "../utils/Utils.js" as Utils
 
 function Connection(current, prev, prevPrev){
     var undefinedNodeContents = ["first", "last"];
@@ -9,6 +10,12 @@ function Connection(current, prev, prevPrev){
     this.current = Utils.contains(undefinedNodeContents, current) ? undefined : current;
     this.prev = Utils.contains(undefinedNodeContents, prev) ? undefined : prev;
     this.prevPrev = Utils.contains(undefinedNodeContents, prevPrev) ? undefined : prevPrev;
+
+    this.equals = function(other){
+        return (!this.current && !other.current || this.current.equals(other.current)) &&
+            (!this.prev && !other.prev || this.prev.equals(other.prev))  &&
+            (!this.prevPrev && !other.prevPrev || this.prevPrev.equals(other.prevPrev))
+    }
 }
 
 function Evaluator(connectionSize){
@@ -47,14 +54,14 @@ function Evaluator(connectionSize){
             return
         var result = 0;
         var oneRuleBroken = false;
-        for(var i = 0; i < this.softRules.length; i++){
-            var currentEvaluation = this.softRules[i].evaluate(connection)
-            if(currentEvaluation !== 0) {
-                this.brokenRulesCounter.increaseCounter(this.softRules[i].name)
-            } else {
-                result += currentEvaluation
-            }
-        }
+        // for(var i = 0; i < this.softRules.length; i++){
+        //     var currentEvaluation = this.softRules[i].evaluate(connection)
+        //     if(currentEvaluation !== 0) {
+        //         this.brokenRulesCounter.increaseCounter(this.softRules[i].name)
+        //     } else {
+        //         result += currentEvaluation
+        //     }
+        // }
         for(var i = 0; i < this.hardRules.length; i++){
             if(this.hardRules[i].isBroken(connection)) {
                 this.brokenRulesCounter.increaseCounter(this.hardRules[i].name)

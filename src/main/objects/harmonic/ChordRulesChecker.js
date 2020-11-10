@@ -16,6 +16,7 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
     this.hardRules = [
         new ConcurrentOctavesRule("Consecutive octaves"),
         new ConcurrentFifthsRule("Consecutive fifths"),
+        new IllegalDoubledThirdRule("Illegal double third"),
         new CrossingVoicesRule("Crossing voices"),
         new OneDirectionRule("One direction of voices"),
         new ForbiddenJumpRule(false, isFixedBass, isFixedSoprano, "Forbidden voice jump"),
@@ -23,7 +24,6 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
         new HiddenOctavesRule("Hidden consecutive octaves"),
         new FalseRelationRule("False relation"),
         new SameFunctionCheckConnectionRule("Repeated function voice wrong movement"),
-        new IllegalDoubledThirdRule("Illegal double third"),
         new DominantSubdominantCheckConnectionRule("Dominant subdominant relation voice wrong movement") //should stand here always
     ];
     this.softRules = [
@@ -354,17 +354,24 @@ function FalseRelationRule(details, evaluationRatio){
     }
 }
 
+var currentConnection = undefined
+var currentConnectionTranslated = undefined
+
 function ICheckConnectionRule(details){
     RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var translatedConnection = this.translateConnectionIncludingDeflections(connection);
+        currentConnection = connection;
+        currentConnectionTranslated = translatedConnection;
         if(!Utils.isDefined(translatedConnection))
             return 0;
         return this.evaluateIncludingDeflections(translatedConnection);
     };
 
     this.translateConnectionIncludingDeflections = function(connection){
+        if(Utils.isDefined(currentConnection) && connection.equals(currentConnection))
+            return currentConnectionTranslated;
         var currentChord = connection.current.copy();
         var prevChord = connection.prev.copy();
         var currentFunctionTranslated = currentChord.harmonicFunction.copy();
@@ -573,7 +580,7 @@ function DominantRelationCheckConnectionRule(details){
             Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
             prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction)){
             if(this.brokenThirdMoveRule(prevChord, currentChord))
-                result += 50;
+                return 50;
             if (Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) {
                 if(this.brokenSeventhMoveRule(prevChord, currentChord))
                     result += 20;
@@ -586,7 +593,7 @@ function DominantRelationCheckConnectionRule(details){
                 this.brokenDownFifthMoveRule(prevChord, currentChord))
                 result += 20;
             if (prevChord.harmonicFunction.isChopin() && this.brokenChopinMoveRule(prevChord, currentChord))
-                result += 50;
+                return 50;
         }
         return result;
     };
@@ -665,7 +672,7 @@ function DominantSecondRelationCheckConnectionRule(details){
         if (specificConnectionRule.isNotBroken(connection)
             && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction)) {
             if(this.brokenThirdMoveRule(prevChord, currentChord))
-                result += 50;
+                return 50;
             if(this.brokenFifthMoveRule(prevChord, currentChord))
                 result += 20;
             if (Utils.containsChordComponent(prevChord.harmonicFunction.extra, "7") && this.brokenSeventhMoveRule(prevChord, currentChord))
