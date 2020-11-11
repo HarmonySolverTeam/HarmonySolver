@@ -13,8 +13,8 @@ var rulesChecker = new RulesChecker.SopranoRulesChecker("C");
 
 const initializeTest = () => {
     return UnitTest.assertEqualsPrimitives(2, rulesChecker.connectionSize) &&
-        UnitTest.assertEqualsPrimitives(3, rulesChecker.hardRules.length) &&
-        UnitTest.assertEqualsPrimitives(7, rulesChecker.softRules.length);
+        UnitTest.assertEqualsPrimitives(4, rulesChecker.hardRules.length) &&
+        UnitTest.assertEqualsPrimitives(9, rulesChecker.softRules.length);
 };
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(initializeTest, "Initialize soprano rulechecker test"));
