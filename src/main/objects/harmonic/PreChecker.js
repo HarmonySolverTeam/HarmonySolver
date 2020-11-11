@@ -5,22 +5,22 @@
 .import "../commons/RulesCheckerUtils.js" as RulesCheckerUtils
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 
-var DEBUG = false;
+var DEBUG = true;
 
-function checkDSConnection(harmonicFunctions) {
+function checkDSConnection(harmonicFunctions, indexes) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
         if (harmonicFunctions[i].functionName === Consts.FUNCTION_NAMES.DOMINANT
             && harmonicFunctions[i + 1].functionName === Consts.FUNCTION_NAMES.SUBDOMINANT
             && harmonicFunctions[i].mode === Consts.MODE.MAJOR
             && harmonicFunctions[i].key === harmonicFunctions[i+1].key) {
-            throw new Errors.PreCheckerError("Forbidden connection: D->S", "Chords: " + (i + 1) + " " + (i + 2)
-                + "\nChord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i])
-                + "\nChord " + (i + 2) + "\n" + JSON.stringify(harmonicFunctions[i+1]))
+            throw new Errors.PreCheckerError("Forbidden connection: D->S", "Chords: " + (indexes[i]) + " " + (indexes[i + 1])
+                + "\nChord " + (indexes[i]) + "\n" + (DEBUG ? JSON.stringify(harmonicFunctions[i]) : harmonicFunctions[i].toString())
+                + "\nChord " + (indexes[i + 1]) + "\n" + (DEBUG ? JSON.stringify(harmonicFunctions[i + 1]) : harmonicFunctions[i].toString()))
         }
     }
 }
 
-function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine) {
+function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine, indexes) {
     var currentChords
     var prevChords = undefined
     var goodCurrentChords = []
@@ -59,8 +59,8 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
 
         if (currentChords.length === 0) {
             if (DEBUG) console.log(harmonicFunctions[i])
-            throw new Errors.PreCheckerError("Could not generate any chords for chord " + (i + 1  - chordsWithDelays),
-                                                JSON.stringify(harmonicFunctions[i]))
+            throw new Errors.PreCheckerError("Could not generate any chords for chord " + (indexes[i]),
+                DEBUG ? JSON.stringify(harmonicFunctions[i]) : harmonicFunctions[i].toString())
         }
 
         for (var a = 0; a < currentChords.length; a++) {
@@ -94,15 +94,32 @@ function checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLi
             var brokenRulesStringInfo = rulesChecker.getBrokenRulesCounter().getBrokenRulesStringInfo()
 
             if (i !== 0) {
-                throw new Errors.PreCheckerError("Could not find valid connection between chords " + (i - chordsWithDelays) + " and " + (i + 1 - chordsWithDelays),
-                    "Chord " + i + "\n" + JSON.stringify(harmonicFunctions[i-1])
-                    + "\nChord " + (i + 1) + "\n" + JSON.stringify(harmonicFunctions[i]) + "\nBroken rules:\n" + brokenRulesStringInfo)
+                throw new Errors.PreCheckerError("Could not find valid connection between chords " + (indexes[i - 1]) + " and " + (indexes[i]),
+                    "Chord " + (indexes[i - 1])+ "\n" + (DEBUG ? JSON.stringify(harmonicFunctions[i - 1]) : harmonicFunctions[i - 1].toString())
+                    + "\nChord " + (indexes[i]) + "\n" + (DEBUG ? JSON.stringify(harmonicFunctions[i]) : harmonicFunctions[i].toString())
+                        + "\nBroken rules:\n" + brokenRulesStringInfo)
             } else {
-                throw new Errors.PreCheckerError("Could not generate any correct chord for first chord", JSON.stringify(harmonicFunctions[0]) + "\nBroken rules:\n" + brokenRulesStringInfo)
+                throw new Errors.PreCheckerError("Could not generate any correct chord for first chord",
+                    (DEBUG ? JSON.stringify(harmonicFunctions[i]) : harmonicFunctions[i].toString())
+                    + "\nBroken rules:\n" + brokenRulesStringInfo)
             }
         }
     }
 }
+
+function getHFIndexesBasedOnDelays(harmonicFunctions) {
+    var ret = []
+    var currentIndex = 1
+    for (var a = 0; a < harmonicFunctions.length; a++, currentIndex++) {
+        ret.push(currentIndex)
+        if (harmonicFunctions[a].delay.length > 0) {
+            ret.push(currentIndex)
+            a++
+        }
+    }
+    return ret
+}
+
 
 function preCheck(harmonicFunctions, chordGenerator, bassLine, sopranoLine) {
     if (sopranoLine !== undefined) {
@@ -112,9 +129,9 @@ function preCheck(harmonicFunctions, chordGenerator, bassLine, sopranoLine) {
     }
     if (DEBUG) console.log("Prechecker harmonic functions")
     if (DEBUG) console.log(JSON.stringify(harmonicFunctions))
-
-    checkDSConnection(harmonicFunctions)
-    checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine)
+    var indexes = getHFIndexesBasedOnDelays(harmonicFunctions)
+    checkDSConnection(harmonicFunctions, indexes)
+    checkForImpossibleConnections(harmonicFunctions, chordGenerator, bassLine, indexes)
 }
 
 
