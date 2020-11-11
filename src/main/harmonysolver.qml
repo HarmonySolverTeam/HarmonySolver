@@ -603,39 +603,64 @@ MuseScore {
         chordsList.push(S)
         chordsList.push(D)
 
-        if (tab3.item.getCheckboxState("D7") === true) {
+        if (tab3.item.getCheckboxState("D7")) {
             chordsList.push(D7)
         }
-        if (tab3.item.getCheckboxState("S6") === true) {
+        if (tab3.item.getCheckboxState("S6")) {
             chordsList.push(S6)
         }
-        if (tab3.item.getCheckboxState("neapolitan") === true) {
-            chordsList.push(neapolitan)
-        }
-        if (tab3.item.getCheckboxState("degree2") === true) {
+
+        if (tab3.item.getCheckboxState("degree2")) {
             chordsList.push(Sii)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtoii)
+            }
         }
-        if (tab3.item.getCheckboxState("degree3") === true) {
+        if (tab3.item.getCheckboxState("degree3")) {
             chordsList.push(Diii)
             chordsList.push(Tiii)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtoiii)
+            }
         }
-        if (tab3.item.getCheckboxState("degree6") === true) {
+        if (tab3.item.getCheckboxState("degree6")) {
             chordsList.push(Tvi)
             chordsList.push(Svi)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtovi)
+            }
         }
-        if (tab3.item.getCheckboxState("degree7") === true) {
+        if (tab3.item.getCheckboxState("degree7")) {
             chordsList.push(Dvii)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtovii)
+            }
         }
-        if (tab3.item.getCheckboxState("secondaryD") === true){
-            chordsList.push(Dtoii)
-            chordsList.push(Dtoiii)
+        if (tab3.item.getCheckboxState("secondaryD")){
             chordsList.push(Dtoiv)
             chordsList.push(Dtov)
-            chordsList.push(Dtovi)
-            chordsList.push(Dtovii)
+        }
+        var revolutionChords = []
+        if (tab3.item.getCheckboxState("revolution3")){
+            for (var i = 0; i < chordsList.length; i++){  
+                var tmpHarmonicFunction = chordsList[i].copy()
+                tmpHarmonicFunction.revolution = tmpHarmonicFunction.getThird()
+                revolutionChords.push(tmpHarmonicFunction)
+            }
+        }
+        if (tab3.item.getCheckboxState("revolution5")){
+            for (var i = 0; i < chordsList.length; i++){
+                var tmpHarmonicFunction = chordsList[i].copy()
+                tmpHarmonicFunction.revolution = tmpHarmonicFunction.getFifth()
+                revolutionChords.push(tmpHarmonicFunction)
+            }
+        }
+        
+        if (tab3.item.getCheckboxState("neapolitan")) {
+            chordsList.push(neapolitan)
         }
 
-        return chordsList
+        return chordsList.concat(revolutionChords)
     }
 
     FileIO {
@@ -914,10 +939,16 @@ MuseScore {
                         if (function_name === "secondaryD") {
                             return secondaryDCheckbox.checkedState === Qt.Checked
                         }
+                        if (function_name === "revolution3") {
+                            return revolution3Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "revolution5") {
+                            return revolution5Checkbox.checkedState === Qt.Checked
+                        }
                     }
 
                     function getSelectedMode(){
-                        if (useMinorCheckbox.checkedState === Qt.Checked) {
+                        if (useMinorCheckbox.checked) {
                             return Consts.MODE.MINOR;
                         } else {
                             return Consts.MODE.MAJOR;
@@ -1024,11 +1055,40 @@ MuseScore {
                         }
 
                         Column {
-                            id: extraOptions
+                            id: revolutionColumn
+                            Text {
+                                id: revolutionTextLabelt
+                                text: qsTr("Revolutions")
+                            }
                             CheckBox {
-                                id: useMinorCheckbox
+                                id: revolution3Checkbox
                                 checked: false
-                                text: qsTr("use minor scale")
+                                text: qsTr("3")
+                            }
+                            CheckBox {
+                                id: revolution5Checkbox
+                                checked: false
+                                text: qsTr("5")
+                            }
+                        }
+
+                        Column {
+                            id: scaleColumn
+                            ExclusiveGroup { id: scaleGroup }
+                            Text {
+                                id: scaleTextLabelt
+                                text: qsTr("Scale")
+                            }
+                            RadioButton {
+                                id: useMajorCheckbox
+                                checked: true
+                                text: qsTr("major")
+                                exclusiveGroup: scaleGroup
+                            }
+                            RadioButton {
+                                id: useMinorCheckbox
+                                text: qsTr("minor")
+                                exclusiveGroup: scaleGroup
                             }
                         }
                     }
