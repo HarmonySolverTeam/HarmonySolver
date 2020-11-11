@@ -78,7 +78,8 @@ function HarmonicFunctionGenerator(allowedHarmonicFunctions, key, mode){
                 function(harmonicFunction){
                         return harmonicFunction.functionName === Consts.FUNCTION_NAMES.TONIC &&
                             harmonicFunction.degree === 1 &&
-                            !Utils.isDefined(harmonicFunction.key)
+                            !Utils.isDefined(harmonicFunction.key) &&
+                            harmonicFunction.revolution === harmonicFunction.getPrime()
                     }
                 )
         }
