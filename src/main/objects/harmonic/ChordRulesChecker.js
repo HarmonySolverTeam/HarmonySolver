@@ -89,7 +89,7 @@ function AdaptiveChordRulesChecker(punishmentRatios){
                     targetRuleSet.push(new IllegalDoubledThirdRule("Illegal double third", this.punishmentRatios[rulesToAlter[i]]));
                     break;
                 default:
-                    throw new Errors.ProbablyUnexpectedError("Incorrect rule type to alter");
+                    throw new Errors.UnexpectedInternalError("Incorrect rule type to alter", rulesToAlter[i]);
             }
         }
     }

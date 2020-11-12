@@ -58,11 +58,11 @@ function Evaluator(connectionSize){
 
 function IRule(details, evaluationRatio){
     this.evaluate = function(connection){
-        throw new Error("IRule default evaluate method was called");
+        throw new Errors.UnexpectedInternalError("IRule default evaluate method was called");
     };
 
     if(Utils.isDefined(evaluationRatio) && (evaluationRatio > 1 || evaluationRatio < 0)){
-        throw new Errors.ProbablyUnexpectedError("Incorrect evaluation ratio in Rule. Should be in [0,1].")
+        throw new Errors.UnexpectedInternalError("Incorrect evaluation ratio in Rule. Should be in [0,1].")
     };
 
     this.name = this.constructor.name;
