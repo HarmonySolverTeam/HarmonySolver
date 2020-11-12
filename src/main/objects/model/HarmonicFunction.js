@@ -206,10 +206,19 @@ function HarmonicFunction2(params){
 
     this.getExtraString = function() {
         var ret = ""
+        var delays = this.getDelaysCopy()
+        var leftSideOfDelays = []
+
+        for (var a = 0; a < delays.length; a++) {
+            leftSideOfDelays.push(delays[a][0])
+        }
+
         for (var a = 0; a < this.extra.length; a++) {
-            ret += this.extra[a].chordComponentString
-            if (a !== this.extra.length - 1) {
-                ret += ", "
+            if (!Utils.contains(leftSideOfDelays, this.extra[a].chordComponentString)) {
+                if (a!== 0 && ret !== ""){
+                    ret += ", "
+                }
+                ret += this.extra[a].chordComponentString
             }
         }
         return ret
@@ -228,10 +237,18 @@ function HarmonicFunction2(params){
 
     this.getOmitString = function() {
         var ret = ""
+        var delays = this.getDelaysCopy()
+        var rightSideOfDelays = []
+
+        for (var a = 0; a < delays.length; a++) {
+            rightSideOfDelays.push(delays[a][1])
+        }
         for (var a = 0; a < this.omit.length; a++) {
-            ret += this.omit[a].chordComponentString
-            if (a !== this.omit.length - 1) {
-                ret += ", "
+            if (!Utils.contains(rightSideOfDelays, this.omit[a].chordComponentString)) {
+                if (a!== 0 && ret !== ""){
+                    ret += ", "
+                }
+                ret += this.omit[a].chordComponentString
             }
         }
         return ret

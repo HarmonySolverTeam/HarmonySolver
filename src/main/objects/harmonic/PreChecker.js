@@ -5,7 +5,7 @@
 .import "../commons/RulesCheckerUtils.js" as RulesCheckerUtils
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 
-var DEBUG = true;
+var DEBUG = false;
 
 function checkDSConnection(harmonicFunctions, indexes) {
     for (var i = 0; i < harmonicFunctions.length - 1; i++) {
