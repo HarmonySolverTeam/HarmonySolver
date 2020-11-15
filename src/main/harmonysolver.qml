@@ -770,6 +770,7 @@ MuseScore {
 
                     TextArea {
                         id: abcText
+                        font.pointSize: 10
                         anchors.top: textLabel.bottom
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
@@ -891,17 +892,6 @@ MuseScore {
                                 showError(error)
                             }
                         }
-                    }
-
-                    Label {
-                        id: textLabelFiguredBass
-                        wrapMode: Text.WordWrap
-                        text: qsTr("Here you can solve figured bass exercises. \nRemember that current opened score\nshould contain figured bass exercise.")
-                        font.pointSize: 12
-                        anchors.left: tabRectangle2.left
-                        anchors.top: tabRectangle2.top
-                        anchors.leftMargin: 10
-                        anchors.topMargin: 10
                     }
 
                 }
