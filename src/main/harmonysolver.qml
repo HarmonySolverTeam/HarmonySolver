@@ -746,7 +746,7 @@ MuseScore {
             height: 550
 
             Tab {
-                title: "Harmonic Functions"
+                title: "Harmonics"
                 id: tab1
                 active: true
 
@@ -796,6 +796,7 @@ MuseScore {
                         onClicked: {
                             fileDialog.open()
                         }
+                        tooltip: "Import file with harmonic functions exercise."
                     }
 
                     Button {
@@ -819,6 +820,7 @@ MuseScore {
                                 }
                             }
                         }
+                        tooltip: "Check if input is correct"
                     }
 
                     Button {
@@ -872,7 +874,7 @@ MuseScore {
                 }
             }
             Tab {
-                title: "Figured Bass"
+                title: "Bass"
 
                 Rectangle {
                     id: tabRectangle2
@@ -898,7 +900,7 @@ MuseScore {
             }
             Tab {
 
-                title: "Soprano Harmonization"
+                title: "Soprano"
                 id: tab3
 
                 Rectangle {
@@ -1026,6 +1028,7 @@ MuseScore {
                                 id: degree2Checkbox
                                 checked: false
                                 text: qsTr("II")
+
                             }
                             CheckBox {
                                 id: degree3Checkbox
@@ -1094,6 +1097,7 @@ MuseScore {
                         Column {
                               spacing: 10
                               Column {
+
                                     Text {
                                           text: qsTr("Consecutive Octaves")
                                     }
@@ -1102,6 +1106,7 @@ MuseScore {
                                           maximumValue: 100
                                           minimumValue: 0
                                           stepSize: 1.0
+
                                     }
                                     Text {
                                           text: qsTr(consecutiveOctavesSlider.value+" %")
@@ -1269,7 +1274,7 @@ MuseScore {
             }
             Tab {
 
-                title: "Plugin Settings"
+                title: "Settings"
                 id: tab4
 
                 function showConfiguration(){
@@ -1335,6 +1340,7 @@ MuseScore {
                             id: printCheckbox
                             checked: configuration.enableChordSymbolsPrinting
                             text: qsTr("print chord symbols")
+                            tooltip: "Enable printing chord sybols under the chords in score"
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableChordSymbolsPrinting = true
@@ -1351,6 +1357,7 @@ MuseScore {
                              id: printComponentsCheckbox
                              checked: configuration.enableChordComponentsPrinting
                              text: qsTr("print chord components")
+                             tooltip: "Enable printing chord components next to every note"
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableChordComponentsPrinting = true
@@ -1367,6 +1374,11 @@ MuseScore {
                             id: precheckCheckbox
                             checked: configuration.enablePrechecker
                             text: qsTr("precheck for unavoidable errors")
+                            tooltip: "Enables additional step of solving - preckeck.\n" + 
+                            "During precheck plugin checks connections between all chords.\n" + 
+                            "If there is some problem, plugin will wand you about that giving chords position,\n" + 
+                            "their parameters and rules, that were broken during checking that connection.\n" +
+                            "This option may increase solving time by around 5 seconds."
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enablePrechecker = true
@@ -1383,6 +1395,8 @@ MuseScore {
                              id: correctCheckbox
                              checked: configuration.enableCorrector
                              text: qsTr("correct given exercise")
+                             tooltip: "Enable exercise correction.\nExample:\n" +
+                             "TODO EXAMPLE"
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableCorrector = true
