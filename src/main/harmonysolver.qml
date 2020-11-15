@@ -32,8 +32,8 @@ MuseScore {
     property var configuration: ({})
 
     id: window
-    width: 800
-    height: 600
+    width: 550
+    height: 550
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
     }
@@ -399,7 +399,8 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0, [cursor.element.duration.numerator, cursor.element.duration.denominator])
-            //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0, [" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
+            //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0,
+            //[" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
             notes.push(sopranoNote)
             measure_notes.push(sopranoNote)
         } while (cursor.next())
@@ -437,7 +438,7 @@ MuseScore {
             console.log("cannot find solution");
         }
 
-        }
+    }
 
     function addComponentToScore(cursor, componentValue) {
         if(!configuration.enableChordComponentsPrinting)
@@ -741,7 +742,7 @@ MuseScore {
 
         TabView {
             id: tabView
-            width: 750
+            width: 550
             height: 550
 
             Tab {
@@ -787,7 +788,7 @@ MuseScore {
                         id: buttonOpenFile
                         text: qsTr("Import file")
                         anchors.bottom: tabRectangle1.bottom
-                        anchors.left: abcText.left
+                        anchors.left: tabRectangle1.left
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 10
@@ -827,7 +828,7 @@ MuseScore {
                         anchors.right: tabRectangle1.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
-                        anchors.rightMargin: 40
+                        anchors.rightMargin: 10
                         anchors.leftMargin: 10
                         onClicked: {
                                 //parsing
@@ -879,7 +880,7 @@ MuseScore {
                         id: buttonRunFiguredBass
                         text: qsTr("Solve")
                         anchors.bottomMargin: 10
-                        anchors.rightMargin: 40
+                        anchors.rightMargin: 10
                         anchors.right: tabRectangle2.right
                         anchors.bottom: tabRectangle2.bottom
                         onClicked: {
@@ -899,9 +900,8 @@ MuseScore {
                         font.pointSize: 12
                         anchors.left: tabRectangle2.left
                         anchors.top: tabRectangle2.top
-                        anchors.leftMargin: 20
-                        anchors.topMargin: 20
-                        font.pixelSize: 20
+                        anchors.leftMargin: 10
+                        anchors.topMargin: 10
                     }
 
                 }
@@ -963,7 +963,7 @@ MuseScore {
                         anchors.top: tabRectangle3.top
                         anchors.leftMargin: 20
                         anchors.topMargin: 20
-                        font.pixelSize: 17
+                        font.pointSize: 12
                     }*/
                     Row{
                         id: harmonicFunctionRow
@@ -972,7 +972,7 @@ MuseScore {
                         anchors.top: tabRectangle3.top
                         anchors.topMargin: 10
                         anchors.right: tabRectangle3.right
-                        spacing: 30
+                        spacing: 16
                    
 
                         Column {
@@ -1263,7 +1263,7 @@ MuseScore {
                         anchors.right: tabRectangle3.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
-                        anchors.rightMargin: 40
+                        anchors.rightMargin: 10
                         onClicked: {
                             try{
                                 isSopranoScore()
@@ -1338,7 +1338,7 @@ MuseScore {
                         id: exerciseOptionsColumn
                         anchors.top: savedPathTextField.bottom
                         anchors.left: tabRectangle4.left
-                        anchors.leftMargin: 35
+                        anchors.leftMargin: 10
                         anchors.topMargin: 20
                         spacing: 10
                         CheckBox {
@@ -1413,26 +1413,14 @@ MuseScore {
                         text: qsTr("Save Configuration")
                         anchors.bottom: tabRectangle4.bottom
                         anchors.left: tabRectangle4.left
-                        anchors.bottomMargin: 20
-                        anchors.leftMargin: 40
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
                         onClicked: {
                             savePluginConfiguration()
                         }
                     }
 
                 }
-            }
-        }
-        Button {
-            id: buttonCancel
-            text: qsTr("Quit")
-            anchors.top: tabView.bottom
-            anchors.left: tabView.right
-            anchors.topMargin: 20
-            anchors.bottomMargin: 10
-            anchors.rightMargin: 40
-            onClicked: {
-                Qt.quit()
             }
         }
     }
