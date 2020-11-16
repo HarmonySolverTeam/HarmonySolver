@@ -39,7 +39,7 @@ function getKeyFromPitchBasenoteAndModeOrThrowError(pitch, basenote, mode) {
     var mapKey = pitch.toString() + "," + basenote.toString() + "," + mode
     var key = Consts.keyFromPitchBasenoteAndMode[mapKey]
     if (key === undefined) {
-        throw new Errors.ProbablyUnexpectedError("Could not find key for given pitch, basenote and mode",
+        throw new Errors.UnexpectedInternalError("Could not find key for given pitch, basenote and mode",
             "Pitch: " + pitch + " Basenote: " + basenote + " Mode: " + mode)
     } else {
         return key

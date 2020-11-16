@@ -1,4 +1,5 @@
 .import "../algorithms/PriorityQueue.js" as PriorityQueue
+.import "../commons/Errors.js" as Errors
 
 function Dikstra(graph){
 
@@ -18,7 +19,7 @@ function Dikstra(graph){
     //Cormen p.662
     this.relax = function(u, v, w){
         if(u.distanceFromBegining === "infinity"){
-            throw "u cannot have inifinity distance from begining";
+            throw new Errors.UnexpectedInternalError("u cannot have inifinity distance from begining")
         }
 
         if(u.distanceFromBegining + w < v.distanceFromBegining || v.distanceFromBegining === "infinity") {

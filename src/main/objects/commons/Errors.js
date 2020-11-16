@@ -30,9 +30,9 @@ function SopranoHarmonizationInputError(message, details) {
     this.source = "Error in soprano harmonization input"
 }
 
-function ProbablyUnexpectedError(message, details) {
+function UnexpectedInternalError(message, details) {
     BasicError.call(this, message, details)
-    this.source = "Possible error in code"
+    this.source = "Error in Harmonysolver plugin. Please contact with developers."
 }
 
 function PreCheckerError(message, details) {
