@@ -96,7 +96,7 @@ MuseScore {
                         [cursor.element.duration.numerator, cursor.element.duration.denominator])
             if (typeof cursor.element.parent.annotations[0] !== "undefined") {
                 var readSymbols = cursor.element.parent.annotations[0].text
-                Utils.log("readSymbols:", readSymbols)
+                //Utils.log("readSymbols:", readSymbols)
                 for (var i = 0; i < readSymbols.length; i++) {
                     var component = "", alteration = undefined
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
@@ -105,7 +105,7 @@ MuseScore {
                         }
                         i++
                     }
-                    Utils.log("component: " + component)
+                    //Utils.log("component: " + component)
 
                     if ((component.length === 1 && isAlterationSymbol(component[0])) ||
                         (component.length === 2 && isAlterationSymbol(component[0]) && component[0] === component[1])) {
@@ -169,7 +169,7 @@ MuseScore {
                         }
                     }
 
-                        Utils.log("symbols:", symbols)
+                        //Utils.log("symbols:", symbols)
                 }
             }
             lastBaseNote = getBaseNote(Utils.mod((cursor.element.notes[0].tpc + 1), 7))
@@ -179,10 +179,10 @@ MuseScore {
             has3component = false
 
             if (delays.length !== 0) {
-                Utils.log("durations", durations)
+                //Utils.log("durations", durations)
                 durations[durations.length - 1][1]*=2
                 durations.push(durations[durations.length - 1])
-                Utils.log("durations", durations)
+                //Utils.log("durations", durations)
             }
 
             delays = []
@@ -214,7 +214,7 @@ MuseScore {
                     ) + "_" + (date.getMonth() + 1) + "_" + date.getDate() + "_"
         ret += date.getHours() + "_" + date.getMinutes(
                     ) + "_" + date.getSeconds()
-        Utils.log("Solution date - " + ret)
+        //Utils.log("Solution date - " + ret)
         return ret
     }
 
@@ -253,7 +253,7 @@ MuseScore {
             var countMeasures = function(durations){
                 var sum = 0;
                 for(var i=0; i<durations.length;i++){
-                    Utils.log(durations[i][0]/durations[i][1])
+                    //Utils.log(durations[i][0]/durations[i][1])
                     sum += durations[i][0]/durations[i][1];
                 }
                 return Math.round(sum/(solution.exercise.meter[0]/solution.exercise.meter[1]));
@@ -272,7 +272,7 @@ MuseScore {
             var curChord = solution.chords[i]
             var prevChord = i === 0 ? undefined : solution.chords[i-1];
             var nextChord = i === solution.chords.length - 1 ? undefined : solution.chords[i+1];
-            Utils.log("curChord:",curChord)
+            //Utils.log("curChord:",curChord)
             if (durations !== undefined) {
                 var dur = durations[i]
             }
@@ -431,7 +431,7 @@ MuseScore {
                        filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                        "mscz")
 
-            Utils.log("sopranoExercise:",sopranoExercise)
+            //Utils.log("sopranoExercise:",sopranoExercise)
         }
         else{
             console.log("cannot find solution");
@@ -454,16 +454,16 @@ MuseScore {
         try {
             var ex = read_figured_bass()
             var translator = new Translator.BassTranslator()
-            Utils.log("ex",JSON.stringify(ex))
+            //Utils.log("ex",JSON.stringify(ex))
 
             var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
-            Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
+            //Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
             var solver = new Solver.Solver(exerciseAndBassline[0], exerciseAndBassline[1], undefined,
                 !configuration.enableCorrector, !configuration.enablePrechecker)
 
             var solution = solver.solve()
             var solution_date = get_solution_date()
-            Utils.log("Solution:", JSON.stringify(solution))
+            //Utils.log("Solution:", JSON.stringify(solution))
 
             prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
 

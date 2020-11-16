@@ -2,6 +2,7 @@
 .import "../commons/Consts.js" as Consts
 .import "../commons/Errors.js" as Errors
 .import "../commons/BrokenRulesCounter.js" as BrokenRulesCounter
+.import "../utils/Utils.js" as Utils
 
 function Connection(current, prev, prevPrev){
     var undefinedNodeContents = ["first", "last"];
@@ -9,6 +10,12 @@ function Connection(current, prev, prevPrev){
     this.current = Utils.contains(undefinedNodeContents, current) ? undefined : current;
     this.prev = Utils.contains(undefinedNodeContents, prev) ? undefined : prev;
     this.prevPrev = Utils.contains(undefinedNodeContents, prevPrev) ? undefined : prevPrev;
+
+    this.equals = function(other){
+        return (!this.current && !other.current || this.current.equals(other.current)) &&
+            (!this.prev && !other.prev || this.prev.equals(other.prev))  &&
+            (!this.prevPrev && !other.prevPrev || this.prevPrev.equals(other.prevPrev))
+    }
 }
 
 function Evaluator(connectionSize){

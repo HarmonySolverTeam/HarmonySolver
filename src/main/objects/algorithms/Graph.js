@@ -326,7 +326,6 @@ function GraphBuilder() {
         }
         //just for printing
         resultGraph.enumerateNodes();
-
         setEdgeWeights(resultGraph, this.evaluator);
         // if(this.evaluator.connectionSize === 2) resultGraph.printEdges()
 
