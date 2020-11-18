@@ -62,7 +62,7 @@ function getThirdMode(key, baseNote) {
 }
 
 function toBaseNote(scaleBaseNote, harmonicFunction, chordComponent) {
-    var int = chordComponent.baseComponent;
+    var interval = chordComponent.baseComponent;
 
     var intervalToBaseNote = {
         '1': 0,
@@ -76,5 +76,5 @@ function toBaseNote(scaleBaseNote, harmonicFunction, chordComponent) {
         '9': 8
     }
 
-    return Utils.mod((scaleBaseNote + (harmonicFunction.degree - 1) + intervalToBaseNote[int]), 7);
+    return Utils.mod((scaleBaseNote + (harmonicFunction.degree - 1) + intervalToBaseNote[interval]), 7);
 }

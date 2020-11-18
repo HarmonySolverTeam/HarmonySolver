@@ -405,3 +405,26 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     };
     HarmonicFunction2.call(this, args);
 }
+
+function harmonicFunctionReconstruct(hf){
+    var delay = []
+    for(var i=0;i<hf.delay.length; i++){
+        delay.push([hf.delay[i][0].chordComponentString, hf.delay[i][1].chordComponentString]);
+    }
+    delay = delay.length > 0 ? delay : undefined;
+
+    return new HarmonicFunction(
+        hf.functionName,
+        hf.degree,
+        hf.position === undefined ? undefined : hf.position.chordComponentString,
+        hf.revolution === undefined ? undefined : hf.revolution.chordComponentString,
+        delay,
+        hf.extra === undefined ? undefined : hf.extra.map(function (cc) { return cc.chordComponentString; }),
+        hf.omit === undefined ? undefined : hf.omit.map(function (cc) { return cc.chordComponentString; }),
+        hf.down,
+        hf.system,
+        hf.mode,
+        hf.key,
+        hf.isRelatedBackwards
+    )
+}

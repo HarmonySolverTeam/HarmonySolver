@@ -314,21 +314,16 @@ function GraphBuilder() {
     }
 
     this.build = function () {
-        var resultGraph = new Graph([]);
-
-        generateLayers(resultGraph, this.generator, this.generatorInput);
-        addEdges(resultGraph, this.evaluator);
+        var resultGraph = new Graph([]);                              //${counter}
+        generateLayers(resultGraph, this.generator, this.generatorInput);   //${counter}
+        addEdges(resultGraph, this.evaluator);                              //${counter}
         addFirstAndLast(resultGraph);
         removeUnreachableNodes(resultGraph);
-        removeUselessNodes(resultGraph);
+        removeUselessNodes(resultGraph);                                    //${counter}
         if (this.evaluator.connectionSize === 3){
             makeAllNodesHavingSinglePrevContent(resultGraph);
         }
-        //just for printing
-        resultGraph.enumerateNodes();
-
-        setEdgeWeights(resultGraph, this.evaluator);
-        // if(this.evaluator.connectionSize === 2) resultGraph.printEdges()
+        setEdgeWeights(resultGraph, this.evaluator);                        //${counter}
 
         return resultGraph;
     }

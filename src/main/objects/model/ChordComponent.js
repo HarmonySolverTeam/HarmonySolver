@@ -58,3 +58,7 @@ function ChordComponent(chordComponentString, id, isDown){
             " CC semitones_number: " + this.semitonesNumber;
     }
 }
+
+function chordComponentReconstruct(chordComponent){
+    return new ChordComponent(chordComponent.chordComponentString, chordComponent.id, chordComponent.isDown);
+}
