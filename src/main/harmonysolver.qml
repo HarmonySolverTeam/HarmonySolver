@@ -479,6 +479,12 @@ MuseScore {
     }
 
     function isFiguredBassScore() {
+        if (curScore === null) {
+            throw new Errors.FiguredBassInputError(
+                  "No score is opened!"
+                  )
+        }
+
         var cursor = curScore.newCursor()
         cursor.rewind(0)
         var vb = new Consts.VoicesBoundary()
@@ -522,6 +528,12 @@ MuseScore {
     }
 
     function isSopranoScore() {
+                if (curScore === null) {
+                    throw new Errors.SopranoInputError(
+                          "No score is opened!"
+                          )
+                }
+
                 var cursor = curScore.newCursor()
                 cursor.rewind(0)
                 var vb = new Consts.VoicesBoundary()
@@ -707,12 +719,69 @@ MuseScore {
 
       errorDialog.open()
     }
-    
+
+
+    MessageDialog {
+        id: helpHarmonicsDialog
+        width: 300
+        height: 400
+        title: "Help - Harmonic Functions"
+        text: "Here you can solve Harmonic Functions exercises.\n" +
+        "You can type in exercise or load it with 'Import file' button.\nAfter importing, exercise is editable in the text area.\n"+
+        "With button 'Check input' you can check if input is correct."
+        //detailedText: "Detailed text test"
+        icon: StandardIcon.Question
+        standardButtons: StandardButton.Ok
+    }
+
+
+    MessageDialog {
+        id: helpBassDialog
+        width: 800
+        height: 600
+        title: "Help - Figured Bass"
+        text: "Here you can solve figured bass exercises.\n" +
+        "At first, open a score with only bass voice and figured bass symbols.\n" +
+        "Remember to use '#' and 'b' instead of '<' and '>' in symbols and delays.\n" +
+        "For more information like supported symbols, please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
+
+    MessageDialog {
+        id: helpSopranoDialog
+        width: 800
+        height: 600
+        title: "Help - Soprano Harmonization"
+        text: "Here you can solve soprano harmonization exercises.\n" +
+        "At first, open a score with only soprano voice.\n" +
+        "You can choose which chords are being used for harmonization, possible revolutions and scale.\n" +
+        "With sliders you can choose tolerance of different harmonic rules.\n" +
+        "The more percent value, the less rule is taken into account.\n" +
+        "0% means that specific rule can not be broken.\n" +
+        "For more information, please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
+    MessageDialog {
+        id: helpSettingsDialog
+        width: 800
+        height: 600
+        title: "Help - Plugin Settings"
+        text: "If you want to get more information about specific option, place mouse cursor\n" +
+        "over the checkbox - small tip will appear.\n" +
+        "For more details please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
 
     MessageDialog {
         id: errorDialog
-        width: 600
-        height: 400
+        width: 800
+        height: 600
         title: "HarmonySolver - Error"
         text: ""
         icon: StandardIcon.Critical
@@ -755,6 +824,21 @@ MuseScore {
 
                     function setText(text) {
                         abcText.text = text
+                    }
+
+                    Button {
+                        id: buttonHarmonicsHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle1.top
+                        anchors.right: tabRectangle1.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpHarmonicsDialog.open()
+                        }
+                        tooltip: "Help"
                     }
 
                     Label {
@@ -880,6 +964,21 @@ MuseScore {
                     id: tabRectangle2
 
                     Button {
+                        id: buttonBassHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle2.top
+                        anchors.right: tabRectangle2.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpBassDialog.open()
+                        }
+                        tooltip: "Help"
+                    }
+
+                    Button {
                         id: buttonRunFiguredBass
                         text: qsTr("Solve")
                         anchors.bottomMargin: 10
@@ -905,6 +1004,21 @@ MuseScore {
 
                 Rectangle {
                     id: tabRectangle3
+
+                    Button {
+                        id: buttonSopranoHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle3.top
+                        anchors.right: tabRectangle3.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpSopranoDialog.open()
+                        }
+                        tooltip: "Help"
+                    }
 
                     function getCheckboxState(function_name) {
                         if (function_name === "D7") {
@@ -1099,7 +1213,7 @@ MuseScore {
                               Column {
 
                                     Text {
-                                          text: qsTr("Consecutive Octaves")
+                                          text: qsTr("Parallel Octaves")
                                     }
                                     Slider {
                                           id: consecutiveOctavesSlider
@@ -1114,7 +1228,7 @@ MuseScore {
                               }
                               Column {      
                                     Text {
-                                          text: qsTr("Consecutive Fifths")
+                                          text: qsTr("Parallel Fifths")
                                     }
                                     Slider {
                                           id: consecutiveFifthsSlider
@@ -1284,6 +1398,21 @@ MuseScore {
                 Rectangle{
                     id: tabRectangle4
 
+                    Button {
+                        id: buttonSettingsHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle4.top
+                        anchors.right: tabRectangle4.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpSettingsDialog.open()
+                        }
+                        tooltip: "Help"
+                    }
+
                     Label {
                         id: savedPathLabel
                         anchors.top: tabRectangle4.top
@@ -1395,8 +1524,10 @@ MuseScore {
                              id: correctCheckbox
                              checked: configuration.enableCorrector
                              text: qsTr("correct given exercise")
-                             tooltip: "Enable exercise correction.\nExample:\n" +
-                             "TODO EXAMPLE"
+                             tooltip: "Enable exercise correction by tweaking chords revolution and omit parameters\n"
+                              + "to avoid breaking harmonic rules." +
+                              "\nFor example " +
+                             "adds omit 5 to tonic after chopin chord if user do not specify it to avoid parallel fifths."
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableCorrector = true
