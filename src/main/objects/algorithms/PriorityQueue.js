@@ -13,21 +13,30 @@ function PriorityQueue (priorityAttribute) {
     // return 1 if first > second
     // return 0 if first = second
     // return -1 if first < second
+    var sign = function(x){
+        if(x > 0) return 1;
+        if(x < 0) return -1;
+        return 0;
+    }
+
     var compare = function(first, second){
 
         if(first === undefined || second === undefined)
             throw new Errors.UnexpectedInternalError("Illegal argument exception: arguments of compare cannot be undefined")
 
-        var sign = function(x){
-            if(x > 0) return 1;
-            if(x < 0) return -1;
-            return 0;
+        if (first === "infinity") {
+            if (second === "infinity") {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            if (second === "infinity") {
+                return -1;
+            } else {
+                sign(first - second) ;
+            }
         }
-
-        if(first === "infinity" && second === "infinity") return 0;
-        if(first !== "infinity" && second !== "infinity") return sign(first - second) ;
-        if(first !== "infinity" && second === "infinity") return -1;
-        if(first === "infinity" && second !== "infinity") return 1;
 
     }
 
@@ -35,7 +44,7 @@ function PriorityQueue (priorityAttribute) {
         if(this.nodeList.length === 0) return "empty";
 
         var indexOfMin = 0;
-        for(var i=0; i<this.nodeList.length; i++){
+        for(var i=this.nodeList.length; i--;){
             if( compare(this.nodeList[i][this.priorityAttribute], this.nodeList[indexOfMin][this.priorityAttribute]) === -1 )
                 indexOfMin = i;
         }
