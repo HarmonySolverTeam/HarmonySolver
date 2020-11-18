@@ -8,7 +8,7 @@ function Dikstra(graph){
 
     this.init = function() {
         var allNodes = this.graph.getNodes();
-        for(var i=0; i<allNodes.length; i++){
+        for(var i=allNodes.length; i--;){
             allNodes[i].distanceFromBegining = "infinity";
             allNodes[i].prevInShortestPath = undefined;
             this.queue.insert(allNodes[i]);
@@ -30,11 +30,12 @@ function Dikstra(graph){
 
     this.findShortestPaths = function() {
         this.init();
+        var u, v, w;
         while(this.queue.isNotEmpty()){
-            var u = this.queue.extractMin();
-            for(var i=0; i<u.nextNeighbours.length; i++){
-                var v = u.nextNeighbours[i].node;
-                var w = u.nextNeighbours[i].weight;
+            u = this.queue.extractMin();
+            for(var i=u.nextNeighbours.length; i--;){
+                v = u.nextNeighbours[i].node;
+                w = u.nextNeighbours[i].weight;
                 this.relax(u,v,w);
             }
         }

@@ -223,10 +223,10 @@ function GraphBuilder() {
 
     var addEdges = function (graph, evaluator) {
         for (var i = 0; i < graph.layers.length - 1; i++) {
-            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
+            for (var j = graph.layers[i].nodeList.length; j--;) {
                 var currentNode = graph.layers[i].nodeList[j];
                 var nextNodes = graph.layers[i + 1].nodeList;
-                for (var k = 0; k < graph.layers[i + 1].nodeList.length; k++) {
+                for (var k = graph.layers[i + 1].nodeList.length; k--;) {
                     if (evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k].content, currentNode.content)))
                         currentNode.addNextNeighbour(new NeighbourNode(nextNodes[k]));
                 }

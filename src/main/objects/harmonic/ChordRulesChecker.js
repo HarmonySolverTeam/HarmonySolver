@@ -112,6 +112,9 @@ function SameFunctionRule(){
     }
 }
 
+var sfRule = new SameFunctionRule();
+
+
 function SpecificFunctionConnectionRule(prevFunctionName, currentFunctionName){
     RulesCheckerUtils.IRule.call(this);
     this.currentFunctionName = currentFunctionName;
@@ -124,13 +127,17 @@ function SpecificFunctionConnectionRule(prevFunctionName, currentFunctionName){
     }
 }
 
+var specificConnectionRuleDT = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
+var specificConnectionRuleDS = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
+var specificConnectionRuleSD = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.SUBDOMINANT, Consts.FUNCTION_NAMES.DOMINANT);
+
+
 function ConcurrentOctavesRule(details, evaluationRatio){
     RulesCheckerUtils.IRule.call(this, details, evaluationRatio);
 
     this.evaluate = function(connection){
         var currentChord = connection.current;
         var prevChord = connection.prev;
-        var sfRule = new SameFunctionRule();
         if(sfRule.isNotBroken(connection)) return 0;
         for(var i = 0; i < 3; i++){
             for(var j = i + 1; j < 4; j++){
@@ -151,7 +158,6 @@ function ConcurrentFifthsRule(details, evaluationRatio){
     this.evaluate = function(connection) {
         var currentChord = connection.current;
         var prevChord = connection.prev;
-        var sfRule = new SameFunctionRule();
         if (sfRule.isNotBroken(connection)) return 0;
         for (var i = 0; i < 3; i++) {
             for (var j = i + 1; j < 4; j++) {
@@ -211,13 +217,12 @@ function IllegalDoubledThirdRule(details, evaluationRatio){
     this.evaluate = function(connection) {
         var currentChord = connection.current;
         var prevChord = connection.prev;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
-        if ((specificConnectionRule.isNotBroken(connection) ||
+        if ((specificConnectionRuleDT.isNotBroken(connection) ||
             Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
             prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction) &&
             Utils.containsChordComponent(prevChord.harmonicFunction.extra, "5<"))
             return 0;
-        if(specificConnectionRule.isNotBroken(connection) && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction))
+        if(specificConnectionRuleDT.isNotBroken(connection) && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction))
             return 0;
 
         return this.hasIllegalDoubled3Rule(currentChord)? this.evaluationRatio * 50 : 0
@@ -262,6 +267,8 @@ function ForbiddenJumpRule(notNeighbourChords, isFixedBass, isFixedSoprano, deta
             || (voiceNumber === 3 && this.isFixedSoprano)
     }
 }
+
+var forbiddenJumpRulenoArgs = new ForbiddenJumpRule();
 
 function CheckDelayCorrectnessRule(details){
     RulesCheckerUtils.IRule.call(this, details);
@@ -429,8 +436,7 @@ function DominantSubdominantCheckConnectionRule(details){
     ICheckConnectionRule.call(this, details);
 
     this.evaluateIncludingDeflections = function(connection){
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.SUBDOMINANT);
-        if (specificConnectionRule.isNotBroken(connection) &&
+        if (specificConnectionRuleDS.isNotBroken(connection) &&
             connection.prev.harmonicFunction.hasMajorMode())
             throw new Errors.RulesCheckerError("Forbidden connection: D->S");
         return 0;
@@ -442,8 +448,7 @@ function SameFunctionCheckConnectionRule(details, evaluationRatio){
     ICheckConnectionRule.call(this, details, evaluationRatio);
 
     this.evaluateIncludingDeflections = function(connection){
-        var sf = new SameFunctionRule();
-        if(sf.isNotBroken(connection)){
+        if(sfRule.isNotBroken(connection)){
                 if(this.brokenChangePitchesRule(connection.current, connection.prev))
                     return this.evaluationRatio * 20;
         }
@@ -475,14 +480,12 @@ function ForbiddenSumJumpRule(details){
         var prevChord = connection.prev;
         var prevPrevChord = connection.prevPrev;
 
-        var sfRule = new SameFunctionRule();
         if (sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prevPrev, connection.prev)) &&
             sfRule.isNotBroken(new RulesCheckerUtils.Connection(connection.prev, connection.current))) return 0;
-        var forbiddenJumpRule = new ForbiddenJumpRule();
         for (var i = 0; i < 4; i++) {
             if (((prevPrevChord.notes[i].isUpperThan(prevChord.notes[i]) && prevChord.notes[i].isUpperThan(currentChord.notes[i])) ||
                 (prevPrevChord.notes[i].isLowerThan(prevChord.notes[i]) && prevChord.notes[i].isLowerThan(currentChord.notes[i])))
-                && forbiddenJumpRule.isBroken(new RulesCheckerUtils.Connection(connection.current, connection.prevPrev), true)) {
+                && forbiddenJumpRulenoArgs.isBroken(new RulesCheckerUtils.Connection(connection.current, connection.prevPrev), true)) {
                 if (DEBUG) {
                     Utils.log("forbiddenSumJump in voice " + i, prevPrevChord + " -> " + prevChord + " -> " + currentChord);
                 }
@@ -493,13 +496,15 @@ function ForbiddenSumJumpRule(details){
     }
 }
 
+var vb = new Consts.VoicesBoundary();
+
+
 function ClosestMoveRule(details){
     RulesCheckerUtils.IRule.call(this, details);
 
     this.evaluate = function(connection) {
         var currentChord = connection.current;
         var prevChord = connection.prev;
-        var vb = new Consts.VoicesBoundary();
         for(var i=1; i<4; i++){
             var higherPitch, lowerPitch;
             if(prevChord.notes[i].pitch > currentChord.notes[i].pitch){
@@ -575,8 +580,7 @@ function DominantRelationCheckConnectionRule(details){
         var currentChord = connection.current;
         var prevChord = connection.prev;
         var result = 0;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
-        if ((specificConnectionRule.isNotBroken(connection) ||
+        if ((specificConnectionRuleDT.isNotBroken(connection) ||
             Utils.containsBaseChordComponent(prevChord.harmonicFunction.extra, "7")) &&
             prevChord.harmonicFunction.isInDominantRelation(currentChord.harmonicFunction)){
             if(this.brokenThirdMoveRule(prevChord, currentChord))
@@ -668,8 +672,7 @@ function DominantSecondRelationCheckConnectionRule(details){
         var currentChord = connection.current;
         var prevChord = connection.prev;
         var result = 0;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.DOMINANT, Consts.FUNCTION_NAMES.TONIC);
-        if (specificConnectionRule.isNotBroken(connection)
+        if (specificConnectionRuleDT.isNotBroken(connection)
             && prevChord.harmonicFunction.isInSecondRelation(currentChord.harmonicFunction)) {
             if(this.brokenThirdMoveRule(prevChord, currentChord))
                 return 50;
@@ -717,8 +720,7 @@ function SubdominantDominantCheckConnectionRule(details){
     this.evaluateIncludingDeflections = function(connection){
         var currentChord = connection.current;
         var prevChord = connection.prev;
-        var specificConnectionRule = new SpecificFunctionConnectionRule(Consts.FUNCTION_NAMES.SUBDOMINANT, Consts.FUNCTION_NAMES.DOMINANT);
-        if (specificConnectionRule.isNotBroken(connection)
+        if (specificConnectionRuleSD.isNotBroken(connection)
             && prevChord.harmonicFunction.degree + 1 === currentChord.harmonicFunction.degree){
             if(this.brokenVoicesMoveOppositeDirectionRule(currentChord, prevChord))
                 return 40;
