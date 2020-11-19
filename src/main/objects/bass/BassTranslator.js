@@ -1,4 +1,4 @@
-.import "./FiguredBass.js" as FiguredBass
+.import "../bass/FiguredBass.js" as FiguredBass
 .import "../utils/Utils.js" as Utils
 .import "../model/HarmonicFunction.js" as HarmonicFunction
 .import "../harmonic/Exercise.js" as Exercise

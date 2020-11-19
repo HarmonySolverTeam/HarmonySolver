@@ -102,6 +102,7 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
         if(!precheckDisabled) {
             PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
         }
+        //${counter}
         var graphBuilder = new Graph.GraphBuilder();
         graphBuilder.withGenerator(this.chordGenerator);
         graphBuilder.withEvaluator(
@@ -110,8 +111,11 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
             new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
         graphBuilder.withInput(this.getGeneratorInput());
         var graph = graphBuilder.build();
+        //${counter}
+
         var dikstra = new Dikstra.Dikstra(graph);
         var sol_nodes = dikstra.getShortestPathToLastNode();
+        //${counter}
 
         if(sol_nodes.length !== graph.layers.length) {
             return new ExerciseSolution.ExerciseSolution(this.exercise, -1, [], false);
@@ -121,6 +125,7 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
         for(var i=0; i<sol_nodes.length; i++)
             sol_chords.push(sol_nodes[i].content)
 
+        //${counter}
         return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords, true);
     }
 

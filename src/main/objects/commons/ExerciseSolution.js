@@ -1,4 +1,6 @@
 .import "../utils/Utils.js" as Utils
+.import "../model/Chord.js" as Chord
+.import "../harmonic/Exercise.js" as Exercise
 
 var DEBUG = false
 
@@ -137,4 +139,13 @@ function ExerciseSolution(exercise, rating, chords, success) {
         this.errorMessages.push(message)
     }
 
+}
+
+function exerciseSolutionReconstruct(sol){
+    return new ExerciseSolution(
+        Exercise.exerciseReconstruct(sol.exercise),
+        sol.rating,
+        sol.chords.map(function (chord) { return Chord.chordReconstruct(chord) }),
+        sol.success
+    )
 }

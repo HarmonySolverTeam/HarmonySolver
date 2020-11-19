@@ -1,3 +1,5 @@
+.import "../model/HarmonicFunction.js" as HarmonicFunction
+
 function Exercise(key, meter, mode, measures) {
     this.mode = mode
     this.key = key
@@ -20,4 +22,17 @@ function Exercise(key, meter, mode, measures) {
         }
         return harmonicFunctions;
     }
+}
+
+function exerciseReconstruct(ex){
+    var measures = []
+    for(var i=0; i<ex.measures.length;i++){
+        var measure = [];
+        for(var j=0; j<ex.measures[i].length; j++){
+            measure.push( HarmonicFunction.harmonicFunctionReconstruct(ex.measures[i][j]) )
+        }
+        measures.push(measure)
+    }
+
+    return new Exercise(ex.key, ex.meter, ex.mode, measures);
 }

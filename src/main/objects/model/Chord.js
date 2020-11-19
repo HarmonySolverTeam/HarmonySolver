@@ -1,3 +1,6 @@
+.import "../model/Note.js" as Note
+.import "../model/HarmonicFunction.js" as HarmonicFunction
+
 function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     this.sopranoNote = sopranoNote
     this.altoNote = altoNote
@@ -47,3 +50,14 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     }
 
 }
+
+function chordReconstruct(chord){
+    return new Chord(
+        Note.noteReconstruct(chord.sopranoNote),
+        Note.noteReconstruct(chord.altoNote),
+        Note.noteReconstruct(chord.tenorNote),
+        Note.noteReconstruct(chord.bassNote),
+        HarmonicFunction.harmonicFunctionReconstruct(chord.harmonicFunction)
+    )
+}
+

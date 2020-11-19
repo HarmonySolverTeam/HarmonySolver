@@ -1,5 +1,5 @@
-.import "./HarmonicFunctionGenerator.js" as HarmonicFunctionGenerator
-.import "./SopranoRulesChecker.js" as SopranoRulesChecker
+.import "../soprano/HarmonicFunctionGenerator.js" as HarmonicFunctionGenerator
+.import "../soprano/SopranoRulesChecker.js" as SopranoRulesChecker
 .import "../algorithms/Graph.js" as Graph
 .import "../harmonic/Exercise.js" as HarmonicFunctionsExercise
 .import "../utils/Utils.js" as Utils

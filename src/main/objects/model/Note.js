@@ -57,3 +57,15 @@ function Note(pitch, baseNote, chordComponent, duration) {
 function Measure(notes){
     this.notes = notes; // [Note]
 }
+
+function noteReconstruct(note){
+    return new Note(note.pitch, note.baseNote, note.chordComponent.chordComponentString, note.duration)
+}
+
+function measureReconstruct(measure){
+    var notes = [];
+    for(var i=0; i<measure.notes.length; i++){
+        notes.push(noteReconstruct(measure.notes[i]))
+    }
+    return new Measure(notes);
+}

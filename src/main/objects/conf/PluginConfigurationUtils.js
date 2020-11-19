@@ -1,4 +1,4 @@
-.import "./PluginConfiguration.js" as Configuration
+.import "../conf/PluginConfiguration.js" as Configuration
 
 var configuration_save_path = "resources/harmony_solver_plugin_configuration.json"
 

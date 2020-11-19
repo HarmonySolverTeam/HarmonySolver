@@ -1,3 +1,6 @@
+.import "../model/Note.js" as Note
+.import "../model/HarmonicFunction.js" as HarmonicFunction
+
 function SopranoExercise(mode, key, meter, notes, durations, measures, possibleFunctionsList){
     this.mode = mode; // minor or major
     this.key = key; // for example C
@@ -10,4 +13,16 @@ function SopranoExercise(mode, key, meter, notes, durations, measures, possibleF
     this.toString = function(){
         return "Mode: " + this.mode+" Key: "+this.key+" Meter: "+this.meter+" Notes: "+this.notes+" Durations: "+this.durations;
     }
+}
+
+function sopranoExerciseReconstruct(sopranoExercise){
+    return new SopranoExercise(
+        sopranoExercise.mode,
+        sopranoExercise.key,
+        sopranoExercise.meter,
+        sopranoExercise.notes.map(function (n) { return Note.noteReconstruct(n) }),
+        sopranoExercise.durations,
+        sopranoExercise.measures.map(function (m) { return Note.measureReconstruct(m) }),
+        sopranoExercise.possibleFunctionsList.map(function (hf) { return HarmonicFunction.harmonicFunctionReconstruct(hf)})
+    )
 }
