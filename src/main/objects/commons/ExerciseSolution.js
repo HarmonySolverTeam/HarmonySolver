@@ -49,17 +49,17 @@ function ExerciseSolution(exercise, rating, chords, success) {
         function find_division_point(list) {
             var front = 0
             var back = list.length - 1
-            var front_sum = list[0][front]
-            var back_sum = list[0][back]
+            var front_sum = list[front][0]
+            var back_sum = list[back][0]
             var last = -1
-            while (front !== back) {
-                if (front_sum >= back_sum) {
+            while (front < back) {
+                if (front_sum > back_sum) {
                     back--
-                    back_sum += list[0][back]
+                    back_sum += list[back][0]
                     last = 0
                 } else {
                     front++
-                    front_sum += list[0][front]
+                    front_sum += list[front][0]
                     last = 1
                 }
             }
@@ -82,6 +82,14 @@ function ExerciseSolution(exercise, rating, chords, success) {
             return funList
         }
 
+        function sum_of(list){
+            var acc = 0;
+            for (var i = 0; i < list.length; i++){
+                acc += list[i][0];
+            }
+            return acc;
+        }
+
         var measures = this.exercise.measures
         var offset = 0
         for (var measure_id = 0; measure_id < measures.length; measure_id++) {
@@ -101,8 +109,15 @@ function ExerciseSolution(exercise, rating, chords, success) {
                 var list1 = list.slice(0, index)
                 var list2 = list.slice(index, list.length)
                 if (value > 1) {
-                    add_time_to_fun(list1, Math.ceil(value / 2))
-                    add_time_to_fun(list2, Math.floor(value / 2))
+                    var ceil = Math.ceil(value / 2)
+                    var floor = Math.floor(value / 2)
+                    if (sum_of(list1) >= sum_of(list2)) {
+                        add_time_to_fun(list1, ceil)
+                        add_time_to_fun(list2, floor)
+                    } else {
+                        add_time_to_fun(list1, floor)
+                        add_time_to_fun(list2, ceil)
+                    }
                 } else {
                     add_time_to_fun(list1, value / 2)
                     add_time_to_fun(list2, value / 2)
