@@ -204,6 +204,56 @@ function HarmonicFunction2(params){
         return ret
     }
 
+    this.getExtraString = function() {
+        var ret = ""
+        var delays = this.getDelaysCopy()
+        var leftSideOfDelays = []
+
+        for (var a = 0; a < delays.length; a++) {
+            leftSideOfDelays.push(delays[a][0])
+        }
+
+        for (var a = 0; a < this.extra.length; a++) {
+            if (!Utils.contains(leftSideOfDelays, this.extra[a].chordComponentString)) {
+                if (a!== 0 && ret !== ""){
+                    ret += ", "
+                }
+                ret += this.extra[a].chordComponentString
+            }
+        }
+        return ret
+    }
+
+    this.getDelaysString = function() {
+        var ret = ""
+        for (var a = 0; a < this.delay.length; a++) {
+            ret = ret + this.delay[a][0].chordComponentString + "-" + this.delay[a][1].chordComponentString
+            if (a !== this.delay.length - 1) {
+                ret += ", "
+            }
+        }
+        return ret
+    }
+
+    this.getOmitString = function() {
+        var ret = ""
+        var delays = this.getDelaysCopy()
+        var rightSideOfDelays = []
+
+        for (var a = 0; a < delays.length; a++) {
+            rightSideOfDelays.push(delays[a][1])
+        }
+        for (var a = 0; a < this.omit.length; a++) {
+            if (!Utils.contains(rightSideOfDelays, this.omit[a].chordComponentString)) {
+                if (a!== 0 && ret !== ""){
+                    ret += ", "
+                }
+                ret += this.omit[a].chordComponentString
+            }
+        }
+        return ret
+    }
+
     this.getArgsMapWithDelays = function() {
         return {
             "functionName" : this.functionName,
@@ -240,17 +290,18 @@ function HarmonicFunction2(params){
     };
 
     this.toString = function () {
-        return "FunctionName: " + this.functionName + " " +
-            "Degree: " + this.degree + " " +
-            "Position: " + this.position + " " +
-            "Revolution: " + this.revolution + " " +
-            "Delay: " + this.delay + " " +
-            "Extra: " + this.extra + " " +
-            "Omit: " + this.omit + " " +
-            "Down: " + this.down + " " +
-            "System: " + this.system + " " +
-            "Mode: " + this.mode +
-            "Key: " + this.key
+        return "FunctionName: " + this.functionName + "\n" +
+            "Degree: " + this.degree + " \n" +
+            (this.position !== undefined ? "Position: " + this.position.chordComponentString + "\n" : "") +
+            (this.revolution !== undefined ? "Revolution: " + this.revolution.chordComponentString + "\n" : "" ) +
+            (this.delay.length !== 0 ? "Delay: " + this.getDelaysString()+ "\n" : "") +
+            (this.extra.length !== 0 ? "Extra: " + this.getExtraString() + "\n" : "") +
+            (this.omit.length !== 0 ? "Omit: " + this.getOmitString() + "\n" : "") +
+            (this.down === true ? "Down: " + this.down + "\n" : "") +
+            (this.system !== undefined ? "System: " + this.system + "\n"  : "") +
+            (this.mode !== undefined ? "Mode: " + this.mode  + "\n" : "") +
+            (this.key !== undefined ? "Key: " + this.key  + "\n" : "") +
+            (this.isRelatedBackwards === true ? "Is related backwards" : "" )
     };
 
     this.getSimpleChordName = function() {

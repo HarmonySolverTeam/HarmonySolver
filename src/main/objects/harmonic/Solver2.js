@@ -67,7 +67,7 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
     this.punishmentRatios = punishmentRatios;
 
     if(Utils.isDefined(this.punishmentRatios) && !Utils.isDefined(this.sopranoLine))
-        throw new Errors.ProbablyUnexpectedError("Punishment ratios available only for soprano harmonization!");
+        throw new Errors.UnexpectedInternalError("Punishment ratios available only for soprano harmonization!");
 
     this.harmonicFunctions = [];
     for(var i=0; i<exercise.measures.length; i++){

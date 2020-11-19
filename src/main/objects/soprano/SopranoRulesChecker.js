@@ -22,7 +22,8 @@ function SopranoRulesChecker(key, mode, punishmentRatios){
             new ChordRulesChecker.AdaptiveChordRulesChecker(this.punishmentRatios):
             new ChordRulesChecker.ChordRulesChecker(false,true),
             new ChordGenerator.ChordGenerator(this.key,this.mode)),
-        new SecondaryDominantConnectionRule(this.key)
+        new SecondaryDominantConnectionRule(this.key),
+        new Revolution5Rule()
     ];
     this.softRules = [
         new FourthChordsRule(),
@@ -31,7 +32,9 @@ function SopranoRulesChecker(key, mode, punishmentRatios){
         new JumpRule(),
         new SecondRelationRule(),
         new ChangeFunctionOnDownBeatRule(),
-        new ChangeFunctionAtMeasureBeginningRule()
+        new ChangeFunctionAtMeasureBeginningRule(),
+        new RevolutionOneShouldBe1(),
+        new SopranoShouldBeDoubled()
         ];
 }
 
@@ -229,6 +232,41 @@ function FourthChordsRule(){
         if(connection.current.harmonicFunction.countChordComponents() === 3){
             return 8;
         }
+        return 0;
+    }
+}
+
+function Revolution5Rule(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function (connection) {
+        if(connection.current.harmonicFunction.revolution === connection.current.harmonicFunction.getFifth() &&
+            connection.current.measurePlace !== Consts.MEASURE_PLACE.UPBEAT){
+            return -1;
+        }
+        return 0;
+    }
+}
+
+function RevolutionOneShouldBe1(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function (connection) {
+        if(connection.current.harmonicFunction.revolution !== connection.current.harmonicFunction.getPrime() ||
+            connection.prev.harmonicFunction.revolution !== connection.prev.harmonicFunction.getPrime()){
+            return 4;
+        }
+        if(connection.current.harmonicFunction.revolution === connection.current.harmonicFunction.getPrime() &&
+            connection.prev.harmonicFunction.revolution === connection.prev.harmonicFunction.getPrime()){
+            return 1;
+        }
+        return 0;
+    }
+}
+
+function SopranoShouldBeDoubled(){
+    RulesCheckerUtils.IRule.call(this);
+    this.evaluate = function (connection) {
+        if(connection.current.harmonicFunction.position !== connection.current.harmonicFunction.revolution)
+            return 1;
         return 0;
     }
 }

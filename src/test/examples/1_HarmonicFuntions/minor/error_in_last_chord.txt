@@ -12,4 +12,4 @@ D{"extra":["7"]};To{"revolution":"3>"};So{};(So{"degree":7,"revolution":"5","ext
 D{};D{"extra":["7"]}
 To{"degree":6};(D{"extra":["7"]})
 So{};So{"extra":["6"]}
-To{};To{"extra":["3"]}
+To{};To{"extra":["3"], "delay":[["6>","5"],["4","3"]]}

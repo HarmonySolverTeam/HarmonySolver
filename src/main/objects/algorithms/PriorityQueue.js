@@ -1,3 +1,5 @@
+.import "../commons/Errors.js" as Errors
+
 // priority queue of type MIN
 function PriorityQueue (priorityAttribute) {
 
@@ -14,7 +16,7 @@ function PriorityQueue (priorityAttribute) {
     var compare = function(first, second){
 
         if(first === undefined || second === undefined)
-            throw "Illegal argument exception: arguments of compare cannot be undefined";
+            throw new Errors.UnexpectedInternalError("Illegal argument exception: arguments of compare cannot be undefined")
 
         var sign = function(x){
             if(x > 0) return 1;
@@ -45,7 +47,7 @@ function PriorityQueue (priorityAttribute) {
 
     this.decreaseKey = function (node, key) {
         if(node[this.priorityAttribute] < key)
-            throw "Given key: " + key + " is greater than current key of given node:" + node[this.priorityAttribute];
+            throw new Errors.UnexpectedInternalError("Given key: " + key + " is greater than current key of given node:" + node[this.priorityAttribute])
 
         node[this.priorityAttribute] = key;
     }

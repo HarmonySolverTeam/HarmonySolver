@@ -12,7 +12,7 @@ function Node(content) {
     this.getPrevContentIfSingle = function () {
         var uniquePrevContents =  this.getUniquePrevContents();
         if(uniquePrevContents.length !== 1)
-            throw new Errors.InvalidGraphConstruction("Method not allowed in current state of node - there are "
+            throw new Errors.UnexpectedInternalError("Method not allowed in current state of node - there are "
                 + this.getUniquePrevContents().length + " unique prev nodes contents instead of expected 1");
 
         return uniquePrevContents[0];

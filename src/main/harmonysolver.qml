@@ -32,8 +32,8 @@ MuseScore {
     property var configuration: ({})
 
     id: window
-    width: 800
-    height: 600
+    width: 550
+    height: 550
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
     }
@@ -96,7 +96,7 @@ MuseScore {
                         [cursor.element.duration.numerator, cursor.element.duration.denominator])
             if (typeof cursor.element.parent.annotations[0] !== "undefined") {
                 var readSymbols = cursor.element.parent.annotations[0].text
-                Utils.log("readSymbols:", readSymbols)
+                //Utils.log("readSymbols:", readSymbols)
                 for (var i = 0; i < readSymbols.length; i++) {
                     var component = "", alteration = undefined
                     while (i < readSymbols.length && readSymbols[i] !== "\n") {
@@ -105,7 +105,7 @@ MuseScore {
                         }
                         i++
                     }
-                    Utils.log("component: " + component)
+                    //Utils.log("component: " + component)
 
                     if ((component.length === 1 && isAlterationSymbol(component[0])) ||
                         (component.length === 2 && isAlterationSymbol(component[0]) && component[0] === component[1])) {
@@ -169,7 +169,7 @@ MuseScore {
                         }
                     }
 
-                        Utils.log("symbols:", symbols)
+                        //Utils.log("symbols:", symbols)
                 }
             }
             lastBaseNote = getBaseNote(Utils.mod((cursor.element.notes[0].tpc + 1), 7))
@@ -179,10 +179,10 @@ MuseScore {
             has3component = false
 
             if (delays.length !== 0) {
-                Utils.log("durations", durations)
+                //Utils.log("durations", durations)
                 durations[durations.length - 1][1]*=2
                 durations.push(durations[durations.length - 1])
-                Utils.log("durations", durations)
+                //Utils.log("durations", durations)
             }
 
             delays = []
@@ -214,7 +214,7 @@ MuseScore {
                     ) + "_" + (date.getMonth() + 1) + "_" + date.getDate() + "_"
         ret += date.getHours() + "_" + date.getMinutes(
                     ) + "_" + date.getSeconds()
-        Utils.log("Solution date - " + ret)
+        //Utils.log("Solution date - " + ret)
         return ret
     }
 
@@ -253,7 +253,7 @@ MuseScore {
             var countMeasures = function(durations){
                 var sum = 0;
                 for(var i=0; i<durations.length;i++){
-                    Utils.log(durations[i][0]/durations[i][1])
+                    //Utils.log(durations[i][0]/durations[i][1])
                     sum += durations[i][0]/durations[i][1];
                 }
                 return Math.round(sum/(solution.exercise.meter[0]/solution.exercise.meter[1]));
@@ -272,7 +272,7 @@ MuseScore {
             var curChord = solution.chords[i]
             var prevChord = i === 0 ? undefined : solution.chords[i-1];
             var nextChord = i === solution.chords.length - 1 ? undefined : solution.chords[i+1];
-            Utils.log("curChord:",curChord)
+            //Utils.log("curChord:",curChord)
             if (durations !== undefined) {
                 var dur = durations[i]
             }
@@ -399,7 +399,8 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0, [cursor.element.duration.numerator, cursor.element.duration.denominator])
-            //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0, [" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
+            //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0,
+            //[" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
             notes.push(sopranoNote)
             measure_notes.push(sopranoNote)
         } while (cursor.next())
@@ -431,13 +432,13 @@ MuseScore {
                        filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                        "mscz")
 
-            Utils.log("sopranoExercise:",sopranoExercise)
+            //Utils.log("sopranoExercise:",sopranoExercise)
         }
         else{
             console.log("cannot find solution");
         }
 
-        }
+    }
 
     function addComponentToScore(cursor, componentValue) {
         if(!configuration.enableChordComponentsPrinting)
@@ -454,16 +455,16 @@ MuseScore {
         try {
             var ex = read_figured_bass()
             var translator = new Translator.BassTranslator()
-            Utils.log("ex",JSON.stringify(ex))
+            //Utils.log("ex",JSON.stringify(ex))
 
             var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
-            Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
+            //Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
             var solver = new Solver.Solver(exerciseAndBassline[0], exerciseAndBassline[1], undefined,
                 !configuration.enableCorrector, !configuration.enablePrechecker)
 
             var solution = solver.solve()
             var solution_date = get_solution_date()
-            Utils.log("Solution:", JSON.stringify(solution))
+            //Utils.log("Solution:", JSON.stringify(solution))
 
             prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
 
@@ -478,6 +479,12 @@ MuseScore {
     }
 
     function isFiguredBassScore() {
+        if (curScore === null) {
+            throw new Errors.FiguredBassInputError(
+                  "No score is opened!"
+                  )
+        }
+
         var cursor = curScore.newCursor()
         cursor.rewind(0)
         var vb = new Consts.VoicesBoundary()
@@ -521,6 +528,12 @@ MuseScore {
     }
 
     function isSopranoScore() {
+                if (curScore === null) {
+                    throw new Errors.SopranoInputError(
+                          "No score is opened!"
+                          )
+                }
+
                 var cursor = curScore.newCursor()
                 cursor.rewind(0)
                 var vb = new Consts.VoicesBoundary()
@@ -603,39 +616,64 @@ MuseScore {
         chordsList.push(S)
         chordsList.push(D)
 
-        if (tab3.item.getCheckboxState("D7") === true) {
+        if (tab3.item.getCheckboxState("D7")) {
             chordsList.push(D7)
         }
-        if (tab3.item.getCheckboxState("S6") === true) {
+        if (tab3.item.getCheckboxState("S6")) {
             chordsList.push(S6)
         }
-        if (tab3.item.getCheckboxState("neapolitan") === true) {
-            chordsList.push(neapolitan)
-        }
-        if (tab3.item.getCheckboxState("degree2") === true) {
+
+        if (tab3.item.getCheckboxState("degree2")) {
             chordsList.push(Sii)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtoii)
+            }
         }
-        if (tab3.item.getCheckboxState("degree3") === true) {
+        if (tab3.item.getCheckboxState("degree3")) {
             chordsList.push(Diii)
             chordsList.push(Tiii)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtoiii)
+            }
         }
-        if (tab3.item.getCheckboxState("degree6") === true) {
+        if (tab3.item.getCheckboxState("degree6")) {
             chordsList.push(Tvi)
             chordsList.push(Svi)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtovi)
+            }
         }
-        if (tab3.item.getCheckboxState("degree7") === true) {
+        if (tab3.item.getCheckboxState("degree7")) {
             chordsList.push(Dvii)
+            if (tab3.item.getCheckboxState("secondaryD")){
+                  chordsList.push(Dtovii)
+            }
         }
-        if (tab3.item.getCheckboxState("secondaryD") === true){
-            chordsList.push(Dtoii)
-            chordsList.push(Dtoiii)
+        if (tab3.item.getCheckboxState("secondaryD")){
             chordsList.push(Dtoiv)
             chordsList.push(Dtov)
-            chordsList.push(Dtovi)
-            chordsList.push(Dtovii)
+        }
+        var revolutionChords = []
+        if (tab3.item.getCheckboxState("revolution3")){
+            for (var i = 0; i < chordsList.length; i++){  
+                var tmpHarmonicFunction = chordsList[i].copy()
+                tmpHarmonicFunction.revolution = tmpHarmonicFunction.getThird()
+                revolutionChords.push(tmpHarmonicFunction)
+            }
+        }
+        if (tab3.item.getCheckboxState("revolution5")){
+            for (var i = 0; i < chordsList.length; i++){
+                var tmpHarmonicFunction = chordsList[i].copy()
+                tmpHarmonicFunction.revolution = tmpHarmonicFunction.getFifth()
+                revolutionChords.push(tmpHarmonicFunction)
+            }
+        }
+        
+        if (tab3.item.getCheckboxState("neapolitan")) {
+            chordsList.push(neapolitan)
         }
 
-        return chordsList
+        return chordsList.concat(revolutionChords)
     }
 
     FileIO {
@@ -681,12 +719,69 @@ MuseScore {
 
       errorDialog.open()
     }
-    
+
+
+    MessageDialog {
+        id: helpHarmonicsDialog
+        width: 300
+        height: 400
+        title: "Help - Harmonic Functions"
+        text: "Here you can solve Harmonic Functions exercises.\n" +
+        "You can type in exercise or load it with 'Import file' button.\nAfter importing, exercise is editable in the text area.\n"+
+        "With button 'Check input' you can check if input is correct."
+        //detailedText: "Detailed text test"
+        icon: StandardIcon.Question
+        standardButtons: StandardButton.Ok
+    }
+
+
+    MessageDialog {
+        id: helpBassDialog
+        width: 800
+        height: 600
+        title: "Help - Figured Bass"
+        text: "Here you can solve figured bass exercises.\n" +
+        "At first, open a score with only bass voice and figured bass symbols.\n" +
+        "Remember to use '#' and 'b' instead of '<' and '>' in symbols and delays.\n" +
+        "For more information like supported symbols, please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
+
+    MessageDialog {
+        id: helpSopranoDialog
+        width: 800
+        height: 600
+        title: "Help - Soprano Harmonization"
+        text: "Here you can solve soprano harmonization exercises.\n" +
+        "At first, open a score with only soprano voice.\n" +
+        "You can choose which chords are being used for harmonization, possible revolutions and scale.\n" +
+        "With sliders you can choose tolerance of different harmonic rules.\n" +
+        "The more percent value, the less rule is taken into account.\n" +
+        "0% means that specific rule can not be broken.\n" +
+        "For more information, please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
+    MessageDialog {
+        id: helpSettingsDialog
+        width: 800
+        height: 600
+        title: "Help - Plugin Settings"
+        text: "If you want to get more information about specific option, place mouse cursor\n" +
+        "over the checkbox - small tip will appear.\n" +
+        "For more details please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
 
     MessageDialog {
         id: errorDialog
-        width: 600
-        height: 400
+        width: 800
+        height: 600
         title: "HarmonySolver - Error"
         text: ""
         icon: StandardIcon.Critical
@@ -716,11 +811,11 @@ MuseScore {
 
         TabView {
             id: tabView
-            width: 750
+            width: 550
             height: 550
 
             Tab {
-                title: "Harmonic Functions"
+                title: "Harmonics"
                 id: tab1
                 active: true
 
@@ -729,6 +824,21 @@ MuseScore {
 
                     function setText(text) {
                         abcText.text = text
+                    }
+
+                    Button {
+                        id: buttonHarmonicsHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle1.top
+                        anchors.right: tabRectangle1.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpHarmonicsDialog.open()
+                        }
+                        tooltip: "Help"
                     }
 
                     Label {
@@ -744,6 +854,7 @@ MuseScore {
 
                     TextArea {
                         id: abcText
+                        font.pointSize: 10
                         anchors.top: textLabel.bottom
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
@@ -762,13 +873,14 @@ MuseScore {
                         id: buttonOpenFile
                         text: qsTr("Import file")
                         anchors.bottom: tabRectangle1.bottom
-                        anchors.left: abcText.left
+                        anchors.left: tabRectangle1.left
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 10
                         onClicked: {
                             fileDialog.open()
                         }
+                        tooltip: "Import file with harmonic functions exercise."
                     }
 
                     Button {
@@ -792,6 +904,7 @@ MuseScore {
                                 }
                             }
                         }
+                        tooltip: "Check if input is correct"
                     }
 
                     Button {
@@ -802,7 +915,7 @@ MuseScore {
                         anchors.right: tabRectangle1.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
-                        anchors.rightMargin: 40
+                        anchors.rightMargin: 10
                         anchors.leftMargin: 10
                         onClicked: {
                                 //parsing
@@ -845,16 +958,31 @@ MuseScore {
                 }
             }
             Tab {
-                title: "Figured Bass"
+                title: "Bass"
 
                 Rectangle {
                     id: tabRectangle2
 
                     Button {
+                        id: buttonBassHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle2.top
+                        anchors.right: tabRectangle2.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpBassDialog.open()
+                        }
+                        tooltip: "Help"
+                    }
+
+                    Button {
                         id: buttonRunFiguredBass
                         text: qsTr("Solve")
                         anchors.bottomMargin: 10
-                        anchors.rightMargin: 40
+                        anchors.rightMargin: 10
                         anchors.right: tabRectangle2.right
                         anchors.bottom: tabRectangle2.bottom
                         onClicked: {
@@ -867,27 +995,30 @@ MuseScore {
                         }
                     }
 
-                    Label {
-                        id: textLabelFiguredBass
-                        wrapMode: Text.WordWrap
-                        text: qsTr("Here you can solve figured bass exercises. \nRemember that current opened score\nshould contain figured bass exercise.")
-                        font.pointSize: 12
-                        anchors.left: tabRectangle2.left
-                        anchors.top: tabRectangle2.top
-                        anchors.leftMargin: 20
-                        anchors.topMargin: 20
-                        font.pixelSize: 20
-                    }
-
                 }
             }
             Tab {
 
-                title: "Soprano Harmonization"
+                title: "Soprano"
                 id: tab3
 
                 Rectangle {
                     id: tabRectangle3
+
+                    Button {
+                        id: buttonSopranoHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle3.top
+                        anchors.right: tabRectangle3.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpSopranoDialog.open()
+                        }
+                        tooltip: "Help"
+                    }
 
                     function getCheckboxState(function_name) {
                         if (function_name === "D7") {
@@ -914,10 +1045,16 @@ MuseScore {
                         if (function_name === "secondaryD") {
                             return secondaryDCheckbox.checkedState === Qt.Checked
                         }
+                        if (function_name === "revolution3") {
+                            return revolution3Checkbox.checkedState === Qt.Checked
+                        }
+                        if (function_name === "revolution5") {
+                            return revolution5Checkbox.checkedState === Qt.Checked
+                        }
                     }
 
                     function getSelectedMode(){
-                        if (useMinorCheckbox.checkedState === Qt.Checked) {
+                        if (useMinorCheckbox.checked) {
                             return Consts.MODE.MINOR;
                         } else {
                             return Consts.MODE.MAJOR;
@@ -932,7 +1069,7 @@ MuseScore {
                         anchors.top: tabRectangle3.top
                         anchors.leftMargin: 20
                         anchors.topMargin: 20
-                        font.pixelSize: 17
+                        font.pointSize: 12
                     }*/
                     Row{
                         id: harmonicFunctionRow
@@ -941,7 +1078,7 @@ MuseScore {
                         anchors.top: tabRectangle3.top
                         anchors.topMargin: 10
                         anchors.right: tabRectangle3.right
-                        spacing: 30
+                        spacing: 16
                    
 
                         Column {
@@ -1005,6 +1142,7 @@ MuseScore {
                                 id: degree2Checkbox
                                 checked: false
                                 text: qsTr("II")
+
                             }
                             CheckBox {
                                 id: degree3Checkbox
@@ -1024,11 +1162,40 @@ MuseScore {
                         }
 
                         Column {
-                            id: extraOptions
+                            id: revolutionColumn
+                            Text {
+                                id: revolutionTextLabelt
+                                text: qsTr("Revolutions")
+                            }
                             CheckBox {
-                                id: useMinorCheckbox
+                                id: revolution3Checkbox
                                 checked: false
-                                text: qsTr("use minor scale")
+                                text: qsTr("3")
+                            }
+                            CheckBox {
+                                id: revolution5Checkbox
+                                checked: false
+                                text: qsTr("5")
+                            }
+                        }
+
+                        Column {
+                            id: scaleColumn
+                            ExclusiveGroup { id: scaleGroup }
+                            Text {
+                                id: scaleTextLabelt
+                                text: qsTr("Scale")
+                            }
+                            RadioButton {
+                                id: useMajorCheckbox
+                                checked: true
+                                text: qsTr("major")
+                                exclusiveGroup: scaleGroup
+                            }
+                            RadioButton {
+                                id: useMinorCheckbox
+                                text: qsTr("minor")
+                                exclusiveGroup: scaleGroup
                             }
                         }
                     }
@@ -1044,14 +1211,16 @@ MuseScore {
                         Column {
                               spacing: 10
                               Column {
+
                                     Text {
-                                          text: qsTr("Consecutive Octaves")
+                                          text: qsTr("Parallel Octaves")
                                     }
                                     Slider {
                                           id: consecutiveOctavesSlider
                                           maximumValue: 100
                                           minimumValue: 0
                                           stepSize: 1.0
+
                                     }
                                     Text {
                                           text: qsTr(consecutiveOctavesSlider.value+" %")
@@ -1059,7 +1228,7 @@ MuseScore {
                               }
                               Column {      
                                     Text {
-                                          text: qsTr("Consecutive Fifths")
+                                          text: qsTr("Parallel Fifths")
                                     }
                                     Slider {
                                           id: consecutiveFifthsSlider
@@ -1203,7 +1372,7 @@ MuseScore {
                         anchors.right: tabRectangle3.right
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
-                        anchors.rightMargin: 40
+                        anchors.rightMargin: 10
                         onClicked: {
                             try{
                                 isSopranoScore()
@@ -1219,7 +1388,7 @@ MuseScore {
             }
             Tab {
 
-                title: "Plugin Settings"
+                title: "Settings"
                 id: tab4
 
                 function showConfiguration(){
@@ -1228,6 +1397,21 @@ MuseScore {
 
                 Rectangle{
                     id: tabRectangle4
+
+                    Button {
+                        id: buttonSettingsHelp
+                        text: qsTr("?")
+                        anchors.top: tabRectangle4.top
+                        anchors.right: tabRectangle4.right
+                        anchors.topMargin: 10
+                        anchors.rightMargin: 10
+                        width: 18
+                        height: 20
+                        onClicked: {
+                            helpSettingsDialog.open()
+                        }
+                        tooltip: "Help"
+                    }
 
                     Label {
                         id: savedPathLabel
@@ -1278,13 +1462,14 @@ MuseScore {
                         id: exerciseOptionsColumn
                         anchors.top: savedPathTextField.bottom
                         anchors.left: tabRectangle4.left
-                        anchors.leftMargin: 35
+                        anchors.leftMargin: 10
                         anchors.topMargin: 20
                         spacing: 10
                         CheckBox {
                             id: printCheckbox
                             checked: configuration.enableChordSymbolsPrinting
                             text: qsTr("print chord symbols")
+                            tooltip: "Enable printing chord sybols under the chords in score"
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableChordSymbolsPrinting = true
@@ -1301,6 +1486,7 @@ MuseScore {
                              id: printComponentsCheckbox
                              checked: configuration.enableChordComponentsPrinting
                              text: qsTr("print chord components")
+                             tooltip: "Enable printing chord components next to every note"
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableChordComponentsPrinting = true
@@ -1317,6 +1503,11 @@ MuseScore {
                             id: precheckCheckbox
                             checked: configuration.enablePrechecker
                             text: qsTr("precheck for unavoidable errors")
+                            tooltip: "Enables additional step of solving - preckeck.\n" + 
+                            "During precheck plugin checks connections between all chords.\n" + 
+                            "If there is some problem, plugin will wand you about that giving chords position,\n" + 
+                            "their parameters and rules, that were broken during checking that connection.\n" +
+                            "This option may increase solving time by around 5 seconds."
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enablePrechecker = true
@@ -1333,6 +1524,10 @@ MuseScore {
                              id: correctCheckbox
                              checked: configuration.enableCorrector
                              text: qsTr("correct given exercise")
+                             tooltip: "Enable exercise correction by tweaking chords revolution and omit parameters\n"
+                              + "to avoid breaking harmonic rules." +
+                              "\nFor example " +
+                             "adds omit 5 to tonic after chopin chord if user do not specify it to avoid parallel fifths."
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableCorrector = true
@@ -1353,26 +1548,14 @@ MuseScore {
                         text: qsTr("Save Configuration")
                         anchors.bottom: tabRectangle4.bottom
                         anchors.left: tabRectangle4.left
-                        anchors.bottomMargin: 20
-                        anchors.leftMargin: 40
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 10
                         onClicked: {
                             savePluginConfiguration()
                         }
                     }
 
                 }
-            }
-        }
-        Button {
-            id: buttonCancel
-            text: qsTr("Quit")
-            anchors.top: tabView.bottom
-            anchors.left: tabView.right
-            anchors.topMargin: 20
-            anchors.bottomMargin: 10
-            anchors.rightMargin: 40
-            onClicked: {
-                Qt.quit()
             }
         }
     }

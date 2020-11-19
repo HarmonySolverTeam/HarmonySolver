@@ -7,5 +7,5 @@ D{"extra":["7"],"omit":["5"]};T{"extra":["7<"]};T{"degree":6}
 S{};S{"extra":["6"]}
 T{};T{"extra":["6"]};D{}
 T{"delay":[["7<","8"]]};T{"position":"5","revolution":"7<"}
-T{"degree":6,"extra":["7"]};S{"degree":2,"extra":["7"],"omit":["5"]};D{"extra":["7"],"omit":["5"]}
+T{"degree":6,"extra":["7"]};S{"degree":2,"extra":["7"]};D{"extra":["7"]}
 T{}
