@@ -1,6 +1,22 @@
 import os
 import sys
 
+""""
+This script is using to build scripts for qml WorkerScript object. It require single file with code to execute 
+(it doesn't support imports) so it is obligatory to squash code into one file.
+
+How to use it? 
+If it is required to execute some function/method etc. in separate thread move to localisation of file containing
+that function and execute this script with name (from main dir context) of that file as an argument. 
+You also need to prepare file *Prototype containing some WorkerScript instructions (look up SopranoSolverWorkerPrototype)
+ 
+For example to build Solver2Worker::
+1. Move to src/main/objects/soprano 
+2. run this script by the following command "python ../../utils/buildWorker.py ../soprano/SopranoSolver.js"
+
+Consider preparing dedicated configuration in your IDE to do it faster.
+"""
+
 COUNTER_MARK = "//${counter}"
 COUNTER_REPLACEMENT = "d++; WorkerScript.sendMessage({ \'type\' : \"progress_notification\", \'progress\': d/D });"
 
