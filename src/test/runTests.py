@@ -21,7 +21,8 @@ suites = [
     "graphBuilderTest",
     "priorityQueueTest",
     "dikstraTest",
-    "harmonicFunctionGeneratorTest"
+    "harmonicFunctionGeneratorTest",
+    "setDurationsTest"
 ]
 
 for s in suites:
