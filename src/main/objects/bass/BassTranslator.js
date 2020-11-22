@@ -282,7 +282,8 @@ function BassTranslator() {
                 }
                 chordElement.notesNumbers = temp
                 if (chordElement.notesNumbers.length >= 5) {
-                    chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
+                    //nothing?
+                    //chordElement.omit.push(Utils.mod((chordElement.notesNumbers[chordElement.notesNumbers.length - 1]), 7) + 1)
                 }
                 return
             }
