@@ -2,11 +2,11 @@
 .import "../commons/Errors.js" as Errors
 .import "../commons/RulesCheckerUtils.js" as RulesCheckerUtils
 
-function Node(content) {
+function Node(content, nextNeighbours, prevNodes) {
 
     this.content = content;
-    this.nextNeighbours = [];
-    this.prevNodes = [];
+    this.nextNeighbours = nextNeighbours === undefined ? [] : nextNeighbours;
+    this.prevNodes = prevNodes === undefined ? [] : prevNodes;
     // this.pp2 = 0
 
     this.getPrevContentIfSingle = function () {
@@ -89,8 +89,11 @@ function NeighbourNode(node, weight) {
     }
 }
 
-function Layer(nodeList) {
-    this.nodeList = nodeList;
+function Layer(generatorInput, generator) {
+
+    this.nodeList = generator.generate(generatorInput).map(function (x) {
+        return new Node(x);
+    })
 
     this.removeNode = function (node) {
         Utils.removeFrom(this.nodeList, node);
@@ -112,6 +115,62 @@ function Layer(nodeList) {
             count += this.nodeList[i].nextNeighbours.length;
         }
         return count;
+    }
+
+    this.connectWith = function(other, evaluator, isFirstLayer){
+        var nextNodes = other.nodeList;
+        for (var i = 0; i < this.nodeList.length; i++) {
+            var currentNode = this.nodeList[i];
+            if(currentNode.havePrev() || !isFirstLayer) {
+                for (var k = 0; k < other.nodeList.length; k++) {
+                    if (evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k].content, currentNode.content))) {
+                        currentNode.addNextNeighbour(new NeighbourNode(nextNodes[k]));
+                    }
+                }
+            }
+        }
+        other.removeUnreachableNodes();
+    }
+
+    this.leaveOnlyNodesTo = function(other){
+        for(var i=0; i < this.nodeList.length; i++) {
+            var currentNode = this.nodeList[i];
+            for(var j=0; j < currentNode.nextNeighbours.length; j++){
+                var currentNeighbour = currentNode.nextNeighbours[j];
+                if( ! Utils.contains(currentNeighbour.node, other.nodeList) ){
+                    currentNode.removeNextNeighbour(currentNeighbour.node);
+                    j--;
+                }
+            }
+        }
+    }
+
+    this.removeUselessNodes = function () {
+        for (var j = 0; j < this.nodeList.length; j++) {
+            var currentNode = this.nodeList[j];
+            if(!currentNode.haveNext()){
+                this.removeNode(currentNode);
+                j--;
+            }
+        }
+    }
+
+    this.removeUnreachableNodes = function () {
+        for (var j = 0; j < this.nodeList.length; j++) {
+            var currentNode = this.nodeList[j];
+            if(!currentNode.havePrev()){
+                this.removeNode(currentNode);
+                j--;
+            }
+        }
+    }
+
+    this.map = function (func) {
+        this.nodeList = this.nodeList.map(func);
+    }
+
+    this.isEmpty = function () {
+        return this.nodeList.length === 0;
     }
 }
 
@@ -196,6 +255,7 @@ function GraphBuilder() {
     this.evaluator = undefined;
     this.generator = undefined;
     this.generatorInput = undefined;
+    this.connectedLayers = undefined;
 
     this.withEvaluator = function (evaluator) {
         this.evaluator = evaluator;
@@ -209,28 +269,28 @@ function GraphBuilder() {
         this.generatorInput = generatorInput;
     }
 
+    this.withConnectedLayers = function(layers){
+        this.connectedLayers = layers;
+    }
+
+    var removeUnexpectedNeighboursIfExist = function(graph) {
+        for(var i = 0; i < graph.layers.length-1; i++){
+            graph.layers[i].leaveOnlyNodesTo(graph.layers[i+1]);
+        }
+
+    }
+
     var generateLayers = function (graph, generator, inputs) {
         for (var i = 0; i < inputs.length; i++) {
             graph.layers.push(
-                new Layer(
-                    generator.generate(inputs[i]).map(function (x) {
-                        return new Node(x);
-                    })
-                )
+                new Layer(inputs[i], generator)
             )
         }
     }
 
     var addEdges = function (graph, evaluator) {
         for (var i = 0; i < graph.layers.length - 1; i++) {
-            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
-                var currentNode = graph.layers[i].nodeList[j];
-                var nextNodes = graph.layers[i + 1].nodeList;
-                for (var k = 0; k < graph.layers[i + 1].nodeList.length; k++) {
-                    if (evaluator.evaluateHardRules(new RulesCheckerUtils.Connection(nextNodes[k].content, currentNode.content)))
-                        currentNode.addNextNeighbour(new NeighbourNode(nextNodes[k]));
-                }
-            }
+            graph.layers[i].connectWith(graph.layers[i+1], evaluator, i!==0)
         }
     }
 
@@ -248,26 +308,15 @@ function GraphBuilder() {
     }
 
     var removeUnreachableNodes = function (graph) {
-        for (var i = 0; i < graph.layers.length; i++) {
-            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
-                var currentNode = graph.layers[i].nodeList[j];
-                if(!currentNode.havePrev()){
-                    graph.layers[i].removeNode(currentNode);
-                    j--;
-                }
-            }
-        }
+        // for (var i = 0; i < graph.layers.length; i++) {
+        //     graph.layers[i].removeUnreachableNodes()
+        // }
+        graph.layers[graph.layers.length-1].removeUnreachableNodes()
     }
 
     var removeUselessNodes = function (graph) {
         for (var i = graph.layers.length - 1; i >= 0; i--) {
-            for (var j = 0; j < graph.layers[i].nodeList.length; j++) {
-                var currentNode = graph.layers[i].nodeList[j];
-                if(!currentNode.haveNext()){
-                    graph.layers[i].removeNode(currentNode);
-                    j--;
-                }
-            }
+            graph.layers[i].removeUselessNodes();
         }
     }
 
@@ -305,6 +354,7 @@ function GraphBuilder() {
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var neighbour = currentNode.nextNeighbours[k];
                     var connection = new RulesCheckerUtils.Connection(neighbour.node.content, currentNode.content, prevNodeContent)
+                    //todo Optymalizacja wydzielić zestaw ruli obliczanych dla connection size2 i size3, te pierwsze liczyć przed transformacją grafu
                     var w = evaluator.evaluateSoftRules(connection);
                     neighbour.setWeight(w);
                 }
@@ -313,13 +363,30 @@ function GraphBuilder() {
 
     }
 
-    this.build = function () {
+    this.buildWithoutWeights = function() {
         var resultGraph = new Graph([]);                              //${counter}
         generateLayers(resultGraph, this.generator, this.generatorInput);   //${counter}
         addEdges(resultGraph, this.evaluator);                              //${counter}
         addFirstAndLast(resultGraph);
-        removeUnreachableNodes(resultGraph);
+        // removeUnreachableNodes(resultGraph);
         removeUselessNodes(resultGraph);                                    //${counter}
+        // resultGraph.enumerateNodes()
+        // resultGraph.printEdges()
+        return resultGraph;
+    }
+
+    this.build = function () {
+        if(Utils.isDefined(this.connectedLayers)){
+            var resultGraph = new Graph(this.connectedLayers);
+            addFirstAndLast(resultGraph);
+            removeUnexpectedNeighboursIfExist(resultGraph);
+            removeUnreachableNodes(resultGraph);
+            removeUselessNodes(resultGraph);
+        }
+        else{
+            var resultGraph = this.buildWithoutWeights();
+        }
+
         if (this.evaluator.connectionSize === 3){
             makeAllNodesHavingSinglePrevContent(resultGraph);
         }

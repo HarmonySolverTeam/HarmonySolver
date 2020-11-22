@@ -98,19 +98,27 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
         return input;
     }
 
+    this.prepareGraph = function() {
+        var graphBuilder = new Graph.GraphBuilder();
+        graphBuilder.withGenerator(this.chordGenerator);
+        graphBuilder.withEvaluator(
+            Utils.isDefined(this.punishmentRatios) ?
+                new Checker.AdaptiveChordRulesChecker(this.punishmentRatios) :
+                new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
+        graphBuilder.withInput(this.getGeneratorInput());
+        return graphBuilder.build();
+    }
+
+    this.overrideGraph = function(graph) {
+        this.graph = graph;
+    }
+
     this.solve = function(){
         if(!precheckDisabled) {
             PreChecker.preCheck(this.harmonicFunctions, this.chordGenerator, this.bassLine, this.sopranoLine)
         }
         //${counter}
-        var graphBuilder = new Graph.GraphBuilder();
-        graphBuilder.withGenerator(this.chordGenerator);
-        graphBuilder.withEvaluator(
-            Utils.isDefined(this.punishmentRatios) ?
-            new Checker.AdaptiveChordRulesChecker(this.punishmentRatios) :
-            new Checker.ChordRulesChecker(Utils.isDefined(this.bassLine), Utils.isDefined(this.sopranoLine)));
-        graphBuilder.withInput(this.getGeneratorInput());
-        var graph = graphBuilder.build();
+        var graph = Utils.isDefined(this.graph) ? this.graph : this.prepareGraph();
         //${counter}
 
         var dikstra = new Dikstra.Dikstra(graph);
