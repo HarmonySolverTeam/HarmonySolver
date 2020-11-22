@@ -517,6 +517,16 @@ function BassTranslator() {
         return this.translateDelays(ret, revolution)
     }
 
+    this.changeDelaysDuringModeChange = function(delays, fromMinorToMajor) {
+        for (var a = 0; a < delays.length; a++) {
+            for (var b = 0; b < delays[a].length; b++) {
+                if (delays[a][b][0] === "6" || delays[a][b][0] === "7") {
+                    delays[a][b] = fromMinorToMajor ? this.decreaseByHalfTone(delays[a][b]) : this.increaseByHalfTone(delays[a][b])
+                }
+            }
+        }
+    }
+
 
     this.createHarmonicFunctionOrFunctions = function (chordElement, mode, key, delays) {
         var ret = []
@@ -693,6 +703,22 @@ function BassTranslator() {
             return a[0]
         } else {
             return a + "<"
+        }
+    }
+
+    this.decreaseByHalfTone = function (a) {
+        if (a === undefined) {
+            return undefined
+        }
+
+        if (a.length === 1) {
+            return a + ">"
+        }
+
+        if (a.length === 2 && a[1] === "<") {
+            return a[0]
+        } else {
+            return a + ">"
         }
     }
 
@@ -899,13 +925,19 @@ function BassTranslator() {
                 if (revolution === 3) {
                     if (mode === Consts.MODE.MINOR && Utils.contains(toExtra, "3<")) {
                         if (DEBUG) Utils.log("Changing chord mode to major")
-                        argsMap.mode = !Utils.contains([2, 3, 6], argsMap.degree) ? Consts.MODE.MAJOR : argsMap.mode;
+                        if (!Utils.contains([2, 3, 6], argsMap.degree)) {
+                            argsMap.mode = Consts.MODE.MAJOR
+                            this.changeDelaysDuringModeChange(argsMap.delay, true)
+                        }
                         toExtra.splice(toExtra.indexOf("3<"), 1)
                         toOmit.splice(toOmit.indexOf(3), 1)
                     }
                     if (mode === Consts.MODE.MAJOR && Utils.contains(toExtra, "3>")) {
                         if (DEBUG) Utils.log("Changing chord mode to minor")
-                        argsMap.mode = !Utils.contains([2, 3, 6], argsMap.degree) ? Consts.MODE.MINOR : argsMap.mode;
+                        if (!Utils.contains([2, 3, 6], argsMap.degree)) {
+                            argsMap.mode = Consts.MODE.MINOR
+                            this.changeDelaysDuringModeChange(argsMap.delay, false)
+                        }
                         toExtra.splice(toExtra.indexOf("3>"), 1)
                         toOmit.splice(toOmit.indexOf(3), 1)
                     }
@@ -930,14 +962,23 @@ function BassTranslator() {
                     || (mode === Consts.MODE.MAJOR && toExtra[0] === "3>"))) {
                 if (mode === Consts.MODE.MINOR && toExtra[0] === "3<") {
                     if (DEBUG) Utils.log("Changing chord mode to major")
-                    harmonicFunctions[0][i].mode = !Utils.contains([2, 3, 6], harmonicFunctions[0][i].degree) ? Consts.MODE.MAJOR : harmonicFunctions[0][i].mode;
-                    //harmonicFunctions[0][i].mode = Consts.MODE.MAJOR;
+                    if (!Utils.contains([2, 3, 6], harmonicFunctions[0][i].degree)) {
+                        var argsMap = harmonicFunctions[0][i].getArgsMapWithDelays()
+                        argsMap.mode = Consts.MODE.MAJOR
+                        this.changeDelaysDuringModeChange(argsMap.delay, true)
+                        harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                    }
                     toExtra.splice(toExtra.indexOf("3<"), 1)
                     toOmit.splice(toOmit.indexOf(3), 1)
                 }
                 if (mode === Consts.MODE.MAJOR && toExtra[0] === "3>") {
                     if (DEBUG) Utils.log("Changing chord mode to minor")
-                    harmonicFunctions[0][i].mode = !Utils.contains([2, 3, 6], harmonicFunctions[0][i].degree) ? Consts.MODE.MINOR : harmonicFunctions[0][i].mode;
+                    if (!Utils.contains([2, 3, 6], harmonicFunctions[0][i].degree)) {
+                        var argsMap = harmonicFunctions[0][i].getArgsMapWithDelays()
+                        argsMap.mode = Consts.MODE.MINOR
+                        this.changeDelaysDuringModeChange(argsMap.delay, false)
+                        harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                    }
                     toExtra.splice(toExtra.indexOf("3>"), 1)
                     toOmit.splice(toOmit.indexOf(3), 1)
                 }
