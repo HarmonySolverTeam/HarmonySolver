@@ -5,7 +5,7 @@
 
 ## Prerequisites
 
-* Musescore 3.X
+* Musescore 3.X (plugin was tested on 3.4.X and 3.5.X versions, but it should work on every 3.X version)
 * Windows (this plugin should also work with Linux systems, but it was not fully tested on Linux distributions)
 
 ## Installation step by step
