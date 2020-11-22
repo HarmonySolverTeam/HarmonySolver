@@ -44,7 +44,7 @@ function PriorityQueue (priorityAttribute) {
         if(this.nodeList.length === 0) return "empty";
 
         var indexOfMin = 0;
-        for(var i=this.nodeList.length; i--;){
+        for(var i = 0; i < this.nodeList.length; i++){
             if( compare(this.nodeList[i][this.priorityAttribute], this.nodeList[indexOfMin][this.priorityAttribute]) === -1 )
                 indexOfMin = i;
         }
