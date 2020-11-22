@@ -10,7 +10,7 @@
 .import "../commons/ExerciseCorrector.js" as Corrector
 .import "../harmonic/PreChecker.js" as PreChecker
 .import "../algorithms/Dikstra.js" as Dikstra
-.import "../algorithms/Graph.js" as Graph
+.import "../algorithms/GraphBuilder.js" as GraphBuilder
 
 var DEBUG = false;
 
@@ -99,7 +99,7 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
     }
 
     this.prepareGraph = function() {
-        var graphBuilder = new Graph.GraphBuilder();
+        var graphBuilder = new GraphBuilder.GraphBuilder();
         graphBuilder.withGenerator(this.chordGenerator);
         graphBuilder.withEvaluator(
             Utils.isDefined(this.punishmentRatios) ?

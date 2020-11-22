@@ -1,16 +1,16 @@
 .import "../soprano/HarmonicFunctionGenerator.js" as HarmonicFunctionGenerator
-    .import "../soprano/SopranoRulesChecker.js" as SopranoRulesChecker
-    .import "../algorithms/SopranoGraphBuilder.js" as SopranoGraphBuilder
-    .import "../harmonic/Exercise.js" as HarmonicFunctionsExercise
-    .import "../utils/Utils.js" as Utils
-    .import "../algorithms/Dikstra.js" as Dikstra
-    .import "../harmonic/Exercise.js" as Exercise
-    .import "../harmonic/Solver2.js" as HarmonisationSolver
-    .import "../commons/ExerciseSolution.js" as ExerciseSolution
-    .import "../commons/Errors.js" as Errors
-    .import "../harmonic/ChordGenerator.js" as ChordGenerator
-    .import "../harmonic/ChordRulesChecker.js" as RulesChecker
-    .import "../algorithms/Graph.js" as Graph
+.import "../soprano/SopranoRulesChecker.js" as SopranoRulesChecker
+.import "../algorithms/SopranoGraphBuilder.js" as SopranoGraphBuilder
+.import "../harmonic/Exercise.js" as HarmonicFunctionsExercise
+.import "../utils/Utils.js" as Utils
+.import "../algorithms/Dikstra.js" as Dikstra
+.import "../harmonic/Exercise.js" as Exercise
+.import "../harmonic/Solver2.js" as HarmonisationSolver
+.import "../commons/ExerciseSolution.js" as ExerciseSolution
+.import "../commons/Errors.js" as Errors
+.import "../harmonic/ChordGenerator.js" as ChordGenerator
+.import "../harmonic/ChordRulesChecker.js" as RulesChecker
+.import "../algorithms/Graph.js" as Graph
 
 function SopranoSolver(exercise, punishmentRatios){
 
@@ -80,7 +80,7 @@ function SopranoSolver(exercise, punishmentRatios){
             harmonicFunctions.push(sol_nodes[i].content.harmonicFunction)
         }
 
-        var graphBuilder = new Graph.GraphBuilder();
+        var graphBuilder = new GraphBuilder.GraphBuilder();
         graphBuilder.withEvaluator(innerEvaluator);
         graphBuilder.withConnectedLayers(layers);
         var innerGraph = graphBuilder.build();

@@ -1,6 +1,6 @@
 .import "../soprano/HarmonicFunctionGenerator.js" as HarmonicFunctionGenerator
 .import "../soprano/SopranoRulesChecker.js" as SopranoRulesChecker
-.import "../algorithms/Graph.js" as Graph
+.import "../algorithms/GraphBuilder.js" as GraphBuilder
 .import "../harmonic/Exercise.js" as HarmonicFunctionsExercise
 .import "../utils/Utils.js" as Utils
 .import "../algorithms/Dikstra.js" as Dikstra
@@ -53,7 +53,7 @@ function SopranoSolver(exercise, punishmentRatios){
     }
 
     this.solve = function (){
-        var graphBuilder = new Graph.GraphBuilder();
+        var graphBuilder = new GraphBuilder.GraphBuilder();
         graphBuilder.withGenerator(this.harmonicFunctionGenerator);
         graphBuilder.withEvaluator(this.sopranoRulesChecker);
         graphBuilder.withInput(this.prepareSopranoGeneratorInputs(this.exercise));

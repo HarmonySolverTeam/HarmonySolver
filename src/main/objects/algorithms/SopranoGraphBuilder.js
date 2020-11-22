@@ -62,7 +62,7 @@ function SopranoGraphBuilder() {
                 var currentNode = graph.layers[i].nodeList[j];
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var nextNeighbour = currentNode.nextNeighbours[k].node;
-                    currentNode.nestedLayer.connectWith(nextNeighbour.nestedLayer, innerEvaluator, i!==0);
+                    currentNode.nestedLayer.connectWith(nextNeighbour.nestedLayer, innerEvaluator, i===0);
                 }
             }
         }
