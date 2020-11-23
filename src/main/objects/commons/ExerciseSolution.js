@@ -1,6 +1,7 @@
 .import "../utils/Utils.js" as Utils
 .import "../model/Chord.js" as Chord
 .import "../harmonic/Exercise.js" as Exercise
+.import "../commons/Errors.js" as Errors
 
 var DEBUG = false
 
@@ -12,6 +13,11 @@ function ExerciseSolution(exercise, rating, chords, success) {
     this.success = success === undefined ? true : success //todo for later use
     this.infoMessages = []
     this.errorMessages = []
+
+    if(!this.success){
+        throw new Errors.SolverError("Cannot find solution for given harmonic functions",
+            "If you want know more details please turn on prechecker in Settings and solve again")
+    }
 
     this.setDurations = function () {
         function default_divide(number, result) {
