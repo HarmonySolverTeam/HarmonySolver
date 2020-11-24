@@ -1474,7 +1474,7 @@ MuseScore {
                             id: printCheckbox
                             checked: configuration.enableChordSymbolsPrinting
                             text: qsTr("print chord symbols")
-                            tooltip: "Enable printing chord sybols under the chords in score"
+                            tooltip: "Enable printing chord symbols under the chords in score"
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableChordSymbolsPrinting = true
