@@ -14,7 +14,7 @@ function ExerciseSolution(exercise, rating, chords, success) {
     this.infoMessages = []
     this.errorMessages = []
 
-    if(!this.success){
+    if(!this.success && Utils.isDefined(exercise)){
         throw new Errors.SolverError("Cannot find solution for given harmonic functions",
             "If you want know more details please turn on prechecker in Settings and solve again")
     }
