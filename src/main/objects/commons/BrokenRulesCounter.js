@@ -15,14 +15,30 @@ function BrokenRulesCounter(rulesList, rulesDetails) {
         this.allConnections = value
     }
 
+    this.compareBrokenRuleStatuses = function(r1, r2) {
+        return r2.counter - r1.counter
+    }
+
     this.getBrokenRulesStringInfo = function() {
         var ret = ""
 
-        for (var i = 0; i < this.rulesList.length; i++) {
-            if (this[this.rulesList[i]] !== 0) {
-                ret += this.rulesDetails[i] + ": " + this[this.rulesList[i]] + "/" + this.allConnections + "\n"
+        var brokenRuleStatuses = []
+        for (var i = 0; i < this.rulesList.length; i++){
+            brokenRuleStatuses.push(new BrokenRuleStatus(this.rulesDetails[i], this[this.rulesList[i]]))
+        }
+
+        brokenRuleStatuses.sort(this.compareBrokenRuleStatuses)
+
+        for (var i = 0; i < brokenRuleStatuses.length; i++) {
+            if (brokenRuleStatuses[i].counter !== 0) {
+                ret += brokenRuleStatuses[i].details + ": " + brokenRuleStatuses[i].counter + "/" + this.allConnections + "\n"
             }
         }
         return ret
     }
+}
+
+function BrokenRuleStatus(details, counter){
+    this.details = details
+    this.counter = counter
 }
