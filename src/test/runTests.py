@@ -21,6 +21,7 @@ suites = [
     "priorityQueueTest",
     "dikstraTest",
     "harmonicFunctionGeneratorTest",
+    "setDurationsTest",
     "sopranoTests",
     # "performanceTests"
 ]

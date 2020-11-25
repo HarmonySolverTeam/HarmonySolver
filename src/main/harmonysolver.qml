@@ -179,10 +179,15 @@ MuseScore {
             has3component = false
 
             if (delays.length !== 0) {
-                //Utils.log("durations", durations)
-                durations[durations.length - 1][1]*=2
-                durations.push(durations[durations.length - 1])
-                //Utils.log("durations", durations)
+                if (durations[durations.length - 1][0] % 2 === 0 || durations[durations.length - 1][0] === 1) {
+                    durations[durations.length - 1][1]*=2
+                    durations.push(durations[durations.length - 1])
+                } else{
+                    var numerator = durations[durations.length - 1][0]
+                    durations[durations.length - 1][0] = parseInt(Math.ceil(numerator * 1.0 / 2))
+                    durations.push([parseInt(Math.floor(numerator * 1.0 / 2)), durations[durations.length - 1][1]])
+                    durations[durations.length - 1][0] = parseInt(Math.floor(numerator * 1.0 / 2))
+                }
             }
 
             delays = []
@@ -1469,7 +1474,7 @@ MuseScore {
                             id: printCheckbox
                             checked: configuration.enableChordSymbolsPrinting
                             text: qsTr("print chord symbols")
-                            tooltip: "Enable printing chord sybols under the chords in score"
+                            tooltip: "Enable printing chord symbols under the chords in score"
                             onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableChordSymbolsPrinting = true

@@ -87,4 +87,3 @@ function Graph(layers, first, last) {
         return n;
     }
 }
-

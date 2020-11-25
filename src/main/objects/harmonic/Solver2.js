@@ -134,7 +134,7 @@ function Solver(exercise, bassLine, sopranoLine, correctDisabled, precheckDisabl
             sol_chords.push(sol_nodes[i].content)
 
         //${counter}
-        return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords, true);
+        return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords, sol_chords.length > 0);
     }
 
 }
