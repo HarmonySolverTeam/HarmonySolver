@@ -9,6 +9,14 @@ function Graph(layers, first, last) {
     //just for printing
     this.current_id = 0;
 
+    this.getFirst = function (){
+        return this.first;
+    }
+
+    this.getLast = function (){
+        return this.last;
+    }
+
     this.getNodes = function (){
         var allNodes = [];
         for(var i=0; i<this.layers.length; i++){
@@ -43,11 +51,12 @@ function Graph(layers, first, last) {
                 // console.log(currentNode.id + "+" + currentNode.content.shortString() + ","  + currentNode.nextNeighbours[k].node.id + "+" + currentNode.nextNeighbours[k].node.content.shortString() + "," + i)
 
                 // version for soprano
-                // if(currentNode.content !== "first" && currentNode.nextNeighbours[k].node.content !== "last")
+                if(currentNode.content !== "first" && currentNode.nextNeighbours[k].node.content !== "last")
                 // console.log(currentNode.id + currentNode.content.harmonicFunction.functionName + "," + currentNode.nextNeighbours[k].node.id + currentNode.nextNeighbours[k].node.content.harmonicFunction.functionName+ "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
+                console.log(currentNode.id + currentNode.content.harmonicFunction.functionName + "_" +currentNode.content.harmonicFunction.degree +  "," + currentNode.nextNeighbours[k].node.id + currentNode.nextNeighbours[k].node.content.harmonicFunction.functionName+  "_"+ currentNode.nextNeighbours[k].node.content.harmonicFunction.degree +"," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
 
                 // default version
-                console.log(currentNode.id + "," + currentNode.nextNeighbours[k].node.id + "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
+                // console.log(currentNode.id + "," + currentNode.nextNeighbours[k].node.id + "," + layerNumber + "," + currentNode.nextNeighbours[k].weight)
             }
         }
 

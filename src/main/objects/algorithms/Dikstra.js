@@ -10,10 +10,10 @@ function Dikstra(graph){
         var allNodes = this.graph.getNodes();
         for(var i=0; i<allNodes.length; i++){
             allNodes[i].distanceFromBegining = "infinity";
-            allNodes[i].prevInShortestPath = undefined;
+            allNodes[i].prevsInShortestPath = undefined;
             this.queue.insert(allNodes[i]);
         }
-        this.graph.first.distanceFromBegining = 0;
+        this.graph.getFirst().distanceFromBegining = 0;
     }
 
     //Cormen p.662
@@ -24,7 +24,9 @@ function Dikstra(graph){
 
         if(u.distanceFromBegining + w < v.distanceFromBegining || v.distanceFromBegining === "infinity") {
             this.queue.decreaseKey(v, u.distanceFromBegining + w);
-            v.prevInShortestPath = u;
+            v.prevsInShortestPath = [u];
+        } else if (u.distanceFromBegining + w === v.distanceFromBegining){
+            v.prevsInShortestPath.push(u);
         }
     }
 
@@ -42,11 +44,11 @@ function Dikstra(graph){
 
     this.getShortestPathToLastNode = function() {
         this.findShortestPaths();
-        var currentNode = this.graph.last;
+        var currentNode = this.graph.getLast();
         var result = []
-        while(currentNode.prevInShortestPath !== undefined){
+        while(currentNode.prevsInShortestPath !== undefined){
             result.unshift(currentNode);
-            currentNode = currentNode.prevInShortestPath;
+            currentNode = currentNode.prevsInShortestPath[0];
         }
         result.splice(result.length-1, 1);
         return result;

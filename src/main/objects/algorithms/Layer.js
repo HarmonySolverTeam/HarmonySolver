@@ -5,7 +5,7 @@
 
 function Layer(generatorInput, generator) {
 
-    this.nodeList = generator.generate(generatorInput).map(function (x) {
+    this.nodeList =  generator === undefined ? undefined : generator.generate(generatorInput).map(function (x) {
         return new NodeI.Node(x);
     })
 
@@ -31,7 +31,7 @@ function Layer(generatorInput, generator) {
         return count;
     }
 
-    this.connectWith = function(other, evaluator, isFirstLayer){
+    this.connectWith = function(other, evaluator, isFirstLayer, removeUnreachable){
         var nextNodes = other.nodeList;
         for (var i = 0; i < this.nodeList.length; i++) {
             var currentNode = this.nodeList[i];
@@ -43,7 +43,7 @@ function Layer(generatorInput, generator) {
                 }
             }
         }
-        other.removeUnreachableNodes();
+        if(removeUnreachable) other.removeUnreachableNodes();
     }
 
     this.leaveOnlyNodesTo = function(other){

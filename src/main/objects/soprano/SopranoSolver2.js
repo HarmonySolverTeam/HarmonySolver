@@ -11,6 +11,7 @@
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 .import "../harmonic/ChordRulesChecker.js" as RulesChecker
 .import "../algorithms/Graph.js" as Graph
+.import "../algorithms/GraphBuilder.js" as GraphBuilder
 
 function SopranoSolver(exercise, punishmentRatios){
 
@@ -66,37 +67,30 @@ function SopranoSolver(exercise, punishmentRatios){
             new RulesChecker.ChordRulesChecker(false, true);
         graphBuilder.withInnerEvaluator(innerEvaluator);
 
-        var graph = graphBuilder.build();
+        var sopranoGraph = graphBuilder.build();
 
-        var dikstra = new Dikstra.Dikstra(graph);
-        var sol_nodes = dikstra.getShortestPathToLastNode();
-
-        if(sol_nodes.length !== this.exercise.notes.length) throw new Errors.SolverError("Cannot find any harmonic function sequence satisfying given notes");
-
-        var layers = []
-        var harmonicFunctions = []
-        for (var i = 0; i < sol_nodes.length; i++) {
-            layers.push(sol_nodes[i].nestedLayer)
-            harmonicFunctions.push(sol_nodes[i].content.harmonicFunction)
-        }
+        var dikstra = new Dikstra.Dikstra(sopranoGraph);
+        dikstra.findShortestPaths();
+        var chordGraph = sopranoGraph.reduceToChordGraph();
 
         var graphBuilder = new GraphBuilder.GraphBuilder();
         graphBuilder.withEvaluator(innerEvaluator);
-        graphBuilder.withConnectedLayers(layers);
+        graphBuilder.withGraphTemplate(chordGraph);
         var innerGraph = graphBuilder.build();
 
-        // console.log("PRINTINF")
-        // innerGraph.enumerateNodes()
-        // innerGraph.printEdges()
-        // console.log("PRINTINF END")
-        var harmonisationExercise = this.mapToHarmonisationExercise(harmonicFunctions);
-        var harmonisationSolver = new HarmonisationSolver.Solver(harmonisationExercise, undefined, this.exercise.notes, true, false, this.punishmentRatios);
-        harmonisationSolver.overrideGraph(innerGraph);
-        var solutionCandidate = harmonisationSolver.solve();
 
-        if(!solutionCandidate.success) throw new Errors.SolverError("Error that should not occur");
+        var dikstra2 = new Dikstra.Dikstra(innerGraph);
+        var sol_nodes = dikstra2.getShortestPathToLastNode();
 
-        return solutionCandidate;
+        if(sol_nodes.length !== innerGraph.layers.length) {
+            throw new Errors.SolverError("Error that should not occur");
+        }
+
+        var sol_chords = []
+        for(var i=0; i<sol_nodes.length; i++)
+            sol_chords.push(sol_nodes[i].content)
+
+        return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords, true);
     }
 
 }

@@ -1,7 +1,7 @@
 var HarmonicFunction = require("./objects/model/HarmonicFunction");
 var Note = require("./objects/model/Note");
 var Soprano = require("./objects/soprano/Soprano");
-var SopranoSolver = require("./objects/soprano/SopranoSolver")
+var SopranoSolver = require("./objects/soprano/SopranoSolver2")
 var SopranoExercise = require("./objects/soprano/SopranoExercise");
 var TestUtils = require("./TestUtils");
 var Consts = require("./objects/commons/Consts")
@@ -11,6 +11,9 @@ var Utils = require("./objects/utils/Utils")
 var testSuite = new TestUtils.TestSuite("Soprano exercise tests", 10000);
 
 // ************************** HARMONIC FUNCTIONS *********************************
+
+var use_rev3 = false;
+var use_rev5 = false;
 
 var getPossibleCombinationsOfHFsFor = (ex) => {
     var x = undefined
@@ -90,7 +93,27 @@ var getPossibleCombinationsOfHFsFor = (ex) => {
         // if (Utils.mod(N, 2) === 0) current_comb += Dto
         combinations.push(current_comb)
     }
-    return combinations;
+    combinations.sort((a,b) => a.length - b.length);
+    return combinations.map((combination) =>
+        {
+            var new_combination = []
+            for(hf of combination){
+                new_combination.push(hf);
+
+                if(use_rev3) {
+                    var hf_copy = hf.copy();
+                    hf_copy.revolution = hf_copy.getThird();
+                    new_combination.push(hf_copy);
+                }
+                if(use_rev5) {
+                    hf_copy = hf.copy();
+                    hf_copy.revolution = hf_copy.getFifth();
+                    new_combination.push(hf_copy);
+                }
+            }
+            return new_combination;
+        }
+    )
 }
 // ****************************** EXERCISES **************************************
 

@@ -28,6 +28,10 @@ function GraphBuilder() {
         this.connectedLayers = layers;
     }
 
+    this.withGraphTemplate = function (graphTemplate){
+        this.graphTemplate = graphTemplate;
+    }
+
     var removeUnexpectedNeighboursIfExist = function(graph) {
         for(var i = 0; i < graph.layers.length-1; i++){
             graph.layers[i].leaveOnlyNodesTo(graph.layers[i+1]);
@@ -45,7 +49,7 @@ function GraphBuilder() {
 
     var addEdges = function (graph, evaluator) {
         for (var i = 0; i < graph.layers.length - 1; i++) {
-            graph.layers[i].connectWith(graph.layers[i+1], evaluator, i===0)
+            graph.layers[i].connectWith(graph.layers[i+1], evaluator, i===0, true)
         }
     }
 
@@ -136,6 +140,9 @@ function GraphBuilder() {
             removeUnreachableNodes(resultGraph);
             removeUselessNodes(resultGraph);
         }
+        else if(Utils.isDefined(this.graphTemplate)){
+            var resultGraph = this.graphTemplate;
+        }
         else{
             var resultGraph = this.buildWithoutWeights();
         }
@@ -143,7 +150,7 @@ function GraphBuilder() {
         if (this.evaluator.connectionSize === 3){
             makeAllNodesHavingSinglePrevContent(resultGraph);
         }
-        setEdgeWeights(resultGraph, this.evaluator);                        //${counter}
+        setEdgeWeights(resultGraph, this.evaluator);
 
         return resultGraph;
     }

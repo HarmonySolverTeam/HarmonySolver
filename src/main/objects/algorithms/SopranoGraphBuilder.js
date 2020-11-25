@@ -1,11 +1,12 @@
-.import "../algorithms/Graph.js" as Graph
+.import "../algorithms/GraphBuilder.js" as GraphBuilder
+.import "../algorithms/SopranoGraph.js" as SopranoGraph
+.import "../algorithms/Layer.js" as Layer
+.import "../algorithms/NeighbourNode.js" as NeighbourNode
+.import "../algorithms/Node.js" as Node
 .import "../harmonic/ChordGenerator.js" as ChordGenerator
 .import "../commons/RulesCheckerUtils.js" as RulesCheckerUtils
+.import "../commons/Errors.js" as Errors
 
-// function SopranoGraphNode(content, nextNeighbours, prevNodes, nestedLayer) {
-//     Graph.Node.call(this, content, nextNeighbours, prevNodes)
-//     this.nestedLayer = nestedLayer
-// }
 
 function SopranoGraphBuilder() {
     this.outerEvaluator = undefined;
@@ -35,7 +36,7 @@ function SopranoGraphBuilder() {
     }
 
     this.getGraphTemplate = function () {
-        var graphBuilder = new Graph.GraphBuilder();
+        var graphBuilder = new GraphBuilder.GraphBuilder();
         graphBuilder.withEvaluator(this.outerEvaluator);
         graphBuilder.withGenerator(this.outerGenerator);
         graphBuilder.withInput(this.outerGeneratorInput)
@@ -47,7 +48,7 @@ function SopranoGraphBuilder() {
             var sopranoNote = outerGeneratorInput[i].sopranoNote;
             for(var j=0; j<graph.layers[i].nodeList.length; j++){
                 var currentNode = graph.layers[i].nodeList[j];
-                var nestedLayer = new Graph.Layer(
+                var nestedLayer = new Layer.Layer(
                     new ChordGenerator.ChordGeneratorInput(currentNode.content.harmonicFunction, i!==0, sopranoNote),
                     innerGenerator
                 );
@@ -62,7 +63,7 @@ function SopranoGraphBuilder() {
                 var currentNode = graph.layers[i].nodeList[j];
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var nextNeighbour = currentNode.nextNeighbours[k].node;
-                    currentNode.nestedLayer.connectWith(nextNeighbour.nestedLayer, innerEvaluator, i===0);
+                    currentNode.nestedLayer.connectWith(nextNeighbour.nestedLayer, innerEvaluator, i===0, false);
                 }
             }
         }
@@ -112,36 +113,83 @@ function SopranoGraphBuilder() {
         }
     }
 
-    var setEdgeWeights = function(graph, evaluator){
+    var setEdgeWeightsAndPropagate = function(graph, evaluator){
         for(var i=0; i<graph.layers.length - 1; i++){
             for(var j=0; j<graph.layers[i].nodeList.length; j++){
                 var currentNode = graph.layers[i].nodeList[j];
 
-                var prevNodeContent = i === 0 ? undefined : ( evaluator.connectionSize !== 3 ? undefined : currentNode.getPrevContentIfSingle());
-
                 for(var k=0; k<currentNode.nextNeighbours.length; k++){
                     var neighbour = currentNode.nextNeighbours[k];
-                    var connection = new RulesCheckerUtils.Connection(neighbour.node.content, currentNode.content, prevNodeContent)
-                    //todo Optymalizacja wydzielić zestaw ruli obliczanych dla connection size2 i size3, te pierwsze liczyć przed transformacją grafu
+                    var connection = new RulesCheckerUtils.Connection(neighbour.node.content, currentNode.content)
+
                     var w = evaluator.evaluateSoftRules(connection);
                     neighbour.setWeight(w);
+
+                    //propagate
+                    var hf_left = currentNode.content.harmonicFunction;
+                    var hf_right = neighbour.node.content.harmonicFunction;
+
+                    for(var l=0; l<currentNode.nestedLayer.nodeList.length; l++){
+                        var nested_node = currentNode.nestedLayer.nodeList[l];
+                        for(var m=0; m<nested_node.nextNeighbours.length; m++){
+                            var nested_neighbour = nested_node.nextNeighbours[m];
+                            if(nested_neighbour.node.content.harmonicFunction === hf_right){
+                                nested_neighbour.setWeight(w);
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+
+    var attachNestedFirstAndLast = function(graph){
+        graph.nestedFirst = new Node.Node("first");
+        graph.nestedLast = new Node.Node("last");
+        ///first
+        for(var i=0; i<graph.layers[0].nodeList.length; i++){
+            var currentNode = graph.layers[0].nodeList[i];
+            for(var j=0; j<currentNode.nestedLayer.nodeList.length; j++){
+                var currentNestedNode = currentNode.nestedLayer.nodeList[j];
+                graph.nestedFirst.addNextNeighbour(new NeighbourNode.NeighbourNode(currentNestedNode, 0));
+            }
+        }
+
+        //last
+        for(var i=0; i<graph.layers[graph.layers.length -1].nodeList.length; i++) {
+            var currentNode = graph.layers[graph.layers.length -1].nodeList[i];
+            for (var j=0; j<currentNode.nestedLayer.nodeList.length; j++) {
+                var currentNestedNode = currentNode.nestedLayer.nodeList[j];
+                currentNestedNode.addNextNeighbour(new NeighbourNode.NeighbourNode(graph.nestedLast, 0));
+            }
+        }
+
+    }
+
 
     this.build = function () {
         var graphTemplate = this.getGraphTemplate();
         generateNestedLayers(graphTemplate, this.innerGenerator, this.outerGeneratorInput);
         connectNestedLayers(graphTemplate, this.innerEvaluator);
         removeUselessNodesInNestedLayers(graphTemplate);
-        // removeUnreachableNodesInNestedLayers(graphTemplate);
-        // removeNodesWithEmptyNestedLayers(graphTemplate);
-        // removeUnreachableNodes(graphTemplate);
-        // removeUselessNodes(graphTemplate);
-        // setEdgeWeights(graphTemplate, this.outerEvaluator);
+        removeUnreachableNodesInNestedLayers(graphTemplate);
+        setEdgeWeightsAndPropagate(graphTemplate, this.outerEvaluator);
 
-        return graphTemplate
+        removeNodesWithEmptyNestedLayers(graphTemplate)
+
+
+        var sopranoGraph = new SopranoGraph.SopranoGraph(
+            graphTemplate.layers,
+            graphTemplate.first,
+            graphTemplate.last
+        )
+
+        if(sopranoGraph.getNodes().length === 2)
+            throw new Errors.InvalidGraphConstruction("Cannot find any harmonic function sequence which could be harmonised");
+
+        attachNestedFirstAndLast(sopranoGraph)
+
+        return sopranoGraph;
     }
 
 }

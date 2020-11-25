@@ -70,6 +70,14 @@ function Node(content, nextNeighbours, prevNodes) {
         Utils.removeFrom(node.prevNodes, this);
     }
 
+    this.overridePrevNodes = function(newPrevNodes) {
+        this.prevNodes = newPrevNodes;
+    }
+
+    this.overrideNextNeighbours = function(newNextNeighbours){
+        this.nextNeighbours = newNextNeighbours;
+    }
+
     this.duplicate = function(){
         var newNode = new Node(this.content);
         for(var i=0; i<this.nextNeighbours.length; i++){
