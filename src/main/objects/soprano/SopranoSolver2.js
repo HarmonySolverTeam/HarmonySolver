@@ -13,6 +13,8 @@
 .import "../algorithms/Graph.js" as Graph
 .import "../algorithms/GraphBuilder.js" as GraphBuilder
 
+var LOG_SOLUTION_INFO = false;
+
 function SopranoSolver(exercise, punishmentRatios){
 
     this.exercise = exercise;
@@ -71,6 +73,7 @@ function SopranoSolver(exercise, punishmentRatios){
 
         var dikstra = new Dikstra.Dikstra(sopranoGraph);
         dikstra.findShortestPaths();
+        if (LOG_SOLUTION_INFO) console.log("HARMONIC FUNCTION SEQUENCE COST = " + sopranoGraph.getLast().distanceFromBegining)
         var chordGraph = sopranoGraph.reduceToChordGraph();
 
         var graphBuilder = new GraphBuilder.GraphBuilder();
@@ -89,6 +92,8 @@ function SopranoSolver(exercise, punishmentRatios){
         var sol_chords = []
         for(var i=0; i<sol_nodes.length; i++)
             sol_chords.push(sol_nodes[i].content)
+
+        if(LOG_SOLUTION_INFO) console.log("CHORD HARMONIZATION COST = " + sol_nodes[sol_nodes.length-1].distanceFromBegining)
 
         return new ExerciseSolution.ExerciseSolution(this.exercise, sol_nodes[sol_nodes.length-1].distanceFromBegining, sol_chords, true);
     }

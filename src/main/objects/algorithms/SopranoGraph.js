@@ -64,7 +64,56 @@ function SopranoGraph(layers, first, last, nestedFirst, nestedLast){
             layer.nodeList = stack;
             layers.unshift(layer)
         }
-        layers.splice(0,1);
+        layers.splice(0,1)
+        ;
+        for(var i=0; i<this.getFirst().nextNeighbours.length; i++){
+            this.getFirst().nextNeighbours[i].weight = 0
+        }
+
+        for(var i=0; i<this.getLast().prevNodes.length; i++){
+            var currentNode = this.getLast().prevNodes[i];
+            for(var j=0; j<currentNode.nextNeighbours.length; j++){
+                if(currentNode.nextNeighbours[j].node === this.getLast()){
+                    currentNode.nextNeighbours[j].weight = 0;
+                }
+            }
+        }
         return new Graph.Graph(layers, this.getFirst(), this.getLast());
+    }
+
+    this.enumerateNodes = function() {
+        this.nestedFirst.id = -1;
+        this.nestedLast.id = -2;
+        for(var i=0; i<this.layers.length; i++){
+            for(var j=0; j<this.layers[i].nodeList.length; j++) {
+                var currentLayer = this.layers[i].nodeList[j].nestedLayer;
+                for(var k=0; k<currentLayer.nodeList.length; k++){
+                    var currentNode = currentLayer.nodeList[k];
+                    currentNode.id = this.current_id;
+                    this.current_id++;
+                }
+            }
+        }
+    }
+
+    this.printEdges = function() {
+        for(var i=0; i<this.layers.length; i++){
+            for(var j=0; j<this.layers[i].nodeList.length; j++) {
+                var currentLayer = this.layers[i].nodeList[j].nestedLayer;
+                for(var k=0; k<currentLayer.nodeList.length; k++){
+                    var currentNode = currentLayer.nodeList[k];
+                    for(var l=0; l<currentNode.nextNeighbours.length;l++){
+                        console.log(currentNode.id + "," + currentNode.nextNeighbours[l].node.id + "," + (i + 1) + "," + currentNode.nextNeighbours[l].weight)
+                        if(currentNode.nextNeighbours[l].node.id === undefined){
+                            console.log(currentNode.nextNeighbours[l])
+                        }
+                    }
+                }
+            }
+        }
+        var currentNode = this.nestedFirst;
+        for(var l=0; l<currentNode.nextNeighbours.length;l++){
+            console.log(currentNode.id + "," + currentNode.nextNeighbours[l].node.id + "," + 0 + "," + currentNode.nextNeighbours[l].weight )
+        }
     }
 }

@@ -9,6 +9,8 @@
 .import "../commons/ExerciseSolution.js" as ExerciseSolution
 .import "../commons/Errors.js" as Errors
 
+LOG_SOLUTION_INFO = false
+
 function SopranoSolver(exercise, punishmentRatios){
 
     this.exercise = exercise;
@@ -66,6 +68,7 @@ function SopranoSolver(exercise, punishmentRatios){
         while(tryNumber < this.numberOfRetry && !solutionCandidate.success) {
             var dikstra = new Dikstra.Dikstra(graph);
             var sol_nodes = dikstra.getShortestPathToLastNode();
+            if(LOG_SOLUTION_INFO) console.log("HARMONIC FUNCTION SEQUENCE COST = " + graph.getLast().distanceFromBegining)
 
             if(sol_nodes.length !== this.exercise.notes.length) throw new Errors.SolverError("Cannot find any harmonic function sequence satisfying given notes");
 
@@ -93,6 +96,7 @@ function SopranoSolver(exercise, punishmentRatios){
                 tryNumber++;
             }
         }
+        if(LOG_SOLUTION_INFO) console.log("CHORD HARMONIZATION COST = " + solutionCandidate.rating)
 
         if(!solutionCandidate.success) throw new Errors.SolverError("Cannot find any solution for each of " + this.numberOfRetry + " harmonic functions sequences");
 

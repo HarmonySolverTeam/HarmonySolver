@@ -151,7 +151,8 @@ function SopranoGraphBuilder() {
             var currentNode = graph.layers[0].nodeList[i];
             for(var j=0; j<currentNode.nestedLayer.nodeList.length; j++){
                 var currentNestedNode = currentNode.nestedLayer.nodeList[j];
-                graph.nestedFirst.addNextNeighbour(new NeighbourNode.NeighbourNode(currentNestedNode, 0));
+                if(currentNestedNode.haveNext())
+                    graph.nestedFirst.addNextNeighbour(new NeighbourNode.NeighbourNode(currentNestedNode, 0));
             }
         }
 
@@ -160,7 +161,8 @@ function SopranoGraphBuilder() {
             var currentNode = graph.layers[graph.layers.length -1].nodeList[i];
             for (var j=0; j<currentNode.nestedLayer.nodeList.length; j++) {
                 var currentNestedNode = currentNode.nestedLayer.nodeList[j];
-                currentNestedNode.addNextNeighbour(new NeighbourNode.NeighbourNode(graph.nestedLast, 0));
+                if(currentNestedNode.havePrev())
+                    currentNestedNode.addNextNeighbour(new NeighbourNode.NeighbourNode(graph.nestedLast, 0));
             }
         }
 

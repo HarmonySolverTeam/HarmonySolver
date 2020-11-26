@@ -8,7 +8,7 @@ function Dikstra(graph){
 
     this.init = function() {
         var allNodes = this.graph.getNodes();
-        for(var i=allNodes.length; i--;){
+        for(var i=0; i<allNodes.length; i++){
             allNodes[i].distanceFromBegining = "infinity";
             allNodes[i].prevsInShortestPath = undefined;
             this.queue.insert(allNodes[i]);
