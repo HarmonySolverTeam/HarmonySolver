@@ -9,7 +9,7 @@
 .import "../commons/ExerciseSolution.js" as ExerciseSolution
 .import "../commons/Errors.js" as Errors
 
-LOG_SOLUTION_INFO = false
+LOG_SOLUTION_INFO = true
 
 function SopranoSolver(exercise, punishmentRatios){
 
@@ -23,21 +23,16 @@ function SopranoSolver(exercise, punishmentRatios){
         var measures = []
         var current_measure = []
         var counter = 0
-        var tmp = "";
         for(var i=0; i<this.exercise.notes.length; i++){
             var note = this.exercise.notes[i];
             counter += note.duration[0] / note.duration[1]
             current_measure.push(harmonicFunctions[i])
-            tmp += harmonicFunctions[i].getSimpleChordName() + " "
             if( counter === this.exercise.meter[0]/this.exercise.meter[1]){
-                tmp += "| "
                 measures.push(current_measure)
                 current_measure = []
                 counter = 0
             }
         }
-        tmp += "\n"
-        // console.log(tmp)
         return new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, measures);
     }
 

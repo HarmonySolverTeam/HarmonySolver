@@ -113,6 +113,18 @@ function SopranoGraphBuilder() {
         }
     }
 
+    var propagateEdgeWeightIntoNestedLayer = function (currentNode, w, hf_right){
+        for(var l=0; l<currentNode.nestedLayer.nodeList.length; l++){
+            var nested_node = currentNode.nestedLayer.nodeList[l];
+            for(var m=0; m<nested_node.nextNeighbours.length; m++){
+                var nested_neighbour = nested_node.nextNeighbours[m];
+                if(nested_neighbour.node.content.harmonicFunction === hf_right){
+                    nested_neighbour.setWeight(w);
+                }
+            }
+        }
+    }
+
     var setEdgeWeightsAndPropagate = function(graph, evaluator){
         for(var i=0; i<graph.layers.length - 1; i++){
             for(var j=0; j<graph.layers[i].nodeList.length; j++){
@@ -125,19 +137,7 @@ function SopranoGraphBuilder() {
                     var w = evaluator.evaluateSoftRules(connection);
                     neighbour.setWeight(w);
 
-                    //propagate
-                    var hf_left = currentNode.content.harmonicFunction;
-                    var hf_right = neighbour.node.content.harmonicFunction;
-
-                    for(var l=0; l<currentNode.nestedLayer.nodeList.length; l++){
-                        var nested_node = currentNode.nestedLayer.nodeList[l];
-                        for(var m=0; m<nested_node.nextNeighbours.length; m++){
-                            var nested_neighbour = nested_node.nextNeighbours[m];
-                            if(nested_neighbour.node.content.harmonicFunction === hf_right){
-                                nested_neighbour.setWeight(w);
-                            }
-                        }
-                    }
+                    propagateEdgeWeightIntoNestedLayer(currentNode, w, neighbour.node.content.harmonicFunction)
                 }
             }
         }

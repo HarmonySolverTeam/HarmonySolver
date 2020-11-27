@@ -13,37 +13,14 @@
 .import "../algorithms/Graph.js" as Graph
 .import "../algorithms/GraphBuilder.js" as GraphBuilder
 
-var LOG_SOLUTION_INFO = false;
+var LOG_SOLUTION_INFO = true;
 
 function SopranoSolver(exercise, punishmentRatios){
 
     this.exercise = exercise;
     this.harmonicFunctionGenerator = new HarmonicFunctionGenerator.HarmonicFunctionGenerator(this.exercise.possibleFunctionsList, this.exercise.key, this.exercise.mode);
-    this.numberOfRetry = 10;
     this.punishmentRatios = punishmentRatios;
     this.sopranoRulesChecker = new SopranoRulesChecker.SopranoRulesChecker(this.exercise.key, this.exercise.mode, this.punishmentRatios);
-
-    this.mapToHarmonisationExercise = function(harmonicFunctions){
-        var measures = []
-        var current_measure = []
-        var counter = 0
-        var tmp = "";
-        for(var i=0; i<this.exercise.notes.length; i++){
-            var note = this.exercise.notes[i];
-            counter += note.duration[0] / note.duration[1]
-            current_measure.push(harmonicFunctions[i])
-            tmp += harmonicFunctions[i].getSimpleChordName() + " "
-            if( counter === this.exercise.meter[0]/this.exercise.meter[1]){
-                tmp += "| "
-                measures.push(current_measure)
-                current_measure = []
-                counter = 0
-            }
-        }
-        tmp += "\n"
-        // console.log(tmp)
-        return new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, measures);
-    }
 
     this.prepareSopranoGeneratorInputs = function(sopranoExercise){
         var inputs = [];
@@ -86,7 +63,7 @@ function SopranoSolver(exercise, punishmentRatios){
         var sol_nodes = dikstra2.getShortestPathToLastNode();
 
         if(sol_nodes.length !== innerGraph.layers.length) {
-            throw new Errors.SolverError("Error that should not occur");
+            throw new Errors.UnexpectedInternalError("Shortest path to last node does not exist");
         }
 
         var sol_chords = []
