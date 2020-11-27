@@ -76,15 +76,15 @@ You can also append accidentals. Examples:
 * *2 / 2*
 
 **Each next line** is treated as next measure.
-Each measure contains harmonic functions separated by semicolon.
-Harmonic function must satisfy scheme: <br/>**X{ extra arguments }**, where 
+Each measure contains harmonic functions separated by a semicolon.
+Harmonic function must satisfy the scheme: <br/>**X{ extra arguments }**, where 
 X is one of **T** (major tonic), **S** (major subdominant) or **D** (major dominant).
 <br/>You can also use minor harmonic functions: **To** (minor tonic), **So** (minor subdominant),
 **Do** (minor dominant).
 
 You can provide also extra arguments for harmonic function. Every argument
 should be inside curly parentheses and be separated from next by slash.
-What is more every extra argument should satisfy schema: **key : value**. <br/>
+What is more every extra argument should satisfy the schema: **key : value**. <br/>
 List of extra arguments:
 * **position** - determines which chord component should soprano note be.
 <br/>Example usage: "*position: 3>*" means that soprano should be minor third of given harmonic function.
@@ -96,7 +96,7 @@ If not specified in bass will be prime of chord.
 * **degree** - determines degree of harmonic function. Using this argument you can 
 satisfy for example T<sub>III</sub> or D<sub>VII</sub>.
 <br/>Example usage: "*degree: 3*" or "*degree: 6*".
-* **extra** - determines extra chord components to use. For example you can
+* **extra** - determines extra chord components to use. For example, you can
 satisfy subdominant with extra sixth or dominant with extra seven.
 <br/>Example usage: "*extra: 6*" means extra sixth for harmonic function, 
 "*extra: 7, 9>*" means extra seventh and minor ninth fo harmonic function.
@@ -150,8 +150,44 @@ To solve this type of exercises open a tab called "Bass".
 There is only one button *Solve* for solving exercise.
 Before you will click *Solve*, you should open score containing 
 bass voice with figured bass symbols. If you want to bind note with
-specific symbol - choose note from score and use shortcut *ctrl+G*.
-Remember not to use rests, plugin does not support them.
+a specific symbol - choose note from score and use shortcut *ctrl+G*.
+Remember not to use rests, ties and more than single delays, plugin does not support them.
+
+All alteration in bass symbols should be after the number and should be represented as *b*, *#* and *h*, not "<" or ">".
+
+You can delay up to two numbers, for example "6-4, 5-3". You cannot have delay like "6-".
+
+All alteration symbols without number will be applied to 3.
+
+Here is a table with all supported number bass symbols with their translations:
+
+| Input symbols | How they will be treated |
+|:-------------:|:-------------:|
+| (nothing)        | 5 <br> 3        |
+| 5                | 5 <br> 3        |
+| 3                | 5 <br> 3        |
+| 5 <br> 3         | 5 <br> 3        |
+| 6                | 6 <br> 3        |
+| 6 <br> 3         | 6 <br> 3        |
+| 7                | 7 <br> 5 <br> 3        |
+| 7 <br> 5         | 7 <br> 5 <br> 3        |
+| 7 <br> 3         | 7 <br> 5 <br> 3        |
+| 7 <br> 5 <br> 3  | 7 <br> 5 <br> 3        |
+| 2                | 6 <br> 4 <br> 2        |
+| 4<br>2           | 6 <br> 4 <br> 2        |
+| 6 <br> 4 <br> 2  | 6 <br> 4 <br> 2        |
+| 4<br>3           | 6 <br> 4 <br> 3        |
+| 6 <br> 4 <br> 3  | 6 <br> 4 <br> 3        |
+| 6 <br> 4         | 6 <br> 4        |
+| 6 <br> 5         | 6 <br> 5 <br> 3        |
+| 6 <br> 5 <br> 3  | 6 <br> 5 <br> 3        |
+| 10 <br> 2        | 10 <br> 4 <br> 2       |
+| 10 <br> 4 <br> 2 | 10 <br> 4 <br> 2         |
+| 9 <br> 7         | 9 <br> 7 <br> 5 <br> 3        |
+| 9 <br> 7 <br> 3  | 9 <br> 7 <br> 5 <br> 3        |
+| 9<br>7<br>5<br>3 | 9 <br> 7 <br> 5 <br> 3        |
+| 7 <br> 5 <br> 6  | 7 <br> 5 <br> 6        |
+
 
 There are also some example scores in folder /examples/bass.
 
