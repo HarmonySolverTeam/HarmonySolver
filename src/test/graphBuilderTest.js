@@ -1,4 +1,4 @@
-var Graph = require("./objects/algorithms/Graph")
+var GraphBuilder = require("./objects/algorithms/GraphBuilder")
 var TestUtils = require("./TestUtils")
 var Utils = require("./objects/utils/Utils")
 var Parser = require("./objects/harmonic/Parser");
@@ -53,7 +53,7 @@ var test = () => {
     var input = TestUtils.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + "sikorski_zzip_ex1.txt");
     var ex = Parser.parse(input);
 
-    var graphBuilder = new Graph.GraphBuilder();
+    var graphBuilder = new GraphBuilder.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
     graphBuilder.withEvaluator(new Checker.ChordRulesChecker());
     var harmonicFunctions = getFunctionsWithDelay(ex.getHarmonicFunctionList());
@@ -97,7 +97,7 @@ var allHaveExactlyOneUniquePrevContent = () => {
     var input = TestUtils.get_ex_from_file("\\examples\\1_HarmonicFuntions\\major\\" + "sikorski_zzip_ex65.txt");
     var ex = Parser.parse(input);
 
-    var graphBuilder = new Graph.GraphBuilder();
+    var graphBuilder = new GraphBuilder.GraphBuilder();
     graphBuilder.withGenerator(new Generator.ChordGenerator(ex.key, ex.mode));
     graphBuilder.withEvaluator(new Checker.ChordRulesChecker());
     var harmonicFunctions = getFunctionsWithDelay(ex.getHarmonicFunctionList());

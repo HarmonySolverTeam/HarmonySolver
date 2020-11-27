@@ -13,7 +13,7 @@ import "./objects/commons/Consts.js" as Consts
 import "./objects/bass/BassTranslator.js" as Translator
 import "./objects/soprano/SopranoExercise.js" as SopranoExercise
 import "./objects/model/HarmonicFunction.js" as HarmonicFunction
-import "./objects/soprano/SopranoSolver.js" as Soprano
+import "./objects/soprano/SopranoSolver2.js" as Soprano
 import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
 import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
 import "./objects/commons/Errors.js" as Errors

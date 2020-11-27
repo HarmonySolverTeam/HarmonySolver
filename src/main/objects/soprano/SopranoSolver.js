@@ -1,6 +1,6 @@
 .import "../soprano/HarmonicFunctionGenerator.js" as HarmonicFunctionGenerator
 .import "../soprano/SopranoRulesChecker.js" as SopranoRulesChecker
-.import "../algorithms/Graph.js" as Graph
+.import "../algorithms/GraphBuilder.js" as GraphBuilder
 .import "../harmonic/Exercise.js" as HarmonicFunctionsExercise
 .import "../utils/Utils.js" as Utils
 .import "../algorithms/Dikstra.js" as Dikstra
@@ -8,6 +8,8 @@
 .import "../harmonic/Solver2.js" as HarmonisationSolver
 .import "../commons/ExerciseSolution.js" as ExerciseSolution
 .import "../commons/Errors.js" as Errors
+
+LOG_SOLUTION_INFO = true
 
 function SopranoSolver(exercise, punishmentRatios){
 
@@ -21,21 +23,16 @@ function SopranoSolver(exercise, punishmentRatios){
         var measures = []
         var current_measure = []
         var counter = 0
-        var tmp = "";
         for(var i=0; i<this.exercise.notes.length; i++){
             var note = this.exercise.notes[i];
             counter += note.duration[0] / note.duration[1]
             current_measure.push(harmonicFunctions[i])
-            tmp += harmonicFunctions[i].getSimpleChordName() + " "
             if( counter === this.exercise.meter[0]/this.exercise.meter[1]){
-                tmp += "| "
                 measures.push(current_measure)
                 current_measure = []
                 counter = 0
             }
         }
-        tmp += "\n"
-        // console.log(tmp)
         return new Exercise.Exercise(this.exercise.key, this.exercise.meter, this.exercise.mode, measures);
     }
 
@@ -53,7 +50,7 @@ function SopranoSolver(exercise, punishmentRatios){
     }
 
     this.solve = function (){
-        var graphBuilder = new Graph.GraphBuilder();
+        var graphBuilder = new GraphBuilder.GraphBuilder();
         graphBuilder.withGenerator(this.harmonicFunctionGenerator);
         graphBuilder.withEvaluator(this.sopranoRulesChecker);
         graphBuilder.withInput(this.prepareSopranoGeneratorInputs(this.exercise));
@@ -66,6 +63,7 @@ function SopranoSolver(exercise, punishmentRatios){
         while(tryNumber < this.numberOfRetry && !solutionCandidate.success) {
             var dikstra = new Dikstra.Dikstra(graph);
             var sol_nodes = dikstra.getShortestPathToLastNode();
+            if(LOG_SOLUTION_INFO) console.log("HARMONIC FUNCTION SEQUENCE COST = " + graph.getLast().distanceFromBegining)
 
             if(sol_nodes.length !== this.exercise.notes.length) throw new Errors.SolverError("Cannot find any harmonic function sequence satisfying given notes");
 
@@ -93,6 +91,7 @@ function SopranoSolver(exercise, punishmentRatios){
                 tryNumber++;
             }
         }
+        if(LOG_SOLUTION_INFO) console.log("CHORD HARMONIZATION COST = " + solutionCandidate.rating)
 
         if(!solutionCandidate.success) throw new Errors.SolverError("Cannot find any solution for each of " + this.numberOfRetry + " harmonic functions sequences");
 

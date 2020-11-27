@@ -12,9 +12,9 @@ function Connection(current, prev, prevPrev){
     this.prevPrev = Utils.contains(undefinedNodeContents, prevPrev) ? undefined : prevPrev;
 
     this.equals = function(other){
-        return (!this.current && !other.current || this.current.equals(other.current)) &&
-            (!this.prev && !other.prev || this.prev.equals(other.prev))  &&
-            (!this.prevPrev && !other.prevPrev || this.prevPrev.equals(other.prevPrev))
+        return (!this.current && !other.current || (this.current ? this.current.equals(other.current) : false)) &&
+            (!this.prev && !other.prev || (this.prev ? this.prev.equals(other.prev) : false))  &&
+            (!this.prevPrev && !other.prevPrev || (this.prevPrev ? this.prevPrev.equals(other.prevPrev) : false))
     }
 }
 
