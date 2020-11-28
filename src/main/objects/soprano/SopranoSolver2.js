@@ -46,7 +46,11 @@ function SopranoSolver(exercise, punishmentRatios){
             new RulesChecker.ChordRulesChecker(false, true);
         graphBuilder.withInnerEvaluator(innerEvaluator);
 
-        var sopranoGraph = graphBuilder.build();
+        try {
+            var sopranoGraph = graphBuilder.build();
+        } catch(error) {
+            throw new Errors.SolverError(error.message);
+        }
 
         var dikstra = new Dikstra.Dikstra(sopranoGraph);
         dikstra.findShortestPaths();
