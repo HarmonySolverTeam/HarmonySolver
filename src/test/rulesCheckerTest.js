@@ -437,4 +437,21 @@ const checkConnectionDT64Test = () => {
 
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDT64Test, "D->T6-4 connection test"));
 
+const closestMoveInBassTest = () => {
+    var d3 = new HarmonicFunction.HarmonicFunction("D",undefined, undefined, "3");
+    var d = new HarmonicFunction.HarmonicFunction("D");
+    var t = new HarmonicFunction.HarmonicFunction("T");
+
+    var chd3 = new Chord.Chord(new Note.Note(74, 1,"5"), new Note.Note(67,4,"1"), new Note.Note(62, 1,"5"), new Note.Note(59,6,"3"), d3);
+    var chd = new Chord.Chord(new Note.Note(74, 1,"5"), new Note.Note(67,4,"1"), new Note.Note(62, 1,"5"), new Note.Note(55,4,"1"), d);
+    var cht = new Chord.Chord(new Note.Note(72, 0,"1"), new Note.Note(67,4,"5"), new Note.Note(64, 2,"3"), new Note.Note(60,0,"1"), t);
+
+    var rule = new RulesChecker.ClosestMoveInBassRule(true);
+    return UnitTest.assertTrue(rule.isNotBroken(new Connection(cht,chd3))) &&
+        UnitTest.assertTrue(rule.isBroken(new Connection(cht,chd)));
+};
+
+rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(closestMoveInBassTest, "Closest move in bass test"));
+
+
 rulesCheckerTestSuite.run();
