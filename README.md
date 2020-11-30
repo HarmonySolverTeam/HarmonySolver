@@ -17,7 +17,7 @@ Rule-based system for solving functional harmony exercises
 
 #### Prerequisites
 
-* Musescore version at least 3.4 (plugin cannot work with version 3.3.4)
+* Musescore version at least 3.4 (plugin may not work with version 3.3.4 and lower)
 * Windows (this plugin should also work with Linux systems, but it was not fully tested on Linux distributions)
 
 #### Installation step by step
