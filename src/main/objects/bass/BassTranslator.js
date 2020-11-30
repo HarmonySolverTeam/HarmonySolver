@@ -551,7 +551,11 @@ function BassTranslator() {
 
             var position = posAndRev[0]
             var revolution = posAndRev[1].toString()
-            var omit = chordElement.omit
+            var omit1 = []
+            for (var z = 0; z < chordElement.omit.length; z++){
+                omit1.push(chordElement.omit[z])
+            }
+            var omit = omit1
             var down = false
             var system = undefined
             var extra = []
