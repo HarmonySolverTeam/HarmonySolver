@@ -5,7 +5,9 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4
 
 //import "./qml_components"
+//todo usunąć ten import
 import "./objects/harmonic/Solver2.js" as Solver
+import "./Solver2Worker.js" as SolverWorker
 import "./objects/harmonic/Parser.js" as Parser
 import "./objects/bass/FiguredBass.js" as FiguredBass
 import "./objects/model/Note.js" as Note
@@ -18,6 +20,9 @@ import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
 import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
 import "./objects/commons/Errors.js" as Errors
 import "./objects/utils/Utils.js" as Utils
+import "./objects/dto/SolverRequestDto.js" as SolverRequestDto
+import "./objects/dto/SopranoSolverRequestDto.js" as SopranoSolverRequestDto
+import "./objects/commons/ExerciseSolution.js" as ExerciseSolution
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -827,6 +832,26 @@ MuseScore {
                 Rectangle {
                     id: tabRectangle1
 
+                    WorkerScript {
+                        id: braveWorker
+                        source: "Solver2Worker.js"
+
+                        onMessage:  {
+                            if(messageObject.type === "progress_notification"){
+                //                console.log(messageObject.progress)
+                                harmonicFunctionsProgressBar.value = messageObject.progress;
+                            }
+                            else if(messageObject.type === "solution"){
+                                console.log("Exercise succesfully solved in WorkerScript!!!")
+                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
+                                var solution_date = get_solution_date()
+                                prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
+                                fill_score_with_solution(solution)
+                                writeScore(curScore, filePath + "/solutions/harmonic functions exercise/solution" + solution_date, "mscz")
+                            }
+                        }
+                      }
+
                     function setText(text) {
                         abcText.text = text
                     }
@@ -863,7 +888,7 @@ MuseScore {
                         anchors.top: textLabel.bottom
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
-                        anchors.bottom: buttonOpenFile.top
+//                        anchors.bottom: harmonicFunctionsProgressBar.top
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 10
@@ -872,6 +897,21 @@ MuseScore {
                         height: 400
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
+                    }
+
+                    ProgressBar {
+                        id: harmonicFunctionsProgressBar
+                        value: 0
+                        anchors.left: tabRectangle1.left
+                        anchors.right: tabRectangle1.right
+                        anchors.top: abcText.bottom
+                        anchors.bottom: buttonOpenFile.top
+                        anchors.topMargin: 15
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 20
+                        anchors.rightMargin: 20
+                        height: 1
+                        width: parent.width - 40
                     }
 
                     Button {
@@ -981,6 +1021,20 @@ MuseScore {
                             helpBassDialog.open()
                         }
                         tooltip: "Help"
+                    }
+
+                    ProgressBar {
+                        id: figuredBassProgressBar
+                        value: 0
+                        anchors.left: tabRectangle2.left
+                        anchors.right: tabRectangle2.right
+                        anchors.top: buttonBassHelp.bottom
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 20
+                        anchors.rightMargin: 20
+                        height: 20
+                        width: parent.width - 40
                     }
 
                     Button {
@@ -1368,6 +1422,20 @@ MuseScore {
 
                         return punishmentRatios
                     }     
+
+                    ProgressBar {
+                        id: sopranoProgressBar
+                        value: 0
+                        anchors.left: tabRectangle3.left
+                        anchors.right: tabRectangle3.right
+                        anchors.bottom: buttorSoprano.top
+                        anchors.topMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.leftMargin: 20
+                        anchors.rightMargin: 20
+                        height: 20
+                        width: parent.width - 40
+                    }
 
                     Button {
 
