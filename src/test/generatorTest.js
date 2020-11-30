@@ -132,7 +132,7 @@ var generatorTest = (generator, harmonicFunction, assertion, arg) => {
 
 
 //neapolitan chord tests
-var neapolitan = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
+var neapolitan = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -186,7 +186,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 ));
 
 // extra tests
-var D7 = new HarmonicFunction.HarmonicFunction("D", 5, undefined, undefined, undefined, ["7"], [], false, undefined, undefined);
+var D7 = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, undefined, undefined, ["7"], [], false, undefined, undefined);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -239,7 +239,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 
 
 // omit tests
-var Tom1 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], ["1"], false, undefined, undefined);
+var Tom1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, undefined, undefined, [], ["1"], false, undefined, undefined);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -255,7 +255,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T omit 1 doesn't contain any of chordComponents like \'1\'"
 ));
 
-var Tom5 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], ["5"], false, undefined, undefined);
+var Tom5 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, undefined, undefined, [], ["5"], false, undefined, undefined);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -271,7 +271,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T omit 5 doesn't contain any of chordComponents like \'5\'"
 ));
 
-var SIIom5 = new HarmonicFunction.HarmonicFunction("S", 2, undefined, undefined, undefined, [], ["5"], false, undefined, undefined);
+var SIIom5 = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 2, undefined, undefined, undefined, [], ["5"], false, undefined, undefined);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -287,7 +287,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "S II omit 5 doesn't contain any of chordComponents like \'5\'"
 ));
 
-var SIIom5moll = new HarmonicFunction.HarmonicFunction("S", 2, undefined, undefined, undefined, [], ["5>"], false, undefined, Consts.MODE.MINOR);
+var SIIom5moll = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 2, undefined, undefined, undefined, [], ["5>"], false, undefined, Consts.MODE.MINOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -303,7 +303,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "S II omit 5 in mode minor doesn't contain any of chordComponents like \'5>\'"
 ));
 
-var SIIom5molldown = new HarmonicFunction.HarmonicFunction("S", 2, undefined, undefined, undefined, [], ["5>"], true, undefined, Consts.MODE.MINOR);
+var SIIom5molldown = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 2, undefined, undefined, undefined, [], ["5>"], true, undefined, Consts.MODE.MINOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -319,7 +319,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "S II down omit 5 in mode minor doesn't contain any of chordComponents like \'5>\'"
 ));
 
-var DVII = new HarmonicFunction.HarmonicFunction("D", 7, undefined, undefined, undefined, [], [], false, undefined, undefined);
+var DVII = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 7, undefined, undefined, undefined, [], [], false, undefined, undefined);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         'major',
@@ -330,7 +330,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "D VII contains chordComponents \'5>\'"
 ));
 
-var DVIIom5 = new HarmonicFunction.HarmonicFunction("D", 7, undefined, undefined, undefined, [], ["5>"], false, undefined, undefined);
+var DVIIom5 = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 7, undefined, undefined, undefined, [], ["5>"], false, undefined, undefined);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         'major',
@@ -347,7 +347,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 ));
 
 // position tests
-var Tpos1 = new HarmonicFunction.HarmonicFunction("T", 1, "1");
+var Tpos1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, "1");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         'major',
@@ -358,7 +358,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T with position 1 contains 1 in soprano in all generated chords"
 ));
 
-var Tpos3 = new HarmonicFunction.HarmonicFunction("T", 1, "3");
+var Tpos3 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, "3");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         'major',
@@ -369,7 +369,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T with position 3 contains 3 in soprano in all generated chords"
 ));
 
-var Tpos7 = new HarmonicFunction.HarmonicFunction("T", 1, "7");
+var Tpos7 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, "7");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         'major',
@@ -381,7 +381,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 ));
 
 // revolution tests
-var Trev1 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1");
+var Trev1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "1");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -392,7 +392,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T with revolution 1 contains 1 in bass in all generated chords"
 ));
 
-var Trev3 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "3");
+var Trev3 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "3");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -403,7 +403,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T with revolution 3 contains 3 in bass in all generated chords"
 ));
 
-var Trev5 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "5");
+var Trev5 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "5");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -414,7 +414,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T with revolution 5 contains 5 in bass in all generated chords"
 ));
 
-var Tmollrev1 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "1", undefined, [], [], false, undefined, Consts.MODE.MINOR);
+var Tmollrev1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "1", undefined, [], [], false, undefined, Consts.MODE.MINOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -425,7 +425,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T moll with revolution 1 contains 1 in bass in all generated chords"
 ));
 
-var Tmollrev3 = new HarmonicFunction.HarmonicFunction("T", 1, undefined, "3>", undefined, [], [], false, undefined, Consts.MODE.MINOR);
+var Tmollrev3 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "3>", undefined, [], [], false, undefined, Consts.MODE.MINOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         undefined,
@@ -446,7 +446,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 //todo: combo testy - infastruktura i parę przykładzików
 
 //testy generowania D{"position":"3", "extra":["9>"], "omit":["5"]}
-var Dspec = new HarmonicFunction.HarmonicFunction("D", 5, "3", undefined, undefined, ["9>"], ["5"], false, undefined, Consts.MODE.MAJOR);
+var Dspec = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, "3", undefined, undefined, ["9>"], ["5"], false, undefined, Consts.MODE.MAJOR);
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
         'minor',
@@ -501,7 +501,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
 var neapolitanTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 2, undefined, "3", undefined, [], [], true, undefined, Consts.MODE.MINOR);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
     // res.forEach((x) => {console.log(x.toString())})
 
@@ -513,7 +513,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(neapolitanTest, "Neapolitan ch
 
 var positionAndRevolution1 = () => {
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("S", 4, "1", "1", undefined, [], [], false, undefined, undefined);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 4, "1", "1", undefined, [], [], false, undefined, undefined);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var testResult = true;
@@ -536,7 +536,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(positionAndRevolution1, "Posit
 var doubleOnly135 = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7"], ["5"], false, undefined, undefined);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, "1", undefined, ["7"], ["5"], false, undefined, undefined);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
     // res.forEach((x) => {console.log(x.toString())})
 
@@ -559,7 +559,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(doubleOnly135, "Double only 1,
 
 var majorChordInMinorKeyTest = () => {
     var gen = new Generator.ChordGenerator("e");
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, undefined, undefined, [], [], false, undefined, "major");
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, undefined, undefined, [], [], false, undefined, "major");
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     return TestUtils.assertNotEqualsPrimitives(0, res.length);
@@ -571,8 +571,8 @@ var chordInKeyGivenByHarmonicFunctionInMajor = () => {
     var gen_in_C = new Generator.ChordGenerator("C");
     var gen_in_D = new Generator.ChordGenerator("D");
 
-    var hf_without_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major");
-    var hf_with_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major", "C");
+    var hf_without_key = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major");
+    var hf_with_key = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, undefined, undefined, [], [], false, undefined, "major", "C");
 
     var res1 = gen_in_C.generate(new Generator.ChordGeneratorInput(hf_without_key));
     var res2 = gen_in_D.generate(new Generator.ChordGeneratorInput(hf_with_key));
@@ -593,8 +593,8 @@ var chordInKeyGivenByHarmonicFunctionInMinor = () => {
     var gen_in_f = new Generator.ChordGenerator("f");
     var gen_in_B = new Generator.ChordGenerator("B");
 
-    var hf_without_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor");
-    var hf_with_key = new HarmonicFunction.HarmonicFunction("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor", "f");
+    var hf_without_key = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor");
+    var hf_with_key = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, undefined, undefined, [], [], false, undefined, "minor", "f");
 
     var res1 = gen_in_f.generate(new Generator.ChordGeneratorInput(hf_without_key));
     var res2 = gen_in_B.generate(new Generator.ChordGeneratorInput(hf_with_key));
@@ -615,7 +615,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(chordInKeyGivenByHarmonicFunct
 var extra7Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7"], []);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, "1", undefined, ["7"], []);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
@@ -640,7 +640,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(extra7Test, "Generating extra 
 var extra7doTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["7>"], []);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, "1", undefined, ["7>"], []);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
@@ -665,7 +665,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(extra7doTest, "Generating extr
 var extra7upTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "1", undefined, ["<7"], []);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, "1", undefined, ["<7"], []);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
@@ -690,7 +690,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(extra7upTest, "Generating extr
 var extra7pos7Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, "7", "1", undefined, ["7"], []);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, "7", "1", undefined, ["7"], []);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
@@ -716,7 +716,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(extra7pos7Test, "Generating ex
 var extra7rev7Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("D", 5, undefined, "7", undefined, ["7"], []);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("D", 5, undefined, "7", undefined, ["7"], []);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     var scale = new Scale.MajorScale("C");
@@ -741,7 +741,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(extra7rev7Test, "Generating ex
 var TVIMinorDownTest = () => {
 
     var gen = new Generator.ChordGenerator("C", 'major');
-    var hf = new HarmonicFunction.HarmonicFunction("T", 6, undefined, undefined, undefined, [], [],true,undefined,Consts.MODE.MINOR);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 6, undefined, undefined, undefined, [], [],true,undefined,Consts.MODE.MINOR);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
 
     return TestUtils.assertDefined(res) &&
@@ -755,7 +755,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(TVIMinorDownTest, "Generating 
 var T64Test = () => {
 
     var gen = new Generator.ChordGenerator("C", 'minor');
-    var hf = new HarmonicFunction.HarmonicFunction("T", undefined, undefined, undefined, [["6","5"],["4","3"]],["6","4"], ["5","3"], undefined, undefined, Consts.MODE.MINOR);
+    var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", undefined, undefined, undefined, [["6","5"],["4","3"]],["6","4"], ["5","3"], undefined, undefined, Consts.MODE.MINOR);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
     var ch = new Chord.Chord(new Note.Note(77, 6,"4"), new Note.Note(72,0,"1"), new Note.Note(69, 6,"6"), new Note.Note(60,0,"1"), hf);
 

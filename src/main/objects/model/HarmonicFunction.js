@@ -7,7 +7,7 @@
 
 var DEBUG = false;
 
-function HarmonicFunction2(params){
+function HarmonicFunction2(params, notValidate){
     // Properties:
     // functionName          "T", "S", "D"
     // degree               int
@@ -273,7 +273,7 @@ function HarmonicFunction2(params){
 
     this.copy = function copy(){
         var args = this.getArgsMap();
-        return new HarmonicFunction2(args);
+        return new HarmonicFunction2(args, true);
     }
 
     this.equals = function (other) {
@@ -432,7 +432,7 @@ function HarmonicFunction2(params){
     }
 // *****CONSTUCTOR PART 2 END*****
 
-    if(DEBUG) {
+    if(!Utils.isDefined(notValidate)) {
         var validator = new HarmonicFunctionValidator.HarmonicFunctionValidator();
         validator.validate(this);
     }
@@ -455,6 +455,24 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
         "isRelatedBackwards" : isRelatedBackwards
     };
     HarmonicFunction2.call(this, args);
+}
+
+function HarmonicFunctionWithoutValidation(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key, isRelatedBackwards){
+    var args = {
+        "functionName" : functionName,
+        "degree" : degree,
+        "position" : position,
+        "revolution" : revolution,
+        "delay" : delay,
+        "extra" : extra,
+        "omit" : omit,
+        "down" : down,
+        "system" : system,
+        "mode" : mode,
+        "key" : key,
+        "isRelatedBackwards" : isRelatedBackwards
+    };
+    HarmonicFunction2.call(this, args, true);
 }
 
 function harmonicFunctionReconstruct(hf){

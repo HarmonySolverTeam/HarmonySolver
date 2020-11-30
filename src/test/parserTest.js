@@ -173,8 +173,8 @@ const newNotationTest = () => {
     var lines = input.split("\n")
     var translated = Parser.translateToOldNotation(lines.splice(2,2));
     return TestUtils.assertEqualsObjects([
-            '(D{"position":"5"});(S{"system":"open","degree":2,"omit":["5","7"],"delay":[["2","3"],["4","5"]]}',
-            'Do{"position":"1","revolution":"3","isRelatedBackwards":true,"down":true});T{"extra":["6","7"]}'
+            '(D{"position":"5"});(S{"system":"open","degree":2,"omit":["5","1"],"delay":[["2","3"],["4","5"]]}',
+            'Do{"position":"1","revolution":"3","isRelatedBackwards":true,"down":true});T{"extra":["6","7"],"omit":["5"]}'
         ], translated) &&
         TestUtils.assertDefined(Parser.parse(input))
 }

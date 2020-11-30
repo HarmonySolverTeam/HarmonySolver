@@ -86,7 +86,7 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(oneDirectionTest, "One direc
 const forbiddenJumpTest = () => {
     //Incorrect chord definitions only for this test case - only pitch and baseNote is important of soprano
     var hf2 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
-    var hf1 = new HarmonicFunction.HarmonicFunction("cokolwiek innego",1,undefined,"1",[],[],[],false,undefined,undefined);
+    var hf1 = new HarmonicFunction.HarmonicFunction("S",1,undefined,"1",[],[],[],false,undefined,undefined);
     var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
     var ch2 = new Chord.Chord(new Note.Note(85,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     //altered up
@@ -127,7 +127,7 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenJumpTest, "Forbidde
 
 const forbiddenSumJumpTest = () => {
     var hf2 = new HarmonicFunction.HarmonicFunction("T",1,-1,"1",[],[],[],false,undefined,undefined);
-    var hf1 = new HarmonicFunction.HarmonicFunction("cokolwiek innego",1,-1,"1",[],[],[],false,undefined,undefined);
+    var hf1 = new HarmonicFunction.HarmonicFunction("S",1,-1,"1",[],[],[],false,undefined,undefined);
     var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
     var ch2up = new Chord.Chord(new Note.Note(75,2,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
@@ -224,7 +224,7 @@ const checkConnectionDTVIDownTest = () => {
 rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkConnectionDTVIDownTest, "D->TVI(down) connection test"));
 
 const checkDelayCorrectnessTest = () => {
-    var hf1 = new HarmonicFunction.HarmonicFunction("D",5,undefined,"1",[["6","5"],["4","3"]],["6","4"],["4","3"],false,undefined,undefined);
+    var hf1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("D",5,undefined,"1",[["6","5"],["4","3"]],["6","4"],["4","3"],false,undefined,undefined);
     var hf2 = new HarmonicFunction.HarmonicFunction("D",5,undefined,"1",[],[],[],false,undefined,undefined);
     var ch1 = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(64,2,"6"), new Note.Note(60, 0,"4"), new Note.Note(55,4,"1"), hf1);
     var ch2 = new Chord.Chord(new Note.Note(67, 4,"1"), new Note.Note(62,1,"5"), new Note.Note(59, 6,"3"), new Note.Note(43,4,"1"), hf2);

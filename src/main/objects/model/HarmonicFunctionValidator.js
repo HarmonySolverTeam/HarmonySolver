@@ -89,7 +89,7 @@ function HarmonicFunctionValidator(){
             //too large difference in delay
             var chordComponentManager = new ChordComponentManager.ChordComponentManager();
 
-            if(Utils.abs(parseInt(first.baseComponent) - parseInt(second.baseComponent)) !== 1 ) handleValidationFailure(_this, "To large difference in delay");
+            if(Utils.abs(parseInt(first.baseComponent) - parseInt(second.baseComponent)) > 1 )  handleValidationFailure(_this, "To large difference in delay");
             // todo to many chord components!
             //todo cannot omit component used in delay, position, resolution, extra
 
@@ -118,7 +118,9 @@ function HarmonicFunctionValidator(){
 
         for(var i=0; i<omit.length; i++){
             if(!isValidChordComponent(omit[i])) handleValidationFailure(_this, "Invalid chordComponentString of omit [" + i + "]");
-            if(!Utils.contains(_this.harmonicFunction.getBasicChordComponents(), omit[i])) handleValidationFailure(_this, "Omit contains not basic chord component which is not allowed here");
+            if(!Utils.contains(_this.harmonicFunction.getBasicChordComponents(), omit[i]) && omit[i].chordComponentString !== "8") {
+                handleValidationFailure(_this, "Omit contains not basic chord component which is not allowed here");
+            }
 
             if(omit.length === 2 && omit[0] === omit[1]) handleValidationFailure(_this, "Omit contains duplicates");
         }

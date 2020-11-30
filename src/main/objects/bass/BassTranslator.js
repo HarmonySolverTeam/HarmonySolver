@@ -625,7 +625,7 @@ function BassTranslator() {
                 Utils.log("mode", JSON.stringify(mode1))
             }
 
-            var toAdd = new HarmonicFunction.HarmonicFunction(functionName, degree, position, revolution, delays1,
+            var toAdd = new HarmonicFunction.HarmonicFunctionWithoutValidation(functionName, degree, position, revolution, delays1,
                 extra, omit, down, system, mode1)
 
             if (DEBUG) Utils.log("toAdd", JSON.stringify(toAdd))
@@ -953,7 +953,7 @@ function BassTranslator() {
 
                 this.handleDownChord(argsMap)
 
-                harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap, true)
                 if (DEBUG) Utils.log("harm function after copy", JSON.stringify(harmonicFunctions[0][i]))
 
             }
@@ -970,7 +970,7 @@ function BassTranslator() {
                         var argsMap = harmonicFunctions[0][i].getArgsMapWithDelays()
                         argsMap.mode = Consts.MODE.MAJOR
                         this.changeDelaysDuringModeChange(argsMap.delay, true)
-                        harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                        harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap, true)
                     }
                     toExtra.splice(toExtra.indexOf("3<"), 1)
                     toOmit.splice(toOmit.indexOf(3), 1)
@@ -981,7 +981,7 @@ function BassTranslator() {
                         var argsMap = harmonicFunctions[0][i].getArgsMapWithDelays()
                         argsMap.mode = Consts.MODE.MINOR
                         this.changeDelaysDuringModeChange(argsMap.delay, false)
-                        harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                        harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap, true)
                     }
                     toExtra.splice(toExtra.indexOf("3>"), 1)
                     toOmit.splice(toOmit.indexOf(3), 1)
@@ -1066,7 +1066,7 @@ function BassTranslator() {
                 this.handleDownChord(argsMap)
                 this.fixExtraAfterModeChange(argsMap)
                 this.addOmit3ForS2IfNecessary(argsMap)
-                harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap)
+                harmonicFunctions[0][i] = new HarmonicFunction.HarmonicFunction2(argsMap, true)
                 if (DEBUG) Utils.log("harm function after copy adding toExtra and toOmit",
                     JSON.stringify(harmonicFunctions[0][i]))
             }
@@ -1096,8 +1096,8 @@ function BassTranslator() {
                             argsMap2.delay.splice(a, 1)
                             argsMap1.mode = Consts.MODE.MAJOR
                             argsMap1.revolution = argsMap1.revolution === "3>" ? "3" : argsMap1.revolution
-                            var newHarmFunc1 = new HarmonicFunction.HarmonicFunction2(argsMap1)
-                            var newHarmFunc2 = new HarmonicFunction.HarmonicFunction2(argsMap2)
+                            var newHarmFunc1 = new HarmonicFunction.HarmonicFunction2(argsMap1, true)
+                            var newHarmFunc2 = new HarmonicFunction.HarmonicFunction2(argsMap2, true)
                             newFunctions.push(newHarmFunc1)
                             newFunctions.push(newHarmFunc2)
                             newBassLine.push(bassLine[i])
@@ -1111,8 +1111,8 @@ function BassTranslator() {
                             argsMap2.delay.splice(a, 1)
                             argsMap1.mode = Consts.MODE.MINOR
                             argsMap1.revolution = argsMap1.revolution === "3" ? "3>" : argsMap1.revolution
-                            var newHarmFunc1 = new HarmonicFunction.HarmonicFunction2(argsMap1)
-                            var newHarmFunc2 = new HarmonicFunction.HarmonicFunction2(argsMap2)
+                            var newHarmFunc1 = new HarmonicFunction.HarmonicFunction2(argsMap1, true)
+                            var newHarmFunc2 = new HarmonicFunction.HarmonicFunction2(argsMap2, true)
                             newFunctions.push(newHarmFunc1)
                             newFunctions.push(newHarmFunc2)
                             newBassLine.push(bassLine[i])
@@ -1230,7 +1230,7 @@ function BassTranslator() {
                     argsMap.omit.splice(argsMap.omit.indexOf("5>"), 1)
                 }
 
-                var newHF = new HarmonicFunction.HarmonicFunction2(argsMap)
+                var newHF = new HarmonicFunction.HarmonicFunction2(argsMap, true)
 
                 newFunctions.push(newHF)
 
