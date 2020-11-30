@@ -809,20 +809,20 @@ MuseScore {
 
                     WorkerScript {
                         id: braveWorker
-                        source: "Solver2Worker.js"
+                        source: "SolverWorker.js"
 
                         onMessage:  {
                             if(messageObject.type === "progress_notification"){
                                 harmonicFunctionsProgressBar.value = messageObject.progress;
                             }
                             else if(messageObject.type === "solution"){
-                                console.log("Exercise succesfully solved in WorkerScript!!!")
                                 var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
                                 var solution_date = get_solution_date()
                                 prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
                                 fill_score_with_solution(solution)
                                 writeScore(curScore, filePath + "/solutions/harmonic functions exercise/solution" + solution_date, "mscz")
                                 buttonRun.enabled = true
+                                harmonicFunctionsProgressBar.value = 0
                             }
                         }
                       }
@@ -980,7 +980,7 @@ MuseScore {
 
                     WorkerScript {
                         id: busyWorker
-                        source: "Solver2Worker.js"
+                        source: "SolverWorker.js"
 
                         onMessage:  {
                             if(messageObject.type === "progress_notification"){
@@ -996,6 +996,7 @@ MuseScore {
                                            filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                                            "mscz")
                                 buttonRunFiguredBass.enabled = true
+                                figuredBassProgressBar.value = 0
                             }
                         }
                      }
@@ -1447,10 +1448,8 @@ MuseScore {
                                                filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                                                "mscz")
                                 }
-                                else{
-                                    console.log("cannot find solution");
-                                }
                                 buttorSoprano.enabled = true
+                                sopranoProgressBar.value = 0
                             }
                         }
                     }
