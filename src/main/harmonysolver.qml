@@ -822,6 +822,7 @@ MuseScore {
                                 prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
                                 fill_score_with_solution(solution)
                                 writeScore(curScore, filePath + "/solutions/harmonic functions exercise/solution" + solution_date, "mscz")
+                                buttonRun.enabled = true
                             }
                         }
                       }
@@ -937,7 +938,7 @@ MuseScore {
                         anchors.rightMargin: 10
                         anchors.leftMargin: 10
                         onClicked: {
-                                //parsing
+                            //parsing
                             exerciseLoaded = false
                             var input_text = abcText.text
                             if (input_text === undefined || input_text === "") {
@@ -966,6 +967,7 @@ MuseScore {
                                     showError(error)
                                 }
                             }
+                            buttonRun.enabled = false;
                         }
                     }
                 }
@@ -993,6 +995,7 @@ MuseScore {
                                 writeScore(curScore,
                                            filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                                            "mscz")
+                                buttonRunFiguredBass.enabled = true
                             }
                         }
                      }
@@ -1050,8 +1053,7 @@ MuseScore {
                                     !configuration.enableCorrector,
                                     !configuration.enablePrechecker
                                 ))
-
-
+                                buttonRunFiguredBass.enabled = false
                             } catch (error) {
                                 showError(error)
                             }
@@ -1448,6 +1450,7 @@ MuseScore {
                                 else{
                                     console.log("cannot find solution");
                                 }
+                                buttorSoprano.enabled = true
                             }
                         }
                     }
@@ -1487,6 +1490,8 @@ MuseScore {
                                         punishments
                                     )
                                 )
+                                buttorSoprano.enabled = false
+
 
                             } catch (error) {
                                 showError(error)
