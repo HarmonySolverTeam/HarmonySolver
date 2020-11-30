@@ -5,9 +5,6 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4
 
 //import "./qml_components"
-//todo usunąć ten import
-import "./objects/harmonic/Solver2.js" as Solver
-import "./Solver2Worker.js" as SolverWorker
 import "./objects/harmonic/Parser.js" as Parser
 import "./objects/bass/FiguredBass.js" as FiguredBass
 import "./objects/model/Note.js" as Note
@@ -15,7 +12,6 @@ import "./objects/commons/Consts.js" as Consts
 import "./objects/bass/BassTranslator.js" as Translator
 import "./objects/soprano/SopranoExercise.js" as SopranoExercise
 import "./objects/model/HarmonicFunction.js" as HarmonicFunction
-import "./objects/soprano/SopranoSolver2.js" as Soprano
 import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
 import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
 import "./objects/commons/Errors.js" as Errors
@@ -384,7 +380,7 @@ MuseScore {
         }
     }
 
-    function sopranoHarmonization(functionsList, punishmentRatios) {
+    function prepareSopranoHarmonizationExercise(functionsList, punishmentRatios) {
 
         var mode = tab3.item.getSelectedMode()
         //should be read from input
@@ -425,28 +421,7 @@ MuseScore {
                                                                   durations, measures,
                                                                   functionsList)
 
-        var solver = new Soprano.SopranoSolver(sopranoExercise, punishmentRatios)
-        //todo make solution aggregate SopranoHarmonizationExercise maybe - to fill score using measures
-        var solution = solver.solve()
-//        console.log("SOLUTION:")
-//        console.log(solution.chords);
-
-        if(solution.success) {
-            var solution_date = get_solution_date()
-
-            prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
-
-            fill_score_with_solution(solution, sopranoExercise.durations)
-
-            writeScore(curScore,
-                       filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
-                       "mscz")
-
-            //Utils.log("sopranoExercise:",sopranoExercise)
-        }
-        else{
-            console.log("cannot find solution");
-        }
+        return sopranoExercise;
 
     }
 
@@ -838,7 +813,6 @@ MuseScore {
 
                         onMessage:  {
                             if(messageObject.type === "progress_notification"){
-                //                console.log(messageObject.progress)
                                 harmonicFunctionsProgressBar.value = messageObject.progress;
                             }
                             else if(messageObject.type === "solution"){
@@ -981,19 +955,13 @@ MuseScore {
                             if (exerciseLoaded) {
                                 try {
                                     exercise = Parser.parse(input_text)
-                                    var solver = new Solver.Solver(exercise,undefined,undefined,
-                                        !configuration.enableCorrector,!configuration.enablePrechecker)
-                                    var solution = solver.solve()
-                                    var solution_date = get_solution_date()
-
-                                    prepare_score_for_solution(filePath, solution,
-                                                               solution_date, true, "_hfunc")
-
-                                    fill_score_with_solution(solution)
-
-                                    writeScore(curScore,
-                                               filePath + "/solutions/harmonic functions exercise/solution"
-                                               + solution_date, "mscz")
+                                    braveWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
+                                        exercise,
+                                        undefined,
+                                        undefined,
+                                        !configuration.enableCorrector,
+                                        !configuration.enablePrechecker
+                                    ))
                                 } catch (error) {
                                     showError(error)
                                 }
@@ -1007,6 +975,27 @@ MuseScore {
 
                 Rectangle {
                     id: tabRectangle2
+
+                    WorkerScript {
+                        id: busyWorker
+                        source: "Solver2Worker.js"
+
+                        onMessage:  {
+                            if(messageObject.type === "progress_notification"){
+                                figuredBassProgressBar.value = messageObject.progress;
+                            }
+                            else if(messageObject.type === "solution"){
+                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
+                                var solution_date = get_solution_date()
+                                Utils.log("Solution:", JSON.stringify(solution))
+                                prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
+                                fill_score_with_solution(solution, ex.durations)
+                                writeScore(curScore,
+                                           filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                                           "mscz")
+                            }
+                        }
+                     }
 
                     Button {
                         id: buttonBassHelp
@@ -1047,7 +1036,22 @@ MuseScore {
                         onClicked: {
                             try {
                                 isFiguredBassScore()
-                                figuredBassSolve()
+                                var ex = read_figured_bass()
+                                var translator = new Translator.BassTranslator()
+                                Utils.log("ex",JSON.stringify(ex))
+
+                                var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
+                                Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
+
+                                busyWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
+                                    exerciseAndBassline[0],
+                                    exerciseAndBassline[1],
+                                    undefined,
+                                    !configuration.enableCorrector,
+                                    !configuration.enablePrechecker
+                                ))
+
+
                             } catch (error) {
                                 showError(error)
                             }
@@ -1421,7 +1425,32 @@ MuseScore {
                         punishmentRatios[Consts.CHORD_RULES.IllegalDoubledThird] = getRatioFromSlider(illegalDoubledThirdSlider)
 
                         return punishmentRatios
-                    }     
+                    }
+
+                    WorkerScript {
+                        id: amazingWorker
+                        source: "SopranoSolverWorker.js"
+
+                        onMessage:  {
+                            if(messageObject.type === "progress_notification"){
+                                sopranoProgressBar.value = messageObject.progress;
+                            }
+                            else if(messageObject.type === "solution"){
+                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
+                                if(solution.success) {
+                                    var solution_date = get_solution_date()
+                                    prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
+                                    fill_score_with_solution(solution, messageObject.durations)
+                                    writeScore(curScore,
+                                               filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
+                                               "mscz")
+                                }
+                                else{
+                                    console.log("cannot find solution");
+                                }
+                            }
+                        }
+                    }
 
                     ProgressBar {
                         id: sopranoProgressBar
@@ -1451,7 +1480,14 @@ MuseScore {
                                 isSopranoScore()
                                 var func_list = getPossibleChordsList()
                                 var punishments = getPunishmentRatios()
-                                sopranoHarmonization(func_list, punishments)
+                                var exercise = prepareSopranoHarmonizationExercise(func_list);
+                                amazingWorker.sendMessage(
+                                    new SopranoSolverRequestDto.SopranoSolverRequestDto(
+                                        exercise,
+                                        punishments
+                                    )
+                                )
+
                             } catch (error) {
                                 showError(error)
                            }
