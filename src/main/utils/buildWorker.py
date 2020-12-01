@@ -70,20 +70,26 @@ def handle_file(filename):
 
 
 if __name__ == "__main__":
-    result = ""
+    result = []
     header = ""
     root_file = sys.argv[1]
     counter_occurrences_count = 0
 
-    prototype = "../../" + root_file[root_file.rindex("/"):-3] + "WorkerPrototype.js"
+    prototype = "../../" + root_file[root_file.rindex("/"):-4] + "WorkerPrototype.js"
     res, import_declarations, _ = handle_file(prototype)
     all_import_declarations = import_declarations[:]
     header += res + "\n"
     handled_files = [prototype]
 
+    res, import_declarations, counter_occurrences = handle_file("../utils/Utils.js")
+    all_import_declarations += import_declarations[:]
+    result += [res + "\n"]
+    counter_occurrences_count += counter_occurrences
+    handled_files += [root_file]
+
     res, import_declarations, counter_occurrences = handle_file(root_file)
     all_import_declarations += import_declarations[:]
-    result += res + "\n"
+    result += [res + "\n"]
     counter_occurrences_count += counter_occurrences
     handled_files += [root_file]
 
@@ -95,11 +101,16 @@ if __name__ == "__main__":
                 file_to_handle_probably_exists = True
                 res, import_declarations, counter_occurrences = handle_file(i_d.relative_path)
                 all_import_declarations += import_declarations
-                result += res + "\n"
+                result += [res + "\n"]
                 counter_occurrences_count += counter_occurrences
                 handled_files += [i_d.relative_path]
 
-    worker_name = root_file[root_file.rindex("/"):-3] + "Worker.js"
+    # result.reverse()
+    result_string = ""
+    for r in result:
+        result_string += r
+
+    worker_name = root_file[root_file.rindex("/"):-4] + "Worker.js"
     out_file = open("../../" + worker_name ,"w+")
-    out_file.write(header.replace("${counter}", str(counter_occurrences_count)) + result)
+    out_file.write(header.replace("${counter}", str(counter_occurrences_count)) + result_string)
 
