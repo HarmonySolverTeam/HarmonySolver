@@ -824,6 +824,11 @@ MuseScore {
                                 buttonRun.enabled = true
                                 harmonicFunctionsProgressBar.value = 0
                             }
+                            else if(messageObject.type === "error"){
+                                buttonRun.enabled = true
+                                harmonicFunctionsProgressBar.value = 0
+                                showError(messageObject.error)
+                            }
                         }
                       }
 
@@ -963,11 +968,13 @@ MuseScore {
                                         !configuration.enableCorrector,
                                         !configuration.enablePrechecker
                                     ))
+                                    buttonRun.enabled = false;
                                 } catch (error) {
+                                    buttonRun.enabled = true
+                                    harmonicFunctionsProgressBar.value = 0
                                     showError(error)
                                 }
                             }
-                            buttonRun.enabled = false;
                         }
                     }
                 }
@@ -997,6 +1004,11 @@ MuseScore {
                                            "mscz")
                                 buttonRunFiguredBass.enabled = true
                                 figuredBassProgressBar.value = 0
+                            }
+                            else if(messageObject.type === "error"){
+                                buttonRunFiguredBass.enabled = true
+                                figuredBassProgressBar.value = 0
+                                showError(messageObject.error)
                             }
                         }
                      }
@@ -1056,6 +1068,8 @@ MuseScore {
                                 ))
                                 buttonRunFiguredBass.enabled = false
                             } catch (error) {
+                                buttonRunFiguredBass.enabled = true
+                                figuredBassProgressBar.value = 0
                                 showError(error)
                             }
                         }
@@ -1451,6 +1465,11 @@ MuseScore {
                                 buttorSoprano.enabled = true
                                 sopranoProgressBar.value = 0
                             }
+                            else if(messageObject.type === "error"){
+                                buttorSoprano.enabled = true
+                                sopranoProgressBar.value = 0
+                                showError(messageObject.error)
+                            }
                         }
                     }
 
@@ -1490,9 +1509,9 @@ MuseScore {
                                     )
                                 )
                                 buttorSoprano.enabled = false
-
-
                             } catch (error) {
+                                buttorSoprano.enabled = true
+                                sopranoProgressBar.value = 0
                                 showError(error)
                            }
                         }

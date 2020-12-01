@@ -5,13 +5,15 @@ var d = 0
 var D = ${counter} - 4
 
 WorkerScript.onMessage = function(sopranoSolverRequestDto) {
-
-    var dto = Dto.sopranoSolverRequestReconstruct(sopranoSolverRequestDto)
-    var solver = new SopranoSolver(dto.sopranoExercise, dto.punishmentRatios)
-    var solution = solver.solve()
-    sleep(100)
-    WorkerScript.sendMessage({ 'type' : "solution", 'solution': solution, 'durations': dto.sopranoExercise.durations})
-
+    try {
+        var dto = Dto.sopranoSolverRequestReconstruct(sopranoSolverRequestDto)
+        var solver = new SopranoSolver(dto.sopranoExercise, dto.punishmentRatios)
+        var solution = solver.solve()
+        sleep(100)
+        WorkerScript.sendMessage({ 'type' : "solution", 'solution': solution, 'durations': dto.sopranoExercise.durations})
+    } catch (e) {
+        WorkerScript.sendMessage({ 'type' : "error", 'error': e})
+    }
 }
 
 function sleep(millis){
