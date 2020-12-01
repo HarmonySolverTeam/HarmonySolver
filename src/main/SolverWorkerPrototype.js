@@ -10,7 +10,7 @@ WorkerScript.onMessage = function(solverRequestDto) {
         var solver = new Solver(dto.exercise, dto.bassLine, dto.sopranoLine, dto.enableCorrector,dto.enablePrechecker)
         var solution = solver.solve()
         sleep(100)
-        WorkerScript.sendMessage({ 'type' : "solution", 'solution': solution})
+        WorkerScript.sendMessage({ 'type' : "solution", 'solution': solution, 'durations': dto.durations})
     } catch (e) {
         WorkerScript.sendMessage({ 'type' : "error", 'error': e})
     }

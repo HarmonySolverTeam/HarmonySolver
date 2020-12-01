@@ -720,7 +720,7 @@ MuseScore {
     }
 
 
-    MessageDialog {
+/*    MessageDialog {
         id: helpBassDialog
         width: 800
         height: 600
@@ -732,7 +732,7 @@ MuseScore {
         icon: StandardIcon.Information
         standardButtons: StandardButton.Ok
     }
-
+*/
 
     MessageDialog {
         id: helpSopranoDialog
@@ -744,7 +744,9 @@ MuseScore {
         "You can choose which chords are being used for harmonization, possible revolutions and scale.\n" +
         "With sliders you can choose tolerance of different harmonic rules.\n" +
         "The more percent value, the less rule is taken into account.\n" +
-        "0% means that specific rule can not be broken.\n" +
+        "0% means that specific rule can not be broken.\n\n" +
+        "Important notice:\n" +
+        "The more options you choose, the more time it will take to solve an exercise.\n\n" +
         "For more information, please refer to the manual."
         icon: StandardIcon.Information
         standardButtons: StandardButton.Ok
@@ -864,7 +866,7 @@ MuseScore {
 
                     TextArea {
                         id: abcText
-                        font.pointSize: 10
+                        font.pointSize: 9
                         anchors.top: textLabel.bottom
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
@@ -874,7 +876,7 @@ MuseScore {
                         anchors.leftMargin: 10
                         anchors.rightMargin: 10
                         width: parent.width
-                        height: 400
+                        height: 390
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
                     }
@@ -884,13 +886,11 @@ MuseScore {
                         value: 0
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
-                        anchors.top: abcText.bottom
                         anchors.bottom: buttonOpenFile.top
-                        anchors.topMargin: 15
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 20
                         anchors.rightMargin: 20
-                        height: 1
+                        height: 15
                         width: parent.width - 40
                     }
 
@@ -966,7 +966,8 @@ MuseScore {
                                         undefined,
                                         undefined,
                                         !configuration.enableCorrector,
-                                        !configuration.enablePrechecker
+                                        !configuration.enablePrechecker,
+                                        undefined
                                     ))
                                     buttonRun.enabled = false;
                                 } catch (error) {
@@ -998,7 +999,7 @@ MuseScore {
                                 var solution_date = get_solution_date()
                                 Utils.log("Solution:", JSON.stringify(solution))
                                 prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
-                                fill_score_with_solution(solution, ex.durations)
+                                fill_score_with_solution(solution, messageObject.durations)
                                 writeScore(curScore,
                                            filePath + "/solutions/harmonic functions exercise/solution" + solution_date,
                                            "mscz")
@@ -1012,7 +1013,7 @@ MuseScore {
                             }
                         }
                      }
-
+/*
                     Button {
                         id: buttonBassHelp
                         text: qsTr("?")
@@ -1027,18 +1028,31 @@ MuseScore {
                         }
                         tooltip: "Help"
                     }
+*/
+                    Label {
+                        id: bassInfoLabel
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Here you can solve figured bass exercises.\n" +
+                                           "At first, open a score with only bass voice and\nfigured bass symbols.\n" +
+                                           "Remember to use '#' and 'b' instead of '<' and '>'\nin symbols and delays.\n" +
+                                           "For more information like supported symbols,\nplease refer to the manual.")
+                        font.pointSize: 12
+                        anchors.left: tabRectangle2.left
+                        anchors.top: tabRectangle2.top
+                        anchors.leftMargin: 10
+                        anchors.topMargin: 10
+                    }
 
                     ProgressBar {
                         id: figuredBassProgressBar
                         value: 0
                         anchors.left: tabRectangle2.left
                         anchors.right: tabRectangle2.right
-                        anchors.top: buttonBassHelp.bottom
-                        anchors.topMargin: 10
+                        anchors.bottom: buttonRunFiguredBass.top
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 20
                         anchors.rightMargin: 20
-                        height: 20
+                        height: 15
                         width: parent.width - 40
                     }
 
@@ -1064,7 +1078,8 @@ MuseScore {
                                     exerciseAndBassline[1],
                                     undefined,
                                     !configuration.enableCorrector,
-                                    !configuration.enablePrechecker
+                                    !configuration.enablePrechecker,
+                                    ex.durations
                                 ))
                                 buttonRunFiguredBass.enabled = false
                             } catch (error) {
@@ -1284,12 +1299,12 @@ MuseScore {
                         anchors.left: tabRectangle3.left
                         anchors.leftMargin: 10
                         anchors.top: harmonicFunctionRow.bottom
-                        anchors.topMargin: 30
+                        anchors.topMargin: 5
                         anchors.right: tabRectangle3.right
                         spacing: 30
                         
                         Column {
-                              spacing: 10
+                              spacing: 0
                               Column {
 
                                     Text {
@@ -1364,7 +1379,7 @@ MuseScore {
                               }      
                         }
                         Column {
-                              spacing: 10
+                              spacing: 20.6
                               Column {
                                     Text {
                                           text: qsTr("Hidden Octaves")
@@ -1483,7 +1498,7 @@ MuseScore {
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 20
                         anchors.rightMargin: 20
-                        height: 20
+                        height: 15
                         width: parent.width - 40
                     }
 
