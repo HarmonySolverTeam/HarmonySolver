@@ -6,6 +6,8 @@ git pull
 cd ../HarmonySolver
 )
 
+./buildWorkers.bat
+
 (for %%a in (%paths%) do (
     xcopy /s /q /y .\src\main\%%a ..\HarmonySolverPlugin\main\%%a /EXCLUDE:exclude.txt
 ))
@@ -14,8 +16,6 @@ cd ../HarmonySolver
 xcopy /y /q .\README.md ..\HarmonySolverPlugin\README.md
 
 xcopy /y /q /s .\photos ..\HarmonySolverPlugin\photos
-
-./buildWorkers.bat
 
 @IF %1 == -push (
 cd ../HarmonySolverPlugin
