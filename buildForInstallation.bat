@@ -1,5 +1,11 @@
 set paths=objects resources utils\myStyle.xml harmonySolver.qml SopranoSolverWorker.js SolverWorker.js
 
+@IF %1 == -push (
+cd ../HarmonySolverPlugin
+git pull
+cd ../HarmonySolver
+)
+
 (for %%a in (%paths%) do (
     xcopy /s /q /y .\src\main\%%a ..\HarmonySolverPlugin\main\%%a /EXCLUDE:exclude.txt
 ))
