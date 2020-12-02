@@ -15,6 +15,8 @@ xcopy /y /q .\README.md ..\HarmonySolverPlugin\README.md
 
 xcopy /y /q /s .\photos ..\HarmonySolverPlugin\photos
 
+./buildWorkers.bat
+
 @IF %1 == -push (
 cd ../HarmonySolverPlugin
 git add -u
