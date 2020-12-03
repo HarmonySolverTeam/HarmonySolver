@@ -38,9 +38,23 @@ var exactDivideForHFs3 = () => {
     var solution = solver.solve();
     solution.setDurations();
     var durations = solution.chords.map((x) => {return x.duration});
-    return TestUtils.assertEqualsObjects( [[1,4],[1,8],[1,8],[1,8],[1,8],[1,16],[1,32],[1,32],[1,8]], durations);
+    return TestUtils.assertEqualsObjects([[1,4],[1,8],[1,8],[1,8],[1,8],[1,16],[1,32],[1,32],[1,8]], durations);
 };
 
 testSuite.addTest(new TestUtils.UnitTest(exactDivideForHFs3, "Exact divide for hfs 3"));
+
+var exactDivideForHFs4 = () => {
+    var input = "C\n" +
+        "4/4\n" +
+        "(D{});D{};T{};S{}";
+    var ex = Parser.parse(input);
+    var solver = new Solver.Solver(ex);
+    var solution = solver.solve();
+    solution.setDurations();
+    var durations = solution.chords.map((x) => {return x.duration});
+    return TestUtils.assertEqualsObjects( [[1,4],[1,4],[1,4],[1,4]], durations);
+};
+
+testSuite.addTest(new TestUtils.UnitTest(exactDivideForHFs4, "Exact divide for hfs 4"));
 
 testSuite.run();

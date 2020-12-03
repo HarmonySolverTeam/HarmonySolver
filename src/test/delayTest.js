@@ -53,9 +53,9 @@ delayTestSuite.addTest(new UnitTest.UnitTest(chordWithDelayConvertWithFixedRevol
 
 const chordWithDelayConvertMoreMeasuresTest = () => {
     var exercise = new Exercise.Exercise("C", [3,4],"major",[[new HarmonicFunction.HarmonicFunction("T",1,undefined,'3',[["4","3"]],[],[],false,undefined,undefined),
-        new HarmonicFunction.HarmonicFunction("T",1,-1,'3',[["4","3"]],[],[],false,undefined,undefined)],
-        [new HarmonicFunction.HarmonicFunction("T",1,-1,'3',[["4","3"]],[],[],false,undefined,undefined),
-            new HarmonicFunction.HarmonicFunction("T",1,-1,'3',[],[],[],false,undefined,undefined)]]);
+        new HarmonicFunction.HarmonicFunction("T",1,undefined,'3',[["4","3"]],[],[],false,undefined,undefined)],
+        [new HarmonicFunction.HarmonicFunction("T",1,undefined,'3',[["4","3"]],[],[],false,undefined,undefined),
+            new HarmonicFunction.HarmonicFunction("T",1,undefined,'3',[],[],[],false,undefined,undefined)]]);
     var solver = new Solver.Solver(exercise, undefined, undefined);
     var hf = solver.harmonicFunctions;
     return UnitTest.assertEqualsPrimitives(7, hf.length)
