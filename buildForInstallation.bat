@@ -6,7 +6,11 @@ git pull
 cd ../HarmonySolver
 )
 
-./buildWorkers.bat
+cd ./src/main/objects/soprano
+python ../../utils/buildWorker.py ../soprano/SopranoSolver2.js
+cd ../harmonic
+python ../../utils/buildWorker.py ../harmonic/Solver2.js
+cd ../../../..
 
 (for %%a in (%paths%) do (
     xcopy /s /q /y .\src\main\%%a ..\HarmonySolverPlugin\main\%%a /EXCLUDE:exclude.txt
