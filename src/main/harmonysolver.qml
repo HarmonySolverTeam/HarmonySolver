@@ -471,6 +471,7 @@ MuseScore {
 
         var cursor = curScore.newCursor()
         cursor.rewind(0)
+        var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
         var vb = new Consts.VoicesBoundary()
         var elementCounter = 0
         var tracks = [1,4,5]
@@ -483,6 +484,7 @@ MuseScore {
             }
         }
         cursor.track = 0
+        
         do{
             elementCounter++
             if(!Utils.isDefined(cursor.element.noteType)){
@@ -508,6 +510,19 @@ MuseScore {
                 if (!Parser.check_figured_bass_symbols(readSymbols))
                     throw new Errors.FiguredBassInputError("Wrong symbols "+readSymbols,"At "+elementCounter+" position from beginning") 
             }
+            var currentMetre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+            if(currentMetre[0] !== metre[0] || currentMetre[1] !== metre[1]){
+                  throw new Errors.FiguredBassInputError(
+                        "Metre changes are not supported",
+                        "Forbidden metre change for "+currentMetre[0]+"/"+currentMetre[1]+" at "+elementCounter+" position from beginning"
+                        )
+            }
+            if(cursor.element.notes[0].tieForward !== null){
+                  throw new Errors.FiguredBassInputError(
+                        "Ties are not supported",
+                        "Not supported tie at "+elementCounter+" position from beginnig"
+                        )
+            }
         } while(cursor.next())
     }
 
@@ -520,6 +535,7 @@ MuseScore {
 
                 var cursor = curScore.newCursor()
                 cursor.rewind(0)
+                var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
                 var vb = new Consts.VoicesBoundary()
                 var elementCounter = 0
                 var tracks = [1,4,5]
@@ -550,6 +566,19 @@ MuseScore {
                     if(currentPitch > vb.sopranoMax || currentPitch < vb.sopranoMin){
                           throw new Errors.SopranoInputError(
                                 "Soprano note not in voice scale at "+elementCounter+" position from beginning"
+                                )
+                    }
+                    var currentMetre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+                    if(currentMetre[0] !== metre[0] || currentMetre[1] !== metre[1]){
+                          throw new Errors.SopranoInputError(
+                                "Metre changes are not supported",
+                                "Forbidden metre change for "+currentMetre[0]+"/"+currentMetre[1]+" at "+elementCounter+" position from beginning"
+                                )
+                    }
+                    if(cursor.element.notes[0].tieForward !== null){
+                          throw new Errors.SopranoInputError(
+                                "Ties are not supported",
+                                "Not supported tie at "+elementCounter+" position from beginnig"
                                 )
                     }
                 } while(cursor.next())
