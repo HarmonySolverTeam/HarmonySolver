@@ -9,11 +9,12 @@ WorkerScript.onMessage = function(sopranoSolverRequestDto) {
         var dto = Dto.sopranoSolverRequestReconstruct(sopranoSolverRequestDto)
         var solver = new SopranoSolver(dto.sopranoExercise, dto.punishmentRatios)
         var solution = solver.solve()
-        sleep(100)
+        // sleep(100)
         WorkerScript.sendMessage({ 'type' : "solution", 'solution': solution, 'durations': dto.sopranoExercise.durations})
     } catch (e) {
         WorkerScript.sendMessage({ 'type' : "error", 'error': e})
     }
+    d=0;
 }
 
 function sleep(millis){
