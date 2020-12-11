@@ -474,6 +474,7 @@ MuseScore {
                   )
         }
         bassScoreWarnings = ""
+        var tiesMeasures = []
 
         var cursor = curScore.newCursor()
         cursor.rewind(0)
@@ -529,9 +530,21 @@ MuseScore {
                         )
             }
             if(cursor.element.notes[0].tieForward !== null){
-                  bassScoreWarnings += "Score contains ties which are not supported and will be ignored.\n"
+                  tiesMeasures.push(measureCounter)
             }
         } while(cursor.next())
+
+        if (tiesMeasures.length !== 0) {
+            bassScoreWarnings += "Score contains ties (measures ";
+            for (var i = 0; i < tiesMeasures.length; i++) {
+                if (i > 0) {
+                    bassScoreWarnings += ", "
+                }
+                bassScoreWarnings += tiesMeasures[i]
+            }
+            bassScoreWarnings += ") which are not supported and will be ignored.\n"
+        }
+
     }
 
     function isSopranoScore() {
@@ -541,6 +554,7 @@ MuseScore {
                           )
                 }
                 sopranoScoreWarnings = ""
+                var tiesMeasures = []
 
                 var cursor = curScore.newCursor()
                 cursor.rewind(0)
@@ -591,9 +605,21 @@ MuseScore {
                                 )
                     }
                     if(cursor.element.notes[0].tieForward !== null){
-                        sopranoScoreWarnings += "Score contains ties which are not supported and will be ignored.\n"
+                        tiesMeasures.push(measureCounter)
                     }
                 } while(cursor.next())
+
+            if (tiesMeasures.length !== 0) {
+                sopranoScoreWarnings += "Score contains ties (measures ";
+                for (var i = 0; i < tiesMeasures.length; i++) {
+                    if (i > 0) {
+                        sopranoScoreWarnings += ", "
+                    }
+                    sopranoScoreWarnings += tiesMeasures[i]
+                }
+                sopranoScoreWarnings += ") which are not supported and will be ignored.\n"
+            }
+
     }
 
     function getPossibleChordsList() {
