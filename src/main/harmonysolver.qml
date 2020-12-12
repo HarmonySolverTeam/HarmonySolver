@@ -915,7 +915,6 @@ MuseScore {
     }
 
 
-
     ScrollView {
     anchors.fill: parent
 
