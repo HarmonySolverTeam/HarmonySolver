@@ -37,13 +37,18 @@ MuseScore {
     property var isSopranoSolving: false
     property var bassScoreWarnings: ""
     property var sopranoScoreWarnings: ""
+    property var fourPartScoreWarnings: ""
 
     id: window
     width: 570
     height: 570
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
-      readSolvedExercise()
+      try {
+            readSolvedExercise()
+      } catch(error){
+            showError(error)
+      }
     }
 
     function savePluginConfiguration(){
@@ -448,6 +453,7 @@ MuseScore {
     }
 
     function readSolvedExercise() {
+        isFourPartScore()
         var cursor = curScore.newCursor()
         cursor.rewind(0)
         var currentNote
@@ -462,7 +468,9 @@ MuseScore {
         }
         var hfs = [new HF("A"), new HF("B")] //just to make connections have diffrent hfs
         var idx = 0;
+        var chords_counter = 0
         do {
+            chords_counter ++
             selectSoprano(cursor)
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
@@ -479,7 +487,12 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote)
-            chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, hfs[idx]))
+            try{
+                chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, hfs[idx]))
+            } catch(error){
+                error.details = "Found at " + chords_counter + " position"
+                throw error  
+            }
             idx = (idx + 1) % 2
         } while (cursor.next())
         var exercise = new Exercise.SolvedExercise(chords)
@@ -675,6 +688,114 @@ MuseScore {
             }
 
     }
+
+    function isFourPartScore() {
+        if (curScore === null) {
+            throw new Errors.FourPartSolutionInputError(
+                  "No score is opened!"
+                  )
+        }
+        fourPartScoreWarnings = ""
+        var tiesMeasures = []
+
+        var cursor = curScore.newCursor()
+        cursor.rewind(0)
+        var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+        var measureDurationTick = (division * (4 / metre[1])) * metre[0]
+        var vb = new Consts.VoicesBoundary()
+        var durations = []
+
+        function checkVoice(voice, min, max, cursor, forSoprano){
+            cursor.rewind(0)
+            var elementCounter = 0
+            var measureCounter = 0
+            var positionCounter = 0
+            do{
+                if(cursor.tick >= measureCounter*measureDurationTick){
+                    measureCounter++
+                    elementCounter = 0
+                }
+                elementCounter++
+                if(!Utils.isDefined(cursor.element.noteType)){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Forbidden element in "+measureCounter+" measure at "+elementCounter+" position from its beginning in " + voice,
+                            "Score should contain only notes (no rests etc.)"
+                            )
+                }
+                if(cursor.element.notes.length > 1){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Forbidden element in "+measureCounter+" measure at "+elementCounter+" position from its beginning in ",
+                            "Each voice should contain only one voice"
+                            )
+                }
+                var currentPitch = cursor.element.notes[0].pitch
+                if(currentPitch > max || currentPitch < min){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Note not in voice scale in "+measureCounter+" measure at "+elementCounter+" position from its beginning in " + voice
+                            )
+                }
+                var currentMetre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+                if(currentMetre[0] !== metre[0] || currentMetre[1] !== metre[1]){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Metre changes are not supported",
+                            "Forbidden metre change for "+currentMetre[0]+"/"+currentMetre[1]+" in "+measureCounter+" measure at "+elementCounter+" position from its beginning"
+                            )
+                }
+
+                if(forSoprano){
+                      durations.push([cursor.element.duration.numerator, cursor.element.duration.denominator])
+                } else {
+                      if(durations[positionCounter][0] !== cursor.element.duration.numerator ||
+                        durations[positionCounter][1] !== cursor.element.duration.denominator){
+                            throw new Errors.FourPartSolutionInputError(
+                            "Chord homofony is only supported",
+                            "Forbidden note in "+measureCounter+" measure at "+elementCounter+" position from its beginning in "+voice
+                            )
+                        }
+                }
+
+                positionCounter++
+
+                if(cursor.element.notes[0].tieForward !== null){
+                    tiesMeasures.push(measureCounter)
+                }
+            } while(cursor.next())
+        }
+
+
+        selectSoprano(cursor)
+        checkVoice("soprano", vb.sopranoMin, vb.sopranoMax, cursor, true)
+        selectAlto(cursor)
+        checkVoice("alto", vb.altoMin, vb.altoMax, cursor)
+        selectTenor(cursor)
+        checkVoice("tenor", vb.tenorMin, vb.tenorMax, cursor)
+        selectBass(cursor)
+        checkVoice("bass", vb.bassMin, vb.bassMax, cursor)
+
+        cursor.rewind(0)
+        var elementCounter = 0
+        var measureCounter = 0
+        do{
+            if(cursor.tick >= measureCounter*measureDurationTick){
+                measureCounter++
+                elementCounter = 0
+            }
+            elementCounter++
+
+        } while(cursor.next())
+
+        if (tiesMeasures.length !== 0) {
+            fourPartScoreWarnings += "Score contains ties (measures ";
+            for (var i = 0; i < tiesMeasures.length; i++) {
+                if (i > 0) {
+                    fourPartScoreWarnings += ", "
+                }
+                fourPartScoreWarnings += tiesMeasures[i]
+            }
+            fourPartScoreWarnings += ") which are not supported and will be ignored.\n"
+        }
+
+        }
 
     function getPossibleChordsList() {
         var mode = tab3.item.getSelectedMode()
