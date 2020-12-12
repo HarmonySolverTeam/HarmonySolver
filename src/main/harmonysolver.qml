@@ -43,7 +43,6 @@ MuseScore {
     height: 570
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
-      readSolvedExercise()
     }
 
     function savePluginConfiguration(){
@@ -883,6 +882,27 @@ MuseScore {
         icon: StandardIcon.Information
         standardButtons: StandardButton.Ok
     }
+
+    MessageDialog {
+        id: helpSolvedCheckerDialog
+        width: 800
+        height: 600
+        title: "Help - Solved Exercise Validator"
+        text: "In this tab you can check yours solved exercise for any existing harmonic errors.\n" +
+        "Only notes are taken into consideration.\n" +
+        "Harmonic rules, that are checked, are:\n" +
+        "Parallel octaves\n" +
+        "Parallel fifths\n" +
+        "Crossing voices\n" +
+        "One direction of voices\n" +
+        "Forbidden voice jump\n" +
+        "Hidden parallel octaves\n" +
+        "False relation\n" +
+        "For more details please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
 
 
     MessageDialog {
@@ -1737,6 +1757,59 @@ MuseScore {
                         }
                     }
                 }
+            }
+            Tab {
+              title: "Validator"
+              id: tab5
+
+              Rectangle {
+                id: tabRectangle5
+
+                Label {
+                    id: checkExerciseInfoLabel
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Here you can check and validate your solved exercise.\nOnly notes are taken into consideration,\nnot harmonic functions names.")
+                    font.pointSize: 12
+                    anchors.left: tabRectangle5.left
+                    anchors.top: tabRectangle5.top
+                    anchors.leftMargin: 10
+                    anchors.topMargin: 10
+                    color: "#000000"
+                }
+
+                Button {
+                    id: buttonSolvedExerciseCheckerHelp
+                    text: qsTr("?")
+                    anchors.top: tabRectangle5.top
+                    anchors.right: tabRectangle5.right
+                    anchors.topMargin: 10
+                    anchors.rightMargin: 10
+                    width: 18
+                    height: 20
+                    onClicked: {
+                        helpSolvedCheckerDialog.open()
+                    }
+                    tooltip: "Help"
+                }
+
+
+                 Button {
+                    id: buttonCheckSolvedExercise
+                    text: qsTr("Validate opened exercise")
+                    anchors.bottom: tabRectangle5.bottom
+                    anchors.right: tabRectangle5.right
+                    anchors.topMargin: 10
+                    anchors.bottomMargin: 10
+                    anchors.rightMargin: 10
+
+                    onClicked: {
+                        readSolvedExercise()
+                    }
+
+                 }
+
+              }
+
             }
             Tab {
 
