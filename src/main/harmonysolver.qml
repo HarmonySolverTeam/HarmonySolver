@@ -702,6 +702,11 @@ MuseScore {
 
         function checkVoice(voice, min, max, cursor, forSoprano){
             cursor.rewind(0)
+            if(cursor.element === null){
+                  throw new Errors.FourPartSolutionInputError(
+                        "There is no "+voice+" voice!"
+                  )
+            }
             var elementCounter = 0
             var measureCounter = 0
             var positionCounter = 0
