@@ -888,7 +888,7 @@ MuseScore {
         width: 800
         height: 600
         title: "Help - Solved Exercise Validator"
-        text: "In this tab you can check yours solved exercise for any existing harmonic errors.\n" +
+        text: "In this tab you can check solved exercise for any existing harmonic errors.\n" +
         "Only notes are taken into consideration.\n" +
         "Harmonic rules, that are checked, are:\n" +
         "Parallel octaves\n" +
