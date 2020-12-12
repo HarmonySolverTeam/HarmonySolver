@@ -19,6 +19,7 @@ import "./objects/utils/Utils.js" as Utils
 import "./objects/dto/SolverRequestDto.js" as SolverRequestDto
 import "./objects/dto/SopranoSolverRequestDto.js" as SopranoSolverRequestDto
 import "./objects/commons/ExerciseSolution.js" as ExerciseSolution
+import "./objects/harmonic/Exercise.js" as Exercise
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -42,6 +43,7 @@ MuseScore {
     height: 570
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
+      readSolvedExercise()
     }
 
     function savePluginConfiguration(){
@@ -435,6 +437,16 @@ MuseScore {
 
     }
 
+    MessageDialog {
+        id: correctnessInfoDialog
+        width: 300
+        height: 400
+        title: "Correctness info"
+        text: ""
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
     function readSolvedExercise() {
         var cursor = curScore.newCursor()
         cursor.rewind(0)
@@ -442,6 +454,14 @@ MuseScore {
         var lastBaseNote, lastPitch
         var sopranoNote, altoNote, tenorNote, bassNote
         var chords = []
+        var HF = function (value) {
+            this.value = value
+            this.equals = function(other){
+                  this.value === other.value
+            }
+        }
+        var hfs = [new HF("A"), new HF("B")] //just to make connections have diffrent hfs
+        var idx = 0;
         do {
             selectSoprano(cursor)
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
@@ -459,9 +479,12 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote)
-            chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote))
+            chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, hfs[idx]))
+            idx = (idx + 1) % 2
         } while (cursor.next())
-        //todo find broken rules
+        var exercise = new Exercise.SolvedExercise(chords)
+        correctnessInfoDialog.text = exercise.checkCorrectness()
+        correctnessInfoDialog.open()
     }
 
     function addComponentToScore(cursor, componentValue) {
