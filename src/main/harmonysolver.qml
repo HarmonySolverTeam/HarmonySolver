@@ -889,7 +889,7 @@ MuseScore {
         height: 600
         title: "Help - Solved Exercise Validator"
         text: "In this tab you can check solved exercise for any existing harmonic errors.\n" +
-        "Only notes are taken into consideration.\n" +
+        "Only notes are taken into consideration, not harmonic functions nor chord components.\n" +
         "Harmonic rules, that are checked, are:\n" +
         "Parallel octaves\n" +
         "Parallel fifths\n" +
@@ -1768,7 +1768,7 @@ MuseScore {
                 Label {
                     id: checkExerciseInfoLabel
                     wrapMode: Text.WordWrap
-                    text: qsTr("Here you can check and validate your solved exercise.\nOnly notes are taken into consideration,\nnot harmonic functions names.")
+                    text: qsTr("Here you can check and validate your solved exercise.\nOnly notes are taken into consideration.")
                     font.pointSize: 12
                     anchors.left: tabRectangle5.left
                     anchors.top: tabRectangle5.top
