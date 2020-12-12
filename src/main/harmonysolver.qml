@@ -11,6 +11,7 @@ import "./objects/commons/Consts.js" as Consts
 import "./objects/bass/BassTranslator.js" as Translator
 import "./objects/soprano/SopranoExercise.js" as SopranoExercise
 import "./objects/model/HarmonicFunction.js" as HarmonicFunction
+import "./objects/model/Chord.js" as Chord
 import "./objects/conf/PluginConfiguration.js" as PluginConfiguration
 import "./objects/conf/PluginConfigurationUtils.js" as PluginConfigurationUtils
 import "./objects/commons/Errors.js" as Errors
@@ -78,6 +79,19 @@ MuseScore {
             break
         }
         return result
+    }
+
+    function selectSoprano(cursor) {
+        cursor.track = 0
+    }
+    function selectAlto(cursor) {
+        cursor.track = 1
+    }
+    function selectTenor(cursor) {
+        cursor.track = 4
+    }
+    function selectBass(cursor) {
+        cursor.track = 5
     }
 
     function isAlterationSymbol(character) {
@@ -293,18 +307,6 @@ MuseScore {
             if (i === solution.chords.length - 1)
                 lastSegment = true
 
-            function selectSoprano(cursor) {
-                cursor.track = 0
-            }
-            function selectAlto(cursor) {
-                cursor.track = 1
-            }
-            function selectTenor(cursor) {
-                cursor.track = 4
-            }
-            function selectBass(cursor) {
-                cursor.track = 5
-            }
             if (durations !== undefined) {
                 cursor.setDuration(dur[0], dur[1])
             } else {
@@ -431,6 +433,35 @@ MuseScore {
 
         return sopranoExercise;
 
+    }
+
+    function readSolvedExercise() {
+        var cursor = curScore.newCursor()
+        cursor.rewind(0)
+        var currentNote
+        var lastBaseNote, lastPitch
+        var sopranoNote, altoNote, tenorNote, bassNote
+        var chords = []
+        do {
+            selectSoprano(cursor)
+            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastPitch = cursor.element.notes[0].pitch
+            sopranoNote = new Note.Note(lastPitch, lastBaseNote)
+            selectAlto(cursor)
+            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastPitch = cursor.element.notes[0].pitch
+            altoNote = new Note.Note(lastPitch, lastBaseNote)
+            selectTenor(cursor)
+            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastPitch = cursor.element.notes[0].pitch
+            tenorNote = new Note.Note(lastPitch, lastBaseNote)
+            selectBass(cursor)
+            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastPitch = cursor.element.notes[0].pitch
+            bassNote = new Note.Note(lastPitch, lastBaseNote)
+            chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote))
+        } while (cursor.next())
+        //todo find broken rules
     }
 
     function addComponentToScore(cursor, componentValue) {
