@@ -54,7 +54,7 @@ function BasicHardRulesChecker(){
         var brokenRules = [];
         for(var i = 0; i < this.hardRules.length; i++){
             if(this.hardRules[i].isBroken(connection))
-                brokenRules.push(this.hardRules[i].name);
+                brokenRules.push(this.hardRules[i].details);
         }
         return brokenRules;
     }

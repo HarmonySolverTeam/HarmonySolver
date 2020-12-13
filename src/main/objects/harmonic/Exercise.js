@@ -53,8 +53,8 @@ function SolvedExercise(chords){
             }
         }
         if(brokenRulesReport === ""){
-            return "Correct!"
+            return "Correct!\t\t"
         }
-        return "Found some broken rules!\n"+brokenRulesReport;
+        return "Found some broken rules!\t\t\n"+brokenRulesReport;
     }
 }
