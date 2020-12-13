@@ -19,6 +19,7 @@ import "./objects/utils/Utils.js" as Utils
 import "./objects/dto/SolverRequestDto.js" as SolverRequestDto
 import "./objects/dto/SopranoSolverRequestDto.js" as SopranoSolverRequestDto
 import "./objects/commons/ExerciseSolution.js" as ExerciseSolution
+import "./objects/harmonic/Exercise.js" as Exercise
 
 MuseScore {
     menuPath: "Plugins.HarmonySolver"
@@ -36,6 +37,7 @@ MuseScore {
     property var isSopranoSolving: false
     property var bassScoreWarnings: ""
     property var sopranoScoreWarnings: ""
+    property var fourPartScoreWarnings: ""
 
     id: window
     width: 570
@@ -435,14 +437,35 @@ MuseScore {
 
     }
 
+    MessageDialog {
+        id: correctnessInfoDialog
+        width: 300
+        height: 400
+        title: "Correctness info"
+        text: ""
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
     function readSolvedExercise() {
+        isFourPartScore()
         var cursor = curScore.newCursor()
         cursor.rewind(0)
         var currentNote
         var lastBaseNote, lastPitch
         var sopranoNote, altoNote, tenorNote, bassNote
         var chords = []
+        var HF = function (value) {
+            this.value = value
+            this.equals = function(other){
+                  this.value === other.value
+            }
+        }
+        var hfs = [new HF("A"), new HF("B")] //just to make connections have diffrent hfs
+        var idx = 0;
+        var chords_counter = 0
         do {
+            chords_counter ++
             selectSoprano(cursor)
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
@@ -459,9 +482,17 @@ MuseScore {
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote)
-            chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote))
+            try{
+                chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, hfs[idx]))
+            } catch(error){
+                error.details = "Found at " + chords_counter + " position"
+                throw error  
+            }
+            idx = (idx + 1) % 2
         } while (cursor.next())
-        //todo find broken rules
+        var exercise = new Exercise.SolvedExercise(chords)
+        correctnessInfoDialog.text = exercise.checkCorrectness()
+        correctnessInfoDialog.open()
     }
 
     function addComponentToScore(cursor, componentValue) {
@@ -652,6 +683,119 @@ MuseScore {
             }
 
     }
+
+    function isFourPartScore() {
+        if (curScore === null) {
+            throw new Errors.FourPartSolutionInputError(
+                  "No score is opened!"
+                  )
+        }
+        fourPartScoreWarnings = ""
+        var tiesMeasures = []
+
+        var cursor = curScore.newCursor()
+        cursor.rewind(0)
+        var metre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+        var measureDurationTick = (division * (4 / metre[1])) * metre[0]
+        var vb = new Consts.VoicesBoundary()
+        var durations = []
+
+        function checkVoice(voice, min, max, cursor, forSoprano){
+            cursor.rewind(0)
+            if(cursor.element === null){
+                  throw new Errors.FourPartSolutionInputError(
+                        "There is no "+voice+" voice!"
+                  )
+            }
+            var elementCounter = 0
+            var measureCounter = 0
+            var positionCounter = 0
+            do{
+                if(cursor.tick >= measureCounter*measureDurationTick){
+                    measureCounter++
+                    elementCounter = 0
+                }
+                elementCounter++
+                if(!Utils.isDefined(cursor.element.noteType)){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Forbidden element in "+measureCounter+" measure at "+elementCounter+" position from its beginning in " + voice,
+                            "Score should contain only notes (no rests etc.)"
+                            )
+                }
+                if(cursor.element.notes.length > 1){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Forbidden element in "+measureCounter+" measure at "+elementCounter+" position from its beginning in ",
+                            "Each voice should contain only one voice"
+                            )
+                }
+                var currentPitch = cursor.element.notes[0].pitch
+                if(currentPitch > max || currentPitch < min){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Note not in voice scale in "+measureCounter+" measure at "+elementCounter+" position from its beginning in " + voice
+                            )
+                }
+                var currentMetre = [cursor.measure.timesigActual.numerator, cursor.measure.timesigActual.denominator]
+                if(currentMetre[0] !== metre[0] || currentMetre[1] !== metre[1]){
+                      throw new Errors.FourPartSolutionInputError(
+                            "Metre changes are not supported",
+                            "Forbidden metre change for "+currentMetre[0]+"/"+currentMetre[1]+" in "+measureCounter+" measure at "+elementCounter+" position from its beginning"
+                            )
+                }
+
+                if(forSoprano){
+                      durations.push([cursor.element.duration.numerator, cursor.element.duration.denominator])
+                } else {
+                      if(durations[positionCounter][0] !== cursor.element.duration.numerator ||
+                        durations[positionCounter][1] !== cursor.element.duration.denominator){
+                            throw new Errors.FourPartSolutionInputError(
+                            "Chord homofony is only supported. Durations should be equal vertically in all voices.",
+                            "Forbidden note in "+measureCounter+" measure at "+elementCounter+" position from its beginning in "+voice
+                            )
+                        }
+                }
+
+                positionCounter++
+
+                if(cursor.element.notes[0].tieForward !== null){
+                    tiesMeasures.push(measureCounter)
+                }
+            } while(cursor.next())
+        }
+
+
+        selectSoprano(cursor)
+        checkVoice("soprano", vb.sopranoMin, vb.sopranoMax, cursor, true)
+        selectAlto(cursor)
+        checkVoice("alto", vb.altoMin, vb.altoMax, cursor)
+        selectTenor(cursor)
+        checkVoice("tenor", vb.tenorMin, vb.tenorMax, cursor)
+        selectBass(cursor)
+        checkVoice("bass", vb.bassMin, vb.bassMax, cursor)
+
+        cursor.rewind(0)
+        var elementCounter = 0
+        var measureCounter = 0
+        do{
+            if(cursor.tick >= measureCounter*measureDurationTick){
+                measureCounter++
+                elementCounter = 0
+            }
+            elementCounter++
+
+        } while(cursor.next())
+
+        if (tiesMeasures.length !== 0) {
+            fourPartScoreWarnings += "Score contains ties (measures ";
+            for (var i = 0; i < tiesMeasures.length; i++) {
+                if (i > 0) {
+                    fourPartScoreWarnings += ", "
+                }
+                fourPartScoreWarnings += tiesMeasures[i]
+            }
+            fourPartScoreWarnings += ") which are not supported and will be ignored.\n"
+        }
+
+        }
 
     function getPossibleChordsList() {
         var mode = tab3.item.getSelectedMode()
@@ -861,6 +1005,27 @@ MuseScore {
         standardButtons: StandardButton.Ok
     }
 
+    MessageDialog {
+        id: helpSolvedCheckerDialog
+        width: 800
+        height: 600
+        title: "Help - Solved Exercise Validator"
+        text: "In this tab you can check solved exercise for any existing harmonic errors.\n" +
+        "Only notes are taken into consideration, not harmonic functions nor chord components.\n" +
+        "Harmonic rules, that are checked, are:\n" +
+        "Parallel octaves\n" +
+        "Parallel fifths\n" +
+        "Crossing voices\n" +
+        "One direction of voices\n" +
+        "Forbidden voice jump\n" +
+        "Hidden parallel octaves\n" +
+        "False relation\n" +
+        "For more details please refer to the manual."
+        icon: StandardIcon.Information
+        standardButtons: StandardButton.Ok
+    }
+
+
 
     MessageDialog {
         id: errorDialog
@@ -890,7 +1055,6 @@ MuseScore {
         icon: StandardIcon.Warning
         standardButtons: StandardButton.Ok
     }
-
 
 
     ScrollView {
@@ -1715,6 +1879,63 @@ MuseScore {
                         }
                     }
                 }
+            }
+            Tab {
+              title: "Validator"
+              id: tab5
+
+              Rectangle {
+                id: tabRectangle5
+
+                Label {
+                    id: checkExerciseInfoLabel
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Here you can check and validate your solved exercise.\nOnly notes are taken into consideration.")
+                    font.pointSize: 12
+                    anchors.left: tabRectangle5.left
+                    anchors.top: tabRectangle5.top
+                    anchors.leftMargin: 10
+                    anchors.topMargin: 10
+                    color: "#000000"
+                }
+
+                Button {
+                    id: buttonSolvedExerciseCheckerHelp
+                    text: qsTr("?")
+                    anchors.top: tabRectangle5.top
+                    anchors.right: tabRectangle5.right
+                    anchors.topMargin: 10
+                    anchors.rightMargin: 10
+                    width: 18
+                    height: 20
+                    onClicked: {
+                        helpSolvedCheckerDialog.open()
+                    }
+                    tooltip: "Help"
+                }
+
+
+                 Button {
+                    id: buttonCheckSolvedExercise
+                    text: qsTr("Validate opened exercise")
+                    anchors.bottom: tabRectangle5.bottom
+                    anchors.right: tabRectangle5.right
+                    anchors.topMargin: 10
+                    anchors.bottomMargin: 10
+                    anchors.rightMargin: 10
+
+                    onClicked: {
+                        try {
+                            readSolvedExercise()
+                        } catch(error){
+                            showError(error)
+                        }
+                    }
+
+                 }
+
+              }
+
             }
             Tab {
 

@@ -51,13 +51,13 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(concurrentFifthsTest, "Concu
 
 const crossingVoicesTest = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
-    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch2 = new Chord.Chord(new Note.Note(67, 4, "5"), new Note.Note(74,2,"3"), new Note.Note(60, 0, "1"), new Note.Note(60, 0, "1"),hf1);
-    var ch3 = new Chord.Chord(new Note.Note(76,2,"3"), new Note.Note(67, 4, "5"), new Note.Note(72, 0, "1"), new Note.Note(48, 0, "1"),hf1);
-    var ch4 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(72, 0, "1"),hf1);
-    var ch5 = new Chord.Chord(new Note.Note(60,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch6 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(52, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch7 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(52, 2, "3"), new Note.Note(60, 0, "1"),hf1);
+    var ch1 = new Chord.Chord(new Note.Note(72), new Note.Note(67), new Note.Note(60), new Note.Note(48),hf1);
+    var ch2 = new Chord.Chord(new Note.Note(79), new Note.Note(74), new Note.Note(60), new Note.Note(60),hf1);
+    var ch3 = new Chord.Chord(new Note.Note(76), new Note.Note(72), new Note.Note(72), new Note.Note(48),hf1);
+    var ch4 = new Chord.Chord(new Note.Note(72), new Note.Note(67), new Note.Note(64), new Note.Note(62),hf1);
+    var ch5 = new Chord.Chord(new Note.Note(66), new Note.Note(65), new Note.Note(64), new Note.Note(48),hf1);
+    var ch6 = new Chord.Chord(new Note.Note(72), new Note.Note(59), new Note.Note(58), new Note.Note(48),hf1);
+    var ch7 = new Chord.Chord(new Note.Note(72), new Note.Note(67), new Note.Note(59), new Note.Note(58),hf1);
 
     var rule = new RulesChecker.CrossingVoicesRule();
     return UnitTest.assertTrue(rule.evaluate(new Connection(ch2, ch1))) &&
@@ -87,24 +87,24 @@ const forbiddenJumpTest = () => {
     //Incorrect chord definitions only for this test case - only pitch and baseNote is important of soprano
     var hf2 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
     var hf1 = new HarmonicFunction.HarmonicFunction("S",1,undefined,"1",[],[],[],false,undefined,undefined);
-    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
-    var ch2 = new Chord.Chord(new Note.Note(85,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+    var ch2 = new Chord.Chord(new Note.Note(85,0,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     //altered up
-    var ch1up = new Chord.Chord(new Note.Note(75,1,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch2up = new Chord.Chord(new Note.Note(77,2,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch4up = new Chord.Chord(new Note.Note(80,4,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch5up = new Chord.Chord(new Note.Note(82,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch6up = new Chord.Chord(new Note.Note(84,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch1up = new Chord.Chord(new Note.Note(75,1,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch2up = new Chord.Chord(new Note.Note(77,2,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch4up = new Chord.Chord(new Note.Note(80,4,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch5up = new Chord.Chord(new Note.Note(82,5,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch6up = new Chord.Chord(new Note.Note(84,6,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
     //altered down
-    var ch1down = new Chord.Chord(new Note.Note(69,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch2down = new Chord.Chord(new Note.Note(67,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch3down = new Chord.Chord(new Note.Note(66,4,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch4down = new Chord.Chord(new Note.Note(64,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch5down = new Chord.Chord(new Note.Note(62,2,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch6down = new Chord.Chord(new Note.Note(60,1,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch1down = new Chord.Chord(new Note.Note(69,6,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch2down = new Chord.Chord(new Note.Note(67,5,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch3down = new Chord.Chord(new Note.Note(66,4,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch4down = new Chord.Chord(new Note.Note(64,3,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch5down = new Chord.Chord(new Note.Note(62,2,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch6down = new Chord.Chord(new Note.Note(60,1,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
 
-    var chdownSameFun = new Chord.Chord(new Note.Note(60,6,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+    var chdownSameFun = new Chord.Chord(new Note.Note(60,6,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf2);
 
     var rule = new RulesChecker.ForbiddenJumpRule();
     return UnitTest.assertTrue(rule.isBroken(new Connection(ch2, ch1))) &&
@@ -128,13 +128,13 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(forbiddenJumpTest, "Forbidde
 const forbiddenSumJumpTest = () => {
     var hf2 = new HarmonicFunction.HarmonicFunction("T",1,undefined,"1",[],[],[],false,undefined,undefined);
     var hf1 = new HarmonicFunction.HarmonicFunction("S",1,undefined,"1",[],[],[],false,undefined,undefined);
-    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
-    var ch2up = new Chord.Chord(new Note.Note(75,2,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch2down = new Chord.Chord(new Note.Note(69,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch3down = new Chord.Chord(new Note.Note(66,4,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf1);
-    var ch2downSameFun = new Chord.Chord(new Note.Note(69,5,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
-    var ch3downSameFun = new Chord.Chord(new Note.Note(66,3,"1"), new Note.Note(67, 4, "5"), new Note.Note(64, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+    var ch1 = new Chord.Chord(new Note.Note(72,0,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+    var ch2up = new Chord.Chord(new Note.Note(75,2,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch3up = new Chord.Chord(new Note.Note(78,3,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch2down = new Chord.Chord(new Note.Note(69,5,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch3down = new Chord.Chord(new Note.Note(66,4,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf1);
+    var ch2downSameFun = new Chord.Chord(new Note.Note(69,5,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf2);
+    var ch3downSameFun = new Chord.Chord(new Note.Note(66,3,"1"), new Note.Note(60, 4, "5"), new Note.Note(60, 2, "3"), new Note.Note(48, 0, "1"),hf2);
 
     var rule = new RulesChecker.ForbiddenJumpRule();
     return UnitTest.assertTrue(rule.isBroken(new Connection(ch3up, ch2up, ch1))) &&
@@ -160,9 +160,9 @@ rulesCheckerTestSuite.addTest(new UnitTest.UnitTest(checkIllegalDouble3Test, "Il
 
 const checkConnectionDSTest = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("D",1,undefined,"1",[],[],[],false,undefined,undefined);
-    var ch1 = new Chord.Chord(undefined, undefined, undefined, undefined, hf1);
+    var ch1 = new Chord.Chord(new Note.Note(60), new Note.Note(60), new Note.Note(60), new Note.Note(60),hf1);
     var hf2 = new HarmonicFunction.HarmonicFunction("S",1,undefined,"1",[],[],[],false,undefined,undefined);
-    var ch2 = new Chord.Chord(undefined, undefined, undefined, undefined, hf2);
+    var ch2 = new Chord.Chord(new Note.Note(60), new Note.Note(60), new Note.Note(60), new Note.Note(60),hf2);
 
     var rule = new RulesChecker.DominantSubdominantCheckConnectionRule();
     return UnitTest.assertThrows("Error during checking connections between chords","Forbidden connection: D->S", rule.evaluateIncludingDeflections, [new Connection(ch2,ch1)]);
