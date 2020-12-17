@@ -39,6 +39,11 @@ MuseScore {
     property var sopranoScoreWarnings: ""
     property var fourPartScoreWarnings: ""
 
+    property var hfTime : 0
+    property var bassTime : 0
+    property var sopranoTime : 0
+
+
     id: window
     width: 570
     height: 570
@@ -1111,10 +1116,12 @@ MuseScore {
                                 if(isHfSolving) harmonicFunctionsProgressBar.value = messageObject.progress;
                             }
                             else if(messageObject.type === "solution"){
+                                console.log("Harmonic Time reading and solving: " + (new Date() - hfTime) + "ms");
                                 var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
                                 var solution_date = get_solution_date()
                                 prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
                                 fill_score_with_solution(solution)
+                                console.log("Harmonic Total Time: " + (new Date() - hfTime) + "ms");
                                 isHfSolving = false
                                 buttonRun.update()
                                 harmonicFunctionsProgressBar.value = 0
@@ -1238,6 +1245,8 @@ MuseScore {
                         anchors.rightMargin: 10
                         anchors.leftMargin: 10
                         onClicked: {
+
+                            hfTime = new Date();
                             //parsing
                             exerciseLoaded = false
                             var input_text = abcText.text
@@ -1295,11 +1304,13 @@ MuseScore {
                                 if(isBassSolving) figuredBassProgressBar.value = messageObject.progress;
                             }
                             else if(messageObject.type === "solution"){
+                                console.log("Bass Time reading and solving: " + (new Date() - bassTime) + "ms");
                                 var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
                                 var solution_date = get_solution_date()
 //                                Utils.log("Solution:", JSON.stringify(solution))
                                 prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
                                 fill_score_with_solution(solution, messageObject.durations)
+                                console.log("Bass Total Time: " + (new Date() - bassTime) + "ms");
                                 isBassSolving = false
                                 buttonRunFiguredBass.update()
                                 figuredBassProgressBar.value = 0
@@ -1375,6 +1386,8 @@ MuseScore {
                         anchors.right: tabRectangle2.right
                         anchors.bottom: tabRectangle2.bottom
                         onClicked: {
+                            bassTime = new Date();
+
                             try {
                                 isFiguredBassScore()
                                 var ex = read_figured_bass()
@@ -1402,7 +1415,7 @@ MuseScore {
 
                                 var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
                                 //Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
-
+                                console.log("Bass Time reading and translating: " + (new Date() - bassTime) + "ms");
                                 busyWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
                                     exerciseAndBassline[0],
                                     exerciseAndBassline[1],
@@ -1804,12 +1817,14 @@ MuseScore {
                                 if(isSopranoSolving) sopranoProgressBar.value = messageObject.progress;
                             }
                             else if(messageObject.type === "solution"){
+                                console.log("Soprano Time reading and solving: " + (new Date() - sopranoTime) + "ms");
                                 var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
                                 if(solution.success) {
                                     var solution_date = get_solution_date()
                                     prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
                                     fill_score_with_solution(solution, messageObject.durations)
                                 }
+                                console.log("Soprano Total Time: " + (new Date() - sopranoTime) + "ms");
                                 isSopranoSolving = false
                                 buttorSoprano.update()
                                 sopranoProgressBar.value = 0
@@ -1861,6 +1876,7 @@ MuseScore {
                         anchors.bottomMargin: 10
                         anchors.rightMargin: 10
                         onClicked: {
+                            sopranoTime = new Date();
                             try{
                                 isSopranoScore()
                                 if (sopranoScoreWarnings.length !== 0) {
