@@ -1,7 +1,7 @@
 .import "../model/Note.js" as Note
 .import "../model/HarmonicFunction.js" as HarmonicFunction
 .import "../commons/Errors.js" as Errors
-
+.import "../utils/Utils.js" as Utils
 function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
     this.sopranoNote = sopranoNote
     this.altoNote = altoNote
@@ -59,12 +59,14 @@ function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
 }
 
 function chordReconstruct(chord){
+    var hf = Utils.contains(["T","S","D"],(chord.harmonicFunction.functionName)) ?
+        HarmonicFunction.harmonicFunctionReconstruct(chord.harmonicFunction) : undefined
     return new Chord(
         Note.noteReconstruct(chord.sopranoNote),
         Note.noteReconstruct(chord.altoNote),
         Note.noteReconstruct(chord.tenorNote),
         Note.noteReconstruct(chord.bassNote),
-        HarmonicFunction.harmonicFunctionReconstruct(chord.harmonicFunction)
+        hf
     )
 }
 

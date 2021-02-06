@@ -42,8 +42,14 @@ MuseScore {
     id: window
     width: 570
     height: 570
+    
+    QProcess {
+      id: proc
+    }
+    
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
+      proc.start("node "+filePath+"/objects/ValidatorHttpServer.js")
     }
 
     function savePluginConfiguration(){
@@ -491,8 +497,18 @@ MuseScore {
             idx = (idx + 1) % 2
         } while (cursor.next())
         var exercise = new Exercise.SolvedExercise(chords)
-        correctnessInfoDialog.text = exercise.checkCorrectness()
-        correctnessInfoDialog.open()
+        var req = new XMLHttpRequest()
+        req.open("POST", "http://127.0.0.1:7777")
+        req.onreadystatechange = function(){
+            if (req.readyState == XMLHttpRequest.DONE) {
+                correctnessInfoDialog.text = req.response // exercise.checkCorrectness()
+                correctnessInfoDialog.open()
+            }
+        }
+        req.onerror = function() {
+              console.log("error")
+        }
+        req.send(JSON.stringify(exercise))
     }
 
     function addComponentToScore(cursor, componentValue) {

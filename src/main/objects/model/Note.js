@@ -59,7 +59,8 @@ function Measure(notes){
 }
 
 function noteReconstruct(note){
-    return new Note(note.pitch, note.baseNote, note.chordComponent.chordComponentString, note.duration)
+    var chordComponentString = note.chordComponent !== undefined ? note.chordComponent.chordComponentString : undefined
+    return new Note(note.pitch, note.baseNote, chordComponentString, note.duration)
 }
 
 function measureReconstruct(measure){
