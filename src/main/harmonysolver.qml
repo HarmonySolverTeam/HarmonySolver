@@ -38,18 +38,30 @@ MuseScore {
     property var bassScoreWarnings: ""
     property var sopranoScoreWarnings: ""
     property var fourPartScoreWarnings: ""
+    property var host: "http://127.0.0.1"
+    property var port: "7777"
+    property var harmonicsEndpoint: "/harmonics"
+    property var validatorEndpoint: "/validator"
+
+    function getURL(endpoint, params) {
+        if (params === undefined) {
+            return host+":"+port+endpoint
+        } else {
+            return host+":"+port+endpoint+"?"+params.reduce(function(x,y){return x + "&&" + y})
+        }
+    }
 
     id: window
     width: 570
     height: 570
     
-    QProcess {
-      id: proc
-    }
+//    QProcess {
+//      id: proc
+//    }
     
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
-      proc.start("node "+filePath+"/objects/ValidatorHttpServer.js")
+      //proc.start("node "+filePath+"/objects/HttpServer.js")
     }
 
     function savePluginConfiguration(){
@@ -498,10 +510,10 @@ MuseScore {
         } while (cursor.next())
         var exercise = new Exercise.SolvedExercise(chords)
         var req = new XMLHttpRequest()
-        req.open("POST", "http://127.0.0.1:7777")
+        req.open("POST", getURL(validatorEndpoint))
         req.onreadystatechange = function(){
             if (req.readyState == XMLHttpRequest.DONE) {
-                correctnessInfoDialog.text = req.response // exercise.checkCorrectness()
+                correctnessInfoDialog.text = req.response
                 correctnessInfoDialog.open()
             }
         }
@@ -1118,32 +1130,6 @@ MuseScore {
                 Rectangle {
                     id: tabRectangle1
 
-                    WorkerScript {
-                        id: braveWorker
-                        source: "SolverWorker.js"
-
-                        onMessage:  {
-                            if(messageObject.type === "progress_notification"){
-                                if(isHfSolving) harmonicFunctionsProgressBar.value = messageObject.progress;
-                            }
-                            else if(messageObject.type === "solution"){
-                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
-                                var solution_date = get_solution_date()
-                                prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
-                                fill_score_with_solution(solution)
-                                isHfSolving = false
-                                buttonRun.update()
-                                harmonicFunctionsProgressBar.value = 0
-                            }
-                            else if(messageObject.type === "error"){
-                                isHfSolving = false
-                                buttonRun.update
-                                harmonicFunctionsProgressBar.value = 0
-                                showError(messageObject.error)
-                            }
-                        }
-                      }
-
                     function setText(text) {
                         abcText.text = text
                     }
@@ -1181,7 +1167,6 @@ MuseScore {
                         anchors.top: textLabel.bottom
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
-//                        anchors.bottom: harmonicFunctionsProgressBar.top
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 10
@@ -1190,19 +1175,6 @@ MuseScore {
                         height: 390
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
-                    }
-
-                    ProgressBar {
-                        id: harmonicFunctionsProgressBar
-                        value: 0
-                        anchors.left: tabRectangle1.left
-                        anchors.right: tabRectangle1.right
-                        anchors.bottom: buttonOpenFile.top
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 20
-                        height: 15
-                        width: parent.width - 40
                     }
 
                     Button {
@@ -1232,12 +1204,26 @@ MuseScore {
                             if (input_text === undefined || input_text === "") {
                               emptyExerciseDialog.open()
                             } else {
-                                try{
-                                    exercise = Parser.parse(input_text)
-                                    parseSuccessDialog.open()
-                                } catch (error) {
-                                    showError(error)
+                                var preReq = new XMLHttpRequest()
+                                preReq.open("POST", getURL(harmonicsEndpoint, ["onlyParse=true"]))
+                                preReq.onreadystatechange = function(){
+                                    if (preReq.readyState == XMLHttpRequest.DONE) {
+                                        if (preReq.status === 200) {
+                                            exerciseLoaded = true
+                                        } else {
+                                            showError(JSON.parse(preReq.response))
+                                        }
+                                    }
                                 }
+                                preReq.onerror = function() {
+                                      console.log("error")
+                                }
+
+                                preReq.send(
+                                    JSON.stringify({
+                                        "input": input_text
+                                    })
+                                )
                             }
                         }
                         tooltip: "Check if input is correct"
@@ -1260,34 +1246,57 @@ MuseScore {
                             if (input_text === undefined || input_text === "") {
                               emptyExerciseDialog.open()
                             } else {
-                                try{
-                                    exercise = Parser.parse(input_text)
-                                    exerciseLoaded = true
-                                } catch (error) {
-                                    showError(error)
-                                }
-                            }
+                                var preReq = new XMLHttpRequest()
+                                preReq.open("POST", getURL(harmonicsEndpoint, ["onlyParse=true"]))
+                                preReq.onreadystatechange = function(){
+                                    if (preReq.readyState == XMLHttpRequest.DONE) {
+                                        if (preReq.status === 200) {
+                                            exerciseLoaded = true
+                                            var req = new XMLHttpRequest()
+                                            req.open("POST", getURL(harmonicsEndpoint))
+                                            req.onreadystatechange = function(){
+                                                if (req.readyState == XMLHttpRequest.DONE) {
+                                                    if (req.status === 200) {
+                                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(JSON.parse(req.response));
+                                                        var solution_date = get_solution_date()
+                                                        prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
+                                                        fill_score_with_solution(solution)
+                                                        isHfSolving = false
+                                                        buttonRun.update()
+                                                    } else {
+                                                        isHfSolving = false;
+                                                        buttonRun.update()
+                                                        showError(JSON.parse(req.response))
+                                                    }
+                                                }
+                                            }
+                                            req.onerror = function() {
+                                                  console.log("error")
+                                            }
 
-                            //solving
-                            if (exerciseLoaded) {
-                                try {
-                                    exercise = Parser.parse(input_text)
-                                    braveWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
-                                        exercise,
-                                        undefined,
-                                        undefined,
-                                        !configuration.enableCorrector,
-                                        !configuration.enablePrechecker,
-                                        undefined
-                                    ))
-                                    isHfSolving = true;
-                                    buttonRun.update();
-                                } catch (error) {
-                                    isHfSolving = false;
-                                    buttonRun.update()
-                                    harmonicFunctionsProgressBar.value = 0
-                                    showError(error)
+                                            req.send(
+                                                JSON.stringify({
+                                                    "input": input_text,
+                                                    "configuration": configuration
+                                                })
+                                            )
+
+                                            isHfSolving = true;
+                                            buttonRun.update();
+                                        } else {
+                                            showError(JSON.parse(preReq.response))
+                                        }
+                                    }
                                 }
+                                preReq.onerror = function() {
+                                      console.log("error")
+                                }
+
+                                preReq.send(
+                                    JSON.stringify({
+                                        "input": input_text
+                                    })
+                                )
                             }
                         }
                         property var update: function(){
