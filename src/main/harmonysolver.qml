@@ -42,6 +42,8 @@ MuseScore {
     property var port: "7777"
     property var harmonicsEndpoint: "/harmonics"
     property var validatorEndpoint: "/validator"
+    property var bassEndpoint: "/bass"
+    property var sopranoEndpoint: "/soprano"
 
     function getURL(endpoint, params) {
         if (params === undefined) {
@@ -1311,33 +1313,6 @@ MuseScore {
                 Rectangle {
                     id: tabRectangle2
 
-                    WorkerScript {
-                        id: busyWorker
-                        source: "SolverWorker.js"
-
-                        onMessage:  {
-                            if(messageObject.type === "progress_notification"){
-                                if(isBassSolving) figuredBassProgressBar.value = messageObject.progress;
-                            }
-                            else if(messageObject.type === "solution"){
-                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
-                                var solution_date = get_solution_date()
-//                                Utils.log("Solution:", JSON.stringify(solution))
-                                prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
-                                fill_score_with_solution(solution, messageObject.durations)
-                                isBassSolving = false
-                                buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
-                            }
-                            else if(messageObject.type === "error"){
-                                isBassSolving = false
-                                buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
-                                showError(messageObject.error)
-                            }
-                        }
-                     }
-
                     Button {
                         id: buttonBassHelp
                         text: qsTr("?")
@@ -1363,19 +1338,6 @@ MuseScore {
                         anchors.leftMargin: 10
                         anchors.topMargin: 10
                         color: "#000000"
-                    }
-                    
-                    ProgressBar {
-                        id: figuredBassProgressBar
-                        value: 0
-                        anchors.left: tabRectangle2.left
-                        anchors.right: tabRectangle2.right
-                        anchors.bottom: buttonRunFiguredBass.top
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 20
-                        height: 15
-                        width: parent.width - 40
                     }
 
                     MessageDialog {
@@ -1413,37 +1375,44 @@ MuseScore {
                             } catch (error) {
                                 isBassSolving = false
                                 buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
                                 showError(error)
                             }
                         }
 
                         property var solve: function() {
-                            try {
-                                isFiguredBassScore()
-                                var ex = read_figured_bass()
-                                var translator = new Translator.BassTranslator()
-                                //Utils.log("ex",JSON.stringify(ex))
-
-                                var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
-                                //Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
-
-                                busyWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
-                                    exerciseAndBassline[0],
-                                    exerciseAndBassline[1],
-                                    undefined,
-                                    !configuration.enableCorrector,
-                                    !configuration.enablePrechecker,
-                                    ex.durations
-                                ))
-                                isBassSolving = true
-                                buttonRunFiguredBass.update()
-                            } catch (error) {
-                                isBassSolving = false
-                                buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
-                                showError(error)
+                            isFiguredBassScore()
+                            var ex = read_figured_bass()
+                            var req = new XMLHttpRequest()
+                            req.open("POST", getURL(bassEndpoint))
+                            req.onreadystatechange = function(){
+                                if (req.readyState == XMLHttpRequest.DONE) {
+                                    if (req.status === 200) {
+                                        var response = JSON.parse(req.response)
+                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response.solution);
+                                        var solution_date = get_solution_date()
+                                        prepare_score_for_solution(filePath, solution, solution_date, true, "_bass")
+                                        fill_score_with_solution(solution, response.durations)
+                                        isBassSolving = false
+                                        buttonRunFiguredBass.update()
+                                    } else {
+                                        isBassSolving = false;
+                                        buttonRunFiguredBass.update()
+                                        showError(JSON.parse(req.response))
+                                    }
+                                }
                             }
+                            req.onerror = function() {
+                                  console.log("error")
+                            }
+
+                            req.send(
+                                JSON.stringify({
+                                    "exercise": ex,
+                                    "configuration": configuration
+                                })
+                            )
+                            isBassSolving = true
+                            buttonRunFiguredBass.update()
                         }
 
                         property var update: function(){

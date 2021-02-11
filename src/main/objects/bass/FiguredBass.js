@@ -1,3 +1,5 @@
+.import "../model/Note.js" as Note
+
 var ALTERATION_TYPE = {
   SHARP : "#",
   FLAT : 'b',
@@ -17,6 +19,10 @@ function BassSymbol(component, alteration){
     }
 }
 
+function bassSymbolReconstruct(symbol) {
+    return new BassSymbol(symbol.component, symbol.alteration)
+}
+
 function FiguredBassElement(bassNote, symbols, delays) {
 
     this.bassNote = bassNote;
@@ -28,6 +34,14 @@ function FiguredBassElement(bassNote, symbols, delays) {
         return "Bass note: "+ this.bassNote + " Symbols: " + this.symbols + " Delays: " + this.delays
     }
 
+}
+
+function figuredBassElementReconstruct(element) {
+    return new FiguredBassElement(
+        Note.noteReconstruct(element.bassNote),
+        element.symbols.map(function(x){return bassSymbolReconstruct(x)}),
+        element.delays
+    )
 }
 
 function FiguredBassExercise(mode, key, meter, elements, durations) {
@@ -42,3 +56,12 @@ function FiguredBassExercise(mode, key, meter, elements, durations) {
     }
 }
 
+function figuredBassExerciseReconstruct(exercise) {
+    return new FiguredBassExercise(
+        exercise.mode,
+        exercise.key,
+        exercise.meter,
+        exercise.elements.map(function(x){return figuredBassElementReconstruct(x)}),
+        exercise.durations
+    )
+}
