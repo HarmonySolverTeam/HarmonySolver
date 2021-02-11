@@ -1789,48 +1789,6 @@ MuseScore {
                         return punishmentRatios
                     }
 
-                    WorkerScript {
-                        id: amazingWorker
-                        source: "SopranoSolverWorker.js"
-
-                        onMessage:  {
-                            if(messageObject.type === "progress_notification"){
-                                if(isSopranoSolving) sopranoProgressBar.value = messageObject.progress;
-                            }
-                            else if(messageObject.type === "solution"){
-                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
-                                if(solution.success) {
-                                    var solution_date = get_solution_date()
-                                    prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
-                                    fill_score_with_solution(solution, messageObject.durations)
-                                }
-                                isSopranoSolving = false
-                                buttorSoprano.update()
-                                sopranoProgressBar.value = 0
-                            }
-                            else if(messageObject.type === "error"){
-                                isSopranoSolving = false
-                                buttorSoprano.update()
-                                sopranoProgressBar.value = 0
-                                showError(messageObject.error)
-                            }
-                        }
-                    }
-
-                    ProgressBar {
-                        id: sopranoProgressBar
-                        value: 0
-                        anchors.left: tabRectangle3.left
-                        anchors.right: tabRectangle3.right
-                        anchors.bottom: buttorSoprano.top
-                        anchors.topMargin: 10
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 20
-                        height: 15
-                        width: parent.width - 40
-                    }
-
                     MessageDialog {
                       id: inputWarningSopranoDialog
                       width: 300
@@ -1866,31 +1824,42 @@ MuseScore {
                             } catch (error) {
                                 isSopranoSolving = false
                                 buttorSoprano.update()
-                                sopranoProgressBar.value = 0
                                 showError(error)
                            }
                         }
 
                         property var solve: function() {
-                            try{
-                                isSopranoScore()
-                                var func_list = getPossibleChordsList()
-                                var punishments = getPunishmentRatios()
-                                var exercise = prepareSopranoHarmonizationExercise(func_list);
-                                amazingWorker.sendMessage(
-                                    new SopranoSolverRequestDto.SopranoSolverRequestDto(
-                                        exercise,
-                                        punishments
-                                    )
-                                )
-                                isSopranoSolving = true
-                                buttorSoprano.update()
-                            } catch (error) {
-                                isSopranoSolving = false
-                                buttorSoprano.update()
-                                sopranoProgressBar.value = 0
-                                showError(error)
-                           }
+                            isSopranoScore()
+                            var func_list = getPossibleChordsList()
+                            var punishments = getPunishmentRatios()
+                            var exercise = prepareSopranoHarmonizationExercise(func_list);
+                            var req = new XMLHttpRequest()
+                            req.open("POST", getURL(sopranoEndpoint))
+                            req.onreadystatechange = function(){
+                                if (req.readyState == XMLHttpRequest.DONE) {
+                                    if (req.status === 200) {
+                                        var response = JSON.parse(req.response)
+                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response.solution)
+                                        if(solution.success) {
+                                            var solution_date = get_solution_date()
+                                            prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
+                                            fill_score_with_solution(solution, response.durations)
+                                        }
+                                        isSopranoSolving = false
+                                        buttorSoprano.update()
+                                    } else {
+                                        isSopranoSolving = false
+                                        buttorSoprano.update()
+                                        showError(JSON.parse(req.response))
+                                    }
+                                }
+                            }
+                            req.onerror = function() {
+                                  console.log("error")
+                            }
+                            req.send(JSON.stringify({'exercise':exercise, 'punishments':punishments}))
+                            isSopranoSolving = true
+                            buttorSoprano.update()
                         }
 
                         property var update: function(){
