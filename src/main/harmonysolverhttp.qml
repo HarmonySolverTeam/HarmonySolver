@@ -38,12 +38,32 @@ MuseScore {
     property var bassScoreWarnings: ""
     property var sopranoScoreWarnings: ""
     property var fourPartScoreWarnings: ""
+    property var host: "http://127.0.0.1"
+    property var port: "7777"
+    property var harmonicsEndpoint: "/harmonics"
+    property var validatorEndpoint: "/validator"
+    property var bassEndpoint: "/bass"
+    property var sopranoEndpoint: "/soprano"
+
+    function getURL(endpoint, params) {
+        if (params === undefined) {
+            return host+":"+port+endpoint
+        } else {
+            return host+":"+port+endpoint+"?"+params.reduce(function(x,y){return x + "&&" + y})
+        }
+    }
 
     id: window
     width: 570
     height: 570
+
+//    QProcess {
+//      id: proc
+//    }
+
     onRun: {
       configuration = PluginConfigurationUtils.readConfiguration(outConfFile, filePath)
+      //proc.start("node "+filePath+"/HttpServer.js")
     }
 
     function savePluginConfiguration(){
@@ -491,8 +511,18 @@ MuseScore {
             idx = (idx + 1) % 2
         } while (cursor.next())
         var exercise = new Exercise.SolvedExercise(chords)
-        correctnessInfoDialog.text = exercise.checkCorrectness()
-        correctnessInfoDialog.open()
+        var req = new XMLHttpRequest()
+        req.open("POST", getURL(validatorEndpoint))
+        req.onreadystatechange = function(){
+            if (req.readyState == XMLHttpRequest.DONE) {
+                correctnessInfoDialog.text = req.response
+                correctnessInfoDialog.open()
+            }
+        }
+        req.onerror = function() {
+              console.log("error")
+        }
+        req.send(JSON.stringify(exercise))
     }
 
     function addComponentToScore(cursor, componentValue) {
@@ -1102,32 +1132,6 @@ MuseScore {
                 Rectangle {
                     id: tabRectangle1
 
-                    WorkerScript {
-                        id: braveWorker
-                        source: "SolverWorker.js"
-
-                        onMessage:  {
-                            if(messageObject.type === "progress_notification"){
-                                if(isHfSolving) harmonicFunctionsProgressBar.value = messageObject.progress;
-                            }
-                            else if(messageObject.type === "solution"){
-                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
-                                var solution_date = get_solution_date()
-                                prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
-                                fill_score_with_solution(solution)
-                                isHfSolving = false
-                                buttonRun.update()
-                                harmonicFunctionsProgressBar.value = 0
-                            }
-                            else if(messageObject.type === "error"){
-                                isHfSolving = false
-                                buttonRun.update
-                                harmonicFunctionsProgressBar.value = 0
-                                showError(messageObject.error)
-                            }
-                        }
-                      }
-
                     function setText(text) {
                         abcText.text = text
                     }
@@ -1165,7 +1169,6 @@ MuseScore {
                         anchors.top: textLabel.bottom
                         anchors.left: tabRectangle1.left
                         anchors.right: tabRectangle1.right
-//                        anchors.bottom: harmonicFunctionsProgressBar.top
                         anchors.topMargin: 10
                         anchors.bottomMargin: 10
                         anchors.leftMargin: 10
@@ -1174,19 +1177,6 @@ MuseScore {
                         height: 390
                         wrapMode: TextEdit.WrapAnywhere
                         textFormat: TextEdit.PlainText
-                    }
-
-                    ProgressBar {
-                        id: harmonicFunctionsProgressBar
-                        value: 0
-                        anchors.left: tabRectangle1.left
-                        anchors.right: tabRectangle1.right
-                        anchors.bottom: buttonOpenFile.top
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 20
-                        height: 15
-                        width: parent.width - 40
                     }
 
                     Button {
@@ -1216,12 +1206,26 @@ MuseScore {
                             if (input_text === undefined || input_text === "") {
                               emptyExerciseDialog.open()
                             } else {
-                                try{
-                                    exercise = Parser.parse(input_text)
-                                    parseSuccessDialog.open()
-                                } catch (error) {
-                                    showError(error)
+                                var preReq = new XMLHttpRequest()
+                                preReq.open("POST", getURL(harmonicsEndpoint, ["onlyParse=true"]))
+                                preReq.onreadystatechange = function(){
+                                    if (preReq.readyState == XMLHttpRequest.DONE) {
+                                        if (preReq.status === 200) {
+                                            exerciseLoaded = true
+                                        } else {
+                                            showError(JSON.parse(preReq.response))
+                                        }
+                                    }
                                 }
+                                preReq.onerror = function() {
+                                      console.log("error")
+                                }
+
+                                preReq.send(
+                                    JSON.stringify({
+                                        "input": input_text
+                                    })
+                                )
                             }
                         }
                         tooltip: "Check if input is correct"
@@ -1244,34 +1248,57 @@ MuseScore {
                             if (input_text === undefined || input_text === "") {
                               emptyExerciseDialog.open()
                             } else {
-                                try{
-                                    exercise = Parser.parse(input_text)
-                                    exerciseLoaded = true
-                                } catch (error) {
-                                    showError(error)
-                                }
-                            }
+                                var preReq = new XMLHttpRequest()
+                                preReq.open("POST", getURL(harmonicsEndpoint, ["onlyParse=true"]))
+                                preReq.onreadystatechange = function(){
+                                    if (preReq.readyState == XMLHttpRequest.DONE) {
+                                        if (preReq.status === 200) {
+                                            exerciseLoaded = true
+                                            var req = new XMLHttpRequest()
+                                            req.open("POST", getURL(harmonicsEndpoint))
+                                            req.onreadystatechange = function(){
+                                                if (req.readyState == XMLHttpRequest.DONE) {
+                                                    if (req.status === 200) {
+                                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(JSON.parse(req.response));
+                                                        var solution_date = get_solution_date()
+                                                        prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
+                                                        fill_score_with_solution(solution)
+                                                        isHfSolving = false
+                                                        buttonRun.update()
+                                                    } else {
+                                                        isHfSolving = false;
+                                                        buttonRun.update()
+                                                        showError(JSON.parse(req.response))
+                                                    }
+                                                }
+                                            }
+                                            req.onerror = function() {
+                                                  console.log("error")
+                                            }
 
-                            //solving
-                            if (exerciseLoaded) {
-                                try {
-                                    exercise = Parser.parse(input_text)
-                                    braveWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
-                                        exercise,
-                                        undefined,
-                                        undefined,
-                                        !configuration.enableCorrector,
-                                        !configuration.enablePrechecker,
-                                        undefined
-                                    ))
-                                    isHfSolving = true;
-                                    buttonRun.update();
-                                } catch (error) {
-                                    isHfSolving = false;
-                                    buttonRun.update()
-                                    harmonicFunctionsProgressBar.value = 0
-                                    showError(error)
+                                            req.send(
+                                                JSON.stringify({
+                                                    "input": input_text,
+                                                    "configuration": configuration
+                                                })
+                                            )
+
+                                            isHfSolving = true;
+                                            buttonRun.update();
+                                        } else {
+                                            showError(JSON.parse(preReq.response))
+                                        }
+                                    }
                                 }
+                                preReq.onerror = function() {
+                                      console.log("error")
+                                }
+
+                                preReq.send(
+                                    JSON.stringify({
+                                        "input": input_text
+                                    })
+                                )
                             }
                         }
                         property var update: function(){
@@ -1285,33 +1312,6 @@ MuseScore {
 
                 Rectangle {
                     id: tabRectangle2
-
-                    WorkerScript {
-                        id: busyWorker
-                        source: "SolverWorker.js"
-
-                        onMessage:  {
-                            if(messageObject.type === "progress_notification"){
-                                if(isBassSolving) figuredBassProgressBar.value = messageObject.progress;
-                            }
-                            else if(messageObject.type === "solution"){
-                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
-                                var solution_date = get_solution_date()
-//                                Utils.log("Solution:", JSON.stringify(solution))
-                                prepare_score_for_solution(filePath, solution, solution_date, false, "_bass")
-                                fill_score_with_solution(solution, messageObject.durations)
-                                isBassSolving = false
-                                buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
-                            }
-                            else if(messageObject.type === "error"){
-                                isBassSolving = false
-                                buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
-                                showError(messageObject.error)
-                            }
-                        }
-                     }
 
                     Button {
                         id: buttonBassHelp
@@ -1338,19 +1338,6 @@ MuseScore {
                         anchors.leftMargin: 10
                         anchors.topMargin: 10
                         color: "#000000"
-                    }
-
-                    ProgressBar {
-                        id: figuredBassProgressBar
-                        value: 0
-                        anchors.left: tabRectangle2.left
-                        anchors.right: tabRectangle2.right
-                        anchors.bottom: buttonRunFiguredBass.top
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 20
-                        height: 15
-                        width: parent.width - 40
                     }
 
                     MessageDialog {
@@ -1388,37 +1375,44 @@ MuseScore {
                             } catch (error) {
                                 isBassSolving = false
                                 buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
                                 showError(error)
                             }
                         }
 
                         property var solve: function() {
-                            try {
-                                isFiguredBassScore()
-                                var ex = read_figured_bass()
-                                var translator = new Translator.BassTranslator()
-                                //Utils.log("ex",JSON.stringify(ex))
-
-                                var exerciseAndBassline = translator.createExerciseFromFiguredBass(ex)
-                                //Utils.log("Translated exercise",JSON.stringify(exerciseAndBassline[0]))
-
-                                busyWorker.sendMessage(new SolverRequestDto.SolverRequestDto(
-                                    exerciseAndBassline[0],
-                                    exerciseAndBassline[1],
-                                    undefined,
-                                    !configuration.enableCorrector,
-                                    !configuration.enablePrechecker,
-                                    ex.durations
-                                ))
-                                isBassSolving = true
-                                buttonRunFiguredBass.update()
-                            } catch (error) {
-                                isBassSolving = false
-                                buttonRunFiguredBass.update()
-                                figuredBassProgressBar.value = 0
-                                showError(error)
+                            isFiguredBassScore()
+                            var ex = read_figured_bass()
+                            var req = new XMLHttpRequest()
+                            req.open("POST", getURL(bassEndpoint))
+                            req.onreadystatechange = function(){
+                                if (req.readyState == XMLHttpRequest.DONE) {
+                                    if (req.status === 200) {
+                                        var response = JSON.parse(req.response)
+                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response.solution);
+                                        var solution_date = get_solution_date()
+                                        prepare_score_for_solution(filePath, solution, solution_date, true, "_bass")
+                                        fill_score_with_solution(solution, response.durations)
+                                        isBassSolving = false
+                                        buttonRunFiguredBass.update()
+                                    } else {
+                                        isBassSolving = false;
+                                        buttonRunFiguredBass.update()
+                                        showError(JSON.parse(req.response))
+                                    }
+                                }
                             }
+                            req.onerror = function() {
+                                  console.log("error")
+                            }
+
+                            req.send(
+                                JSON.stringify({
+                                    "exercise": ex,
+                                    "configuration": configuration
+                                })
+                            )
+                            isBassSolving = true
+                            buttonRunFiguredBass.update()
                         }
 
                         property var update: function(){
@@ -1795,48 +1789,6 @@ MuseScore {
                         return punishmentRatios
                     }
 
-                    WorkerScript {
-                        id: amazingWorker
-                        source: "SopranoSolverWorker.js"
-
-                        onMessage:  {
-                            if(messageObject.type === "progress_notification"){
-                                if(isSopranoSolving) sopranoProgressBar.value = messageObject.progress;
-                            }
-                            else if(messageObject.type === "solution"){
-                                var solution = ExerciseSolution.exerciseSolutionReconstruct(messageObject.solution);
-                                if(solution.success) {
-                                    var solution_date = get_solution_date()
-                                    prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
-                                    fill_score_with_solution(solution, messageObject.durations)
-                                }
-                                isSopranoSolving = false
-                                buttorSoprano.update()
-                                sopranoProgressBar.value = 0
-                            }
-                            else if(messageObject.type === "error"){
-                                isSopranoSolving = false
-                                buttorSoprano.update()
-                                sopranoProgressBar.value = 0
-                                showError(messageObject.error)
-                            }
-                        }
-                    }
-
-                    ProgressBar {
-                        id: sopranoProgressBar
-                        value: 0
-                        anchors.left: tabRectangle3.left
-                        anchors.right: tabRectangle3.right
-                        anchors.bottom: buttorSoprano.top
-                        anchors.topMargin: 10
-                        anchors.bottomMargin: 10
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 20
-                        height: 15
-                        width: parent.width - 40
-                    }
-
                     MessageDialog {
                       id: inputWarningSopranoDialog
                       width: 300
@@ -1872,31 +1824,42 @@ MuseScore {
                             } catch (error) {
                                 isSopranoSolving = false
                                 buttorSoprano.update()
-                                sopranoProgressBar.value = 0
                                 showError(error)
                            }
                         }
 
                         property var solve: function() {
-                            try{
-                                isSopranoScore()
-                                var func_list = getPossibleChordsList()
-                                var punishments = getPunishmentRatios()
-                                var exercise = prepareSopranoHarmonizationExercise(func_list);
-                                amazingWorker.sendMessage(
-                                    new SopranoSolverRequestDto.SopranoSolverRequestDto(
-                                        exercise,
-                                        punishments
-                                    )
-                                )
-                                isSopranoSolving = true
-                                buttorSoprano.update()
-                            } catch (error) {
-                                isSopranoSolving = false
-                                buttorSoprano.update()
-                                sopranoProgressBar.value = 0
-                                showError(error)
-                           }
+                            isSopranoScore()
+                            var func_list = getPossibleChordsList()
+                            var punishments = getPunishmentRatios()
+                            var exercise = prepareSopranoHarmonizationExercise(func_list);
+                            var req = new XMLHttpRequest()
+                            req.open("POST", getURL(sopranoEndpoint))
+                            req.onreadystatechange = function(){
+                                if (req.readyState == XMLHttpRequest.DONE) {
+                                    if (req.status === 200) {
+                                        var response = JSON.parse(req.response)
+                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response.solution)
+                                        if(solution.success) {
+                                            var solution_date = get_solution_date()
+                                            prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")
+                                            fill_score_with_solution(solution, response.durations)
+                                        }
+                                        isSopranoSolving = false
+                                        buttorSoprano.update()
+                                    } else {
+                                        isSopranoSolving = false
+                                        buttorSoprano.update()
+                                        showError(JSON.parse(req.response))
+                                    }
+                                }
+                            }
+                            req.onerror = function() {
+                                  console.log("error")
+                            }
+                            req.send(JSON.stringify({'exercise':exercise, 'punishments':punishments}))
+                            isSopranoSolving = true
+                            buttorSoprano.update()
                         }
 
                         property var update: function(){
