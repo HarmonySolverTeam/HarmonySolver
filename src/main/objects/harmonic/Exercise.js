@@ -29,13 +29,15 @@ function exerciseReconstruct(ex){
     var measures = []
     for(var i=0; i<ex.measures.length;i++){
         var measure = [];
-        for(var j=0; j<ex.measures[i].length; j++){
-            measure.push( HarmonicFunction.harmonicFunctionReconstruct(ex.measures[i][j]) )
+        for(var j=0; j<ex.measures[i].elements.length; j++){
+            measure.push( HarmonicFunction.harmonicFunctionReconstruct(ex.measures[i].elements[j]) )
         }
         measures.push(measure)
     }
 
-    return new Exercise(ex.key, ex.meter, ex.mode, measures);
+    var mode = ex.key[0] === ex.key[0].toUpperCase()? "major" : "minor"
+    var meter = ex.meter.split("/").map(function(x){return parseInt(x)})
+    return new Exercise(ex.key, meter, mode, measures);
 }
 
 function SolvedExercise(chords){

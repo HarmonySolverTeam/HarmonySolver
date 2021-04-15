@@ -488,21 +488,35 @@ function HarmonicFunctionWithoutValidation(functionName, degree, position, revol
 
 function harmonicFunctionReconstruct(hf){
     var delay = []
-    for(var i=0;i<hf.delay.length; i++){
-        delay.push([hf.delay[i][0].chordComponentString, hf.delay[i][1].chordComponentString]);
+    for(var i=0;i<hf.delays.length; i++){
+        delay.push([hf.delays[i][0], hf.delays[i][1]]);
     }
     delay = delay.length > 0 ? delay : undefined;
 
+    var degree = undefined
+    switch(hf.degree) {
+        case "I" : degree = 1; break
+        case "II" : degree = 2; break
+        case "III" : degree = 3; break
+        case "IV" : degree = 4; break
+        case "V" : degree = 5; break
+        case "VI" : degree = 6; break
+        case "VII" : degree = 7; break
+        default : degree = undefined; break
+    }
+
+    var system = hf.system === "undefined" ? undefined : hf.system.toLowerCase()
+
     return new HarmonicFunctionWithoutValidation(
         hf.functionName,
-        hf.degree,
-        hf.position === undefined ? undefined : hf.position.chordComponentString,
-        hf.revolution === undefined ? undefined : hf.revolution.chordComponentString,
+        degree,
+        hf.position,
+        hf.revolution,
         delay,
-        hf.extra === undefined ? undefined : hf.extra.map(function (cc) { return cc.chordComponentString; }),
-        hf.omit === undefined ? undefined : hf.omit.map(function (cc) { return cc.chordComponentString; }),
+        hf.extra,
+        hf.omit,
         hf.down,
-        hf.system,
+        system,
         hf.mode,
         hf.key,
         hf.isRelatedBackwards

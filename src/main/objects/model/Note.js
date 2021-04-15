@@ -59,8 +59,18 @@ function Measure(notes){
 }
 
 function noteReconstruct(note){
-    var chordComponentString = note.chordComponent !== undefined ? note.chordComponent.chordComponentString : undefined
-    return new Note(note.pitch, note.baseNote, chordComponentString, note.duration)
+    var chordComponentString = note.chordComponent !== undefined ? cm.chordComponentFromString(note.chordComponent) : undefined
+    var baseNote = undefined
+    switch(note.baseNote) {
+        case "C": baseNote = 0; break
+        case "D": baseNote = 1; break
+        case "E": baseNote = 2; break
+        case "F": baseNote = 3; break
+        case "G": baseNote = 4; break
+        case "A": baseNote = 5; break
+        case "B": baseNote = 6; break
+    }
+    return new Note(note.pitch, baseNote, chordComponentString, note.duration)
 }
 
 function measureReconstruct(measure){

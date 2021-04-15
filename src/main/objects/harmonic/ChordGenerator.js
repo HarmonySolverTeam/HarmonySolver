@@ -421,7 +421,7 @@ function ChordGenerator(key, mode) {
         }
         if(!chordGeneratorInput.allowDoubleThird){
             var illegalDoubledThirdRule = new ChordRulesChecker.IllegalDoubledThirdRule();
-            chords.filter(function (chord) {
+            chords = chords.filter(function (chord) {
                     return !illegalDoubledThirdRule.hasIllegalDoubled3Rule(chord)
                 }
             )

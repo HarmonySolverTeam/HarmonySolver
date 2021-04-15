@@ -2,14 +2,14 @@
 .import "../model/HarmonicFunction.js" as HarmonicFunction
 .import "../commons/Errors.js" as Errors
 .import "../utils/Utils.js" as Utils
-function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction) {
+function Chord(sopranoNote, altoNote, tenorNote, bassNote, harmonicFunction, duration) {
     this.sopranoNote = sopranoNote
     this.altoNote = altoNote
     this.tenorNote = tenorNote
     this.bassNote = bassNote
     this.harmonicFunction = harmonicFunction
     this.notes = [bassNote, tenorNote, altoNote, sopranoNote]
-    this.duration = undefined
+    this.duration = duration
 
     for(var i = 0; i < 3; i++){
         if(this.notes[i].isUpperThan(this.notes[i+1])){
@@ -66,7 +66,8 @@ function chordReconstruct(chord){
         Note.noteReconstruct(chord.altoNote),
         Note.noteReconstruct(chord.tenorNote),
         Note.noteReconstruct(chord.bassNote),
-        hf
+        hf,
+        chord.duration
     )
 }
 
