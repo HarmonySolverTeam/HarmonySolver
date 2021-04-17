@@ -104,6 +104,34 @@ MuseScore {
         return result
     }
 
+    function getBaseNoteString(museScoreBaseNote) {
+            var result
+            switch (museScoreBaseNote) {
+            case 0:
+                result = "F"
+                break
+            case 1:
+                result = "C"
+                break
+            case 2:
+                result = "G"
+                break
+            case 3:
+                result = "D"
+                break
+            case 4:
+                result = "A"
+                break
+            case 5:
+                result = "E"
+                break
+            case 6:
+                result = "B"
+                break
+            }
+            return result
+        }
+
     function selectSoprano(cursor) {
         cursor.track = 0
     }
@@ -335,33 +363,19 @@ MuseScore {
             if (!lastSegment)
                 cursor.prev()
 
-            if (durations !== undefined) {
-                cursor.setDuration(dur[0], dur[1])
-            } else {
-                cursor.setDuration(curChord.duration[0], curChord.duration[1])
-            }
             addComponentToScore(cursor, curChord.sopranoNote.chordComponent.toXmlString())
             selectAlto(cursor)
             cursor.addNote(curChord.altoNote.pitch, false)
             if (!lastSegment)
                 cursor.prev()
 
-            if (durations !== undefined) {
-                cursor.setDuration(dur[0], dur[1])
-            } else {
-                cursor.setDuration(curChord.duration[0], curChord.duration[1])
-            }
             addComponentToScore(cursor, curChord.altoNote.chordComponent.toXmlString())
             selectTenor(cursor)
             cursor.addNote(curChord.tenorNote.pitch, false)
             if (!lastSegment)
                 cursor.prev()
 
-            if (durations !== undefined) {
-                cursor.setDuration(dur[0], dur[1])
-            } else {
-                cursor.setDuration(curChord.duration[0], curChord.duration[1])
-            }
+           
             addComponentToScore(cursor, curChord.tenorNote.chordComponent.toXmlString())
             selectBass(cursor)
 
@@ -477,48 +491,49 @@ MuseScore {
                   this.value === other.value
             }
         }
-        var hfs = [new HF("A"), new HF("B")] //just to make connections have diffrent hfs
+        var hfs = [{"functionName": "T"}, {"functionName": "D"}] //just to make connections have diffrent hfs
         var idx = 0;
         var chords_counter = 0
         do {
             chords_counter ++
             selectSoprano(cursor)
-            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastBaseNote = getBaseNoteString(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             sopranoNote = new Note.Note(lastPitch, lastBaseNote)
             selectAlto(cursor)
-            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastBaseNote = getBaseNoteString(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             altoNote = new Note.Note(lastPitch, lastBaseNote)
             selectTenor(cursor)
-            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastBaseNote = getBaseNoteString(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             tenorNote = new Note.Note(lastPitch, lastBaseNote)
             selectBass(cursor)
-            lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
+            lastBaseNote = getBaseNoteString(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
             bassNote = new Note.Note(lastPitch, lastBaseNote)
             try{
-                chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, hfs[idx]))
+                chords.push(new Chord.Chord(sopranoNote, altoNote, tenorNote, bassNote, hfs[idx], 0.0))
             } catch(error){
                 error.details = "Found at " + chords_counter + " position"
                 throw error
             }
             idx = (idx + 1) % 2
         } while (cursor.next())
-        var exercise = new Exercise.SolvedExercise(chords)
         var req = new XMLHttpRequest()
         req.open("POST", getURL(validatorEndpoint))
+        req.setRequestHeader("Content-Type", "application/json")
         req.onreadystatechange = function(){
             if (req.readyState == XMLHttpRequest.DONE) {
-                correctnessInfoDialog.text = req.response
+                  console.log(req.response)
+                correctnessInfoDialog.text = JSON.parse(req.response)
                 correctnessInfoDialog.open()
             }
         }
         req.onerror = function() {
               console.log("error")
         }
-        req.send(JSON.stringify(exercise))
+        req.send(JSON.stringify(chords))
     }
 
     function addComponentToScore(cursor, componentValue) {
