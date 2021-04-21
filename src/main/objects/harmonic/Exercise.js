@@ -36,8 +36,7 @@ function exerciseReconstruct(ex){
     }
 
     var mode = ex.key[0] === ex.key[0].toUpperCase()? "major" : "minor"
-    var meter = ex.meter.split("/").map(function(x){return parseInt(x)})
-    return new Exercise(ex.key, meter, mode, measures);
+    return new Exercise(ex.key, ex.meter, mode, measures);
 }
 
 function SolvedExercise(chords){

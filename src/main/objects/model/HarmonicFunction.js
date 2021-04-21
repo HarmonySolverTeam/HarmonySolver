@@ -489,7 +489,7 @@ function HarmonicFunctionWithoutValidation(functionName, degree, position, revol
 function harmonicFunctionReconstruct(hf){
     var delay = []
     for(var i=0;i<hf.delays.length; i++){
-        delay.push([hf.delays[i][0], hf.delays[i][1]]);
+        delay.push([hf.delays[i].first, hf.delays[i].second]);
     }
     delay = delay.length > 0 ? delay : undefined;
 

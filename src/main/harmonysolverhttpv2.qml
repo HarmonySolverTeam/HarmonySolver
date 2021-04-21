@@ -244,7 +244,7 @@ MuseScore {
             }
             lastBaseNote = getBaseNote(Utils.mod((cursor.element.notes[0].tpc + 1), 7))
             lastPitch = cursor.element.notes[0].pitch
-            bassNote = new Note.Note(lastPitch, lastBaseNote, 0)
+            bassNote = new Note.Note(lastPitch, lastBaseNote, undefined, cursor.element.duration.numerator / cursor.element.duration.denominator)
             elements.push(new FiguredBass.FiguredBassElement(bassNote, symbols, delays))
             has3component = false
 
@@ -1224,7 +1224,9 @@ MuseScore {
                                     if (preReq.readyState == XMLHttpRequest.DONE) {
                                         if (preReq.status === 200) {
                                             exerciseLoaded = true
+                                            parseSuccessDialog.open()
                                         } else {
+                                        console.log(preReq.response)
                                             showError(JSON.parse(preReq.response))
                                         }
                                     }
@@ -1389,19 +1391,22 @@ MuseScore {
                             var ex = read_figured_bass()
                             var req = new XMLHttpRequest()
                             req.open("POST", getURL(bassEndpoint))
+                            req.setRequestHeader("Content-Type", "application/json")
                             req.onreadystatechange = function(){
                                 if (req.readyState == XMLHttpRequest.DONE) {
                                     if (req.status === 200) {
                                         var response = JSON.parse(req.response)
-                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response.solution);
+                                         console.log(req.response) 
+                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response);
                                         var solution_date = get_solution_date()
                                         prepare_score_for_solution(filePath, solution, solution_date, true, "_bass")
-                                        fill_score_with_solution(solution, response.durations)
+                                        fill_score_with_solution(solution)
                                         isBassSolving = false
                                         buttonRunFiguredBass.update()
                                     } else {
                                         isBassSolving = false;
                                         buttonRunFiguredBass.update()
+                                        console.log(req.response)
                                         showError(JSON.parse(req.response))
                                     }
                                 }
@@ -1409,12 +1414,12 @@ MuseScore {
                             req.onerror = function() {
                                   console.log("error")
                             }
-
-                            req.send(
-                                JSON.stringify({
+                            var bass_exercise = JSON.stringify({
                                     "exercise": ex,
                                     "configuration": configuration
                                 })
+                            req.send(
+                                bass_exercise
                             )
                             isBassSolving = true
                             buttonRunFiguredBass.update()
