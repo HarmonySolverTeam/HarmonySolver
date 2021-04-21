@@ -300,6 +300,28 @@ function HarmonicFunction2(params, notValidate){
         return functionWithPosition;
     };
 
+    this.mapToDto = function () {
+        var mapped = this.copy()
+        var degree = undefined
+        switch(mapped.degree) {
+            case 1 : degree = "I"; break
+            case 2 : degree = "II"; break
+            case 3 : degree = "III"; break
+            case 4 : degree = "IV"; break
+            case 5 : degree = "V"; break
+            case 6 : degree = "VI"; break
+            case 7 : degree = "VII"; break
+            default : degree = undefined; break
+        }
+        mapped["degree"] = degree
+        mapped["position"] = mapped.position !== undefined ? mapped.position.chordComponentString : undefined
+        mapped["revolution"] = mapped.revolution !== undefined ? mapped.revolution.chordComponentString : undefined
+        mapped["extra"] = mapped.position !== undefined ? mapped.extra.map(function(x){return x.chordComponentString}) : undefined
+        mapped["omit"] = mapped.omit !== undefined ? mapped.omit.map(function(x){return x.chordComponentString}) : undefined
+        mapped["delays"] = mapped.omit !== undefined ? mapped.delay.map(function(x){return [x[0].chordComponentString, x[1].chordComponentString]}) : undefined
+        return mapped
+    };
+
     this.toString = function () {
         return "FunctionName: " + this.functionName + "\n" +
             "Degree: " + this.degree + " \n" +
@@ -488,21 +510,35 @@ function HarmonicFunctionWithoutValidation(functionName, degree, position, revol
 
 function harmonicFunctionReconstruct(hf){
     var delay = []
-    for(var i=0;i<hf.delay.length; i++){
-        delay.push([hf.delay[i][0].chordComponentString, hf.delay[i][1].chordComponentString]);
+    for(var i=0;i<hf.delays.length; i++){
+        delay.push([hf.delays[i].first, hf.delays[i].second]);
     }
     delay = delay.length > 0 ? delay : undefined;
 
+    var degree = undefined
+    switch(hf.degree) {
+        case "I" : degree = 1; break
+        case "II" : degree = 2; break
+        case "III" : degree = 3; break
+        case "IV" : degree = 4; break
+        case "V" : degree = 5; break
+        case "VI" : degree = 6; break
+        case "VII" : degree = 7; break
+        default : degree = undefined; break
+    }
+
+    var system = hf.system === "undefined" ? undefined : hf.system.toLowerCase()
+
     return new HarmonicFunctionWithoutValidation(
         hf.functionName,
-        hf.degree,
-        hf.position === undefined ? undefined : hf.position.chordComponentString,
-        hf.revolution === undefined ? undefined : hf.revolution.chordComponentString,
+        degree,
+        hf.position,
+        hf.revolution,
         delay,
-        hf.extra === undefined ? undefined : hf.extra.map(function (cc) { return cc.chordComponentString; }),
-        hf.omit === undefined ? undefined : hf.omit.map(function (cc) { return cc.chordComponentString; }),
+        hf.extra,
+        hf.omit,
         hf.down,
-        hf.system,
+        system,
         hf.mode,
         hf.key,
         hf.isRelatedBackwards

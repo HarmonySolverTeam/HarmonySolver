@@ -381,13 +381,13 @@ var PREFERENCES_NAMES = {
 
 //G
 var CHORD_RULES = {
-    ConcurrentOctaves: "ConcurrentOctaves",
-    ConcurrentFifths: "ConcurrentFifths",
-    CrossingVoices: "CrossingVoices",
-    OneDirection: "OneDirection",
-    ForbiddenJump: "ForbiddenJump",
-    HiddenOctaves: "Hidden consecutive octaves",
-    FalseRelation: "FalseRelation",
-    SameFunctionCheckConnection: "SameFunctionCheckConnection",
-    IllegalDoubledThird: "IllegalDoubledThird",
+    ConcurrentOctaves: "concurrentOctaves",
+    ConcurrentFifths: "concurrentFifths",
+    CrossingVoices: "crossingVoices",
+    OneDirection: "oneDirection",
+    ForbiddenJump: "forbiddenJump",
+    HiddenOctaves: "hiddenOctaves",
+    FalseRelation: "falseRelation",
+    SameFunctionCheckConnection: "sameFunctionCheckConnection",
+    IllegalDoubledThird: "illegalDoubledThird",
 }
