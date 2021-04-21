@@ -446,7 +446,7 @@ MuseScore {
                         [cursor.element.duration.numerator, cursor.element.duration.denominator])
             lastBaseNote = getBaseNote(Utils.mod(cursor.element.notes[0].tpc + 1, 7))
             lastPitch = cursor.element.notes[0].pitch
-            sopranoNote = new Note.Note(lastPitch, lastBaseNote, 0, [cursor.element.duration.numerator, cursor.element.duration.denominator])
+            sopranoNote = new Note.Note(lastPitch, lastBaseNote, undefined, cursor.element.duration.numerator / cursor.element.duration.denominator)
             //console.log("new Note.Note(" + lastPitch + ", " + lastBaseNote +", 0,
             //[" + cursor.element.duration.numerator + ", " + cursor.element.duration.denominator + "])"   )
             notes.push(sopranoNote)
@@ -458,11 +458,15 @@ MuseScore {
             key = Consts.majorKeyBySignature(curScore.keysig)
         else
             key = Consts.minorKeyBySignature(curScore.keysig)
+            
+        for (var i = 0; i < functionsList.length; i++) {
+            functionsList[i] = functionsList[i].mapToDto()
+        }    
         var sopranoExercise = new SopranoExercise.SopranoExercise(mode, key,
                                                                   meter, notes,
                                                                   durations, measures,
                                                                   functionsList)
-
+                                                        
         return sopranoExercise;
 
     }
@@ -1269,7 +1273,7 @@ MuseScore {
                                             req.setRequestHeader("Content-Type", "application/json")
                                             req.onreadystatechange = function(){
                                                 if (req.readyState == XMLHttpRequest.DONE) {
-                                                    if (req.status === 200) {
+                                                    if (req.status === 200) {    
                                                         var solution = ExerciseSolution.exerciseSolutionReconstruct(JSON.parse(req.response));
                                                         var solution_date = get_solution_date()
                                                         prepare_score_for_solution(filePath, solution, solution_date, true, "_hfunc")
@@ -1845,11 +1849,13 @@ MuseScore {
                             var exercise = prepareSopranoHarmonizationExercise(func_list);
                             var req = new XMLHttpRequest()
                             req.open("POST", getURL(sopranoEndpoint))
+                            req.setRequestHeader("Content-Type", "application/json")
                             req.onreadystatechange = function(){
                                 if (req.readyState == XMLHttpRequest.DONE) {
                                     if (req.status === 200) {
+                                    console.log(req.response)
                                         var response = JSON.parse(req.response)
-                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response.solution)
+                                        var solution = ExerciseSolution.exerciseSolutionReconstruct(response)
                                         if(solution.success) {
                                             var solution_date = get_solution_date()
                                             prepare_score_for_solution(filePath, solution, solution_date, false, "_soprano")

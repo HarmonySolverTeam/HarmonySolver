@@ -1,5 +1,6 @@
 .import "../model/HarmonicFunction.js" as HarmonicFunction
 .import "../harmonic/ChordRulesChecker.js" as RulesChecker
+.import "../model/Note.js" as Note
 
 function Exercise(key, meter, mode, measures) {
     this.mode = mode
@@ -29,8 +30,15 @@ function exerciseReconstruct(ex){
     var measures = []
     for(var i=0; i<ex.measures.length;i++){
         var measure = [];
-        for(var j=0; j<ex.measures[i].elements.length; j++){
-            measure.push( HarmonicFunction.harmonicFunctionReconstruct(ex.measures[i].elements[j]) )
+        var attribute = ex.measures[i].elements === undefined
+        if (attribute) {
+            for(var j=0; j<ex.measures[i].notes.length; j++){
+                measure.push( Note.noteReconstruct(ex.measures[i].notes[j]) )
+            }
+        } else {
+            for(var j=0; j<ex.measures[i].elements.length; j++){
+                measure.push( HarmonicFunction.harmonicFunctionReconstruct(ex.measures[i].elements[j]) )
+            }
         }
         measures.push(measure)
     }
