@@ -904,19 +904,19 @@ MuseScore {
             chordsList.push(Dtoiv)
             chordsList.push(Dtov)
         }
-        var revolutionChords = []
-        if (tab3.item.getCheckboxState("revolution3")){
+        var inversionChords = []
+        if (tab3.item.getCheckboxState("inversion3")){
             for (var i = 0; i < chordsList.length; i++){
                 var tmpHarmonicFunction = chordsList[i].copy()
-                tmpHarmonicFunction.revolution = tmpHarmonicFunction.getThird()
-                revolutionChords.push(tmpHarmonicFunction)
+                tmpHarmonicFunction.inversion = tmpHarmonicFunction.getThird()
+                inversionChords.push(tmpHarmonicFunction)
             }
         }
-        if (tab3.item.getCheckboxState("revolution5")){
+        if (tab3.item.getCheckboxState("inversion5")){
             for (var i = 0; i < chordsList.length; i++){
                 var tmpHarmonicFunction = chordsList[i].copy()
-                tmpHarmonicFunction.revolution = tmpHarmonicFunction.getFifth()
-                revolutionChords.push(tmpHarmonicFunction)
+                tmpHarmonicFunction.inversion = tmpHarmonicFunction.getFifth()
+                inversionChords.push(tmpHarmonicFunction)
             }
         }
 
@@ -924,7 +924,7 @@ MuseScore {
             chordsList.push(neapolitan)
         }
 
-        return chordsList.concat(revolutionChords)
+        return chordsList.concat(inversionChords)
     }
 
     FileIO {
@@ -1007,7 +1007,7 @@ MuseScore {
         title: "Help - Soprano Harmonization"
         text: "Here you can solve soprano harmonization exercises.\n" +
         "At first, open a score with only soprano voice.\n" +
-        "You can choose which chords are being used for harmonization, possible revolutions and scale.\n" +
+        "You can choose which chords are being used for harmonization, possible inversions and scale.\n" +
         "With sliders you can choose tolerance of different harmonic rules.\n" +
         "The more percent value, the less rule is taken into account.\n" +
         "0% means that specific rule can not be broken.\n\n" +
@@ -1476,11 +1476,11 @@ MuseScore {
                         if (function_name === "secondaryD") {
                             return secondaryDCheckbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "revolution3") {
-                            return revolution3Checkbox.checkedState === Qt.Checked
+                        if (function_name === "inversion3") {
+                            return inversion3Checkbox.checkedState === Qt.Checked
                         }
-                        if (function_name === "revolution5") {
-                            return revolution5Checkbox.checkedState === Qt.Checked
+                        if (function_name === "inversion5") {
+                            return inversion5Checkbox.checkedState === Qt.Checked
                         }
                     }
 
@@ -1593,18 +1593,18 @@ MuseScore {
                         }
 
                         Column {
-                            id: revolutionColumn
+                            id: inversionColumn
                             Text {
-                                id: revolutionTextLabelt
-                                text: qsTr("Revolutions")
+                                id: inversionTextLabelt
+                                text: qsTr("Inversions")
                             }
                             CheckBox {
-                                id: revolution3Checkbox
+                                id: inversion3Checkbox
                                 checked: false
                                 text: "<font color='#000000'>3</font>"
                             }
                             CheckBox {
-                                id: revolution5Checkbox
+                                id: inversion5Checkbox
                                 checked: false
                                 text: "<font color='#000000'>5</font>"
                             }
@@ -2101,10 +2101,10 @@ MuseScore {
                              id: correctCheckbox
                              checked: configuration.enableCorrector
                              text: "<font color='#000000'>correct given exercise</font>"
-                             tooltip: "Enable exercise correction by tweaking chords revolution and omit parameters\n"
+                             tooltip: "Enable exercise correction by tweaking chords inversion and omit parameters\n"
                               + "to avoid breaking harmonic rules." +
                               "\nFor example " +
-                             "adds 3 to revolution after chord with 7 in bass."
+                             "adds 3 to inversion after chord with 7 in bass."
                              onCheckedChanged: function() {
                                     if (this.checkedState === Qt.Checked){
                                           configuration.enableCorrector = true

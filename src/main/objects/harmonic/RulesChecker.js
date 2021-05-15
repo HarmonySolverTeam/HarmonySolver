@@ -237,8 +237,8 @@ function checkConnection(prevChord, currentChord, brokenRulesCounter){
                     !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3") &&
                     !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")){
                     //rozwiazanie swobodne mozliwe
-                    if((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
-                        currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
+                    if((currentChord.harmonicFunction.inversion.chordComponentString === "3" ||
+                        currentChord.harmonicFunction.inversion.chordComponentString === "3>" ||
                         (currentChord.harmonicFunction.position !== undefined &&
                             (currentChord.harmonicFunction.position.chordComponentString === "3" ||
                         currentChord.harmonicFunction.position.chordComponentString === "3>"))) &&
@@ -591,7 +591,7 @@ function correctNoneChord(chord, brokenRulesCounter){
 
     if(!Utils.containsBaseChordComponent(chord.harmonicFunction.extra,9))
         return true;
-    if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.revolution)) {
+    if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.inversion)) {
         if(!chord.sopranoNote.baseChordComponentEquals("9") || !chord.tenorNote.baseChordComponentEquals("1")){
             if (brokenRulesCounter !== undefined) {
                 brokenRulesCounter.increaseCounter(ruleName)

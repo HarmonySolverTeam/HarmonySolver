@@ -18,8 +18,8 @@ function HarmonicFunctionValidator(){
         validateDegree(this);
         // position             should be string f.e. "<7" or "7>" or just "7"
         validatePosition(this);
-        // revolution           should be string f.e. "<6" or "6>" or just "6"
-        validateRevolution(this);
+        // inversion           should be string f.e. "<6" or "6>" or just "6"
+        validateInversion(this);
         // delay                delayed components list
         validateDelay(this);
         // extra                extra components list [] | ["9", "7>"]
@@ -36,7 +36,7 @@ function HarmonicFunctionValidator(){
         //other checks
         checkAllChordComponentNumber(this);
         checkIfExtraContainsPosition(this);
-        checkIfExtraContainsRevolution(this);
+        checkIfExtraContainsInversion(this);
 
         return this.result;
     };
@@ -66,10 +66,10 @@ function HarmonicFunctionValidator(){
         if(position !== undefined && !isValidChordComponent(position))  handleValidationFailure(_this, "Invalid chordComponentString of position");
     }
 
-    function validateRevolution(_this) {
-        var revolution = _this.harmonicFunction.revolution;
-        if(revolution === undefined) handleValidationFailure(_this, "Revolution cannot be undefined");
-        if(!isValidChordComponent(revolution)) handleValidationFailure(_this, "Invalid chordComponentString of revolution");
+    function validateInversion(_this) {
+        var inversion = _this.harmonicFunction.inversion;
+        if(inversion === undefined) handleValidationFailure(_this, "Inversion cannot be undefined");
+        if(!isValidChordComponent(inversion)) handleValidationFailure(_this, "Invalid chordComponentString of inversion");
     }
 
     function validateDelay(_this){
@@ -153,10 +153,10 @@ function HarmonicFunctionValidator(){
             handleValidationFailure(_this, "Extra not contains position which is not standard chord component");
     }
 
-    function checkIfExtraContainsRevolution(_this) {
-        var revolution = _this.harmonicFunction.revolution;
+    function checkIfExtraContainsInversion(_this) {
+        var inversion = _this.harmonicFunction.inversion;
         var extra = _this.harmonicFunction.extra;
-        if(!Utils.contains(_this.harmonicFunction.getBasicChordComponents(), revolution) && !Utils.contains(extra, revolution))
+        if(!Utils.contains(_this.harmonicFunction.getBasicChordComponents(), inversion) && !Utils.contains(extra, inversion))
             handleValidationFailure(_this, "Extra not contains position which is not standard chord component");
     }
 

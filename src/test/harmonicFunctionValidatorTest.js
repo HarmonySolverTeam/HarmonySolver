@@ -30,7 +30,7 @@ const validateDelayWithOtherAttributesTest = () => {
         TestUtils.assertTrue(validator.validate(hf5))
 };
 
-testSuite.addTest(new TestUtils.UnitTest(validateDelayWithOtherAttributesTest, "Validate delay with omit, extra, revolution and position"));
+testSuite.addTest(new TestUtils.UnitTest(validateDelayWithOtherAttributesTest, "Validate delay with omit, extra, inversion and position"));
 
 const omit5AddingToNinthTest = () => {
     var hf1 = new HarmonicFunction.HarmonicFunction("D",undefined, undefined, undefined,[["9","8"]], ["7"]);
@@ -47,19 +47,19 @@ const validateNinthChord = () => {
     // var hf5 = new HarmonicFunction.HarmonicFunction("D",undefined,"5<","5<",[],["9"],[],false,undefined,undefined);
 
     return TestUtils.assertThrows("Error during parsing harmonic functions input", "HarmonicFunction validation error: " +
-        "ninth chord could not have both prime or fifth in position and revolution",
+        "ninth chord could not have both prime or fifth in position and inversion",
             HarmonicFunction.HarmonicFunction, ["D",undefined,"1","5",undefined,["9"]]) &&
         TestUtils.assertThrows("Error during parsing harmonic functions input", "HarmonicFunction validation error: " +
-            "ninth chord could not have same position as revolution",
+            "ninth chord could not have same position as inversion",
             HarmonicFunction.HarmonicFunction, ["D",undefined,"1","1",undefined,["9"]]) &&
         TestUtils.assertThrows("Error during parsing harmonic functions input", "HarmonicFunction validation error: " +
-            "ninth chord could not have both prime or fifth in position and revolution",
+            "ninth chord could not have both prime or fifth in position and inversion",
             HarmonicFunction.HarmonicFunction, ["D",undefined,"5","1",undefined,["9"]]) &&
         TestUtils.assertThrows("Error during parsing harmonic functions input", "HarmonicFunction validation error: " +
-            "ninth chord could not have same position as revolution",
+            "ninth chord could not have same position as inversion",
             HarmonicFunction.HarmonicFunction, ["D",undefined,"5","5",undefined,["9"]]) &&
         TestUtils.assertThrows("Error during parsing harmonic functions input", "HarmonicFunction validation error: " +
-            "ninth chord could not have same position as revolution",
+            "ninth chord could not have same position as inversion",
             HarmonicFunction.HarmonicFunction, ["D",undefined,"5>","5>",undefined,["9"]])
 
 };

@@ -4,7 +4,7 @@ degree_values = ["I", "II", "III", "IV", "V", "VI", "VII", ""] #5
 extra_values = [""] #10  -> 7
 omit_values = [""] #7  -> 5
 position_values = [""] #19 -> 14
-revolution_values = position_values # 19 -> 14
+inversion_values = position_values # 19 -> 14
 system_values = [""] #3
 mode_values = ["moll", ""] #2
 down_values = ["down", ""] #2
@@ -95,7 +95,7 @@ all_chords_count *= len(degree_values)
 all_chords_count *= len(extra_values)
 all_chords_count *= len(omit_values)
 all_chords_count *= len(position_values)
-all_chords_count *= len(revolution_values )
+all_chords_count *= len(inversion_values )
 all_chords_count *= len(system_values)
 all_chords_count *= len(mode_values)
 all_chords_count *= len(down_values)
@@ -148,10 +148,10 @@ def move_deeper(current_node:{}, property_key:str, property_values:[], next_func
         next_function(current_node)
 
 def add_position(current_node):
-    move_deeper(current_node, "position", position_values, add_revolution)
+    move_deeper(current_node, "position", position_values, add_inversion)
 
-def add_revolution(current_node):
-    move_deeper(current_node, "revolution", revolution_values, add_extra)
+def add_inversion(current_node):
+    move_deeper(current_node, "inversion", inversion_values, add_extra)
 
 def add_extra(current_node):
     move_deeper(current_node, "extra", extra_values, add_omit)
@@ -180,7 +180,7 @@ def add_right_bracket(current_node):
 SEQ = 0
 def final_function(current_node):
     hf = HarmonicFunction(position=current_node["position"],
-                          revolution=current_node["revolution"],
+                          inversion=current_node["inversion"],
                           extra=current_node["extra"],
                           omit=current_node["omit"],
                           delay=current_node["delay"],

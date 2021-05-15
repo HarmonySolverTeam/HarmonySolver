@@ -206,12 +206,12 @@ function translateContent(content){
                 }
                 subcontents[i] += "\""+value+"\"";
                 break;
-            case "revolution":
+            case "inversion":
                 if (value === undefined || value.length === 0) {
-                    throw new Errors.HarmonicFunctionsParserError("\"revolution\", if specified, cannot be empty");
+                    throw new Errors.HarmonicFunctionsParserError("\"inversion\", if specified, cannot be empty");
                 }
                 if (!validateSymbol(value)) {
-                    throw new Errors.HarmonicFunctionsParserError("\"revolution\" value is invalid.", value);
+                    throw new Errors.HarmonicFunctionsParserError("\"inversion\" value is invalid.", value);
                 }
                 subcontents[i] += "\""+value+"\"";
                 break;
@@ -306,7 +306,7 @@ function translateContent(content){
                 break;
             default:
                 throw new Errors.HarmonicFunctionsParserError("Invalid property name. Allowed: " +
-                    "\"position\", \"revolution\", \"system\", \"degree\", " +
+                    "\"position\", \"inversion\", \"system\", \"degree\", " +
                     "\"extra\", \"omit\", \"delay\",\"down\", \"isRelatedBackwards\".", "Found \"" + key + "\"");
         }
     }

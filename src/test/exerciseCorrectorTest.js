@@ -61,13 +61,13 @@ const handleDominantConnectionsWith7InBass = () => {
     exerciseCorrector._handleDominantConnectionsWith7InBass(hfd, hfs);
 
 
-    return UnitTest.assertEqualsPrimitives("3", hf1.revolution.chordComponentString) &&
-        UnitTest.assertEqualsPrimitives("3>", hf2.revolution.chordComponentString) &&
-        UnitTest.assertEqualsPrimitives("3>", hf3.revolution.chordComponentString) &&
-        UnitTest.assertEqualsPrimitives("1", hft.revolution.chordComponentString) &&
-        UnitTest.assertEqualsPrimitives("1", hfs.revolution.chordComponentString);
+    return UnitTest.assertEqualsPrimitives("3", hf1.inversion.chordComponentString) &&
+        UnitTest.assertEqualsPrimitives("3>", hf2.inversion.chordComponentString) &&
+        UnitTest.assertEqualsPrimitives("3>", hf3.inversion.chordComponentString) &&
+        UnitTest.assertEqualsPrimitives("1", hft.inversion.chordComponentString) &&
+        UnitTest.assertEqualsPrimitives("1", hfs.inversion.chordComponentString);
 };
 
-exerciseCorrectorTestSuite.addTest(new UnitTest.UnitTest(handleDominantConnectionsWith7InBass, "Handle dominant connections with 7 as revolution"));
+exerciseCorrectorTestSuite.addTest(new UnitTest.UnitTest(handleDominantConnectionsWith7InBass, "Handle dominant connections with 7 as inversion"));
 
 exerciseCorrectorTestSuite.run();

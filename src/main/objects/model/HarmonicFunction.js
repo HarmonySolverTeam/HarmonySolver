@@ -12,7 +12,7 @@ function HarmonicFunction2(params, notValidate){
     // functionName          "T", "S", "D"
     // degree               int
     // position             should be string f.e. "<7" or "7>" or just "7"
-    // revolution           should be string f.e. "<6" or "6>" or just "6"
+    // inversion           should be string f.e. "<6" or "6>" or just "6"
     // delay                delayed components list
     // extra                extra components list [] | ["9", "7>"]
     // omit                 omitted components list [] | ["1", "5"]
@@ -30,7 +30,7 @@ function HarmonicFunction2(params, notValidate){
     this.functionName = params["functionName"];
     this.degree = params["degree"] === undefined ? getDegreeFromFunctionName(this.functionName) : params["degree"];
     this.position = params["position"];
-    this.revolution = params["revolution"] === undefined ? "1" : params["revolution"];
+    this.inversion = params["inversion"] === undefined ? "1" : params["inversion"];
     this.delay = params["delay"] === undefined ? [] : params["delay"];
     this.extra = params["extra"] === undefined ? [] : params["extra"];
     this.omit = params["omit"] === undefined ? [] : params["omit"];
@@ -113,7 +113,7 @@ function HarmonicFunction2(params, notValidate){
     this.isNeapolitan = function () {
         return this.degree === 2 && this.down
             && this.functionName === Consts.FUNCTION_NAMES.SUBDOMINANT && this.mode === Consts.MODE.MINOR
-            && this.revolution.baseComponent === "3" && this.extra.length === 0
+            && this.inversion.baseComponent === "3" && this.extra.length === 0
     };
 
     this.isChopin = function () {
@@ -194,7 +194,7 @@ function HarmonicFunction2(params, notValidate){
             "functionName" : this.functionName,
             "degree" : this.degree,
             "position" : (this.position === undefined ? undefined : this.position.chordComponentString),
-            "revolution" : this.revolution.chordComponentString,
+            "inversion" : this.inversion.chordComponentString,
             "down" : this.down,
             "system" : this.system,
             "mode" : this.mode,
@@ -268,7 +268,7 @@ function HarmonicFunction2(params, notValidate){
             "functionName" : this.functionName,
             "degree" : this.degree,
             "position" : (this.position === undefined ? undefined : this.position.chordComponentString),
-            "revolution" : this.revolution.chordComponentString,
+            "inversion" : this.inversion.chordComponentString,
             "down" : this.down,
             "system" : this.system,
             "mode" : this.mode,
@@ -315,7 +315,7 @@ function HarmonicFunction2(params, notValidate){
         }
         mapped["degree"] = degree
         mapped["position"] = mapped.position !== undefined ? mapped.position.chordComponentString : undefined
-        mapped["revolution"] = mapped.revolution !== undefined ? mapped.revolution.chordComponentString : undefined
+        mapped["inversion"] = mapped.inversion !== undefined ? mapped.inversion.chordComponentString : undefined
         mapped["extra"] = mapped.position !== undefined ? mapped.extra.map(function(x){return x.chordComponentString}) : undefined
         mapped["omit"] = mapped.omit !== undefined ? mapped.omit.map(function(x){return x.chordComponentString}) : undefined
         mapped["delays"] = mapped.omit !== undefined ? mapped.delay.map(function(x){return [x[0].chordComponentString, x[1].chordComponentString]}) : undefined
@@ -326,7 +326,7 @@ function HarmonicFunction2(params, notValidate){
         return "FunctionName: " + this.functionName + "\n" +
             "Degree: " + this.degree + " \n" +
             (this.position !== undefined ? "Position: " + this.position.chordComponentString + "\n" : "") +
-            (this.revolution !== undefined ? "Revolution: " + this.revolution.chordComponentString + "\n" : "" ) +
+            (this.inversion !== undefined ? "Inversion: " + this.inversion.chordComponentString + "\n" : "" ) +
             (this.delay.length !== 0 ? "Delay: " + this.getDelaysString()+ "\n" : "") +
             (this.extra.length !== 0 ? "Extra: " + this.getExtraString() + "\n" : "") +
             (this.omit.length !== 0 ? "Omit: " + this.getOmitString() + "\n" : "") +
@@ -375,7 +375,7 @@ function HarmonicFunction2(params, notValidate){
 
     // mapping to ChordComponent
     if(this.position !== undefined) this.position = this.getChordComponentFromStringInThisHfContext(this.position);
-    this.revolution = this.getChordComponentFromStringInThisHfContext(this.revolution);
+    this.inversion = this.getChordComponentFromStringInThisHfContext(this.inversion);
     for(var i=0; i<this.delay.length; i++){
         this.delay[i][0] = this.getChordComponentFromStringInThisHfContext(this.delay[i][0]);
         this.delay[i][1] = this.getChordComponentFromStringInThisHfContext(this.delay[i][1]);
@@ -397,15 +397,15 @@ function HarmonicFunction2(params, notValidate){
         this.extra.push(cm.chordComponentFromString("7", this.down));
     }
     if(this.position !== undefined && !Utils.contains(this.getBasicChordComponents(), this.position) && !Utils.contains(this.extra, this.position)) this.extra.push(this.position);
-    if(!Utils.contains(this.getBasicChordComponents(), this.revolution) && !Utils.contains(this.extra, this.revolution)) this.extra.push(this.revolution);
+    if(!Utils.contains(this.getBasicChordComponents(), this.inversion) && !Utils.contains(this.extra, this.inversion)) this.extra.push(this.inversion);
     if(Utils.contains(this.extra, cm.chordComponentFromString("5<", this.down)) || Utils.contains(this.extra, cm.chordComponentFromString("5>", this.down))) {
         if (!Utils.contains(this.omit, cm.chordComponentFromString("5", this.down))){
             this.omit.push(cm.chordComponentFromString("5", this.down));
         }
     }
 
-    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1", this.down)) && this.revolution === this.cm.chordComponentFromString("1", this.down)){
-        this.revolution = this.getBasicChordComponents()[1];
+    if(Utils.contains(this.omit, this.cm.chordComponentFromString("1", this.down)) && this.inversion === this.cm.chordComponentFromString("1", this.down)){
+        this.inversion = this.getBasicChordComponents()[1];
     }
 
     if(Utils.contains(this.omit, this.cm.chordComponentFromString("5", this.down))){
@@ -424,8 +424,8 @@ function HarmonicFunction2(params, notValidate){
         }
     }
 
-    if(this.revolution === this.cm.chordComponentFromString("5", this.down)){
-        this.revolution = this.getBasicChordComponents()[2];
+    if(this.inversion === this.cm.chordComponentFromString("5", this.down)){
+        this.inversion = this.getBasicChordComponents()[2];
     }
 
     if(this.position === this.cm.chordComponentFromString("5", this.down)){
@@ -445,21 +445,21 @@ function HarmonicFunction2(params, notValidate){
         if(this.countChordComponents() > 4){
             var prime = this.getPrime()
             var fifth = this.getFifth()
-            if(this.position === this.revolution){
+            if(this.position === this.inversion){
                 throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
-                    "ninth chord could not have same position as revolution")
+                    "ninth chord could not have same position as inversion")
             }
-            if (Utils.contains([prime, fifth], this.position) && Utils.contains([prime, fifth], this.revolution)) {
+            if (Utils.contains([prime, fifth], this.position) && Utils.contains([prime, fifth], this.inversion)) {
                 throw new Errors.HarmonicFunctionsParserError("HarmonicFunction validation error: " +
-                    "ninth chord could not have both prime or fifth in position and revolution")
+                    "ninth chord could not have both prime or fifth in position and inversion")
             }
-            if(!Utils.contains(this.omit, fifth) && this.position !== fifth && this.revolution !== fifth) {
+            if(!Utils.contains(this.omit, fifth) && this.position !== fifth && this.inversion !== fifth) {
                 this.omit.push(fifth);
             }
             else if(!Utils.contains(this.omit, prime)) {
                 this.omit.push(prime);
-                if(this.revolution === prime)
-                    this.revolution = this.getBasicChordComponents()[1];
+                if(this.inversion === prime)
+                    this.inversion = this.getBasicChordComponents()[1];
             }
         }
     }
@@ -472,12 +472,12 @@ function HarmonicFunction2(params, notValidate){
 
 }
 
-function HarmonicFunction(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key, isRelatedBackwards) {
+function HarmonicFunction(functionName, degree, position, inversion, delay, extra, omit, down, system, mode, key, isRelatedBackwards) {
     var args = {
         "functionName" : functionName,
         "degree" : degree,
         "position" : position,
-        "revolution" : revolution,
+        "inversion" : inversion,
         "delay" : delay,
         "extra" : extra,
         "omit" : omit,
@@ -490,12 +490,12 @@ function HarmonicFunction(functionName, degree, position, revolution, delay, ext
     HarmonicFunction2.call(this, args);
 }
 
-function HarmonicFunctionWithoutValidation(functionName, degree, position, revolution, delay, extra, omit, down, system, mode, key, isRelatedBackwards){
+function HarmonicFunctionWithoutValidation(functionName, degree, position, inversion, delay, extra, omit, down, system, mode, key, isRelatedBackwards){
     var args = {
         "functionName" : functionName,
         "degree" : degree,
         "position" : position,
-        "revolution" : revolution,
+        "inversion" : inversion,
         "delay" : delay,
         "extra" : extra,
         "omit" : omit,
@@ -533,7 +533,7 @@ function harmonicFunctionReconstruct(hf){
         hf.functionName,
         degree,
         hf.position,
-        hf.revolution,
+        hf.inversion,
         delay,
         hf.extra,
         hf.omit,

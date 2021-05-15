@@ -12,8 +12,8 @@ var testSuite = new TestUtils.TestSuite("Soprano exercise tests", 10000);
 
 // ************************** HARMONIC FUNCTIONS *********************************
 
-var use_rev3 = false;
-var use_rev5 = false;
+var use_inv3 = false;
+var use_inv5 = false;
 
 var getPossibleCombinationsOfHFsFor = (ex) => {
     var x = undefined
@@ -100,14 +100,14 @@ var getPossibleCombinationsOfHFsFor = (ex) => {
             for(hf of combination){
                 new_combination.push(hf);
 
-                if(use_rev3) {
+                if(use_inv3) {
                     var hf_copy = hf.copy();
-                    hf_copy.revolution = hf_copy.getThird();
+                    hf_copy.inversion = hf_copy.getThird();
                     new_combination.push(hf_copy);
                 }
-                if(use_rev5) {
+                if(use_inv5) {
                     hf_copy = hf.copy();
-                    hf_copy.revolution = hf_copy.getFifth();
+                    hf_copy.inversion = hf_copy.getFifth();
                     new_combination.push(hf_copy);
                 }
             }
