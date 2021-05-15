@@ -29,7 +29,7 @@ function ChordRulesChecker(isFixedBass, isFixedSoprano){
     this.softRules = [
         new ForbiddenSumJumpRule("Forbidden voice sum jump"),
         new ClosestMoveRule("Not closest move in voices"),
-        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
+        new DoublePrimeOrFifthRule("Doubling prime/fifth due to inversion"),
         new SopranoBestLineRule("Soprano line should not contain big jumps"),
         new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
         new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
@@ -71,7 +71,7 @@ function AdaptiveChordRulesChecker(punishmentRatios){
     this.softRules = [
         new ForbiddenSumJumpRule("Forbidden voice sum jump"),
         new ClosestMoveRule("Not closest move in voices"),
-        new DoublePrimeOrFifthRule("Doubling prime/fifth due to revolution"),
+        new DoublePrimeOrFifthRule("Doubling prime/fifth due to inversion"),
         new SopranoBestLineRule("Soprano line should not contain big jumps"),
         new DominantRelationCheckConnectionRule("Dominant relation voice wrong movement"),
         new DominantSecondRelationCheckConnectionRule("Dominant second relation voice wrong movement"),
@@ -613,7 +613,7 @@ function ClosestMoveInBassRule(isFixedSoprano, details){
         for(var i = 1; i < 4; i++){
             var pitch = currentChord.notes[i].pitch;
             if(Utils.contains(currentChord.harmonicFunction.getBasicChordComponents(), currentChord.notes[i].chordComponent) &&
-                currentChord.harmonicFunction.revolution !== currentChord.notes[i].chordComponent){
+                currentChord.harmonicFunction.inversion !== currentChord.notes[i].chordComponent){
                 while(Utils.abs(prevBassPitch - pitch) >= 12)
                     pitch -= 12;
                 if(Utils.abs(pitch - prevBassPitch) < offset)
@@ -635,12 +635,12 @@ function DoublePrimeOrFifthRule(details) {
             return 0;
 
         //double soprano component
-        if(currentChord.harmonicFunction.revolution.chordComponentString === "1"){
+        if(currentChord.harmonicFunction.inversion.chordComponentString === "1"){
             if(currentChord.countBaseComponents(currentChord.sopranoNote.chordComponent.baseComponent) === 1)
                 return 2;
         }
-        //double fifth if revolution === fifth
-        if(currentChord.harmonicFunction.revolution.chordComponentString === currentChord.harmonicFunction.getFifth()){
+        //double fifth if inversion === fifth
+        if(currentChord.harmonicFunction.inversion.chordComponentString === currentChord.harmonicFunction.getFifth()){
             if(currentChord.countBaseComponents(currentChord.harmonicFunction.getFifth()) === 1)
                 return 2;
         }
@@ -711,8 +711,8 @@ function DominantRelationCheckConnectionRule(details){
             !currentChord.notes[dominantVoiceWith7].baseChordComponentEquals("3") &&
             !currentChord.harmonicFunction.containsDelayedBaseChordComponent("3")) {
             //rozwiazanie swobodne mozliwe
-            if ((currentChord.harmonicFunction.revolution.chordComponentString === "3" ||
-                currentChord.harmonicFunction.revolution.chordComponentString === "3>" ||
+            if ((currentChord.harmonicFunction.inversion.chordComponentString === "3" ||
+                currentChord.harmonicFunction.inversion.chordComponentString === "3>" ||
                 (Utils.isDefined(currentChord.harmonicFunction.position) && (currentChord.harmonicFunction.position.chordComponentString === "3" ||
                     currentChord.harmonicFunction.position.chordComponentString === "3>"))) &&
                 dominantVoiceWith7 < dominantVoiceWith3) {

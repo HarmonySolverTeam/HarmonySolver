@@ -90,9 +90,9 @@ What is more every extra argument should satisfy the schema: **key : value**. <b
 List of extra arguments:
 * **position** - determines which chord component should soprano note be.
 <br/>Example usage: "*position: 3>*" means that soprano should be minor third of given harmonic function.
-* **revolution** - determines which chord component should bass note be.
+* **inversion** - determines which chord component should bass note be.
 If not specified in bass will be prime of chord.
-<br/>Example usage: "*revolution: 5*" means that bass should be fifth of given harmonic function.
+<br/>Example usage: "*inversion: 5*" means that bass should be fifth of given harmonic function.
 * **system** - determines if system of result chord should be open or close.
 <br/>Example usage: "*system: open*" and "*system: close*".
 * **degree** - determines degree of harmonic function. Using this argument you can 
@@ -117,10 +117,10 @@ It should be used for deflections.
 <br/>Example usage: "*isRelatedBackwards*".
 
 Full examples of harmonic functions:
-* `D{extra: 7 / delay: 6-5, 4-3 / position: 7 / revolution: 1}` - means
+* `D{extra: 7 / delay: 6-5, 4-3 / position: 7 / inversion: 1}` - means
 dominant with extra 7 in soprano voice, in bass should be 1, 
 also specified special delays.
-* `So{down / revolution: 3>}` - means minor subdominant, down, with 3> in bass
+* `So{down / inversion: 3>}` - means minor subdominant, down, with 3> in bass
 (= Neapolitan chord).
 * `D{extra: 9 / omit: 5}` - means dominant with extra 9 without usage of 5. 
 
@@ -260,7 +260,7 @@ it will let you know about this problem. It does not work in soprano harmonizati
 **corrector** - makes some basic corrections with given harmonic functions:
 * for chain dominants (for example (D7) -> D7 -> T) chooses harmonic functions
 where fifth should be omitted (if not specified) to avoid parallel fifths
-* for connections like D7 (where 7 is in bass) -> T it sets revolution of T to third
+* for connections like D7 (where 7 is in bass) -> T it sets inversion of T to third
 (if not specified)
 * for Chopin chord adds fifth to omit (if not specified)
 

@@ -20,7 +20,7 @@ function ExerciseCorrector(exercise, harmonicFunctions, isDefinedBassLine, sopra
         for(var i=startIndex; i<endIndex; i++){
             if(changeCurrentChord){
                 if(Utils.isDefined(this.harmonicFunctions[i].position) && this.harmonicFunctions[i].position === this.harmonicFunctions[i].getFifth()){
-                    this.harmonicFunctions[i].revolution = this.harmonicFunctions[i].getThird();
+                    this.harmonicFunctions[i].inversion = this.harmonicFunctions[i].getThird();
                     //todo maybe it is wrong strategy
                     this.harmonicFunctions[i].omit.push(this.harmonicFunctions[i].getPrime());
                 } else
@@ -42,23 +42,23 @@ function ExerciseCorrector(exercise, harmonicFunctions, isDefinedBassLine, sopra
         if(isDefinedBassLine)
             return false;
         if(dominantHarmonicFunction.isInDominantRelation(tonicHarmonicFunction) &&
-            dominantHarmonicFunction.revolution.baseComponent === "7" &&
-            tonicHarmonicFunction.revolution.baseComponent === "1") {
+            dominantHarmonicFunction.inversion.baseComponent === "7" &&
+            tonicHarmonicFunction.inversion.baseComponent === "1") {
             var key = tonicHarmonicFunction.key !== undefined ?
                 tonicHarmonicFunction.key : this.exercise.key;
             var cm = tonicHarmonicFunction.cm;
-            tonicHarmonicFunction.revolution =
+            tonicHarmonicFunction.inversion =
                 IntervalUtils.getThirdMode(key, tonicHarmonicFunction.degree-1) === Consts.MODE.MAJOR ?
                     cm.chordComponentFromString("3") : cm.chordComponentFromString("3>");
             return Utils.isDefined(tonicHarmonicFunction.delay) && tonicHarmonicFunction.delay.length > 0
         }
         if(dominantHarmonicFunction.isInDominantRelation(tonicHarmonicFunction) &&
-            tonicHarmonicFunction.revolution.baseComponent === "7" &&
-            dominantHarmonicFunction.revolution.baseComponent === "1") {
+            tonicHarmonicFunction.inversion.baseComponent === "7" &&
+            dominantHarmonicFunction.inversion.baseComponent === "1") {
             var key = dominantHarmonicFunction.key !== undefined ?
                 dominantHarmonicFunction.key : this.exercise.key;
             var cm = dominantHarmonicFunction.cm;
-            dominantHarmonicFunction.revolution =
+            dominantHarmonicFunction.inversion =
                 IntervalUtils.getThirdMode(key, dominantHarmonicFunction.degree-1) === Consts.MODE.MAJOR ?
                     cm.chordComponentFromString("3") : cm.chordComponentFromString("3>");
             return false;
@@ -76,13 +76,13 @@ function ExerciseCorrector(exercise, harmonicFunctions, isDefinedBassLine, sopra
                     var hf = resultHarmonicFunctions[i+2];
                     var key = hf.key !== undefined ?
                         hf.key : this.exercise.key;
-                    hf.revolution = IntervalUtils.getThirdMode(key, hf.degree-1) === Consts.MODE.MAJOR ?
+                    hf.inversion = IntervalUtils.getThirdMode(key, hf.degree-1) === Consts.MODE.MAJOR ?
                         hf.cm.chordComponentFromString("3") : hf.cm.chordComponentFromString("3>");
                 }
                 this._handleChopinTonicConnection(resultHarmonicFunctions[i], resultHarmonicFunctions[i+1]);
                 if(resultHarmonicFunctions[i].isInDominantRelation(resultHarmonicFunctions[i+1]) &&
-                    resultHarmonicFunctions[i].revolution.baseComponent === "1" &&
-                    resultHarmonicFunctions[i+1].revolution.baseComponent === "1" &&
+                    resultHarmonicFunctions[i].inversion.baseComponent === "1" &&
+                    resultHarmonicFunctions[i+1].inversion.baseComponent === "1" &&
                     Utils.containsBaseChordComponent(resultHarmonicFunctions[i].extra, "7") &&
                     resultHarmonicFunctions[i].omit.length === 0 && resultHarmonicFunctions[i+1].omit.length === 0){
                     if(!insideChain){

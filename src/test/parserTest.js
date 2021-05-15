@@ -174,7 +174,7 @@ const newNotationTest = () => {
     var translated = Parser.translateToOldNotation(lines.splice(2,2));
     return TestUtils.assertEqualsObjects([
             '(D{"position":"5"});(S{"system":"open","degree":2,"omit":["5","1"],"delay":[["2","3"],["4","5"]]}',
-            'Do{"position":"1","revolution":"3","isRelatedBackwards":true,"down":true});T{"extra":["6","7"],"omit":["5"]}'
+            'Do{"position":"1","inversion":"3","isRelatedBackwards":true,"down":true});T{"extra":["6","7"],"omit":["5"]}'
         ], translated) &&
         TestUtils.assertDefined(Parser.parse(input))
 }
@@ -190,7 +190,7 @@ testSuite.addTest(new TestUtils.UnitTest(newNotationEmptyDeflectionTest, "New no
 
 const newNotationIllegalPropertyTest = () => {
     return TestUtils.assertThrows("Error during parsing harmonic functions input",
-        "Invalid property name. Allowed: \"position\", \"revolution\", \"system\", \"degree\", \"extra\", " +
+        "Invalid property name. Allowed: \"position\", \"inversion\", \"system\", \"degree\", \"extra\", " +
         "\"omit\", \"delay\",\"down\", \"isRelatedBackwards\". Found \"positio\"", Parser.parse, ["C\n4/4\nT{positio:5}"])
 }
 

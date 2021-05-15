@@ -42,14 +42,14 @@ const chordWithDelayConvertWithFixedPositionTest = () => {
 
 delayTestSuite.addTest(new UnitTest.UnitTest(chordWithDelayConvertWithFixedPositionTest, "Transformation of function with delay and fixed position"));
 
-const chordWithDelayConvertWithFixedRevolutionTest = () => {
+const chordWithDelayConvertWithFixedInversionTest = () => {
     var exercise = new Exercise.Exercise("C", [3,4],"major",[[new HarmonicFunction.HarmonicFunction("T",1,undefined,'3',[["4","3"]],[],[],false,undefined,undefined)]]);
     var solver = new Solver.Solver(exercise, undefined, undefined);
     var hf = solver.harmonicFunctions;
-    return UnitTest.assertEqualsPrimitives('4', hf[0].revolution.chordComponentString) && UnitTest.assertEqualsPrimitives('3', hf[1].revolution.chordComponentString)
+    return UnitTest.assertEqualsPrimitives('4', hf[0].inversion.chordComponentString) && UnitTest.assertEqualsPrimitives('3', hf[1].inversion.chordComponentString)
 };
 
-delayTestSuite.addTest(new UnitTest.UnitTest(chordWithDelayConvertWithFixedRevolutionTest, "Transformation of function with delay and fixed revolution"));
+delayTestSuite.addTest(new UnitTest.UnitTest(chordWithDelayConvertWithFixedInversionTest, "Transformation of function with delay and fixed inversion"));
 
 const chordWithDelayConvertMoreMeasuresTest = () => {
     var exercise = new Exercise.Exercise("C", [3,4],"major",[[new HarmonicFunction.HarmonicFunction("T",1,undefined,'3',[["4","3"]],[],[],false,undefined,undefined),

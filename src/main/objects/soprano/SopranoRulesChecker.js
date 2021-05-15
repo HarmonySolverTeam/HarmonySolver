@@ -23,7 +23,7 @@ function SopranoRulesChecker(key, mode, punishmentRatios){
             new ChordRulesChecker.ChordRulesChecker(false,true),
             new ChordGenerator.ChordGenerator(this.key,this.mode)),
         new SecondaryDominantConnectionRule(this.key),
-        new Revolution5Rule(),
+        new Inversion5Rule(),
         new DownAndNotDownRule(),
         new DegreeRule(),
         new KeepBasicChordsInSecondRelationRule()
@@ -76,7 +76,7 @@ function KeepBasicChordsInSecondRelationRule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function(connection){
         if(connection.prev.harmonicFunction.isInSecondRelation(connection.current.harmonicFunction) &&
-            connection.current.harmonicFunction.revolution !== connection.current.harmonicFunction.getPrime()){
+            connection.current.harmonicFunction.inversion !== connection.current.harmonicFunction.getPrime()){
             return -1;
         }
         return 0;
@@ -311,10 +311,10 @@ function FourthChordsRule(){
     }
 }
 
-function Revolution5Rule(){
+function Inversion5Rule(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function (connection) {
-        if(connection.current.harmonicFunction.revolution === connection.current.harmonicFunction.getFifth() &&
+        if(connection.current.harmonicFunction.inversion === connection.current.harmonicFunction.getFifth() &&
             connection.current.measurePlace !== Consts.MEASURE_PLACE.UPBEAT){
             return -1;
         }
@@ -336,7 +336,7 @@ function PreferNeapolitanRule(){
 function SopranoShouldBeDoubled(){
     RulesCheckerUtils.IRule.call(this);
     this.evaluate = function (connection) {
-        if(connection.current.harmonicFunction.position !== connection.current.harmonicFunction.revolution)
+        if(connection.current.harmonicFunction.position !== connection.current.harmonicFunction.inversion)
             return 3;
         return 0;
     }

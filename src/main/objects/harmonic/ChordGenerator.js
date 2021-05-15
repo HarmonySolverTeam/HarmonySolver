@@ -65,10 +65,10 @@ function ChordGenerator(key, mode) {
                 needToAdd.splice(needToAdd.indexOf(harmonicFunction.position), 1);
         }
 
-        //Revolution handling
-        bass = harmonicFunction.revolution;
-        if(Utils.contains(needToAdd, harmonicFunction.revolution))
-            needToAdd.splice(needToAdd.indexOf(harmonicFunction.revolution), 1);
+        //Inversion handling
+        bass = harmonicFunction.inversion;
+        if(Utils.contains(needToAdd, harmonicFunction.inversion))
+            needToAdd.splice(needToAdd.indexOf(harmonicFunction.inversion), 1);
 
         return [[soprano, alto, tenor, bass], needToAdd]
 
@@ -460,7 +460,7 @@ function correctChopinChord(chord){
 function correctNinthChord(chord){
     if(!Utils.containsBaseChordComponent(chord.harmonicFunction.extra,9))
         return true;
-    if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.revolution)) {
+    if(Utils.containsBaseChordComponent(["3","7"], chord.harmonicFunction.inversion)) {
         if(!chord.sopranoNote.baseChordComponentEquals("9") || !chord.tenorNote.baseChordComponentEquals("1"))
             return false;
     }

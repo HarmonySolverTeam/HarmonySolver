@@ -21,10 +21,10 @@ def some_trasform(cc : str):
 
 class HarmonicFunction():
 
-    def __init__(self, degree, position, revolution, extra, omit, delay, down, mode, system, left_bracket, right_bracket):
+    def __init__(self, degree, position, inversion, extra, omit, delay, down, mode, system, left_bracket, right_bracket):
         self.degree = degree
         self.position = position
-        self.revolution = revolution
+        self.inversion = inversion
         self.extra = extra
         self.omit = omit
         self.delay = delay
@@ -38,16 +38,16 @@ class HarmonicFunction():
     def validate(self):
         if self.position == self.extra and self.position != "":
             return False
-        if self.revolution == self.extra and self.revolution != "":
+        if self.inversion == self.extra and self.inversion != "":
             return False
         if self.position == self.omit and self.position != "":
             return False
-        if self.revolution == self.omit and self.revolution != "":
+        if self.inversion == self.omit and self.inversion != "":
             return False
         if self.extra == self.omit and self.extra != "":
             return False
 
-        # if self.position == self.revolution and self.position != "" and self.extra != "" and self.omit == "":
+        # if self.position == self.inversion and self.position != "" and self.extra != "" and self.omit == "":
         #     return False
         if self.get_chord_components_count() > 4:
             return False
@@ -75,8 +75,8 @@ class HarmonicFunction():
             chord_components.append(some_trasform(self.extra))
         if len(self.position) > 0:
             chord_components.append(some_trasform(self.position))
-        if len(self.revolution) > 0:
-            chord_components.append(some_trasform(self.revolution))
+        if len(self.inversion) > 0:
+            chord_components.append(some_trasform(self.inversion))
         return list(set(chord_components))
 
     def get_chord_components_count(self):
@@ -101,7 +101,7 @@ class HarmonicFunction():
             if len(self.delay[1]) != 0:
                 res += [DELAY + "{0}{1}-{2}{3}".format(self.delay[0][0], self.delay[1][0], self.delay[0][1], self.delay[1][1])]
         res += [POSITION + self.position] if self.position != "" else []
-        res += [REVOLUTION + self.revolution] if self.revolution != "" else []
+        res += [REVOLUTION + self.inversion] if self.inversion != "" else []
         res += [EXTRA + self.extra] if self.extra != "" else []
         res += [self.down] if self.down != "" else []
         res += [DEGREE + self.degree] if self.degree != "" else []
@@ -116,7 +116,7 @@ class HarmonicFunction():
     def __str__(self):
         res = ""
         res += POSITION + self.position if self.position != "" else ""
-        res += REVOLUTION + self.revolution if self.revolution != "" else ""
+        res += REVOLUTION + self.inversion if self.inversion != "" else ""
         res += EXTRA + self.extra if self.extra != "" else ""
         res += self.mode
         res += self.down

@@ -380,7 +380,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
     "T with position 7 contains 7 in soprano in all generated chords"
 ));
 
-// revolution tests
+// inversion tests
 var Trev1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "1");
 generatorTestSuite.addTest(new TestUtils.UnitTest(
     () => generatorTest(
@@ -389,7 +389,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         allResultChordsUseChordComponentInBass,
         cm.chordComponentFromString("1", false)
     ),
-    "T with revolution 1 contains 1 in bass in all generated chords"
+    "T with inversion 1 contains 1 in bass in all generated chords"
 ));
 
 var Trev3 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "3");
@@ -400,7 +400,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         allResultChordsUseChordComponentInBass,
         cm.chordComponentFromString("3", false)
     ),
-    "T with revolution 3 contains 3 in bass in all generated chords"
+    "T with inversion 3 contains 3 in bass in all generated chords"
 ));
 
 var Trev5 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "5");
@@ -411,7 +411,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         allResultChordsUseChordComponentInBass,
         cm.chordComponentFromString("5", false)
     ),
-    "T with revolution 5 contains 5 in bass in all generated chords"
+    "T with inversion 5 contains 5 in bass in all generated chords"
 ));
 
 var Tmollrev1 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "1", undefined, [], [], false, undefined, Consts.MODE.MINOR);
@@ -422,7 +422,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         allResultChordsUseChordComponentInBass,
         cm.chordComponentFromString("1", false)
     ),
-    "T moll with revolution 1 contains 1 in bass in all generated chords"
+    "T moll with inversion 1 contains 1 in bass in all generated chords"
 ));
 
 var Tmollrev3 = new HarmonicFunction.HarmonicFunctionWithoutValidation("T", 1, undefined, "3>", undefined, [], [], false, undefined, Consts.MODE.MINOR);
@@ -433,7 +433,7 @@ generatorTestSuite.addTest(new TestUtils.UnitTest(
         allResultChordsUseChordComponentInBass,
         cm.chordComponentFromString("3>", false)
     ),
-    "T moll with revolution 3> contains 3> in bass in all generated chords"
+    "T moll with inversion 3> contains 3> in bass in all generated chords"
 ));
 
 //todo: testy pitchy: czy akord zawiera przynajmniej jeden pitch z listy np. [48, 60, 72, 84], czyli czy ma dźwięk C
@@ -511,7 +511,7 @@ var neapolitanTest = () => {
 generatorTestSuite.addTest(new TestUtils.UnitTest(neapolitanTest, "Neapolitan chord test"));
 
 
-var positionAndRevolution1 = () => {
+var positionAndInversion1 = () => {
     var gen = new Generator.ChordGenerator("C", 'major');
     var hf = new HarmonicFunction.HarmonicFunctionWithoutValidation("S", 4, "1", "1", undefined, [], [], false, undefined, undefined);
     var res = gen.generate(new Generator.ChordGeneratorInput(hf));
@@ -531,7 +531,7 @@ var positionAndRevolution1 = () => {
     return testResult;
 };
 
-generatorTestSuite.addTest(new TestUtils.UnitTest(positionAndRevolution1, "Position and revolution equal 1 chord test"));
+generatorTestSuite.addTest(new TestUtils.UnitTest(positionAndInversion1, "Position and inversion equal 1 chord test"));
 
 var doubleOnly135 = () => {
 

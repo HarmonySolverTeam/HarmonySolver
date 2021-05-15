@@ -1,10 +1,10 @@
 C
 4/4
-T{"position":"3", "system":"open"};T{"revolution":"3"};T{"revolution":"5"}
+T{"position":"3", "system":"open"};T{"inversion":"3"};T{"inversion":"5"}
 S{};T{}
-D{};D{"revolution":"5"};D{"revolution":"3"}
-T{};T{"revolution":"3"}
-S{"revolution":"3"};D{"revolution":"3"};D{"revolution":"5"}
-T{};D{"revolution":"5"};T{"revolution":"3"};S{}
+D{};D{"inversion":"5"};D{"inversion":"3"}
+T{};T{"inversion":"3"}
+S{"inversion":"3"};D{"inversion":"3"};D{"inversion":"5"}
+T{};D{"inversion":"5"};T{"inversion":"3"};S{}
 D{};D{}
 T{}
