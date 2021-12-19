@@ -1,12 +1,14 @@
 .import "../model/HarmonicFunction.js" as HarmonicFunction
 .import "../harmonic/ChordRulesChecker.js" as RulesChecker
 .import "../model/Note.js" as Note
+.import "../conf/PluginConfigurationUtils.js" as Conf
 
 function Exercise(key, meter, mode, measures) {
     this.mode = mode
     this.key = key
     this.meter = meter
     this.measures = measures
+    this.evaluateWithProlog = Conf.enableProlog
 
     this.toString = function () {
         return "Mode: " + this.mode + " " +

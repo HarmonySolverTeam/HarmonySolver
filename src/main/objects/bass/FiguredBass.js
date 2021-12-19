@@ -1,4 +1,5 @@
 .import "../model/Note.js" as Note
+.import "../conf/PluginConfigurationUtils.js" as Conf
 
 var ALTERATION_TYPE = {
   SHARP : "#",
@@ -50,6 +51,7 @@ function FiguredBassExercise(mode, key, meter, elements, durations) {
     this.meter = meter;
     this.elements = elements;
     this.durations = durations;
+    this.evaluateWithProlog = Conf.enableProlog;
 
     this.toString = function () {
         return "Mode: " + this.mode + " Key: " + this.key + " Meter: " + this.meter + " Elements: " + this.elements + " Durations: " + this.durations

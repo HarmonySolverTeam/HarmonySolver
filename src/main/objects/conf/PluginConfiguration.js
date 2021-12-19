@@ -35,6 +35,11 @@ function PluginConfigurationBuilder(){
         return this;
     }
 
+    this.enableProlog = function (_enableProlog){
+        this.conf.enableProlog = _enableProlog;
+        return this;
+    }
+
     this.build = function (){
 
         this.conf.solutionPath = this.conf.solutionPath === undefined ? "" : this.conf.solutionPath;
@@ -42,6 +47,7 @@ function PluginConfigurationBuilder(){
         this.conf.enableChordComponentsPrinting = this.conf.enableChordComponentsPrinting === undefined ? true : this.conf.enableChordComponentsPrinting;
         this.conf.enableCorrector = this.conf.enableCorrector === undefined ? true : this.conf.enableCorrector;
         this.conf.enablePrechecker = this.conf.enablePrechecker === undefined ? true : this.conf.enablePrechecker;
+        this.conf.enableProlog = this.conf.enableProlog === undefined ? true : this.conf.enableProlog;
 
         return this.conf;
     }

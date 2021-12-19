@@ -1238,7 +1238,7 @@ MuseScore {
                                 preReq.onerror = function() {
                                       console.log("error")
                                 }
-                                preReq.send(JSON.stringify({"exercise": input_text}))
+                                preReq.send(JSON.stringify({"exercise": input_text, "evaluateWithProlog": configuration.enableProlog}))
                             }
                         }
                         tooltip: "Check if input is correct"
@@ -1309,7 +1309,7 @@ MuseScore {
                                       console.log("error")
                                 }
 
-                                preReq.send(JSON.stringify({"exercise": input_text}))
+                                preReq.send(JSON.stringify({"exercise": input_text, "evaluateWithProlog": configuration.enableProlog}))
                             }
                         }
                         property var update: function(){
@@ -2091,6 +2091,23 @@ MuseScore {
                                           return Qt.Unchecked
                                     }else{
                                           configuration.enableCorrector = false
+                                          savePluginConfiguration()
+                                          return Qt.Checked
+                                    }
+                            }
+                        }
+                        CheckBox {
+                             id: prologCheckbox
+                             checked: configuration.enableProlog
+                             text: "<font color='#000000'>evaluate with Prolog support</font>"
+                             tooltip: "Use Prolog to evaluate functional harmony rules in HarmonySolver"
+                             onCheckedChanged: function() {
+                                    if (this.checkedState === Qt.Checked){
+                                          configuration.enableProlog = true
+                                          savePluginConfiguration()
+                                          return Qt.Unchecked
+                                    }else{
+                                          configuration.enableProlog = false
                                           savePluginConfiguration()
                                           return Qt.Checked
                                     }

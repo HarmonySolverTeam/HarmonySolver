@@ -13,6 +13,7 @@ function readConfiguration(fileIO, absolutePath){
     confBuilder.enableChordComponentsPrinting(conf_json["enableChordComponentsPrinting"]);
     confBuilder.enableCorrector(conf_json["enableCorrector"]);
     confBuilder.enablePrechecker(conf_json["enablePrechecker"]);
+    confBuilder.enableProlog(conf_json["enableProlog"])
 
     return confBuilder.build();
 }

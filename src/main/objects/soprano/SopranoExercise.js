@@ -1,5 +1,6 @@
 .import "../model/Note.js" as Note
 .import "../model/HarmonicFunction.js" as HarmonicFunction
+.import "../conf/PluginConfigurationUtils.js" as Conf
 
 function SopranoExercise(mode, key, meter, notes, durations, measures, possibleFunctionsList){
     this.mode = mode; // minor or major
@@ -9,6 +10,7 @@ function SopranoExercise(mode, key, meter, notes, durations, measures, possibleF
     this.durations = durations; // list of durations corresponding to notes
     this.measures = measures;
     this.possibleFunctionsList = possibleFunctionsList;
+    this.evaluateWithProlog = Conf.enableProlog;
 
     this.toString = function(){
         return "Mode: " + this.mode+" Key: "+this.key+" Meter: "+this.meter+" Notes: "+this.notes+" Durations: "+this.durations;
